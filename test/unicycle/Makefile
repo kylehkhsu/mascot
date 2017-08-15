@@ -9,7 +9,7 @@ CXXFLAGS 		= -Wall -Wextra -std=c++11
 #
 # scots 
 #
-SCOTSROOT		= /home/kylehsu/control/SCOTS+Adaptive
+SCOTSROOT		= ../..
 SCOTSINC		= -I$(SCOTSROOT)/utils -I$(SCOTSROOT)/bdd 
 
 #

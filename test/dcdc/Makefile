@@ -8,7 +8,7 @@ CXXFLAGS 		= -Wall -Wextra -std=c++11 -O3 -DNDEBUG
 #
 # scots 
 #
-SCOTSROOT		= /home/kylehsu/control/SCOTS+Adaptive
+SCOTSROOT		= ../..
 SCOTSINC		= -I$(SCOTSROOT)/bdd -I$(SCOTSROOT)/utils 
 
 #
