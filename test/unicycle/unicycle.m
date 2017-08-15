@@ -1,12 +1,12 @@
 
 function unicycle (mode, numAbs, controllers)
-  w = [0 0 0];
-  addpath(genpath('/home/kylehsu/control/SCOTS+Adaptive'));
+  w = [0.05 0.05 0];
+  addpath(genpath('../..'));
   
   % colors
   colors=get(groot,'DefaultAxesColorOrder');
   
-  if (mode == 'S')
+  if (strcmp(mode, 'S'))
     figure
     hold on
     box on    
@@ -24,7 +24,7 @@ function unicycle (mode, numAbs, controllers)
     savefig('system');
   end
   
-  if (mode == 'P')
+  if (strcmp(mode,'P'))
     openfig('system');
     hold on
     drawnow
@@ -40,13 +40,13 @@ function unicycle (mode, numAbs, controllers)
     end
         
     % load and draw goal
-    G = SymbolicSet('plotting/G.bdd');
+    G = SymbolicSet('plotting/G.bdd', 'projection', [1 2]);
     plotCells(G, 'facecolor', colors(2,:)*0.5+0.5, 'edgec', colors(2,:), 'linew', 0.1)
     drawnow
     disp('Done plotting goal')
    
     % load and draw initial
-    I = SymbolicSet('plotting/I.bdd');
+    I = SymbolicSet('plotting/I.bdd', 'projection', [1 2]);
     plotCells(I, 'facecolor', colors(3,:)*0.5+0.5, 'edgec', colors(3,:), 'linew', 0.1)
     drawnow
     disp('Done plotting initial')
@@ -55,7 +55,7 @@ function unicycle (mode, numAbs, controllers)
 
   end
   
-  if (mode == 'R')
+  if (strcmp(mode,'R'))
     openfig('problem');
     hold on
     drawnow
@@ -86,7 +86,9 @@ function unicycle (mode, numAbs, controllers)
       eta = eta';
       tau = eta(1)*3/2;
       
+      disp('eta')
       disp(eta)
+      disp('tau')
       disp(tau)
       
       while (1)
@@ -106,12 +108,17 @@ function unicycle (mode, numAbs, controllers)
 	  break
 	end
 	
-	  u = C.getInputs(x(end,:));
-	  ran = randi([1 size(u,1)], 1, 1);
-	  v = [v; u(ran,:)];
-	  d = disturbance(w);
-	  [t phi] = ode45(@unicycle_ode, [0 tau], x(end,:), [], u(ran,:), d);
-	  x = [x; phi];
+	u = C.getInputs(x(end,:));
+	ran = randi([1 size(u,1)], 1, 1);
+	v = [v; u(ran,:)];
+	d = disturbance(w);
+	[t phi] = ode45(@unicycle_ode, [0 tau], x(end,:), [], u(ran,:), d);
+	x = [x; phi];
+	  
+	disp('u')
+	disp(u(ran,:))
+	disp('d')
+	disp(d)
 	
 	j = j + 1;
       end
@@ -120,20 +127,20 @@ function unicycle (mode, numAbs, controllers)
     savefig('simulation');
   end
   
-  if (mode == 'Q')
+  if (strcmp(mode,'scots'))
     openfig('problem');
     hold on
     drawnow
     
-    I = SymbolicSet('plotting/I.bdd');
+    I = SymbolicSet('scots/I.bdd');
     x = I.points();
     x = x(1,:);
     x = [x; x];
     v = [];
     
-    G = SymbolicSet('plotting/G.bdd');
-    eta = [0.2 0.2 0.1];
-    tau = 0.3;
+    G = SymbolicSet('scots/G.bdd');
+    eta = G.eta;
+    tau = eta(1)*3/2;
     
     C = SymbolicSet('scots/C.bdd', 'projection', [1 2 3]);
     
@@ -165,7 +172,8 @@ function unicycle (mode, numAbs, controllers)
       x = [x; phi];
       
       j = j + 1;
-    end       
+    end
+    savefig('scots/simulation')
   end    
 end
 
