@@ -1,9 +1,9 @@
-# Welcome to SCOTS+Adaptive
+# Welcome to SCOTS-Adaptive
 
 **SCOTS**, by Matthias Rungger et al., is a C++ tool (with a small Matlab interface) to synthesize controllers for
 possibly perturbed nonlinear control systems with respect to safety and reachability specifications.
 
-**SCOTS+Adaptive** enables multi-layer abstractions to expedite the fixed point procedure in the synthesis.
+**SCOTS-Adaptive** enables multi-layer abstractions to expedite the fixed point procedure in the synthesis.
 
 
 ### Requirements
