@@ -1,0 +1,25 @@
+Xs_ initialized with full domain.
+X2s_ initialized with full domain.
+U_ initialized with full domain.
+Zs_, validZs_ initialized with empty domain.
+Cs_, validCs_ initialized with empty domain.
+------------------------------------------------initializeXXs: Elapsed time is 8.52e-07 seconds.
+Number of BDD variables: 45
+Gs_ initialized.
+Is_ initialized.
+Os_ initialized.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.141178 seconds.
+No obstacle problem with specification.
+Zs_ ensured to be empty.
+etaX_:
+abstraction 0: 0.2 0.2 0.1 
+tau_:
+abstraction 0: 0.3
+U:
+here?
+there?
+Number of elements in the transition relation: 1.45789e+08
+------------------------------------------------computeAbstractions: Elapsed time is 1.24762 seconds.
+Os_ removed from Ts_, TTs_.
+------------------------------normal SCOTS-----------------------------------
+Elapsed time is 92.9652 seconds.

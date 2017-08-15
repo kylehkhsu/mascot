@@ -1,0 +1,995 @@
+\hypertarget{classscots_1_1Adaptive}{}\section{scots\+:\+:Adaptive$<$ X\+\_\+type, U\+\_\+type $>$ Class Template Reference}
+\label{classscots_1_1Adaptive}\index{scots\+::\+Adaptive$<$ X\+\_\+type, U\+\_\+type $>$@{scots\+::\+Adaptive$<$ X\+\_\+type, U\+\_\+type $>$}}
+
+
+A class that does abstraction-\/based synthesis with adaptive time-\/ and state space-\/gridding.  
+
+
+
+
+{\ttfamily \#include $<$Adaptive.\+hh$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classscots_1_1Adaptive_a7a6ba80b2a6679ec1194551be3dee698}{Adaptive} (int dimX, double $\ast$lbX, double $\ast$ubX, double $\ast$etaX, double tau, int dimU, double $\ast$lbU, double $\ast$ubU, double $\ast$etaU, double $\ast$eta\+Ratio, double tau\+Ratio, int nint, int num\+Abs, int read\+XX, int read\+Abs)
+\item 
+\hyperlink{classscots_1_1Adaptive_aa20062d309691c2858912bc3fd9616e7}{$\sim$\+Adaptive} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_a629133566055e6445983b86082838b96}{save\+Verify\+Safe} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_aed48ef46c84bf6797bea16f896e44e3a}{save\+Verify\+Reach} ()
+\item 
+{\footnotesize template$<$class vec\+\_\+type , class spec\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Adaptive_aac25a2399ed09b07ef546579c94b0726}{initialize\+Spec} (vec\+\_\+type $\ast$vec, spec\+\_\+type add\+Spec)
+\item 
+void \hyperlink{classscots_1_1Adaptive_ad7b09416eb224909dcfddcb6487b3b82}{initialize\+X\+X2\+U\+Z\+Cs} ()
+\item 
+{\footnotesize template$<$class S\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Adaptive_abb37f63b898de0d0013839d3b9d1db2f}{initialize\+Safe} (S\+\_\+type addS)
+\item 
+{\footnotesize template$<$class G\+\_\+type , class I\+\_\+type , class O\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Adaptive_a63afb68f37f6140095c2460d07fc19cb}{initialize\+Reach} (G\+\_\+type addG, I\+\_\+type addI, O\+\_\+type addO)
+\item 
+{\footnotesize template$<$class sys\+\_\+type , class rad\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Adaptive_af6aeb2170e7223c1396454ab2b83fb09}{compute\+Abstractions} (sys\+\_\+type sys\+Next, rad\+\_\+type rad\+Next)
+\item 
+B\+DD \hyperlink{classscots_1_1Adaptive_a4a7b7cbccffbff31c135c9d5bd4d7ec0}{preC} (B\+DD Z, int cur\+Abs)
+\item 
+void \hyperlink{classscots_1_1Adaptive_a93bf8fd25ea0aa5fad018e596e710ff9}{mu} (int min\+To\+Go\+Coarser, int min\+To\+Be\+Valid, int verbose, int early\+Break, int $\ast$cur\+Abs, int $\ast$iter, int $\ast$just\+Coarsed, int $\ast$iter\+Cur\+Abs, int $\ast$reached, int $\ast$stop)
+\item 
+int \hyperlink{classscots_1_1Adaptive_aaa27769c17f2b91743f1e7fc0ff51060}{reach} (int start\+Abs, int min\+To\+Go\+Coarser, int min\+To\+Be\+Valid, int verbose=0, int early\+Break=1)
+\item 
+void \hyperlink{classscots_1_1Adaptive_a6bdf5b60cd9fb7af657091ad5975743d}{always\+Eventually\+S\+C\+O\+TS} ()
+\item 
+int \hyperlink{classscots_1_1Adaptive_a7823d9e433b00b740e56d0eabb920f7b}{always\+Eventually} (int start\+Abs, int min\+To\+Go\+Coarser, int min\+To\+Be\+Valid, int verbose=0, int early\+Break=0)
+\item 
+void \hyperlink{classscots_1_1Adaptive_ad3b8d9cf97cd0967409c14361a40d779}{save\+CZ} (int cur\+Abs)
+\item 
+void \hyperlink{classscots_1_1Adaptive_ad583956ec022b6bd00a62680ff38103a}{reach\+S\+C\+O\+TS} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_a76d026d45bd794eba3ef69c18835dd54}{safe} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_afd80e725160ae143493105b2fe99fe02}{safe\+S\+C\+O\+TS} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_a1c7b5c07621e61b846b70e949b92b0b7}{safe\+Basic\+Debug} (int verbose=0)
+\item 
+{\footnotesize template$<$class G\+\_\+type , class I\+\_\+type , class O\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Adaptive_ae1663a6a4ab0ffe2025f954be4fe4116}{reach\+Basic\+Debug} (int start\+Abs, G\+\_\+type addG, I\+\_\+type addI, O\+\_\+type addO, int \hyperlink{classscots_1_1Adaptive_a8ea5724cde577baf708496d6bef7e548}{debug}=0)
+\item 
+void \hyperlink{classscots_1_1Adaptive_a6a9af6f25e8c4015ceb24d704da26972}{initialize\+Not\+Vars} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_af4c5423a62b8c11110d0a2bdcc96d4fb}{inner\+Finer\+Aligned} (Symbolic\+Set $\ast$Zc, Symbolic\+Set $\ast$Zf, int c)
+\item 
+void \hyperlink{classscots_1_1Adaptive_a4054eda5087611f78dddb2c378fcbb6e}{inner\+Finer\+All2} (Symbolic\+Set $\ast$Zc, Symbolic\+Set $\ast$Zf, int c)
+\item 
+int \hyperlink{classscots_1_1Adaptive_a01f8f69d290f9c81f76f6ab44d9ef193}{inner\+Coarser\+Aligned} (Symbolic\+Set $\ast$Zc, Symbolic\+Set $\ast$Zf, int c)
+\item 
+{\footnotesize template$<$class G\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Adaptive_aa4f1995704cf927fff530e715a6214ec}{test\+Projections} (G\+\_\+type addG)
+\item 
+void \hyperlink{classscots_1_1Adaptive_aec99424e29ff42e2e7e46f747cb6ed34}{initialize\+Ts} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_a8f23922cbd2768a8339c73928ddc9c5a}{initialize\+Alignment} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_a3dca1d73761d2678f981512dee5c325d}{initialize\+Eta\+Tau} (double $\ast$etaX, double tau)
+\item 
+void \hyperlink{classscots_1_1Adaptive_a25cc058f39f38402ff914ae6b927393e}{initialize\+Solvers} (int nint)
+\item 
+void \hyperlink{classscots_1_1Adaptive_af08ee7fae4cf6c5ae1fcabb8699e0721}{initialize\+X\+Xs} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_ab75f4bbed30ecc70747185f36fcab200}{initialize\+Num\+B\+D\+D\+Vars} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_a2b4a5e42c1a4fca883c132b02295bf11}{initialize\+Cubes} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_a7351461977b9be0f07ec2974531af677}{initialize\+Permutes} ()
+\item 
+{\footnotesize template$<$class sys\+\_\+type , class rad\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Adaptive_ae8e0a243c51d3596f994f2b0668892e4}{initialize\+Abs} (sys\+\_\+type sys\+Next, rad\+\_\+type rad\+Next)
+\item 
+void \hyperlink{classscots_1_1Adaptive_a4e6a4284b5f3ef75816aaaefaf8fe51a}{map\+Abstractions} (Symbolic\+Set $\ast$Xc, Symbolic\+Set $\ast$Xf, Symbolic\+Set $\ast$awk\+XX, Symbolic\+Set $\ast$subset\+XX, int c)
+\item 
+void \hyperlink{classscots_1_1Adaptive_af192d9fee4a464e21d88b2d9735c5053}{print\+EtaX} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_a7e3c0b5babfb943dcda7f7f5c89cbb3e}{print\+Tau} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_aba179a9fad6056239005127af2e95f45}{check\+Permutes} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_a5e8e6dc690e2c800338fd2c866af8889}{check\+Cubes} ()
+\item 
+void \hyperlink{classscots_1_1Adaptive_a8ea5724cde577baf708496d6bef7e548}{debug} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Cudd \hyperlink{classscots_1_1Adaptive_a4d986f797368f4e1f74dd7d8a37df2dd}{ddmgr\+\_\+}
+\item 
+int \hyperlink{classscots_1_1Adaptive_a852e87d359ae3c0fe13493bac80f35f6}{dim\+X\+\_\+}
+\item 
+double $\ast$ \hyperlink{classscots_1_1Adaptive_a6018fcd45bd81cc0073f0bd1f375829d}{lb\+X\+\_\+}
+\item 
+double $\ast$ \hyperlink{classscots_1_1Adaptive_ac50c58c4495d727acdb321a0b995426b}{ub\+X\+\_\+}
+\item 
+int \hyperlink{classscots_1_1Adaptive_ac26b29e9c729fd641af851f87e2ee2b4}{dim\+U\+\_\+}
+\item 
+double $\ast$ \hyperlink{classscots_1_1Adaptive_aebaf5b4abaa33f4494491cbe67b42b80}{lb\+U\+\_\+}
+\item 
+double $\ast$ \hyperlink{classscots_1_1Adaptive_aa5c0bc8b175609073aa1f26ad6a83f1c}{ub\+U\+\_\+}
+\item 
+double $\ast$ \hyperlink{classscots_1_1Adaptive_acc2e430a31aa9ceb8ab6593a9eb3e91f}{eta\+U\+\_\+}
+\item 
+double $\ast$ \hyperlink{classscots_1_1Adaptive_af0ae9692bf76a9d38cca670e9535310f}{eta\+Ratio\+\_\+}
+\item 
+double \hyperlink{classscots_1_1Adaptive_a33592a853774854552908de4762f8f8c}{tau\+Ratio\+\_\+}
+\item 
+int \hyperlink{classscots_1_1Adaptive_afdd5a499494efeb8538346ad9e0f329c}{num\+Abs\+\_\+}
+\item 
+int \hyperlink{classscots_1_1Adaptive_ad4f525a5a65b284da14369a54532cf39}{alignment\+\_\+}
+\item 
+int \hyperlink{classscots_1_1Adaptive_a95926f102459b6ec3525040c791ff359}{read\+X\+X\+\_\+}
+\item 
+int \hyperlink{classscots_1_1Adaptive_a8c2a7e89feeb75f0b51fdf9c8d1359e7}{read\+Abs\+\_\+}
+\item 
+vector$<$ double $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_abe9d5faea4bd01753070599200e224c5}{eta\+X\+\_\+}
+\item 
+vector$<$ double $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a2276dbf06b4db12739aed70443c1a32d}{tau\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_ae43471177bc6b7d3229a9497b46ee343}{Xs\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a1421430af54b816e57d7cc4db6f1a83d}{Is\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_abed6bfd1256157d4b943078f6486ee36}{Os\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a4184aca345cd09023c656bc616c2ee9a}{Gs\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a387e00a300c8c75d3a4eb6181dfab9c4}{Zs\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_af160394c89efaa08d8830a1df066586d}{valid\+Zs\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a532d1acf3db0235c7bbd551b41a040fc}{X2s\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_ae7e9ac7e500e7f06931138b68ad48aac}{awk\+X\+Xs\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a8b47913f64f175d3b2b1bebdfcb4ec39}{subset\+X\+Xs\+\_\+}
+\item 
+Symbolic\+Set $\ast$ \hyperlink{classscots_1_1Adaptive_a89fa563cfea5b9a7bec6a705ca412a18}{U\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a4937d441ac9758f33bcceeb9975fb1ce}{Cs\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_ad470ad33182f03ad7b3dd5fe9e5271d5}{valid\+Cs\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a4afb0056b1ab5f1f73b1740806267044}{Ss\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_ad197683891b126e16f0f377d778fd352}{inf\+Zs\+\_\+}
+\item 
+int \hyperlink{classscots_1_1Adaptive_a753d83283386610f1a2283af5cbeba73}{num\+B\+D\+D\+Vars\+\_\+}
+\item 
+vector$<$ B\+DD $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_ac82296bd0392bccf2a0e4af9ba70ff37}{cubes\+X\+\_\+}
+\item 
+vector$<$ B\+DD $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a6fa7b7542b91ec37ff2358359e425d12}{cubes\+X2\+\_\+}
+\item 
+B\+DD $\ast$ \hyperlink{classscots_1_1Adaptive_a0332230a9bad14d432e6651611863be9}{cube\+U\+\_\+}
+\item 
+vector$<$ B\+DD $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_ac3f203003011bcea5176ef294ab7a8a0}{not\+X\+Uvars\+\_\+}
+\item 
+vector$<$ B\+DD $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a8fbbf6976e589506c9e4c38045196c07}{not\+Xvars\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_ab9f37fda9e698b797079d28b243f3a5b}{Ts\+\_\+}
+\item 
+vector$<$ B\+DD $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a1f4c02094ecd380887640c83fc1d0310}{T\+Ts\+\_\+}
+\item 
+vector$<$ int $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_ae954d4d3177bdc4093530e254ace2b34}{permutes\+Xto\+X2\+\_\+}
+\item 
+vector$<$ int $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a88edb6662310c07120d07c9dff968ddc}{permutes\+X2to\+X\+\_\+}
+\item 
+vector$<$ Ode\+Solver $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a0b300511b5f746c7b24ead30dc0ca9ac}{solvers\+\_\+}
+\item 
+vector$<$ Symbolic\+Model\+Growth\+Bound$<$ X\+\_\+type, U\+\_\+type $>$ $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_ab51fe5639ecc8fd046c1d2d56fb25890}{Abs\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a5a70ee2d2b4efe4f5eb20d08a596ec7b}{final\+Cs\+\_\+}
+\item 
+vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_af22209ae22c8b2dd921be22cc51a36dd}{final\+Zs\+\_\+}
+\item 
+Profile \hyperlink{classscots_1_1Adaptive_a8c62c5ae1d50e3301098b864c5b2883f}{reachpf\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class X\+\_\+type, class U\+\_\+type$>$\newline
+class scots\+::\+Adaptive$<$ X\+\_\+type, U\+\_\+type $>$}
+
+A class that does abstraction-\/based synthesis with adaptive time-\/ and state space-\/gridding. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classscots_1_1Adaptive_a7a6ba80b2a6679ec1194551be3dee698}\label{classscots_1_1Adaptive_a7a6ba80b2a6679ec1194551be3dee698}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Adaptive@{Adaptive}}
+\index{Adaptive@{Adaptive}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{Adaptive()}{Adaptive()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+\hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::\hyperlink{classscots_1_1Adaptive}{Adaptive} (\begin{DoxyParamCaption}\item[{int}]{dimX,  }\item[{double $\ast$}]{lbX,  }\item[{double $\ast$}]{ubX,  }\item[{double $\ast$}]{etaX,  }\item[{double}]{tau,  }\item[{int}]{dimU,  }\item[{double $\ast$}]{lbU,  }\item[{double $\ast$}]{ubU,  }\item[{double $\ast$}]{etaU,  }\item[{double $\ast$}]{eta\+Ratio,  }\item[{double}]{tau\+Ratio,  }\item[{int}]{nint,  }\item[{int}]{num\+Abs,  }\item[{int}]{read\+XX,  }\item[{int}]{read\+Abs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructor for an \hyperlink{classscots_1_1Adaptive}{Adaptive} object. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em dimX} & Dimensionality of the state space. \\
+\hline
+\mbox{\tt in}  & {\em lbX} & Lowermost grid point of the state space. \\
+\hline
+\mbox{\tt in}  & {\em ubX} & Uppermost grid point of the state space. \\
+\hline
+\mbox{\tt in}  & {\em etaX} & Coarsest grid spacing of the state space. \\
+\hline
+\mbox{\tt in}  & {\em tau} & Coarsest time step. \\
+\hline
+\mbox{\tt in}  & {\em dimU} & Dimensionality of the input space. \\
+\hline
+\mbox{\tt in}  & {\em lbU} & Lowermost grid point of the input space. \\
+\hline
+\mbox{\tt in}  & {\em ubU} & Uppermost grid point of the input space. \\
+\hline
+\mbox{\tt in}  & {\em etaU} & Grid spacing of the input space. \\
+\hline
+\mbox{\tt in}  & {\em eta\+Ratio} & Ratio between grid spacings of the input space in consecutive abstractions. \\
+\hline
+\mbox{\tt in}  & {\em tau\+Ratio} & Ratio between time steps of consecutive abstractions. \\
+\hline
+\mbox{\tt in}  & {\em nint} & Number of sub-\/intervals in O\+DE solving per time step. \\
+\hline
+\mbox{\tt in}  & {\em num\+Abs} & Number of abstractions. \\
+\hline
+\mbox{\tt in}  & {\em read\+XX} & Whether initialize\+X\+Xs should be done by construction (0) or reading from files (1). \\
+\hline
+\mbox{\tt in}  & {\em read\+Abs} & Whether initialize\+Abs should be done by construction (0) or reading from files (1). \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_aa20062d309691c2858912bc3fd9616e7}\label{classscots_1_1Adaptive_aa20062d309691c2858912bc3fd9616e7}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!````~Adaptive@{$\sim$\+Adaptive}}
+\index{````~Adaptive@{$\sim$\+Adaptive}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{$\sim$\+Adaptive()}{~Adaptive()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+\hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::$\sim$\hyperlink{classscots_1_1Adaptive}{Adaptive} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Destructor for an \hyperlink{classscots_1_1Adaptive}{Adaptive} object. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classscots_1_1Adaptive_a7823d9e433b00b740e56d0eabb920f7b}\label{classscots_1_1Adaptive_a7823d9e433b00b740e56d0eabb920f7b}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!always\+Eventually@{always\+Eventually}}
+\index{always\+Eventually@{always\+Eventually}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{always\+Eventually()}{alwaysEventually()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::always\+Eventually (\begin{DoxyParamCaption}\item[{int}]{start\+Abs,  }\item[{int}]{min\+To\+Go\+Coarser,  }\item[{int}]{min\+To\+Be\+Valid,  }\item[{int}]{verbose = {\ttfamily 0},  }\item[{int}]{early\+Break = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Writes, should they exist, a sequence of controller and controller domain B\+D\+Ds to directories \textquotesingle{}C\textquotesingle{} and \textquotesingle{}Z\textquotesingle{} respectively that satisfy the Buchi box-\/diamond (aka always-\/eventually) specification. Note\+: of the n resultant controllers in \textquotesingle{}C\textquotesingle{}, the n-\/1th, .., 1st controllers are to reach, and the nth controller is for when the system state is a goal state. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em start\+Abs} & 0-\/index of the abstraction to start with. \\
+\hline
+\mbox{\tt in}  & {\em min\+To\+Go\+Coarser} & Minimum number of growing fixed point iterations needed before an attempt to go to a coarser abstraction. \\
+\hline
+\mbox{\tt in}  & {\em min\+To\+Be\+Valid} & Minimum number of growing fixed point iterations needed before a controller is declared valid. \\
+\hline
+\mbox{\tt in}  & {\em verbose} & If 1, prints additional information during synthesis to the console. \\
+\hline
+\mbox{\tt in}  & {\em early\+Break} & If 1, reachability ends as soon as I meets the domain of C. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 if controller(s) satisfying specification is/are synthesized; 0 otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classscots_1_1Adaptive_a6bdf5b60cd9fb7af657091ad5975743d}\label{classscots_1_1Adaptive_a6bdf5b60cd9fb7af657091ad5975743d}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!always\+Eventually\+S\+C\+O\+TS@{always\+Eventually\+S\+C\+O\+TS}}
+\index{always\+Eventually\+S\+C\+O\+TS@{always\+Eventually\+S\+C\+O\+TS}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{always\+Eventually\+S\+C\+O\+T\+S()}{alwaysEventuallySCOTS()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::always\+Eventually\+S\+C\+O\+TS (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Implementation of always-\/eventually using functions in a S\+C\+O\+T\+S\+::\+Fixed\+Point object. For comparison with the \hyperlink{classscots_1_1Adaptive}{Adaptive} version. \mbox{\Hypertarget{classscots_1_1Adaptive_a5e8e6dc690e2c800338fd2c866af8889}\label{classscots_1_1Adaptive_a5e8e6dc690e2c800338fd2c866af8889}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!check\+Cubes@{check\+Cubes}}
+\index{check\+Cubes@{check\+Cubes}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{check\+Cubes()}{checkCubes()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::check\+Cubes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Debugging function. \mbox{\Hypertarget{classscots_1_1Adaptive_aba179a9fad6056239005127af2e95f45}\label{classscots_1_1Adaptive_aba179a9fad6056239005127af2e95f45}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!check\+Permutes@{check\+Permutes}}
+\index{check\+Permutes@{check\+Permutes}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{check\+Permutes()}{checkPermutes()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::check\+Permutes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Debugging function. \mbox{\Hypertarget{classscots_1_1Adaptive_af6aeb2170e7223c1396454ab2b83fb09}\label{classscots_1_1Adaptive_af6aeb2170e7223c1396454ab2b83fb09}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!compute\+Abstractions@{compute\+Abstractions}}
+\index{compute\+Abstractions@{compute\+Abstractions}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{compute\+Abstractions()}{computeAbstractions()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+template$<$class sys\+\_\+type , class rad\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::compute\+Abstractions (\begin{DoxyParamCaption}\item[{sys\+\_\+type}]{sys\+Next,  }\item[{rad\+\_\+type}]{rad\+Next }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes Symbolic\+Model\+Growth\+Bound objects for each abstraction as well as Ts\+\_\+, T\+Ts\+\_\+ for use in the fixed points. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys\+Next} & Function pointer to equation that evolves system state. \\
+\hline
+\mbox{\tt in}  & {\em rad\+Next} & Function pointer to equation that computes growth bound. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_a8ea5724cde577baf708496d6bef7e548}\label{classscots_1_1Adaptive_a8ea5724cde577baf708496d6bef7e548}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!debug@{debug}}
+\index{debug@{debug}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{debug()}{debug()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::debug (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Debugging function. \mbox{\Hypertarget{classscots_1_1Adaptive_ae8e0a243c51d3596f994f2b0668892e4}\label{classscots_1_1Adaptive_ae8e0a243c51d3596f994f2b0668892e4}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Abs@{initialize\+Abs}}
+\index{initialize\+Abs@{initialize\+Abs}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Abs()}{initializeAbs()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+template$<$class sys\+\_\+type , class rad\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Abs (\begin{DoxyParamCaption}\item[{sys\+\_\+type}]{sys\+Next,  }\item[{rad\+\_\+type}]{rad\+Next }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes the transition relations for the abstractions. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys\+Next} & Specification of system dynamics. \\
+\hline
+\mbox{\tt in}  & {\em rad\+Next} & Specification of state uncertainty growth bound. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_a8f23922cbd2768a8339c73928ddc9c5a}\label{classscots_1_1Adaptive_a8f23922cbd2768a8339c73928ddc9c5a}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Alignment@{initialize\+Alignment}}
+\index{initialize\+Alignment@{initialize\+Alignment}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Alignment()}{initializeAlignment()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Alignment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes alignment\+\_\+ by examining eta\+Ratio\+\_\+. \mbox{\Hypertarget{classscots_1_1Adaptive_a2b4a5e42c1a4fca883c132b02295bf11}\label{classscots_1_1Adaptive_a2b4a5e42c1a4fca883c132b02295bf11}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Cubes@{initialize\+Cubes}}
+\index{initialize\+Cubes@{initialize\+Cubes}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Cubes()}{initializeCubes()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Cubes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes the B\+D\+Ds that are the precursors to not\+Xvars\+\_\+ and not\+X\+Uvars\+\_\+ \mbox{\Hypertarget{classscots_1_1Adaptive_a3dca1d73761d2678f981512dee5c325d}\label{classscots_1_1Adaptive_a3dca1d73761d2678f981512dee5c325d}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Eta\+Tau@{initialize\+Eta\+Tau}}
+\index{initialize\+Eta\+Tau@{initialize\+Eta\+Tau}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Eta\+Tau()}{initializeEtaTau()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Eta\+Tau (\begin{DoxyParamCaption}\item[{double $\ast$}]{etaX,  }\item[{double}]{tau }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes the abstractions\textquotesingle{} state space grid parameters and time sampling parameters. \mbox{\Hypertarget{classscots_1_1Adaptive_a6a9af6f25e8c4015ceb24d704da26972}\label{classscots_1_1Adaptive_a6a9af6f25e8c4015ceb24d704da26972}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Not\+Vars@{initialize\+Not\+Vars}}
+\index{initialize\+Not\+Vars@{initialize\+Not\+Vars}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Not\+Vars()}{initializeNotVars()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Not\+Vars (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes the B\+D\+Ds useful for existential abstraction. Must be called only after initializing Xs, U, and X2s. \mbox{\Hypertarget{classscots_1_1Adaptive_ab75f4bbed30ecc70747185f36fcab200}\label{classscots_1_1Adaptive_ab75f4bbed30ecc70747185f36fcab200}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Num\+B\+D\+D\+Vars@{initialize\+Num\+B\+D\+D\+Vars}}
+\index{initialize\+Num\+B\+D\+D\+Vars@{initialize\+Num\+B\+D\+D\+Vars}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Num\+B\+D\+D\+Vars()}{initializeNumBDDVars()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Num\+B\+D\+D\+Vars (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes the number of total distinct B\+DD variables in use. \mbox{\Hypertarget{classscots_1_1Adaptive_a7351461977b9be0f07ec2974531af677}\label{classscots_1_1Adaptive_a7351461977b9be0f07ec2974531af677}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Permutes@{initialize\+Permutes}}
+\index{initialize\+Permutes@{initialize\+Permutes}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Permutes()}{initializePermutes()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Permutes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes the arrays of B\+DD variable I\+Ds that allow a B\+DD over an X domain to be projected to the identical B\+DD over the corresponding X2 domain. \mbox{\Hypertarget{classscots_1_1Adaptive_a63afb68f37f6140095c2460d07fc19cb}\label{classscots_1_1Adaptive_a63afb68f37f6140095c2460d07fc19cb}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Reach@{initialize\+Reach}}
+\index{initialize\+Reach@{initialize\+Reach}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Reach()}{initializeReach()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+template$<$class G\+\_\+type , class I\+\_\+type , class O\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Reach (\begin{DoxyParamCaption}\item[{G\+\_\+type}]{addG,  }\item[{I\+\_\+type}]{addI,  }\item[{O\+\_\+type}]{addO }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes objects specific to the following specifications\+: reachability, always-\/eventually, reach-\/while-\/avoid. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em addG} & Function pointer specifying the points that should be added to the goal set. \\
+\hline
+\mbox{\tt in}  & {\em addI} & Function pointer specifying the points that should be added to the initial set. \\
+\hline
+\mbox{\tt in}  & {\em addO} & Function pointer specifying the points that should be added to the obstacle set. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_abb37f63b898de0d0013839d3b9d1db2f}\label{classscots_1_1Adaptive_abb37f63b898de0d0013839d3b9d1db2f}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Safe@{initialize\+Safe}}
+\index{initialize\+Safe@{initialize\+Safe}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Safe()}{initializeSafe()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+template$<$class S\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Safe (\begin{DoxyParamCaption}\item[{S\+\_\+type}]{addS }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes objects specific to the following specifications\+: safe. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em addS} & Function pointer specifying the points that should be added to the potential safe set. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_a25cc058f39f38402ff914ae6b927393e}\label{classscots_1_1Adaptive_a25cc058f39f38402ff914ae6b927393e}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Solvers@{initialize\+Solvers}}
+\index{initialize\+Solvers@{initialize\+Solvers}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Solvers()}{initializeSolvers()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Solvers (\begin{DoxyParamCaption}\item[{int}]{nint }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes the Runge-\/\+Katta O\+DE solvers. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em nint} & Number of desired sub-\/steps for each time step in the numerical approximation process. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_aac25a2399ed09b07ef546579c94b0726}\label{classscots_1_1Adaptive_aac25a2399ed09b07ef546579c94b0726}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Spec@{initialize\+Spec}}
+\index{initialize\+Spec@{initialize\+Spec}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Spec()}{initializeSpec()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+template$<$class vec\+\_\+type , class spec\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Spec (\begin{DoxyParamCaption}\item[{vec\+\_\+type $\ast$}]{vec,  }\item[{spec\+\_\+type}]{add\+Spec }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes a vector of Symbolic\+Sets that is an instance of Xs\+\_\+ containing points as specified by add\+Spec. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em vec} & Vector of Symbolic\+Sets to initialize. \\
+\hline
+\mbox{\tt in}  & {\em add\+Spec} & Function pointer specifying the points to add to each element of vec. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_aec99424e29ff42e2e7e46f747cb6ed34}\label{classscots_1_1Adaptive_aec99424e29ff42e2e7e46f747cb6ed34}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Ts@{initialize\+Ts}}
+\index{initialize\+Ts@{initialize\+Ts}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+Ts()}{initializeTs()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Ts (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes Ts\+\_\+ and T\+Ts\+\_\+. \mbox{\Hypertarget{classscots_1_1Adaptive_ad7b09416eb224909dcfddcb6487b3b82}\label{classscots_1_1Adaptive_ad7b09416eb224909dcfddcb6487b3b82}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+X\+X2\+U\+Z\+Cs@{initialize\+X\+X2\+U\+Z\+Cs}}
+\index{initialize\+X\+X2\+U\+Z\+Cs@{initialize\+X\+X2\+U\+Z\+Cs}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+X\+X2\+U\+Z\+Cs()}{initializeXX2UZCs()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+X\+X2\+U\+Z\+Cs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes the vectors of Symbolic\+Sets Xs\+\_\+, X2s\+\_\+, Us\+\_\+, Zs\+\_\+, valid\+Zs\+\_\+, Cs\+\_\+, valid\+Cs\+\_\+. \mbox{\Hypertarget{classscots_1_1Adaptive_af08ee7fae4cf6c5ae1fcabb8699e0721}\label{classscots_1_1Adaptive_af08ee7fae4cf6c5ae1fcabb8699e0721}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+X\+Xs@{initialize\+X\+Xs}}
+\index{initialize\+X\+Xs@{initialize\+X\+Xs}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{initialize\+X\+Xs()}{initializeXXs()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+X\+Xs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes Symbolic\+Sets containing the mappings between consecutive state space abstractions. Reads and writes B\+D\+Ds from/to file depending on read\+X\+Xs\+\_\+. \mbox{\Hypertarget{classscots_1_1Adaptive_a01f8f69d290f9c81f76f6ab44d9ef193}\label{classscots_1_1Adaptive_a01f8f69d290f9c81f76f6ab44d9ef193}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!inner\+Coarser\+Aligned@{inner\+Coarser\+Aligned}}
+\index{inner\+Coarser\+Aligned@{inner\+Coarser\+Aligned}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{inner\+Coarser\+Aligned()}{innerCoarserAligned()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::inner\+Coarser\+Aligned (\begin{DoxyParamCaption}\item[{Symbolic\+Set $\ast$}]{Zc,  }\item[{Symbolic\+Set $\ast$}]{Zf,  }\item[{int}]{c }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Inner-\/approximates a set of states in a finer abstraction with a coarser abstraction. This version takes advantage of the fact that cells in the two abstractions are aligned, which occurs if all elements of eta\+Ratio\+\_\+ are a power of 3. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em Zc} & Winning states in the coarser abstraction. \\
+\hline
+\mbox{\tt in}  & {\em Zf} & Winning states in the finer abstraction. \\
+\hline
+\mbox{\tt in}  & {\em c} & 0-\/index of the coarser abstraction. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 if Zc grows; 0 otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classscots_1_1Adaptive_af4c5423a62b8c11110d0a2bdcc96d4fb}\label{classscots_1_1Adaptive_af4c5423a62b8c11110d0a2bdcc96d4fb}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!inner\+Finer\+Aligned@{inner\+Finer\+Aligned}}
+\index{inner\+Finer\+Aligned@{inner\+Finer\+Aligned}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{inner\+Finer\+Aligned()}{innerFinerAligned()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::inner\+Finer\+Aligned (\begin{DoxyParamCaption}\item[{Symbolic\+Set $\ast$}]{Zc,  }\item[{Symbolic\+Set $\ast$}]{Zf,  }\item[{int}]{c }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Inner-\/approximates a set of states in a coarser abstraction with a finer abstraction. This version takes advantage of the fact that cells in the two abstractions are aligned, which occurs if all elements of eta\+Ratio\+\_\+ are a power of 3. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Zc} & Winning states in the coarser abstraction. \\
+\hline
+\mbox{\tt in,out}  & {\em Zf} & Winning states in the finer abstraction. \\
+\hline
+\mbox{\tt in}  & {\em c} & 0-\/index of the coarser abstraction. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_a4054eda5087611f78dddb2c378fcbb6e}\label{classscots_1_1Adaptive_a4054eda5087611f78dddb2c378fcbb6e}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!inner\+Finer\+All2@{inner\+Finer\+All2}}
+\index{inner\+Finer\+All2@{inner\+Finer\+All2}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{inner\+Finer\+All2()}{innerFinerAll2()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::inner\+Finer\+All2 (\begin{DoxyParamCaption}\item[{Symbolic\+Set $\ast$}]{Zc,  }\item[{Symbolic\+Set $\ast$}]{Zf,  }\item[{int}]{c }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Inner-\/approximates a set of states in a coarser abstraction with a finer abstraction. Optimal only if each element of eta\+Ratio\+\_\+ is 2 (or a greater power of; not 1!). 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Zc} & Winning states in the coarser abstraction. \\
+\hline
+\mbox{\tt in,out}  & {\em Zf} & Winning states in the finer abstraction. \\
+\hline
+\mbox{\tt in}  & {\em c} & 0-\/index of the coarser abstraction. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_a4e6a4284b5f3ef75816aaaefaf8fe51a}\label{classscots_1_1Adaptive_a4e6a4284b5f3ef75816aaaefaf8fe51a}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!map\+Abstractions@{map\+Abstractions}}
+\index{map\+Abstractions@{map\+Abstractions}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{map\+Abstractions()}{mapAbstractions()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::map\+Abstractions (\begin{DoxyParamCaption}\item[{Symbolic\+Set $\ast$}]{Xc,  }\item[{Symbolic\+Set $\ast$}]{Xf,  }\item[{Symbolic\+Set $\ast$}]{awk\+XX,  }\item[{Symbolic\+Set $\ast$}]{subset\+XX,  }\item[{int}]{c }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Generates a mapping between two consecutive state space abstractions. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Xc} & Coarser state space abstraction. \\
+\hline
+\mbox{\tt in}  & {\em Xf} & Finer state space abstraction. \\
+\hline
+\mbox{\tt in,out}  & {\em awk\+XX} & Mapping for two cells that meet at all (currently unnecessary/unused). \\
+\hline
+\mbox{\tt in,out}  & {\em subset\+XX} & Mapping for a finer cell to the coarser cell that is its superset. \\
+\hline
+\mbox{\tt in}  & {\em c} & 0-\/index of the coarser abstraction (currently unnecessary/unused). \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_a93bf8fd25ea0aa5fad018e596e710ff9}\label{classscots_1_1Adaptive_a93bf8fd25ea0aa5fad018e596e710ff9}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!mu@{mu}}
+\index{mu@{mu}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{mu()}{mu()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::mu (\begin{DoxyParamCaption}\item[{int}]{min\+To\+Go\+Coarser,  }\item[{int}]{min\+To\+Be\+Valid,  }\item[{int}]{verbose,  }\item[{int}]{early\+Break,  }\item[{int $\ast$}]{cur\+Abs,  }\item[{int $\ast$}]{iter,  }\item[{int $\ast$}]{just\+Coarsed,  }\item[{int $\ast$}]{iter\+Cur\+Abs,  }\item[{int $\ast$}]{reached,  }\item[{int $\ast$}]{stop }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+One iteration in an adaptive minimal fixed point. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em min\+To\+Go\+Coarser} & Minimum number of iterations at an abstraction (not coarsest) before attemping to project to the next coarser abstraction. \\
+\hline
+\mbox{\tt in}  & {\em min\+To\+Be\+Valid} & Minimum number of iterations at an abstraction (not finest) after having gone coarser before a controller is declared valid and saved as a backup. \\
+\hline
+\mbox{\tt in}  & {\em verbose} & Whether messages detailing the steps of the algorithm should be printed to the console. \\
+\hline
+\mbox{\tt in}  & {\em early\+Break} & Whether the fixed point should end as soon as a strategy exists for the initial state. \\
+\hline
+\mbox{\tt in,out}  & {\em cur\+Abs} & 0-\/index of the abstraction under consideration for the current iteration. \\
+\hline
+\mbox{\tt in,out}  & {\em iter} & Counter for the total number of iterations of the minimal fixed point. \\
+\hline
+\mbox{\tt in,out}  & {\em just\+Coarsed} & Status of the abstraction under consideration. \\
+\hline
+\mbox{\tt in,out}  & {\em iter\+Cur\+Abs} & Counter for the consecutive number of iterations for the current abstraction. \\
+\hline
+\mbox{\tt in,out}  & {\em reached} & Whether the initial state has been declared winning. \\
+\hline
+\mbox{\tt in,out}  & {\em stop} & Whether the fixed point should end. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_a4a7b7cbccffbff31c135c9d5bd4d7ec0}\label{classscots_1_1Adaptive_a4a7b7cbccffbff31c135c9d5bd4d7ec0}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!preC@{preC}}
+\index{preC@{preC}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{pre\+C()}{preC()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+B\+DD \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::preC (\begin{DoxyParamCaption}\item[{B\+DD}]{Z,  }\item[{int}]{cur\+Abs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Calculates the enforceable predecessor of the given set with respect to the transition relation at the specified level of abstraction. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Z} & B\+DD of the winning set. \\
+\hline
+\mbox{\tt in}  & {\em cur\+Abs} & 0-\/index of the current abstraction. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+B\+DD containing \{(x,u)\} for which all post states are in Z. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classscots_1_1Adaptive_af192d9fee4a464e21d88b2d9735c5053}\label{classscots_1_1Adaptive_af192d9fee4a464e21d88b2d9735c5053}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!print\+EtaX@{print\+EtaX}}
+\index{print\+EtaX@{print\+EtaX}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{print\+Eta\+X()}{printEtaX()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::print\+EtaX (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Prints information regarding the abstractions\textquotesingle{} grid parameters to the console. \mbox{\Hypertarget{classscots_1_1Adaptive_a7e3c0b5babfb943dcda7f7f5c89cbb3e}\label{classscots_1_1Adaptive_a7e3c0b5babfb943dcda7f7f5c89cbb3e}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!print\+Tau@{print\+Tau}}
+\index{print\+Tau@{print\+Tau}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{print\+Tau()}{printTau()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::print\+Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Prints information regarding the abstractions\textquotesingle{} time sampling parameter to the console. \mbox{\Hypertarget{classscots_1_1Adaptive_aaa27769c17f2b91743f1e7fc0ff51060}\label{classscots_1_1Adaptive_aaa27769c17f2b91743f1e7fc0ff51060}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!reach@{reach}}
+\index{reach@{reach}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{reach()}{reach()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::reach (\begin{DoxyParamCaption}\item[{int}]{start\+Abs,  }\item[{int}]{min\+To\+Go\+Coarser,  }\item[{int}]{min\+To\+Be\+Valid,  }\item[{int}]{verbose = {\ttfamily 0},  }\item[{int}]{early\+Break = {\ttfamily 1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Writes, should they exist, a sequence of controller and controller domain B\+D\+Ds to directories \textquotesingle{}C\textquotesingle{} and \textquotesingle{}Z\textquotesingle{} respectively that satisfy the reachability specification. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em start\+Abs} & 0-\/index of the abstraction to start with. \\
+\hline
+\mbox{\tt in}  & {\em min\+To\+Go\+Coarser} & Minimum number of growing fixed point iterations needed before an attempt to go to a coarser abstraction. \\
+\hline
+\mbox{\tt in}  & {\em min\+To\+Be\+Valid} & Minimum number of growing fixed point iterations needed before a controller is declared valid. \\
+\hline
+\mbox{\tt in}  & {\em verbose} & If 1, prints additional information during synthesis to the console. \\
+\hline
+\mbox{\tt in}  & {\em early\+Break} & If 1, the synthesis ends as soon as I meets the domain of C. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 if controller(s) satisfying specification is/are synthesized; 0 otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classscots_1_1Adaptive_ae1663a6a4ab0ffe2025f954be4fe4116}\label{classscots_1_1Adaptive_ae1663a6a4ab0ffe2025f954be4fe4116}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!reach\+Basic\+Debug@{reach\+Basic\+Debug}}
+\index{reach\+Basic\+Debug@{reach\+Basic\+Debug}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{reach\+Basic\+Debug()}{reachBasicDebug()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+template$<$class G\+\_\+type , class I\+\_\+type , class O\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::reach\+Basic\+Debug (\begin{DoxyParamCaption}\item[{int}]{start\+Abs,  }\item[{G\+\_\+type}]{addG,  }\item[{I\+\_\+type}]{addI,  }\item[{O\+\_\+type}]{addO,  }\item[{int}]{debug = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Debugging function. Implementation of basic S\+C\+O\+TS reachability (single abstraction) in the \hyperlink{classscots_1_1Adaptive}{Adaptive} framework. \mbox{\Hypertarget{classscots_1_1Adaptive_ad583956ec022b6bd00a62680ff38103a}\label{classscots_1_1Adaptive_ad583956ec022b6bd00a62680ff38103a}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!reach\+S\+C\+O\+TS@{reach\+S\+C\+O\+TS}}
+\index{reach\+S\+C\+O\+TS@{reach\+S\+C\+O\+TS}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{reach\+S\+C\+O\+T\+S()}{reachSCOTS()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::reach\+S\+C\+O\+TS (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Implementation of reachability using only a scots\+::\+Fixed\+Point object. For comparison with the \hyperlink{classscots_1_1Adaptive}{Adaptive} version. \mbox{\Hypertarget{classscots_1_1Adaptive_a76d026d45bd794eba3ef69c18835dd54}\label{classscots_1_1Adaptive_a76d026d45bd794eba3ef69c18835dd54}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!safe@{safe}}
+\index{safe@{safe}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{safe()}{safe()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::safe (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Writes, should they exist, controllers of specified abstractions that together satisfy a safety specification. \mbox{\Hypertarget{classscots_1_1Adaptive_a1c7b5c07621e61b846b70e949b92b0b7}\label{classscots_1_1Adaptive_a1c7b5c07621e61b846b70e949b92b0b7}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!safe\+Basic\+Debug@{safe\+Basic\+Debug}}
+\index{safe\+Basic\+Debug@{safe\+Basic\+Debug}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{safe\+Basic\+Debug()}{safeBasicDebug()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::safe\+Basic\+Debug (\begin{DoxyParamCaption}\item[{int}]{verbose = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Debugging fucntion. Implementation of basic S\+C\+O\+TS safety (single abstraction) in the \hyperlink{classscots_1_1Adaptive}{Adaptive} framework. \mbox{\Hypertarget{classscots_1_1Adaptive_afd80e725160ae143493105b2fe99fe02}\label{classscots_1_1Adaptive_afd80e725160ae143493105b2fe99fe02}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!safe\+S\+C\+O\+TS@{safe\+S\+C\+O\+TS}}
+\index{safe\+S\+C\+O\+TS@{safe\+S\+C\+O\+TS}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{safe\+S\+C\+O\+T\+S()}{safeSCOTS()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::safe\+S\+C\+O\+TS (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Implementation of safety using functions in a S\+C\+O\+T\+S\+::\+Fixed\+Point object. For comparison with the \hyperlink{classscots_1_1Adaptive}{Adaptive} version. \mbox{\Hypertarget{classscots_1_1Adaptive_ad3b8d9cf97cd0967409c14361a40d779}\label{classscots_1_1Adaptive_ad3b8d9cf97cd0967409c14361a40d779}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!save\+CZ@{save\+CZ}}
+\index{save\+CZ@{save\+CZ}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{save\+C\+Z()}{saveCZ()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::save\+CZ (\begin{DoxyParamCaption}\item[{int}]{cur\+Abs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Saves a snapshot of a controller and its domain into the sequence of final controllers and controller domains. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em cur\+Abs} & 0-\/index of the abstraction which the controller and controller domain that should be saved belong to. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Adaptive_aed48ef46c84bf6797bea16f896e44e3a}\label{classscots_1_1Adaptive_aed48ef46c84bf6797bea16f896e44e3a}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!save\+Verify\+Reach@{save\+Verify\+Reach}}
+\index{save\+Verify\+Reach@{save\+Verify\+Reach}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{save\+Verify\+Reach()}{saveVerifyReach()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::save\+Verify\+Reach (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Saves and prints to console some information related to the reachability/always-\/eventually specification. \mbox{\Hypertarget{classscots_1_1Adaptive_a629133566055e6445983b86082838b96}\label{classscots_1_1Adaptive_a629133566055e6445983b86082838b96}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!save\+Verify\+Safe@{save\+Verify\+Safe}}
+\index{save\+Verify\+Safe@{save\+Verify\+Safe}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{save\+Verify\+Safe()}{saveVerifySafe()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::save\+Verify\+Safe (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Saves and prints to console some information related to the safety specifiction. \mbox{\Hypertarget{classscots_1_1Adaptive_aa4f1995704cf927fff530e715a6214ec}\label{classscots_1_1Adaptive_aa4f1995704cf927fff530e715a6214ec}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!test\+Projections@{test\+Projections}}
+\index{test\+Projections@{test\+Projections}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{test\+Projections()}{testProjections()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+template$<$class G\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::test\+Projections (\begin{DoxyParamCaption}\item[{G\+\_\+type}]{addG }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Debugging function. Tests the functions for projecting a set from one state space abtraction to another. 
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classscots_1_1Adaptive_ab51fe5639ecc8fd046c1d2d56fb25890}\label{classscots_1_1Adaptive_ab51fe5639ecc8fd046c1d2d56fb25890}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Abs\+\_\+@{Abs\+\_\+}}
+\index{Abs\+\_\+@{Abs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{Abs\+\_\+}{Abs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Model\+Growth\+Bound$<$X\+\_\+type, U\+\_\+type$>$$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::Abs\+\_\+}
+
+Abstractions containing the transition relation  $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} x $\ast$\+U\+\_\+ x $\ast$\+X2s\+\_\+\mbox{[}i\mbox{]}. \mbox{\Hypertarget{classscots_1_1Adaptive_ad4f525a5a65b284da14369a54532cf39}\label{classscots_1_1Adaptive_ad4f525a5a65b284da14369a54532cf39}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!alignment\+\_\+@{alignment\+\_\+}}
+\index{alignment\+\_\+@{alignment\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{alignment\+\_\+}{alignment\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::alignment\+\_\+}
+
+Affects how XX is defined, determined by eta\+Ratio\+\_\+. \mbox{\Hypertarget{classscots_1_1Adaptive_ae7e9ac7e500e7f06931138b68ad48aac}\label{classscots_1_1Adaptive_ae7e9ac7e500e7f06931138b68ad48aac}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!awk\+X\+Xs\+\_\+@{awk\+X\+Xs\+\_\+}}
+\index{awk\+X\+Xs\+\_\+@{awk\+X\+Xs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{awk\+X\+Xs\+\_\+}{awkXXs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::awk\+X\+Xs\+\_\+}
+
+The num\+Abs\+\_\+ -\/ 1 mappings between consecutive state space abstractions for which membership implies that the cells are not disjoint and neither is a subset of the other. \mbox{\Hypertarget{classscots_1_1Adaptive_a4937d441ac9758f33bcceeb9975fb1ce}\label{classscots_1_1Adaptive_a4937d441ac9758f33bcceeb9975fb1ce}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Cs\+\_\+@{Cs\+\_\+}}
+\index{Cs\+\_\+@{Cs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{Cs\+\_\+}{Cs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::Cs\+\_\+}
+
+Controller  $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} x $\ast$\+U\+\_\+. \mbox{\Hypertarget{classscots_1_1Adaptive_a6fa7b7542b91ec37ff2358359e425d12}\label{classscots_1_1Adaptive_a6fa7b7542b91ec37ff2358359e425d12}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!cubes\+X2\+\_\+@{cubes\+X2\+\_\+}}
+\index{cubes\+X2\+\_\+@{cubes\+X2\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{cubes\+X2\+\_\+}{cubesX2\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$B\+DD$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::cubes\+X2\+\_\+}
+
+$\ast$cubes\+X2\+\_\+\mbox{[}i\mbox{]} is a B\+DD with a single minterm of all 1s over the domain of $\ast$\+X2s\+\_\+\mbox{[}i\mbox{]}. \mbox{\Hypertarget{classscots_1_1Adaptive_ac82296bd0392bccf2a0e4af9ba70ff37}\label{classscots_1_1Adaptive_ac82296bd0392bccf2a0e4af9ba70ff37}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!cubes\+X\+\_\+@{cubes\+X\+\_\+}}
+\index{cubes\+X\+\_\+@{cubes\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{cubes\+X\+\_\+}{cubesX\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$B\+DD$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::cubes\+X\+\_\+}
+
+$\ast$cubes\+X\+\_\+\mbox{[}i\mbox{]} is a B\+DD with a single minterm of all 1s over the domain of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]}. \mbox{\Hypertarget{classscots_1_1Adaptive_a0332230a9bad14d432e6651611863be9}\label{classscots_1_1Adaptive_a0332230a9bad14d432e6651611863be9}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!cube\+U\+\_\+@{cube\+U\+\_\+}}
+\index{cube\+U\+\_\+@{cube\+U\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{cube\+U\+\_\+}{cubeU\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+B\+DD$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::cube\+U\+\_\+}
+
+A B\+DD with a single minterm of all 1s over the domain of the input Symbolic\+Set. \mbox{\Hypertarget{classscots_1_1Adaptive_a4d986f797368f4e1f74dd7d8a37df2dd}\label{classscots_1_1Adaptive_a4d986f797368f4e1f74dd7d8a37df2dd}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!ddmgr\+\_\+@{ddmgr\+\_\+}}
+\index{ddmgr\+\_\+@{ddmgr\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{ddmgr\+\_\+}{ddmgr\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+Cudd \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::ddmgr\+\_\+}
+
+A single manager object common to all B\+D\+Ds used in the program. \mbox{\Hypertarget{classscots_1_1Adaptive_ac26b29e9c729fd641af851f87e2ee2b4}\label{classscots_1_1Adaptive_ac26b29e9c729fd641af851f87e2ee2b4}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!dim\+U\+\_\+@{dim\+U\+\_\+}}
+\index{dim\+U\+\_\+@{dim\+U\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{dim\+U\+\_\+}{dimU\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::dim\+U\+\_\+}
+
+Dimensionality of input space. \mbox{\Hypertarget{classscots_1_1Adaptive_a852e87d359ae3c0fe13493bac80f35f6}\label{classscots_1_1Adaptive_a852e87d359ae3c0fe13493bac80f35f6}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!dim\+X\+\_\+@{dim\+X\+\_\+}}
+\index{dim\+X\+\_\+@{dim\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{dim\+X\+\_\+}{dimX\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::dim\+X\+\_\+}
+
+Dimensionality of state space. \mbox{\Hypertarget{classscots_1_1Adaptive_af0ae9692bf76a9d38cca670e9535310f}\label{classscots_1_1Adaptive_af0ae9692bf76a9d38cca670e9535310f}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!eta\+Ratio\+\_\+@{eta\+Ratio\+\_\+}}
+\index{eta\+Ratio\+\_\+@{eta\+Ratio\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{eta\+Ratio\+\_\+}{etaRatio\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::eta\+Ratio\+\_\+}
+
+Ratio between state space grid spacings of consecutive abstractions. \mbox{\Hypertarget{classscots_1_1Adaptive_acc2e430a31aa9ceb8ab6593a9eb3e91f}\label{classscots_1_1Adaptive_acc2e430a31aa9ceb8ab6593a9eb3e91f}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!eta\+U\+\_\+@{eta\+U\+\_\+}}
+\index{eta\+U\+\_\+@{eta\+U\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{eta\+U\+\_\+}{etaU\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::eta\+U\+\_\+}
+
+Grid spacing of input space abstraction in each dimension. \mbox{\Hypertarget{classscots_1_1Adaptive_abe9d5faea4bd01753070599200e224c5}\label{classscots_1_1Adaptive_abe9d5faea4bd01753070599200e224c5}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!eta\+X\+\_\+@{eta\+X\+\_\+}}
+\index{eta\+X\+\_\+@{eta\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{eta\+X\+\_\+}{etaX\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$double$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::eta\+X\+\_\+}
+
+num\+Abs\+\_\+ x dim\+X\+\_\+ matrix of state space grid spacings. \mbox{\Hypertarget{classscots_1_1Adaptive_a5a70ee2d2b4efe4f5eb20d08a596ec7b}\label{classscots_1_1Adaptive_a5a70ee2d2b4efe4f5eb20d08a596ec7b}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!final\+Cs\+\_\+@{final\+Cs\+\_\+}}
+\index{final\+Cs\+\_\+@{final\+Cs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{final\+Cs\+\_\+}{finalCs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::final\+Cs\+\_\+}
+
+Sequence of controllers that satisfy the specification. \mbox{\Hypertarget{classscots_1_1Adaptive_af22209ae22c8b2dd921be22cc51a36dd}\label{classscots_1_1Adaptive_af22209ae22c8b2dd921be22cc51a36dd}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!final\+Zs\+\_\+@{final\+Zs\+\_\+}}
+\index{final\+Zs\+\_\+@{final\+Zs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{final\+Zs\+\_\+}{finalZs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::final\+Zs\+\_\+}
+
+Sequence of domains of final\+Cs\+\_\+. \mbox{\Hypertarget{classscots_1_1Adaptive_a4184aca345cd09023c656bc616c2ee9a}\label{classscots_1_1Adaptive_a4184aca345cd09023c656bc616c2ee9a}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Gs\+\_\+@{Gs\+\_\+}}
+\index{Gs\+\_\+@{Gs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{Gs\+\_\+}{Gs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::Gs\+\_\+}
+
+Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing goal states. \mbox{\Hypertarget{classscots_1_1Adaptive_ad197683891b126e16f0f377d778fd352}\label{classscots_1_1Adaptive_ad197683891b126e16f0f377d778fd352}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!inf\+Zs\+\_\+@{inf\+Zs\+\_\+}}
+\index{inf\+Zs\+\_\+@{inf\+Zs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{inf\+Zs\+\_\+}{infZs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::inf\+Zs\+\_\+}
+
+Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing projection of convergence of previous maximal fixed points. \mbox{\Hypertarget{classscots_1_1Adaptive_a1421430af54b816e57d7cc4db6f1a83d}\label{classscots_1_1Adaptive_a1421430af54b816e57d7cc4db6f1a83d}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Is\+\_\+@{Is\+\_\+}}
+\index{Is\+\_\+@{Is\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{Is\+\_\+}{Is\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::Is\+\_\+}
+
+Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing initial states. \mbox{\Hypertarget{classscots_1_1Adaptive_aebaf5b4abaa33f4494491cbe67b42b80}\label{classscots_1_1Adaptive_aebaf5b4abaa33f4494491cbe67b42b80}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!lb\+U\+\_\+@{lb\+U\+\_\+}}
+\index{lb\+U\+\_\+@{lb\+U\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{lb\+U\+\_\+}{lbU\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::lb\+U\+\_\+}
+
+Lowermost grid point of input space. \mbox{\Hypertarget{classscots_1_1Adaptive_a6018fcd45bd81cc0073f0bd1f375829d}\label{classscots_1_1Adaptive_a6018fcd45bd81cc0073f0bd1f375829d}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!lb\+X\+\_\+@{lb\+X\+\_\+}}
+\index{lb\+X\+\_\+@{lb\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{lb\+X\+\_\+}{lbX\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::lb\+X\+\_\+}
+
+Lowermost grid point of state space. \mbox{\Hypertarget{classscots_1_1Adaptive_ac3f203003011bcea5176ef294ab7a8a0}\label{classscots_1_1Adaptive_ac3f203003011bcea5176ef294ab7a8a0}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!not\+X\+Uvars\+\_\+@{not\+X\+Uvars\+\_\+}}
+\index{not\+X\+Uvars\+\_\+@{not\+X\+Uvars\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{not\+X\+Uvars\+\_\+}{notXUvars\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$B\+DD$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::not\+X\+Uvars\+\_\+}
+
+not\+X\+Uvars\+\_\+\mbox{[}i\mbox{]} is a B\+DD over all ddmgr\+\_\+ variables whose 1-\/term is DC for $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} and $\ast$\+U\+\_\+ and 1 otherwise. \mbox{\Hypertarget{classscots_1_1Adaptive_a8fbbf6976e589506c9e4c38045196c07}\label{classscots_1_1Adaptive_a8fbbf6976e589506c9e4c38045196c07}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!not\+Xvars\+\_\+@{not\+Xvars\+\_\+}}
+\index{not\+Xvars\+\_\+@{not\+Xvars\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{not\+Xvars\+\_\+}{notXvars\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$B\+DD$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::not\+Xvars\+\_\+}
+
+not\+Xvars\+\_\+\mbox{[}i\mbox{]} is a B\+DD over all ddmgr\+\_\+ variables whose 1-\/term is DC for $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} and 1 otherwise. \mbox{\Hypertarget{classscots_1_1Adaptive_afdd5a499494efeb8538346ad9e0f329c}\label{classscots_1_1Adaptive_afdd5a499494efeb8538346ad9e0f329c}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!num\+Abs\+\_\+@{num\+Abs\+\_\+}}
+\index{num\+Abs\+\_\+@{num\+Abs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{num\+Abs\+\_\+}{numAbs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::num\+Abs\+\_\+}
+
+Number of abstractions of different granularity. \mbox{\Hypertarget{classscots_1_1Adaptive_a753d83283386610f1a2283af5cbeba73}\label{classscots_1_1Adaptive_a753d83283386610f1a2283af5cbeba73}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!num\+B\+D\+D\+Vars\+\_\+@{num\+B\+D\+D\+Vars\+\_\+}}
+\index{num\+B\+D\+D\+Vars\+\_\+@{num\+B\+D\+D\+Vars\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{num\+B\+D\+D\+Vars\+\_\+}{numBDDVars\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::num\+B\+D\+D\+Vars\+\_\+}
+
+Total number of B\+DD variables used by ddmgr\+\_\+. \mbox{\Hypertarget{classscots_1_1Adaptive_abed6bfd1256157d4b943078f6486ee36}\label{classscots_1_1Adaptive_abed6bfd1256157d4b943078f6486ee36}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Os\+\_\+@{Os\+\_\+}}
+\index{Os\+\_\+@{Os\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{Os\+\_\+}{Os\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::Os\+\_\+}
+
+Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing unsafe (obstacle) states. \mbox{\Hypertarget{classscots_1_1Adaptive_a88edb6662310c07120d07c9dff968ddc}\label{classscots_1_1Adaptive_a88edb6662310c07120d07c9dff968ddc}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!permutes\+X2to\+X\+\_\+@{permutes\+X2to\+X\+\_\+}}
+\index{permutes\+X2to\+X\+\_\+@{permutes\+X2to\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{permutes\+X2to\+X\+\_\+}{permutesX2toX\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$int$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::permutes\+X2to\+X\+\_\+}
+
+To transform a B\+DD over X2 variables to an equivalent one over X variables. \mbox{\Hypertarget{classscots_1_1Adaptive_ae954d4d3177bdc4093530e254ace2b34}\label{classscots_1_1Adaptive_ae954d4d3177bdc4093530e254ace2b34}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!permutes\+Xto\+X2\+\_\+@{permutes\+Xto\+X2\+\_\+}}
+\index{permutes\+Xto\+X2\+\_\+@{permutes\+Xto\+X2\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{permutes\+Xto\+X2\+\_\+}{permutesXtoX2\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$int$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::permutes\+Xto\+X2\+\_\+}
+
+To transform a B\+DD over X variables to an equivalent one over X2 variables. \mbox{\Hypertarget{classscots_1_1Adaptive_a8c62c5ae1d50e3301098b864c5b2883f}\label{classscots_1_1Adaptive_a8c62c5ae1d50e3301098b864c5b2883f}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!reachpf\+\_\+@{reachpf\+\_\+}}
+\index{reachpf\+\_\+@{reachpf\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{reachpf\+\_\+}{reachpf\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+Profile \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::reachpf\+\_\+}
+
+Time profiling object. \mbox{\Hypertarget{classscots_1_1Adaptive_a8c2a7e89feeb75f0b51fdf9c8d1359e7}\label{classscots_1_1Adaptive_a8c2a7e89feeb75f0b51fdf9c8d1359e7}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!read\+Abs\+\_\+@{read\+Abs\+\_\+}}
+\index{read\+Abs\+\_\+@{read\+Abs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{read\+Abs\+\_\+}{readAbs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::read\+Abs\+\_\+}
+
+Whether Abs\+\_\+ is computed or read from file. \mbox{\Hypertarget{classscots_1_1Adaptive_a95926f102459b6ec3525040c791ff359}\label{classscots_1_1Adaptive_a95926f102459b6ec3525040c791ff359}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!read\+X\+X\+\_\+@{read\+X\+X\+\_\+}}
+\index{read\+X\+X\+\_\+@{read\+X\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{read\+X\+X\+\_\+}{readXX\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::read\+X\+X\+\_\+}
+
+Whether X\+Xs\+\_\+ is computed or read from file. \mbox{\Hypertarget{classscots_1_1Adaptive_a0b300511b5f746c7b24ead30dc0ca9ac}\label{classscots_1_1Adaptive_a0b300511b5f746c7b24ead30dc0ca9ac}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!solvers\+\_\+@{solvers\+\_\+}}
+\index{solvers\+\_\+@{solvers\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{solvers\+\_\+}{solvers\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Ode\+Solver$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::solvers\+\_\+}
+
+O\+DE solvers (Runge-\/\+Katta approximation) for each abstraction time step. \mbox{\Hypertarget{classscots_1_1Adaptive_a4afb0056b1ab5f1f73b1740806267044}\label{classscots_1_1Adaptive_a4afb0056b1ab5f1f73b1740806267044}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Ss\+\_\+@{Ss\+\_\+}}
+\index{Ss\+\_\+@{Ss\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{Ss\+\_\+}{Ss\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::Ss\+\_\+}
+
+Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing possible safe states. \mbox{\Hypertarget{classscots_1_1Adaptive_a8b47913f64f175d3b2b1bebdfcb4ec39}\label{classscots_1_1Adaptive_a8b47913f64f175d3b2b1bebdfcb4ec39}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!subset\+X\+Xs\+\_\+@{subset\+X\+Xs\+\_\+}}
+\index{subset\+X\+Xs\+\_\+@{subset\+X\+Xs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{subset\+X\+Xs\+\_\+}{subsetXXs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::subset\+X\+Xs\+\_\+}
+
+The num\+Abs\+\_\+ -\/ 1 mappings between consecutive state space abstractions for which membership implies that the finer cell is a subset of the coarser cell. \mbox{\Hypertarget{classscots_1_1Adaptive_a2276dbf06b4db12739aed70443c1a32d}\label{classscots_1_1Adaptive_a2276dbf06b4db12739aed70443c1a32d}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!tau\+\_\+@{tau\+\_\+}}
+\index{tau\+\_\+@{tau\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{tau\+\_\+}{tau\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$double$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::tau\+\_\+}
+
+num\+Abs\+\_\+ x 1 matrix of time steps. \mbox{\Hypertarget{classscots_1_1Adaptive_a33592a853774854552908de4762f8f8c}\label{classscots_1_1Adaptive_a33592a853774854552908de4762f8f8c}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!tau\+Ratio\+\_\+@{tau\+Ratio\+\_\+}}
+\index{tau\+Ratio\+\_\+@{tau\+Ratio\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{tau\+Ratio\+\_\+}{tauRatio\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+double \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::tau\+Ratio\+\_\+}
+
+Ratio between time steps of consecutive abstractions. \mbox{\Hypertarget{classscots_1_1Adaptive_ab9f37fda9e698b797079d28b243f3a5b}\label{classscots_1_1Adaptive_ab9f37fda9e698b797079d28b243f3a5b}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Ts\+\_\+@{Ts\+\_\+}}
+\index{Ts\+\_\+@{Ts\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{Ts\+\_\+}{Ts\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::Ts\+\_\+}
+
+Ts\+\_\+\mbox{[}i\mbox{]} stores the transition relation of abstraction i. \mbox{\Hypertarget{classscots_1_1Adaptive_a1f4c02094ecd380887640c83fc1d0310}\label{classscots_1_1Adaptive_a1f4c02094ecd380887640c83fc1d0310}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!T\+Ts\+\_\+@{T\+Ts\+\_\+}}
+\index{T\+Ts\+\_\+@{T\+Ts\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{T\+Ts\+\_\+}{TTs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$B\+DD$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::T\+Ts\+\_\+}
+
+T\+Ts\+\_\+\mbox{[}i\mbox{]} is Ts\+\_\+\mbox{[}i\mbox{]} with X2s\+\_\+\mbox{[}i\mbox{]} existentially abtracted. \mbox{\Hypertarget{classscots_1_1Adaptive_a89fa563cfea5b9a7bec6a705ca412a18}\label{classscots_1_1Adaptive_a89fa563cfea5b9a7bec6a705ca412a18}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!U\+\_\+@{U\+\_\+}}
+\index{U\+\_\+@{U\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{U\+\_\+}{U\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+Symbolic\+Set$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::U\+\_\+}
+
+The single input space abstraction. \mbox{\Hypertarget{classscots_1_1Adaptive_aa5c0bc8b175609073aa1f26ad6a83f1c}\label{classscots_1_1Adaptive_aa5c0bc8b175609073aa1f26ad6a83f1c}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!ub\+U\+\_\+@{ub\+U\+\_\+}}
+\index{ub\+U\+\_\+@{ub\+U\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{ub\+U\+\_\+}{ubU\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::ub\+U\+\_\+}
+
+Uppermost grid point of input space. \mbox{\Hypertarget{classscots_1_1Adaptive_ac50c58c4495d727acdb321a0b995426b}\label{classscots_1_1Adaptive_ac50c58c4495d727acdb321a0b995426b}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!ub\+X\+\_\+@{ub\+X\+\_\+}}
+\index{ub\+X\+\_\+@{ub\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{ub\+X\+\_\+}{ubX\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::ub\+X\+\_\+}
+
+Uppermost grid point of state space. \mbox{\Hypertarget{classscots_1_1Adaptive_ad470ad33182f03ad7b3dd5fe9e5271d5}\label{classscots_1_1Adaptive_ad470ad33182f03ad7b3dd5fe9e5271d5}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!valid\+Cs\+\_\+@{valid\+Cs\+\_\+}}
+\index{valid\+Cs\+\_\+@{valid\+Cs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{valid\+Cs\+\_\+}{validCs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::valid\+Cs\+\_\+}
+
+Controllers that act as savepoints. \mbox{\Hypertarget{classscots_1_1Adaptive_af160394c89efaa08d8830a1df066586d}\label{classscots_1_1Adaptive_af160394c89efaa08d8830a1df066586d}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!valid\+Zs\+\_\+@{valid\+Zs\+\_\+}}
+\index{valid\+Zs\+\_\+@{valid\+Zs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{valid\+Zs\+\_\+}{validZs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::valid\+Zs\+\_\+}
+
+Contains winning states that act as savepoints. \mbox{\Hypertarget{classscots_1_1Adaptive_a532d1acf3db0235c7bbd551b41a040fc}\label{classscots_1_1Adaptive_a532d1acf3db0235c7bbd551b41a040fc}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!X2s\+\_\+@{X2s\+\_\+}}
+\index{X2s\+\_\+@{X2s\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{X2s\+\_\+}{X2s\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::X2s\+\_\+}
+
+The num\+Abs\+\_\+ \char`\"{}post\char`\"{} state space abstractions, coarsest (0) to finest. \mbox{\Hypertarget{classscots_1_1Adaptive_ae43471177bc6b7d3229a9497b46ee343}\label{classscots_1_1Adaptive_ae43471177bc6b7d3229a9497b46ee343}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Xs\+\_\+@{Xs\+\_\+}}
+\index{Xs\+\_\+@{Xs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{Xs\+\_\+}{Xs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::Xs\+\_\+}
+
+The num\+Abs\+\_\+ \char`\"{}pre\char`\"{} state space abstractions, coarsest (0) to finest. \mbox{\Hypertarget{classscots_1_1Adaptive_a387e00a300c8c75d3a4eb6181dfab9c4}\label{classscots_1_1Adaptive_a387e00a300c8c75d3a4eb6181dfab9c4}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Zs\+\_\+@{Zs\+\_\+}}
+\index{Zs\+\_\+@{Zs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{Zs\+\_\+}{Zs\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::Zs\+\_\+}
+
+Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing winning states. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/kylehsu/control/\+S\+C\+O\+T\+S+\+Adaptive/bdd/\hyperlink{Adaptive_8hh}{Adaptive.\+hh}\end{DoxyCompactItemize}
