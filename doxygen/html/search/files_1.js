@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['helper_2ehh',['Helper.hh',['../Helper_8hh.html',1,'']]]
+  ['compare_2ehh',['Compare.hh',['../Compare_8hh.html',1,'']]]
 ];

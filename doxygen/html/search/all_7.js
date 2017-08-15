@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['i_5f',['I_',['../classscots_1_1Compare.html#a32b383c4e137a371859fdee22c165486',1,'scots::Compare']]],
   ['infzs_5f',['infZs_',['../classscots_1_1Adaptive.html#ad197683891b126e16f0f377d778fd352',1,'scots::Adaptive']]],
   ['initializeabs',['initializeAbs',['../classscots_1_1Adaptive.html#ae8e0a243c51d3596f994f2b0668892e4',1,'scots::Adaptive']]],
   ['initializealignment',['initializeAlignment',['../classscots_1_1Adaptive.html#a8f23922cbd2768a8339c73928ddc9c5a',1,'scots::Adaptive']]],
@@ -8,7 +9,7 @@ var searchData=
   ['initializenotvars',['initializeNotVars',['../classscots_1_1Adaptive.html#a6a9af6f25e8c4015ceb24d704da26972',1,'scots::Adaptive']]],
   ['initializenumbddvars',['initializeNumBDDVars',['../classscots_1_1Adaptive.html#ab75f4bbed30ecc70747185f36fcab200',1,'scots::Adaptive']]],
   ['initializepermutes',['initializePermutes',['../classscots_1_1Adaptive.html#a7351461977b9be0f07ec2974531af677',1,'scots::Adaptive']]],
-  ['initializereach',['initializeReach',['../classscots_1_1Adaptive.html#a63afb68f37f6140095c2460d07fc19cb',1,'scots::Adaptive']]],
+  ['initializereach',['initializeReach',['../classscots_1_1Adaptive.html#a63afb68f37f6140095c2460d07fc19cb',1,'scots::Adaptive::initializeReach()'],['../classscots_1_1Compare.html#a4cb70ea51bb4778d92bd134c3b2ffc5e',1,'scots::Compare::initializeReach()']]],
   ['initializesafe',['initializeSafe',['../classscots_1_1Adaptive.html#abb37f63b898de0d0013839d3b9d1db2f',1,'scots::Adaptive']]],
   ['initializesolvers',['initializeSolvers',['../classscots_1_1Adaptive.html#a25cc058f39f38402ff914ae6b927393e',1,'scots::Adaptive']]],
   ['initializespec',['initializeSpec',['../classscots_1_1Adaptive.html#aac25a2399ed09b07ef546579c94b0726',1,'scots::Adaptive']]],

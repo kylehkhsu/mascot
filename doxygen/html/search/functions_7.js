@@ -1,10 +1,6 @@
 var searchData=
 [
-  ['safe',['safe',['../classscots_1_1Adaptive.html#a76d026d45bd794eba3ef69c18835dd54',1,'scots::Adaptive']]],
-  ['safebasicdebug',['safeBasicDebug',['../classscots_1_1Adaptive.html#a1c7b5c07621e61b846b70e949b92b0b7',1,'scots::Adaptive']]],
-  ['safescots',['safeSCOTS',['../classscots_1_1Adaptive.html#afd80e725160ae143493105b2fe99fe02',1,'scots::Adaptive']]],
-  ['savecz',['saveCZ',['../classscots_1_1Adaptive.html#ad3b8d9cf97cd0967409c14361a40d779',1,'scots::Adaptive']]],
-  ['savevec',['saveVec',['../Helper_8hh.html#afea778bfb31cba93e003c382413c36b2',1,'helper']]],
-  ['saveverifyreach',['saveVerifyReach',['../classscots_1_1Adaptive.html#aed48ef46c84bf6797bea16f896e44e3a',1,'scots::Adaptive']]],
-  ['saveverifysafe',['saveVerifySafe',['../classscots_1_1Adaptive.html#a629133566055e6445983b86082838b96',1,'scots::Adaptive']]]
+  ['reach',['reach',['../classscots_1_1Adaptive.html#a94aa585894b725d174c1a33c938a11bf',1,'scots::Adaptive']]],
+  ['reachbasicdebug',['reachBasicDebug',['../classscots_1_1Adaptive.html#ae1663a6a4ab0ffe2025f954be4fe4116',1,'scots::Adaptive']]],
+  ['reachscots',['reachSCOTS',['../classscots_1_1Compare.html#a506b87a62b1adde561d725e9cc1315e9',1,'scots::Compare']]]
 ];
