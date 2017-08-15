@@ -419,6 +419,13 @@ public:
         \param[in,out]	stop				Whether the fixed point should end.
     */
     void mu(int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose, int* curAbs, int* iter, int* justCoarsed, int* iterCurAbs, int* reached, int* stop) {
+        clog << "current abstraction: " << *curAbs << '\n';
+        clog << "mu iteration: " << *iter << '\n';
+        clog << "justCoarsed: " << *justCoarsed << '\n';
+        clog << "iterCurAbs: " << *iterCurAbs << '\n';
+        clog << "reached: " << *reached << '\n';
+        clog << "controllers: " << finalCs_.size() << '\n';
+
         // get pre(Z)
         BDD preF = preC(Zs_[*curAbs]->symbolicSet_, *curAbs);
         // disjunct with goal (minimal fixed point)
@@ -435,6 +442,8 @@ public:
             if (earlyBreak == 1) {
                 saveCZ(*curAbs);
                 *stop = 1;
+                clog << "\nTotal number of controllers: " << finalCs_.size() << '\n';
+                return;
             }
         }
 
@@ -447,6 +456,7 @@ public:
                     else {
                     }
                     *stop = 1;
+                    clog << "\nTotal number of controllers: " << finalCs_.size() << '\n';
                 }
                 else {
                     if (verbose) {
@@ -454,7 +464,9 @@ public:
                     }
                     if (*justCoarsed == 1) { // current controller has not been declared valid
                         if (verbose) {
-                            clog << "Current controller has not been declared valid. Removing last elements of finalCs_ and Fs_. Resetting Zs_[" << *curAbs << "] and Cs_[" << *curAbs << "].\n";
+                            clog << "Current controller has not been declared valid.\n";
+                            clog << "Removing last elements of finalCs_ and finalZs_.\n";
+                            clog << "Resetting Zs_[" << *curAbs << "] and Cs_[" << *curAbs << "] from valids.\n";
                         }
 
                         // remove the last saved C and F from finalCs_ and Fs_
@@ -473,8 +485,13 @@ public:
                     }
                     else {
                         if (verbose) {
-                            clog << "Current controller has been declared valid; saving. Finding inner approximation of Zs_[" << *curAbs << "] and copying into validZs_[" << *curAbs+1 << "].\n";
+                            clog << "Current controller has been declared valid.\n";
+                            clog << "Saving Z and C of abstraction " << *curAbs << " into valids, finals.\n";
+                            clog << "Finding inner approximation of Zs_[" << *curAbs << "] and copying into validZs_[" << *curAbs+1 << "].\n";
                         }
+                        validZs_[*curAbs]->symbolicSet_ = Zs_[*curAbs]->symbolicSet_;
+                        validCs_[*curAbs]->symbolicSet_ = Cs_[*curAbs]->symbolicSet_;
+
                         saveCZ(*curAbs);
                         innerFinerAligned(Zs_[*curAbs], Zs_[*curAbs+1], *curAbs);
                         validZs_[*curAbs+1]->symbolicSet_ = Zs_[*curAbs+1]->symbolicSet_;
@@ -486,11 +503,9 @@ public:
             else { // if there were new (x,u)
                 if ((*justCoarsed == 1) && (*iterCurAbs >= minToBeValid)) {
                     if (verbose) {
-                        clog << "Current controller now valid. Saving into validZs_[" << *curAbs << "] and validCs_[" << *curAbs << "].\n";
+                        clog << "Current controller now valid.\n";
                     }
                     *justCoarsed = 0;
-                    validZs_[*curAbs]->symbolicSet_ = Zs_[*curAbs]->symbolicSet_;
-                    validCs_[*curAbs]->symbolicSet_ = Cs_[*curAbs]->symbolicSet_;
                 }
                 if (*curAbs == 0) {
                     if (verbose) {
@@ -513,13 +528,16 @@ public:
                         }
                         else {
                             if (verbose) {
-                                clog << "Projecting to coarser gives more states in coarser; saving Cs_[" << *curAbs << "]. Also updating validZs_[" << *curAbs << "] and validCs_[" << *curAbs << "] and validZs_[" << *curAbs-1 << "].\n";
+                                clog << "Projecting to coarser gives more states in coarser.\n";
+                                clog << "Saving Z and C of abstraction " << *curAbs << " into validZs, validCs, finalZs, finalCs.\n";
+                                clog << "Saving Z and C of abstraction " << *curAbs-1 << " into validZs_, validCs.\n";
                             }
                             saveCZ(*curAbs);
                             validZs_[*curAbs]->symbolicSet_ = Zs_[*curAbs]->symbolicSet_;
                             validCs_[*curAbs]->symbolicSet_ = Cs_[*curAbs]->symbolicSet_;
                             *justCoarsed = 1;
                             validZs_[*curAbs-1]->symbolicSet_ = Zs_[*curAbs-1]->symbolicSet_;
+                            validCs_[*curAbs-1]->symbolicSet_ = Cs_[*curAbs-1]->symbolicSet_;
                             *curAbs -= 1;
                             *iterCurAbs = 1;
                         }
@@ -530,13 +548,13 @@ public:
                 }
             }
         }
+        else {
+            if (verbose) {
+                clog << "First iteration, nothing happens.\n";
+            }
+        }
 
-        clog << "current abstraction: " << *curAbs << '\n';
-        clog << "mu iteration: " << *iter << '\n';
-        clog << "justCoarsed: " << *justCoarsed << '\n';
-        clog << "iterCurAbs: " << *iterCurAbs << '\n';
-        clog << "reached: " << *reached << '\n';
-        clog << "controllers: " << finalCs_.size() << '\n';
+        clog << "\n";
         *iter += 1;
     }
 
@@ -548,7 +566,7 @@ public:
         \param[in]  earlyBreak          If 1, the synthesis ends as soon as I meets the domain of C.
         \return     1 if controller(s) satisfying specification is/are synthesized; 0 otherwise.
     */
-    int reach(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 0) {
+    int reach(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
         if (stage_ != 3) {
             error("Error: reach called out of order.\n");
         }
@@ -659,7 +677,7 @@ public:
         \param[in]  earlyBreak          If 1, reachability ends as soon as I meets the domain of C.
         \return     1 if controller(s) satisfying specification is/are synthesized; 0 otherwise.
     */
-    int alwaysEventually(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 0) {
+    int alwaysEventually(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
         if (stage_ != 3) {
             error("Error: alwaysEventually called out of order.\n");
         }
@@ -1140,17 +1158,58 @@ public:
         \param[in]      c       0-index of the coarser abstraction.
         \return         1 if Zc grows; 0 otherwise
     */
-    int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {\
-        BDD nQ = !((!(subsetXXs_[c]->symbolicSet_)) | Zf->symbolicSet_);
-        BDD Zcandidate = (!(nQ.ExistAbstract(*notXvars_[c]))) & Xs_[c]->symbolicSet_;
+//    int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+//        BDD nQ = !((!(subsetXXs_[c]->symbolicSet_)) | Zf->symbolicSet_);
+//        BDD Zcandidate = (!(nQ.ExistAbstract(*notXvars_[c]))) & Xs_[c]->symbolicSet_;
 
-        if (Zcandidate <= Zc->symbolicSet_) {
+//        if (Zcandidate <= Zc->symbolicSet_) {
+//            return 0;
+//        }
+//        else {
+//            Zc->symbolicSet_ = Zcandidate;
+//            return 1;
+//        }
+//    }
+    int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+
+        /* Use numFiner to check if the right number of finer cells are in Zf for a particular corresponding cell in Zc. */
+        int numFiner = 1;
+        for (int i = 0; i < dimX_; i++) {
+            numFiner *= etaRatio_[i];
+        }
+
+        SymbolicSet Qcf(*subsetXXs_[c]);
+        Qcf.symbolicSet_ = subsetXXs_[c]->symbolicSet_ & Zf->symbolicSet_;
+
+        SymbolicSet Qc(*Zc);
+        Qc.symbolicSet_ = Qcf.symbolicSet_.ExistAbstract(*notXvars_[c]); // & S1
+        Qc.symbolicSet_ &= !(Zc->symbolicSet_); /* don't check states that are already in Zc */
+
+        int* QcMintermWhole;
+        SymbolicSet Ccf(Qcf);
+        BDD result = ddmgr_.bddZero();
+
+        for (Qc.begin(); !Qc.done(); Qc.next()) { // iterate over all coarse cells with any corresponding finer cells in Zf
+            QcMintermWhole = (int*) Qc.currentMinterm();
+
+            int QcMinterm[Qc.nvars_] = {0};
+            std::copy(QcMintermWhole + Qc.idBddVars_[0], QcMintermWhole + Qc.idBddVars_[0] + Qc.nvars_, QcMinterm);
+
+            BDD coarseCell = Qc.mintermToBDD(QcMinterm) & Xs_[c]->symbolicSet_; // a particular coarse cell
+
+            Ccf.symbolicSet_ = Qcf.symbolicSet_ & coarseCell; // corresponding finer cells to the coarse cell
+
+            if ((Ccf.symbolicSet_.CountMinterm(Ccf.nvars_)) == (numFiner)) { // if there's a full set of finer cells
+                result |= coarseCell;
+            }
+        }
+
+        if (result == ddmgr_.bddZero()) {
             return 0;
         }
-        else {
-            Zc->symbolicSet_ = Zcandidate;
-            return 1;
-        }
+
+        Zc->symbolicSet_ |= result;
+        return 1;
     }
 
     /*! Debugging function. Tests the functions for projecting a set from one state space abtraction to another. */

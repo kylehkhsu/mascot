@@ -1,7 +1,7 @@
 
 function simple (mode, numAbs, controllers)
 
-  addpath(genpath('/home/kylehsu/control/SCOTS+Adaptive'));
+  addpath(genpath('../..'));
   
   % colors
   colors=get(groot,'DefaultAxesColorOrder');  
@@ -56,7 +56,7 @@ function simple (mode, numAbs, controllers)
   end     
 
   if (mode == 'R')
-    w = 0.3;
+    w = [0.3 0.3];
     disp('w')
     disp(w)
   
@@ -102,32 +102,27 @@ function simple (mode, numAbs, controllers)
 	
 	if (mod(j,1) == 0)
 	  plot(x(:,1),x(:,2),'k.-')
-	  if (j ~= 1)
-	    plot(x(end-1:end,1),x(end-1:end,2),'r.-')
-	  end
 	  drawnow
 	  pause
 	end
 	
 	if (G.isElement(x(end,:)))
 	  plot(x(:,1),x(:,2),'k.-')
-	  if (j ~= 1)
-	    plot(x(end-1:end,1),x(end-1:end,2),'r.-')
-	  end
 	  drawnow
 	  break
 	end
 	
 	u = C.getInputs(x(end,:));
-	ran = randi([1 size(u,1)], 1, 1);	
+	ran = randi([1 size(u,1)], 1, 1);
 	v = [v; u(ran,:)];
-	phi = sysNext(x(end,:), u(ran,:), tau);
+	d = disturbance(w);
+	[t phi] = ode45(@sysODE, [0 tau], x(end,:), [], u(ran,:), d);
 	x = [x; phi];
-	xNext = disturbance(phi(end,:), w, tau);
-	x = [x; xNext];
 	
 	disp('u')
 	disp(u(ran,:))
+	disp('d')
+	disp(d)
 	
 	j = j + 1;
       end
@@ -136,63 +131,15 @@ function simple (mode, numAbs, controllers)
     savefig('simulation');
   end
   
-%    if (mode == 'Q')
-%      openfig('problem');
-%      hold on
-%      drawnow
-%      
-%      I = SymbolicSet('I.bdd');
-%      x = I.points();
-%      x = x(1,:);
-%      v = [];
-%      
-%      G = SymbolicSet('G.bdd');
-%      eta = G.eta();
-%      eta = eta';
-%      tau = eta(1) * 3 / 2;
-%      
-%      disp(eta)
-%      disp(tau)
-%      
-%      C = SymbolicSet('CSCOTS.bdd', 'projection', [1 2]);
-%      
-%      j = 1;
-%      
-%      while(1)
-%        disp(j)
-%        disp(x(end,:))
-%        
-%        if (mod(j,3) == 0)
-%  	plot(x(:,1),x(:,2),'k.-')
-%  	drawnow
-%  	pause
-%        end
-%        
-%        if (G.isElement(x(end,:)))
-%  	plot(x(:,1),x(:,2),'k.-')
-%  	drawnow
-%  	break
-%        end
-%  	
-%        u = C.getInputs(x(end,:));
-%        ran = randi([1 size(u,1)], 1, 1);        
-%        v = [v; u(ran,:)];
-%        r = radNext(eta, u(ran,:), tau);
-%        phi = sysNext(x(end,:), u(ran,:), tau);
-%        xNext = disturbance(phi(end,:), r);
-%        x = [x; xNext];
-%        
-%        j = j + 1;
-%      end       
-%    end    
 end
 
-function xNext = disturbance(x, w, tau)
-  w = w * tau;
-  d = -w + (2 * w .* rand(size(x)));
-  xNext = x + d; 
+function d = disturbance(w)
+  d = -w + (2 * w .* rand(size(w)));
 end
 
-function phi = sysNext(x, u, tau)
-  phi = x + u * tau;
+function dxdt = sysODE(t,x,u,d)
+  dxdt = zeros(2,1);
+  dxdt(1) = u(1);
+  dxdt(2) = u(2);
+  dxdt = dxdt + d';
 end

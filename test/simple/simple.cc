@@ -95,6 +95,8 @@ int main() {
     int startAbs = 1;
     int minToGoCoarser = 1;
     int minToBeValid = 2;
-    abs.reach(startAbs, minToGoCoarser, minToBeValid, 1);
+    int earlyBreak = 1;
+
+    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
 
 }
