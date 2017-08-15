@@ -26,23 +26,26 @@ void \hyperlink{classscots_1_1Adaptive_ad7b09416eb224909dcfddcb6487b3b82}{initia
 \item 
 {\footnotesize template$<$class S\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Adaptive_abb37f63b898de0d0013839d3b9d1db2f}{initialize\+Safe} (S\+\_\+type addS)
 \item 
+\mbox{\Hypertarget{classscots_1_1Adaptive_a550bbb19126456c000595d7e647edb25}\label{classscots_1_1Adaptive_a550bbb19126456c000595d7e647edb25}} 
+{\footnotesize template$<$class msg\+\_\+type $>$ }\\void {\bfseries error} (msg\+\_\+type msg)
+\item 
 {\footnotesize template$<$class G\+\_\+type , class I\+\_\+type , class O\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Adaptive_a63afb68f37f6140095c2460d07fc19cb}{initialize\+Reach} (G\+\_\+type addG, I\+\_\+type addI, O\+\_\+type addO)
 \item 
 {\footnotesize template$<$class sys\+\_\+type , class rad\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Adaptive_af6aeb2170e7223c1396454ab2b83fb09}{compute\+Abstractions} (sys\+\_\+type sys\+Next, rad\+\_\+type rad\+Next)
 \item 
 B\+DD \hyperlink{classscots_1_1Adaptive_a4a7b7cbccffbff31c135c9d5bd4d7ec0}{preC} (B\+DD Z, int cur\+Abs)
 \item 
-void \hyperlink{classscots_1_1Adaptive_a93bf8fd25ea0aa5fad018e596e710ff9}{mu} (int min\+To\+Go\+Coarser, int min\+To\+Be\+Valid, int verbose, int early\+Break, int $\ast$cur\+Abs, int $\ast$iter, int $\ast$just\+Coarsed, int $\ast$iter\+Cur\+Abs, int $\ast$reached, int $\ast$stop)
+void \hyperlink{classscots_1_1Adaptive_a56ba7fb25e948dd1f2fa0c7380ca59e6}{mu} (int min\+To\+Go\+Coarser, int min\+To\+Be\+Valid, int early\+Break, int verbose, int $\ast$cur\+Abs, int $\ast$iter, int $\ast$just\+Coarsed, int $\ast$iter\+Cur\+Abs, int $\ast$reached, int $\ast$stop)
 \item 
-int \hyperlink{classscots_1_1Adaptive_aaa27769c17f2b91743f1e7fc0ff51060}{reach} (int start\+Abs, int min\+To\+Go\+Coarser, int min\+To\+Be\+Valid, int verbose=0, int early\+Break=1)
+int \hyperlink{classscots_1_1Adaptive_a94aa585894b725d174c1a33c938a11bf}{reach} (int start\+Abs, int min\+To\+Go\+Coarser, int min\+To\+Be\+Valid, int early\+Break, int verbose=1)
 \item 
 void \hyperlink{classscots_1_1Adaptive_a6bdf5b60cd9fb7af657091ad5975743d}{always\+Eventually\+S\+C\+O\+TS} ()
 \item 
-int \hyperlink{classscots_1_1Adaptive_a7823d9e433b00b740e56d0eabb920f7b}{always\+Eventually} (int start\+Abs, int min\+To\+Go\+Coarser, int min\+To\+Be\+Valid, int verbose=0, int early\+Break=0)
+int \hyperlink{classscots_1_1Adaptive_aaf645bf4507f575426dfdd29de47dfe2}{always\+Eventually} (int start\+Abs, int min\+To\+Go\+Coarser, int min\+To\+Be\+Valid, int early\+Break, int verbose=1)
 \item 
 void \hyperlink{classscots_1_1Adaptive_ad3b8d9cf97cd0967409c14361a40d779}{save\+CZ} (int cur\+Abs)
 \item 
-void \hyperlink{classscots_1_1Adaptive_ad583956ec022b6bd00a62680ff38103a}{reach\+S\+C\+O\+TS} ()
+void \hyperlink{classscots_1_1Adaptive_aed4f1976c5a2f538c07becbde46381e4}{reach\+S\+C\+O\+TS} (int early\+Break, int verbose)
 \item 
 void \hyperlink{classscots_1_1Adaptive_a76d026d45bd794eba3ef69c18835dd54}{safe} ()
 \item 
@@ -183,7 +186,8 @@ vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_a5a70ee2d2b
 \item 
 vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_af22209ae22c8b2dd921be22cc51a36dd}{final\+Zs\+\_\+}
 \item 
-Profile \hyperlink{classscots_1_1Adaptive_a8c62c5ae1d50e3301098b864c5b2883f}{reachpf\+\_\+}
+\mbox{\Hypertarget{classscots_1_1Adaptive_ae144310a281203fc51c67bf060bd9858}\label{classscots_1_1Adaptive_ae144310a281203fc51c67bf060bd9858}} 
+int {\bfseries stage\+\_\+}
 \end{DoxyCompactItemize}
 
 
@@ -200,6 +204,8 @@ A class that does abstraction-\/based synthesis with adaptive time-\/ and state 
 \subsubsection{\texorpdfstring{Adaptive()}{Adaptive()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::\hyperlink{classscots_1_1Adaptive}{Adaptive} (\begin{DoxyParamCaption}\item[{int}]{dimX,  }\item[{double $\ast$}]{lbX,  }\item[{double $\ast$}]{ubX,  }\item[{double $\ast$}]{etaX,  }\item[{double}]{tau,  }\item[{int}]{dimU,  }\item[{double $\ast$}]{lbU,  }\item[{double $\ast$}]{ubU,  }\item[{double $\ast$}]{etaU,  }\item[{double $\ast$}]{eta\+Ratio,  }\item[{double}]{tau\+Ratio,  }\item[{int}]{nint,  }\item[{int}]{num\+Abs,  }\item[{int}]{read\+XX,  }\item[{int}]{read\+Abs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Helps ensure user calls methods in correct order.
 
 Constructor for an \hyperlink{classscots_1_1Adaptive}{Adaptive} object. 
 \begin{DoxyParams}[1]{Parameters}
@@ -244,12 +250,12 @@ Constructor for an \hyperlink{classscots_1_1Adaptive}{Adaptive} object.
 Destructor for an \hyperlink{classscots_1_1Adaptive}{Adaptive} object. 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classscots_1_1Adaptive_a7823d9e433b00b740e56d0eabb920f7b}\label{classscots_1_1Adaptive_a7823d9e433b00b740e56d0eabb920f7b}} 
+\mbox{\Hypertarget{classscots_1_1Adaptive_aaf645bf4507f575426dfdd29de47dfe2}\label{classscots_1_1Adaptive_aaf645bf4507f575426dfdd29de47dfe2}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!always\+Eventually@{always\+Eventually}}
 \index{always\+Eventually@{always\+Eventually}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{always\+Eventually()}{alwaysEventually()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::always\+Eventually (\begin{DoxyParamCaption}\item[{int}]{start\+Abs,  }\item[{int}]{min\+To\+Go\+Coarser,  }\item[{int}]{min\+To\+Be\+Valid,  }\item[{int}]{verbose = {\ttfamily 0},  }\item[{int}]{early\+Break = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::always\+Eventually (\begin{DoxyParamCaption}\item[{int}]{start\+Abs,  }\item[{int}]{min\+To\+Go\+Coarser,  }\item[{int}]{min\+To\+Be\+Valid,  }\item[{int}]{early\+Break,  }\item[{int}]{verbose = {\ttfamily 1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Writes, should they exist, a sequence of controller and controller domain B\+D\+Ds to directories \textquotesingle{}C\textquotesingle{} and \textquotesingle{}Z\textquotesingle{} respectively that satisfy the Buchi box-\/diamond (aka always-\/eventually) specification. Note\+: of the n resultant controllers in \textquotesingle{}C\textquotesingle{}, the n-\/1th, .., 1st controllers are to reach, and the nth controller is for when the system state is a goal state. 
 \begin{DoxyParams}[1]{Parameters}
@@ -375,7 +381,7 @@ Initializes the arrays of B\+DD variable I\+Ds that allow a B\+DD over an X doma
 template$<$class G\+\_\+type , class I\+\_\+type , class O\+\_\+type $>$ \\
 void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Reach (\begin{DoxyParamCaption}\item[{G\+\_\+type}]{addG,  }\item[{I\+\_\+type}]{addI,  }\item[{O\+\_\+type}]{addO }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Initializes objects specific to the following specifications\+: reachability, always-\/eventually, reach-\/while-\/avoid. 
+Initializes objects specific to the following specifications\+: always-\/eventually, reach-\/while-\/avoid. 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em addG} & Function pointer specifying the points that should be added to the goal set. \\
 \hline
@@ -516,12 +522,12 @@ Generates a mapping between two consecutive state space abstractions.
 \mbox{\tt in}  & {\em c} & 0-\/index of the coarser abstraction (currently unnecessary/unused). \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{classscots_1_1Adaptive_a93bf8fd25ea0aa5fad018e596e710ff9}\label{classscots_1_1Adaptive_a93bf8fd25ea0aa5fad018e596e710ff9}} 
+\mbox{\Hypertarget{classscots_1_1Adaptive_a56ba7fb25e948dd1f2fa0c7380ca59e6}\label{classscots_1_1Adaptive_a56ba7fb25e948dd1f2fa0c7380ca59e6}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!mu@{mu}}
 \index{mu@{mu}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{mu()}{mu()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::mu (\begin{DoxyParamCaption}\item[{int}]{min\+To\+Go\+Coarser,  }\item[{int}]{min\+To\+Be\+Valid,  }\item[{int}]{verbose,  }\item[{int}]{early\+Break,  }\item[{int $\ast$}]{cur\+Abs,  }\item[{int $\ast$}]{iter,  }\item[{int $\ast$}]{just\+Coarsed,  }\item[{int $\ast$}]{iter\+Cur\+Abs,  }\item[{int $\ast$}]{reached,  }\item[{int $\ast$}]{stop }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::mu (\begin{DoxyParamCaption}\item[{int}]{min\+To\+Go\+Coarser,  }\item[{int}]{min\+To\+Be\+Valid,  }\item[{int}]{early\+Break,  }\item[{int}]{verbose,  }\item[{int $\ast$}]{cur\+Abs,  }\item[{int $\ast$}]{iter,  }\item[{int $\ast$}]{just\+Coarsed,  }\item[{int $\ast$}]{iter\+Cur\+Abs,  }\item[{int $\ast$}]{reached,  }\item[{int $\ast$}]{stop }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 One iteration in an adaptive minimal fixed point. 
 \begin{DoxyParams}[1]{Parameters}
@@ -529,9 +535,9 @@ One iteration in an adaptive minimal fixed point.
 \hline
 \mbox{\tt in}  & {\em min\+To\+Be\+Valid} & Minimum number of iterations at an abstraction (not finest) after having gone coarser before a controller is declared valid and saved as a backup. \\
 \hline
-\mbox{\tt in}  & {\em verbose} & Whether messages detailing the steps of the algorithm should be printed to the console. \\
-\hline
 \mbox{\tt in}  & {\em early\+Break} & Whether the fixed point should end as soon as a strategy exists for the initial state. \\
+\hline
+\mbox{\tt in}  & {\em verbose} & Whether messages detailing the steps of the algorithm should be printed to the console. \\
 \hline
 \mbox{\tt in,out}  & {\em cur\+Abs} & 0-\/index of the abstraction under consideration for the current iteration. \\
 \hline
@@ -577,12 +583,12 @@ Prints information regarding the abstractions\textquotesingle{} grid parameters 
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::print\+Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Prints information regarding the abstractions\textquotesingle{} time sampling parameter to the console. \mbox{\Hypertarget{classscots_1_1Adaptive_aaa27769c17f2b91743f1e7fc0ff51060}\label{classscots_1_1Adaptive_aaa27769c17f2b91743f1e7fc0ff51060}} 
+Prints information regarding the abstractions\textquotesingle{} time sampling parameter to the console. \mbox{\Hypertarget{classscots_1_1Adaptive_a94aa585894b725d174c1a33c938a11bf}\label{classscots_1_1Adaptive_a94aa585894b725d174c1a33c938a11bf}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!reach@{reach}}
 \index{reach@{reach}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{reach()}{reach()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::reach (\begin{DoxyParamCaption}\item[{int}]{start\+Abs,  }\item[{int}]{min\+To\+Go\+Coarser,  }\item[{int}]{min\+To\+Be\+Valid,  }\item[{int}]{verbose = {\ttfamily 0},  }\item[{int}]{early\+Break = {\ttfamily 1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::reach (\begin{DoxyParamCaption}\item[{int}]{start\+Abs,  }\item[{int}]{min\+To\+Go\+Coarser,  }\item[{int}]{min\+To\+Be\+Valid,  }\item[{int}]{early\+Break,  }\item[{int}]{verbose = {\ttfamily 1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Writes, should they exist, a sequence of controller and controller domain B\+D\+Ds to directories \textquotesingle{}C\textquotesingle{} and \textquotesingle{}Z\textquotesingle{} respectively that satisfy the reachability specification. 
 \begin{DoxyParams}[1]{Parameters}
@@ -608,12 +614,12 @@ Writes, should they exist, a sequence of controller and controller domain B\+D\+
 template$<$class G\+\_\+type , class I\+\_\+type , class O\+\_\+type $>$ \\
 void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::reach\+Basic\+Debug (\begin{DoxyParamCaption}\item[{int}]{start\+Abs,  }\item[{G\+\_\+type}]{addG,  }\item[{I\+\_\+type}]{addI,  }\item[{O\+\_\+type}]{addO,  }\item[{int}]{debug = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Debugging function. Implementation of basic S\+C\+O\+TS reachability (single abstraction) in the \hyperlink{classscots_1_1Adaptive}{Adaptive} framework. \mbox{\Hypertarget{classscots_1_1Adaptive_ad583956ec022b6bd00a62680ff38103a}\label{classscots_1_1Adaptive_ad583956ec022b6bd00a62680ff38103a}} 
+Debugging function. Implementation of basic S\+C\+O\+TS reachability (single abstraction) in the \hyperlink{classscots_1_1Adaptive}{Adaptive} framework. \mbox{\Hypertarget{classscots_1_1Adaptive_aed4f1976c5a2f538c07becbde46381e4}\label{classscots_1_1Adaptive_aed4f1976c5a2f538c07becbde46381e4}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!reach\+S\+C\+O\+TS@{reach\+S\+C\+O\+TS}}
 \index{reach\+S\+C\+O\+TS@{reach\+S\+C\+O\+TS}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{reach\+S\+C\+O\+T\+S()}{reachSCOTS()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::reach\+S\+C\+O\+TS (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::reach\+S\+C\+O\+TS (\begin{DoxyParamCaption}\item[{int}]{early\+Break,  }\item[{int}]{verbose }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Implementation of reachability using only a scots\+::\+Fixed\+Point object. For comparison with the \hyperlink{classscots_1_1Adaptive}{Adaptive} version. \mbox{\Hypertarget{classscots_1_1Adaptive_a76d026d45bd794eba3ef69c18835dd54}\label{classscots_1_1Adaptive_a76d026d45bd794eba3ef69c18835dd54}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!safe@{safe}}
@@ -862,14 +868,7 @@ To transform a B\+DD over X2 variables to an equivalent one over X variables. \m
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 vector$<$int$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::permutes\+Xto\+X2\+\_\+}
 
-To transform a B\+DD over X variables to an equivalent one over X2 variables. \mbox{\Hypertarget{classscots_1_1Adaptive_a8c62c5ae1d50e3301098b864c5b2883f}\label{classscots_1_1Adaptive_a8c62c5ae1d50e3301098b864c5b2883f}} 
-\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!reachpf\+\_\+@{reachpf\+\_\+}}
-\index{reachpf\+\_\+@{reachpf\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
-\subsubsection{\texorpdfstring{reachpf\+\_\+}{reachpf\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-Profile \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::reachpf\+\_\+}
-
-Time profiling object. \mbox{\Hypertarget{classscots_1_1Adaptive_a8c2a7e89feeb75f0b51fdf9c8d1359e7}\label{classscots_1_1Adaptive_a8c2a7e89feeb75f0b51fdf9c8d1359e7}} 
+To transform a B\+DD over X variables to an equivalent one over X2 variables. \mbox{\Hypertarget{classscots_1_1Adaptive_a8c2a7e89feeb75f0b51fdf9c8d1359e7}\label{classscots_1_1Adaptive_a8c2a7e89feeb75f0b51fdf9c8d1359e7}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!read\+Abs\+\_\+@{read\+Abs\+\_\+}}
 \index{read\+Abs\+\_\+@{read\+Abs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{read\+Abs\+\_\+}{readAbs\_}}
@@ -992,4 +991,4 @@ Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing winning states.
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/home/kylehsu/control/\+S\+C\+O\+T\+S+\+Adaptive/bdd/\hyperlink{Adaptive_8hh}{Adaptive.\+hh}\end{DoxyCompactItemize}
+/home/kylehsu/\+S\+C\+O\+T\+S-\/\+Adaptive/bdd/\hyperlink{Adaptive_8hh}{Adaptive.\+hh}\end{DoxyCompactItemize}
