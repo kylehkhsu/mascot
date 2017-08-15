@@ -112,7 +112,7 @@ function unicycle (mode, numAbs, controllers)
 	ran = randi([1 size(u,1)], 1, 1);
 	v = [v; u(ran,:)];
 	d = disturbance(w);
-	[t phi] = ode45(@unicycle_ode, [0 tau], x(end,:), [], u(ran,:), d);
+	[t phi] = ode45(@sysODE, [0 tau], x(end,:), [], u(ran,:), d);
 	x = [x; phi];
 	  
 	disp('u')
@@ -181,7 +181,7 @@ function d = disturbance(w)
   d = -w + (2 * w .* rand(size(w)));
 end
 
-function dxdt = unicycle_ode(t,x,u, d)
+function dxdt = sysODE(t,x,u, d)
   dxdt = zeros(3,1);
   dxdt(1)=u(1)*cos(x(3));
   dxdt(2)=u(1)*sin(x(3));

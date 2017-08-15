@@ -1,9 +1,9 @@
 scots.txt
+etaX: 0.2 0.2 0.1 
+tau: 0.3
 Initialized Compare object.
 No obstacle problem with specification.
-etaX_: 0.2 0.2 0.1 
-tau_: 0.3
-------------------------------------------------computeAbstractions: Elapsed time is 0.443004 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 0.449719 seconds.
 Obstacles removed from transition relation.
 ------------------------------normal SCOTS-----------------------------------
-Elapsed time is 141.358 seconds.
+Elapsed time is 141.51 seconds.

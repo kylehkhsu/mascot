@@ -4,12 +4,12 @@ X2s_ initialized with full domain.
 U_ initialized with full domain.
 Zs_, validZs_ initialized with empty domain.
 Cs_, validCs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 0.0209393 seconds.
+------------------------------------------------initializeXXs: Elapsed time is 0.0223541 seconds.
 Number of BDD variables: 75
 Gs_ initialized.
 Is_ initialized.
 Os_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.121018 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.131431 seconds.
 No obstacle problem with specification.
 Zs_ ensured to be empty.
 etaX_:
@@ -20,7 +20,7 @@ abstraction 0: 0.9
 abstraction 1: 0.3
 Number of elements in the transition relation: 6.22393e+06
 Number of elements in the transition relation: 1.92815e+08
-------------------------------------------------computeAbstractions: Elapsed time is 1.06225 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 0.968821 seconds.
 Os_ removed from Ts_, TTs_.
 current abstraction: 1
 mu iteration: 1
@@ -3927,5 +3927,4 @@ controllers: 7
 
 Total number of controllers: 8
 Won.
-----------------------------------------reach: Elapsed time is 79.4967 seconds.
-0.2 0.2 0.1 
+----------------------------------------reach: Elapsed time is 79.5115 seconds.

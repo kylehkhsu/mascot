@@ -56,8 +56,7 @@ public:
     vector<SymbolicSet*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
     vector<SymbolicSet*> validZs_; /*!< Contains winning states that act as savepoints. */
     vector<SymbolicSet*> X2s_; /*!< The numAbs_ "post" state space abstractions, coarsest (0) to finest. */
-    vector<SymbolicSet*> awkXXs_; /*!< The numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the cells are not disjoint and neither is a subset of the other. */
-    vector<SymbolicSet*> subsetXXs_; /*!< The numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the finer cell is a subset of the coarser cell. */
+    vector<SymbolicSet*> XXs_; /*!< The numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the finer cell is a subset of the coarser cell. */
     SymbolicSet* U_; /*!< The single input space abstraction. */
     vector<SymbolicSet*> Cs_; /*!< Controller \subseteq *Xs_[i] x *U_. */
     vector<SymbolicSet*> validCs_; /*!< Controllers that act as savepoints. */
@@ -103,6 +102,7 @@ public:
         \param[in]	numAbs		Number of abstractions.
         \param[in]	readXX		Whether initializeXXs should be done by construction (0) or reading from files (1).
         \param[in]	readAbs		Whether initializeAbs should be done by construction (0) or reading from files (1).
+        \param[in]  logFile     Filename of program log.
     */
     Adaptive(int dimX, double* lbX, double* ubX, double* etaX, double tau,
              int dimU, double* lbU, double* ubU, double* etaU,
@@ -154,8 +154,7 @@ public:
         deleteVec(Zs_);
         deleteVec(validZs_);
         deleteVec(X2s_);
-        deleteVec(awkXXs_);
-        deleteVec(subsetXXs_);
+        deleteVec(XXs_);
         delete U_;
         deleteVec(Cs_);
         deleteVec(validCs_);
@@ -183,8 +182,7 @@ public:
         printEtaX();
         printTau();
         printVec(Xs_, "X");
-        printVec(awkXXs_, "awkXX");
-        printVec(subsetXXs_, "subsetXX");
+        printVec(XXs_, "XX");
         printVec(Ss_, "S");
         clog << "U:\n";
         U_->printInfo(1);
@@ -199,8 +197,7 @@ public:
         printEtaX();
         printTau();
         printVec(Xs_, "X");
-        printVec(awkXXs_, "awkXX");
-        printVec(subsetXXs_, "subsetXX");
+        printVec(XXs_, "XX");
         printVec(Gs_, "G");
         printVec(Os_, "O");
         printVec(Is_, "I");
@@ -904,7 +901,7 @@ public:
         \param[in]      c       0-index of the coarser abstraction.
     */
     void innerFinerAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
-        BDD Q = subsetXXs_[c]->symbolicSet_ & Zc->symbolicSet_;
+        BDD Q = XXs_[c]->symbolicSet_ & Zc->symbolicSet_;
         Zf->symbolicSet_ = Q.ExistAbstract(*notXvars_[c+1]) & Xs_[c+1]->symbolicSet_;
     }
 
@@ -949,7 +946,7 @@ public:
         \return         1 if Zc grows; 0 otherwise
     */
 //    int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
-//        BDD nQ = !((!(subsetXXs_[c]->symbolicSet_)) | Zf->symbolicSet_);
+//        BDD nQ = !((!(XXs_[c]->symbolicSet_)) | Zf->symbolicSet_);
 //        BDD Zcandidate = (!(nQ.ExistAbstract(*notXvars_[c]))) & Xs_[c]->symbolicSet_;
 
 //        if (Zcandidate <= Zc->symbolicSet_) {
@@ -968,8 +965,8 @@ public:
             numFiner *= etaRatio_[i];
         }
 
-        SymbolicSet Qcf(*subsetXXs_[c]);
-        Qcf.symbolicSet_ = subsetXXs_[c]->symbolicSet_ & Zf->symbolicSet_;
+        SymbolicSet Qcf(*XXs_[c]);
+        Qcf.symbolicSet_ = XXs_[c]->symbolicSet_ & Zf->symbolicSet_;
 
         SymbolicSet Qc(*Zc);
         Qc.symbolicSet_ = Qcf.symbolicSet_.ExistAbstract(*notXvars_[c]); // & S1
@@ -1164,11 +1161,12 @@ public:
 
     /*! Initializes the abstractions' state space grid parameters and time sampling parameters. */
     void initializeEtaTau(double* etaX, double tau) {
-        double etaCur[dimX_] = {0};
+        double* etaCur = new double[dimX_];
         for (int i = 0; i < dimX_; i++) {
             etaCur[i] = etaX[i];
         }
-        double tauCur = tau;
+        double* tauCur = new double;
+        *tauCur = tau;
 
         for (int i = 0; i < numAbs_; i++) {
             double* etai = new double[dimX_];
@@ -1176,15 +1174,17 @@ public:
             for (int j = 0; j < dimX_; j++) {
                 etai[j] = etaCur[j];
             }
-            *taui = tauCur;
+            *taui = *tauCur;
             etaX_.push_back(etai);
             tau_.push_back(taui);
 
             for (int j = 0; j < dimX_; j++) {
                 etaCur[j] /= etaRatio_[j];
             }
-            tauCur /= tauRatio_;
+            *tauCur /= tauRatio_;
         }
+        delete[] etaCur;
+        delete tauCur;
     }
 
     /*! Initializes the Runge-Katta ODE solvers.
@@ -1200,38 +1200,27 @@ public:
     /*! Initializes SymbolicSets containing the mappings between consecutive state space abstractions. Reads and writes BDDs from/to file depending on readXXs_. */
     void initializeXXs() {
         for (int i = 0; i < numAbs_ - 1; i++) {
-            SymbolicSet* awkXX = new SymbolicSet(*Xs_[i], *Xs_[i+1]);
-            SymbolicSet* subsetXX = new SymbolicSet(*awkXX);
+            SymbolicSet* XX = new SymbolicSet(*Xs_[i], *Xs_[i+1]);
 
             if (readXX_ == 0) {
-                mapAbstractions(Xs_[i], Xs_[i+1], awkXX, subsetXX, i);
+                mapAbstractions(Xs_[i], Xs_[i+1], XX, i);
             }
             else {
-                string Str = "XX/awkXX";
+                string Str = "XX/XX";
                 Str += std::to_string(i+1);
                 Str += ".bdd";
                 char Char[20];
                 size_t Length = Str.copy(Char, Str.length() + 1);
                 Char[Length] = '\0';
-                SymbolicSet awkSet(ddmgr_, Char);
-                awkXX->symbolicSet_ = awkSet.symbolicSet_;
-
-                Str = "XX/subsetXX";
-                Str += std::to_string(i+1);
-                Str += ".bdd";
-                Length = Str.copy(Char, Str.length() + 1);
-                Char[Length] = '\0';
-                SymbolicSet subsetSet(ddmgr_, Char);
-                subsetXX->symbolicSet_ = subsetSet.symbolicSet_;
+                SymbolicSet XXSet(ddmgr_, Char);
+                XX->symbolicSet_ = XXSet.symbolicSet_;
             }
-            awkXXs_.push_back(awkXX);
-            subsetXXs_.push_back(subsetXX);
+            XXs_.push_back(XX);
         }
 
         if (readXX_ == 0) {
             checkMakeDir("XX");
-            saveVec(awkXXs_, "XX/awkXX");
-            saveVec(subsetXXs_, "XX/subsetXX");
+            saveVec(XXs_, "XX/XX");
         }
     }
 
@@ -1338,11 +1327,10 @@ public:
     /*! Generates a mapping between two consecutive state space abstractions.
      *  \param[in]      Xc          Coarser state space abstraction.
      *  \param[in]      Xf          Finer state space abstraction.
-     *  \param[in,out]  awkXX       Mapping for two cells that meet at all (currently unnecessary/unused).
-     *  \param[in,out]  subsetXX    Mapping for a finer cell to the coarser cell that is its superset.
+     *  \param[in,out]  XX    Mapping for a finer cell to the coarser cell that is its superset.
      *  \param[in]      c           0-index of the coarser abstraction (currently unnecessary/unused).
      */
-    void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* awkXX, SymbolicSet* subsetXX, int c) {
+    void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX, int c) {
         if (alignment_ == 13) {
             int* XfMinterm;
             double xPoint[dimX_] = {0};
@@ -1374,7 +1362,7 @@ public:
                 for (int i = 0; i < dimX_+dimX_; i++) {
                     XXPoint[i] = xPoint[i % dimX_];
                 }
-                subsetXX->addPoint(XXPoint);
+                XX->addPoint(XXPoint);
             }
             cout << '\n';
             (void)c;

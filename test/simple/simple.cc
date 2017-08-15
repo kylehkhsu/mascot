@@ -4,6 +4,7 @@
 #define _USE_MATH_DEFINES
 
 #include "Adaptive.hh"
+#include "Compare.hh"
 
 using namespace std;
 using namespace scots;
@@ -63,6 +64,18 @@ auto simpleAddI = [](SymbolicSet* I) -> void {
     I->addPoint(q);
 };
 
+void sub(double* lbX, double* ubX, double* etaX, double tau, double* lbU, double* ubU, double* etaU,
+         double* etaRatio, double tauRatio, int numAbs, int nint, int readAb) {
+    Compare<X_type, U_type> comp(dimX, lbX, ubX, etaX, tau,
+                                 dimU, lbU, ubU, etaU,
+                                 etaRatio, tauRatio, nint,
+                                 numAbs, readAb, "scots.txt");
+    comp.initializeReach(simpleAddG, simpleAddI, simpleAddO);
+    comp.computeAbstractions(sysNext, radNext);
+    int earlyBreak = 1;
+    comp.reachSCOTS(earlyBreak);
+}
+
 int main() {
 
     double lbX[dimX]={0, 0};
@@ -86,7 +99,7 @@ int main() {
     Adaptive<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
                                  dimU, lbU, ubU, etaU,
                                  etaRatio, tauRatio, nint,
-                                 numAbs, readXX, readAbs);
+                                 numAbs, readXX, readAbs, "adaptive.txt");
 
     abs.initializeReach(simpleAddG, simpleAddI, simpleAddO);
     abs.computeAbstractions(sysNext, radNext);
@@ -98,5 +111,7 @@ int main() {
     int earlyBreak = 1;
 
     abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs);
+
 
 }

@@ -103,21 +103,12 @@ auto unicycleAddI = [](SymbolicSet* I) -> void {
     I->addPoint(q);
 };
 
-void sub(double* lbX, double* ubX, double* etaX, double tau, double* lbU, double* ubU, double* etaU, double* etaRatio, double tauRatio, int numAbs, int nint, int readAb) {
-    for (int i = 0; i < numAbs - 1; i++) {
-        for (int j = 0; j < dimX; j++) {
-            etaX[j] = etaX[j] / etaRatio[j];
-        }
-        tau = tau / tauRatio;
-    }
-
-    printArray(etaX, dimX);
-    cout << '\n';
-    cout << tau << '\n';
-
+void sub(double* lbX, double* ubX, double* etaX, double tau, double* lbU, double* ubU, double* etaU,
+         double* etaRatio, double tauRatio, int numAbs, int nint, int readAb) {
     Compare<X_type, U_type> comp(dimX, lbX, ubX, etaX, tau,
                                  dimU, lbU, ubU, etaU,
-                                 nint, readAb, "scots.txt");
+                                 etaRatio, tauRatio, nint,
+                                 numAbs, readAb, "scots.txt");
     comp.initializeReach(unicycleAddG, unicycleAddI, unicycleAddO);
     comp.computeAbstractions(sysNext, radNext);
     int earlyBreak = 1;

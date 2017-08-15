@@ -32,15 +32,6 @@ class Compare {
 public:
 
     Cudd ddmgr_; /*!< A single manager object common to all BDDs used in the program. */
-    int dimX_; /*!< Dimensionality of state space. */
-    double* lbX_; /*!< Lowermost grid point of state space. */
-    double* ubX_; /*!< Uppermost grid point of state space. */
-    double* etaX_; /*!< Grid spacing in state space abstraction in each dimension. */
-    double tau_; /*!< Time step. */
-    int dimU_; /*!< Dimensionality of input space. */
-    double* lbU_; /*!< Lowermost grid point of input space. */
-    double* ubU_; /*!< Uppermost grid point of input space. */
-    double* etaU_; /*!< Grid spacing of input space abstraction in each dimension. */
     int readAb_; /*!< Whether transition relation is computed or read from file. */
 
     SymbolicSet* X_; /*!< State space. */
@@ -69,39 +60,44 @@ public:
         \param[in]	lbU 		Lowermost grid point of the input space.
         \param[in]	ubU			Uppermost grid point of the input space.
         \param[in] 	etaU		Grid spacing of the input space.
+        \param[in]	etaRatio	(Adaptive.hh) Ratio between grid spacings of the input space in consecutive abstractions.
+        \param[in]	tauRatio	(Adaptive.hh) Ratio between time steps of consecutive abstractions.
         \param[in]  nint        Number of sub-intervals in ODE solving per time step.
-        \param[in]	readAbs		Whether initializeAbs should be done by construction (0) or reading from files (1).
+        \param[in]	numAbs		(Adaptive.hh) Number of abstractions.
+        \param[in]	readAb		Whether transition relation should constructed (0) or read from file (1).
+        \param[in]  logFile     Filename of program log.
     */
     Compare(int dimX, double* lbX, double* ubX, double* etaX, double tau,
              int dimU, double* lbU, double* ubU, double* etaU,
-             int nint, int readAb, char* logFile) {
+             double* etaRatio, double tauRatio,
+             int nint, int numAbs, int readAb, char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
 
-        dimX_ = dimX;
-        lbX_ = lbX;
-        ubX_ = ubX;
-        etaX_ = etaX;
-        tau_ = tau;
-        dimU_ = dimU;
-        lbU_ = lbU;
-        ubU_ = ubU;
-        etaU_ = etaU;
+        for (int i = 0; i < numAbs - 1; i++) {
+            for (int j = 0; j < dimX; j++) {
+                etaX[j] = etaX[j] / etaRatio[j];
+            }
+            tau = tau / tauRatio;
+        }
+
+        printEtaX(etaX, dimX);
+        printTau(tau);
 
         readAb_ = readAb;
 
-        X_ = new SymbolicSet(ddmgr_, dimX_, lbX_, ubX_, etaX_, tau_);
+        X_ = new SymbolicSet(ddmgr_, dimX, lbX, ubX, etaX, tau);
         X_->addGridPoints();
         G_ = new SymbolicSet(*X_);
         I_ = new SymbolicSet(*X_);
         O_ = new SymbolicSet(*X_);
         X2_ = new SymbolicSet(*X_, 1);
-        U_ = new SymbolicSet(ddmgr_, dimU_, lbU_, ubU_, etaU_, 0);
+        U_ = new SymbolicSet(ddmgr_, dimU, lbU, ubU, etaU, 0);
         U_->addGridPoints();
         C_ = new SymbolicSet(*X_, *U_);
         T_ = new SymbolicSet(*C_, *X2_);
         S_ = new SymbolicSet(*X_);
-        solver_ = new OdeSolver(dimX_, nint, tau_);
+        solver_ = new OdeSolver(dimX, nint, tau);
 
         stage_ = 1;
 
@@ -127,8 +123,6 @@ public:
 
     /*! Saves and prints to console some information related to the reachability/always-eventually specification. */
     void saveVerifyReach() {
-        printEtaX();
-        printTau();
         cout << "X_:";
         X_->printInfo(1);
         cout << "G_:";
@@ -309,14 +303,14 @@ public:
 
 
     /*! Prints information regarding the abstractions' grid parameters to the log file. */
-    void printEtaX() {
-        clog << "etaX_: ";
-        printArray(etaX_, dimX_);
+    void printEtaX(double* etaX, int dimX) {
+        clog << "etaX: ";
+        printArray(etaX, dimX);
     }
 
     /*! Prints information regarding the time sampling parameter to the log file. */
-    void printTau() {
-        clog << "tau_: " << tau_ << '\n';
+    void printTau(double tau) {
+        clog << "tau: " << tau << '\n';
 
     }
 
