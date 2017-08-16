@@ -975,11 +975,10 @@ public:
         int* QcMintermWhole;
         SymbolicSet Ccf(Qcf);
         BDD result = ddmgr_.bddZero();
+        int* QcMinterm = new int[Qc.nvars_];
 
         for (Qc.begin(); !Qc.done(); Qc.next()) { // iterate over all coarse cells with any corresponding finer cells in Zf
             QcMintermWhole = (int*) Qc.currentMinterm();
-
-            int QcMinterm[Qc.nvars_] = {0};
             std::copy(QcMintermWhole + Qc.idBddVars_[0], QcMintermWhole + Qc.idBddVars_[0] + Qc.nvars_, QcMinterm);
 
             BDD coarseCell = Qc.mintermToBDD(QcMinterm) & Xs_[c]->symbolicSet_; // a particular coarse cell
@@ -990,6 +989,8 @@ public:
                 result |= coarseCell;
             }
         }
+
+        delete[] QcMinterm;
 
         if (result == ddmgr_.bddZero()) {
             return 0;
@@ -1333,9 +1334,9 @@ public:
     void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX, int c) {
         if (alignment_ == 13) {
             int* XfMinterm;
-            double xPoint[dimX_] = {0};
+            double* xPoint = new double[dimX_];
             vector<double> XcPoint (dimX_, 0);
-            double XXPoint[dimX_ + dimX_] = {0};
+            double* XXPoint = new double[dimX_ + dimX_];
 
             int totalIter = Xf->symbolicSet_.CountMinterm(Xf->nvars_);
             int iter = 0;
@@ -1366,6 +1367,10 @@ public:
             }
             cout << '\n';
             (void)c;
+
+            delete[] xPoint;
+            delete[] XXPoint;
+
         }
 //        else if (alignment_ == 2) {
 //            int* XfMinterm;

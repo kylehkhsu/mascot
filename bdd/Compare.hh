@@ -44,6 +44,7 @@ public:
     SymbolicSet* T_; /*!< Transition relation. */
 
     SymbolicSet* S_; /*!< Instance of *X_ containing possible safe states. */
+    SymbolicSet* Z_;
 
     OdeSolver* solver_; /*!< ODE solver (Runge-Katta approximation) for an abstraction time step. */
     SymbolicModelGrowthBound<X_type, U_type>* Ab_; /*!< Abstraction containing the transition relation. */
@@ -97,6 +98,7 @@ public:
         C_ = new SymbolicSet(*X_, *U_);
         T_ = new SymbolicSet(*C_, *X2_);
         S_ = new SymbolicSet(*X_);
+        Z_ = new SymbolicSet(*X_);
         solver_ = new OdeSolver(dimX, nint, tau);
 
         stage_ = 1;
@@ -116,6 +118,7 @@ public:
         delete C_;
         delete T_;
         delete S_;
+        delete Z_;
         delete solver_;
         delete Ab_;
         fclose(stderr);
@@ -188,67 +191,59 @@ public:
         tt.toc();
     }
 
-//    /*! Implementation of always-eventually using functions in a SCOTS::FixedPoint object. For comparison with the Adaptive version. */
-//    void alwaysEventuallySCOTS() {
-//        Abs_[0]->transitionRelation_ &= !(Os_[0]->symbolicSet_); // remove obstacles from TR
+    /*! Implementation of always-eventually using functions in a SCOTS::FixedPoint object. For comparison with the Adaptive version. */
+    void alwaysEventuallySCOTS() {
 
-//        if (numAbs_ != 1) {
-//            error("Error: For comparison with SCOTS, numAbs needs to be 1.\n");
-//        }
+        int curAbs = 0;
+        int outerIter = 1;
+        int earlyBreak = 0;
 
-//        int curAbs = 0;
-//        int outerIter = 1;
-//        int earlyBreak = 0;
+        TicToc tt;
+        tt.tic();
 
-//        TicToc tt;
-//        tt.tic();
+        clog << "------------------------------normal SCOTS-----------------------------------\n";
+        FixedPoint fp(Ab_);
 
-//        clog << "------------------------------normal SCOTS-----------------------------------\n";
-//        FixedPoint fp(Abs_[curAbs]);
-//        SymbolicSet C(*Xs_[curAbs], *U_);
-//        SymbolicSet Z(*Xs_[curAbs]);
+        while(1) {
+            clog << "Always Eventually iteration: " << outerIter << '\n';
 
-//        while(1) {
-//            clog << "Always Eventually iteration: " << outerIter << '\n';
+            C_->symbolicSet_ = fp.reach(G_->symbolicSet_, I_->symbolicSet_, earlyBreak);
+            Z_->symbolicSet_ = C_->symbolicSet_.ExistAbstract(U_->getCube());
 
-//            C.symbolicSet_ = fp.reach(Gs_[curAbs]->symbolicSet_, Is_[curAbs]->symbolicSet_, earlyBreak);
-//            Z.symbolicSet_ = C.symbolicSet_.ExistAbstract(U_->getCube());
+            BDD preQ = fp.pre(Z_->symbolicSet_);
+            BDD thing = preQ & G_->symbolicSet_;
+            BDD Q = thing.ExistAbstract(X2_->getCube() & U_->getCube());
 
-//            BDD preQ = fp.pre(Z.symbolicSet_);
-//            BDD thing = preQ & Gs_[curAbs]->symbolicSet_;
-//            BDD Q = thing.ExistAbstract(*notXvars_[curAbs]);
+            if (G_->symbolicSet_ != Q) {
+                G_->symbolicSet_ = Q;
+                C_->symbolicSet_ = ddmgr_.bddZero();
+                Z_->symbolicSet_ = ddmgr_.bddZero();
+            }
+            else {
+                checkMakeDir("scots");
 
-//            if (Gs_[curAbs]->symbolicSet_ != Q) {
-//                Gs_[curAbs]->symbolicSet_ = Q;
-//                C.symbolicSet_ = ddmgr_.bddZero();
-//                Z.symbolicSet_ = ddmgr_.bddZero();
-//            }
-//            else {
-//                checkMakeDir("scots");
+                SymbolicSet E(*X_);
+                E.symbolicSet_ = Z_->symbolicSet_ & !Q;
+                E.writeToFile("scots/E.bdd");
 
-//                SymbolicSet E(*Xs_[curAbs]);
-//                E.symbolicSet_ = Z.symbolicSet_ & !Q;
-//                E.writeToFile("scots/E.bdd");
+                SymbolicSet goalC(*C_);
+                goalC.symbolicSet_ = thing;
+                goalC.writeToFile("scots/goalC.bdd");
 
-//                SymbolicSet goalC(C);
-//                goalC.symbolicSet_ = thing;
-//                goalC.writeToFile("scots/goalC.bdd");
+                SymbolicSet goalZ(*Z_);
+                goalZ.symbolicSet_ = Q;
+                goalZ.writeToFile("scots/goalZ.bdd");
+                break;
+            }
+            outerIter += 1;
+        }
 
-//                SymbolicSet goalZ(Z);
-//                goalZ.symbolicSet_ = Q;
-//                goalZ.writeToFile("scots/goalZ.bdd");
+        C_->printInfo(1);
+        C_->writeToFile("scots/C.bdd");
 
-//                break;
-//            }
-//            outerIter += 1;
-//        }
+        tt.toc();
 
-//        C.printInfo(1);
-//        C.writeToFile("scots/C.bdd");
-
-//        tt.toc();
-
-//    }
+    }
 
 
 
