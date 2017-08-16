@@ -197,6 +197,7 @@ public:
         int curAbs = 0;
         int outerIter = 1;
         int earlyBreak = 0;
+        int verbose = 1;
 
         TicToc tt;
         tt.tic();
@@ -207,7 +208,7 @@ public:
         while(1) {
             clog << "Always Eventually iteration: " << outerIter << '\n';
 
-            C_->symbolicSet_ = fp.reach(G_->symbolicSet_, I_->symbolicSet_, earlyBreak);
+            C_->symbolicSet_ = fp.reach(G_->symbolicSet_, I_->symbolicSet_, earlyBreak, verbose);
             Z_->symbolicSet_ = C_->symbolicSet_.ExistAbstract(U_->getCube());
 
             BDD preQ = fp.pre(Z_->symbolicSet_);
@@ -244,6 +245,50 @@ public:
         tt.toc();
 
     }
+
+    /*! Saves and prints to log file some information related to the safety specification. */
+    void saveVerifySafe() {
+        cout << "X_:";
+        X_->printInfo(1);
+        cout << "S_:";
+        S_->printInfo(1);
+        cout << "U:\n";
+        U_->printInfo(1);
+
+        checkMakeDir("scots");
+        X_->writeToFile("scots/X.bdd");
+        S_->writeToFile("scots/S.bdd");
+    }
+
+    /*! Initializes objects specific to the following specifications: safe.
+        \param[in]	addS	Function pointer specifying the points that should be added to the potential safe set.
+    */
+    template<class S_type>
+    void initializeSafe(S_type addS) {
+        if (stage_ != 1) {
+            error("Error: initializeSafe called out of order.\n");
+        }
+        stage_ = 2;
+
+        addS(S_);
+
+        saveVerifySafe();
+    }
+
+    /*! Implementation of safety using functions in a SCOTS::FixedPoint object. For comparison with the Adaptive version. */
+        void safeSCOTS() {
+
+            TicToc tt;
+            tt.tic();
+
+            clog << "------------------------------normal SCOTS-----------------------------------\n";
+            FixedPoint fp(Ab_);
+            C_->symbolicSet_ = fp.safe(S_->symbolicSet_, 1);
+            tt.toc();
+
+            C_->printInfo(1);
+            C_->writeToFile("scots/C.bdd");
+        }
 
 
 
@@ -282,6 +327,8 @@ public:
 
         Ab_->transitionRelation_ &= !(O_->symbolicSet_);
         clog << "Obstacles removed from transition relation.\n";
+
+        T_->printInfo(1);
 
     }
 

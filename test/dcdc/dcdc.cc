@@ -4,16 +4,19 @@
 #define _USE_MATH_DEFINES
 
 #include "Adaptive.hh"
+#include "Compare.hh"
 
 using namespace scots;
 
 /* dimensions */
-int dimX = 2;
-int dimU = 1;
+#define dimX 2
+#define dimU 1
 
 /* data types for the ode solver */
 typedef std::array<double,2> X_type;
 typedef std::array<double,1> U_type;
+
+const double w[dimX] = {0.001, 0.001};
 
 /* we integrate the simple ode by 0.3 sec (the result is stored in x)  */
 auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
@@ -66,8 +69,8 @@ auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
             a[1][0] = 5 * (r0 / (r0 + rc)) * (1 / xc);
             a[1][1] =(-1 / xc) * (1 / (r0 + rc)) ;
         }
-        drdt[0] = a[0][0]*r[0]+a[0][1]*r[1];
-        drdt[1] = a[1][0]*r[0]+a[1][1]*r[1];
+        drdt[0] = a[0][0]*r[0]+a[0][1]*r[1] + w[0];
+        drdt[1] = a[1][0]*r[0]+a[1][1]*r[1] + w[1];
     };
     solver(radODE, r, u);
 };
@@ -81,6 +84,17 @@ auto dcdcAddS = [](SymbolicSet* S) -> void {
     S->addPolytope(4, H, h, INNER);
 };
 
+void sub(double* lbX, double* ubX, double* etaX, double tau, double* lbU, double* ubU, double* etaU,
+         double* etaRatio, double tauRatio, int numAbs, int nint, int readAb) {
+    Compare<X_type, U_type> comp(dimX, lbX, ubX, etaX, tau,
+                                 dimU, lbU, ubU, etaU,
+                                 etaRatio, tauRatio, nint,
+                                 numAbs, readAb, "scots.txt");
+    comp.initializeSafe(dcdcAddS);
+    comp.computeAbstractions(sysNext, radNext);
+    comp.safeSCOTS();
+}
+
 int main() {
 
     double lbX[dimX]  = {1.15, 5.45};
@@ -90,27 +104,25 @@ int main() {
     double ubU[dimU]  = {2};
     double etaU[dimU] = {1};
 
-    double etaRatio[dimX] = {3, 3};
-    double tauRatio = 1;
     int nint = 5;
 
-    double etaX[dimX]= {2/4e3*10*3, 2/4e3*10*3};
+    double etaX[dimX]= {2/4e3*3*3, 2/4e3*3*3};
     double tau = 0.5;
-    int numAbs = 3;
 
+    double etaRatio[dimX] = {3, 3};
+    double tauRatio = 1;
+
+    int numAbs = 2;
     int readXX = 0; // if X, U have changed, needs to be 0.
     int readAbs = 0; // if above or dynamics have changed, needs to be 0.
-
-
 
     Adaptive<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
                                  dimU, lbU, ubU, etaU,
                                  etaRatio, tauRatio, nint,
-                                 numAbs, readXX, readAbs);
+                                 numAbs, readXX, readAbs, "adaptive.txt");
     abs.initializeSafe(dcdcAddS);
-
     abs.computeAbstractions(sysNext, radNext);
-
     abs.safe();
-//    abs.safeSCOTS();
+
+    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs);
 }

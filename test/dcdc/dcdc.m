@@ -1,5 +1,6 @@
-function dcdc (mode, abstractions)
-  addpath(genpath('/home/kylehsu/control/SCOTS+Adaptive'));
+function dcdc (mode, numAbs)
+  w = [0.001 0.001];
+  addpath(genpath('../..'));
   colors=get(groot,'DefaultAxesColorOrder');
   
   if (mode == 'S')
@@ -9,7 +10,7 @@ function dcdc (mode, abstractions)
     drawnow
   
     % load and draw state space
-    X = SymbolicSet('Xgrid.bdd');
+    X = SymbolicSet('plotting/X.bdd');
     lb = X.first();
     ub = X.last();
     (ub(1)-lb(1))/10
@@ -45,17 +46,18 @@ function dcdc (mode, abstractions)
     hold on
     drawnow
     
-    D = SymbolicSet('D.bdd');
+    D = SymbolicSet('plotting/D.bdd');
     d = D.points;
     plot(d(:,1),d(:,2),'.','color', [0.75 0.85 0.95], 'MarkerSize', 5);
     
-    for i = abstractions:-1:1
-    
-      Z = SymbolicSet(['Z/Z' int2str(i) '.bdd']);
-      z = Z.points;
-      plot(z(:,1),z(:,2),'.','color', colors(i,:), 'MarkerSize', 5);
-      drawnow
-      pause
+    for i = numAbs:-1:1
+      try
+	Z = SymbolicSet(['Z/Z' int2str(i) '.bdd']);
+	z = Z.points;
+	plot(z(:,1),z(:,2),'.','color', colors(i,:), 'MarkerSize', 5);
+	drawnow
+	pause
+      end
     end
     
     savefig('visualization');
@@ -64,13 +66,13 @@ function dcdc (mode, abstractions)
     hold on
     drawnow
     
-    D = SymbolicSet('D.bdd');
+    D = SymbolicSet('plotting/D.bdd');
     d = D.points;
     plot(d(:,1),d(:,2),'.','color', [0.75 0.85 0.95], 'MarkerSize', 5);
   end    
     
   
-  if (mode == 'A') % adaptive safe
+  if (strcmp(mode, 'safe')) % adaptive safe
     openfig('visualization');
     hold on
     drawnow
@@ -78,10 +80,7 @@ function dcdc (mode, abstractions)
     tau = 0.5;
     x = [1.2 5.52];
     v = [];
-    T = 100;
-    
-    Z = SymbolicSet('Z/Z3.bdd');
-    
+    T = 100;        
     
     for j = 1:T/tau
       disp(j)
@@ -94,7 +93,7 @@ function dcdc (mode, abstractions)
       end
       
       foundController = 0;      
-      for i = 1:abstractions
+      for i = 1:numAbs
 	Z = SymbolicSet(['Z/Z' int2str(i) '.bdd']);
 	if (Z.isElement(x(end,:)))
 	  eta = Z.eta;
@@ -113,32 +112,35 @@ function dcdc (mode, abstractions)
       u = C.getInputs(x(end,:));
       ran = randi([1 size(u,1)], 1, 1);
       v = [v; u(ran,:)];
-      r = eta / 2;
-      [t r] = ode45(@radODE, [0 tau], r, [], u(ran,:));
-      [t phi] = ode45(@sysODE, [0 tau], x(end,:), [], u(ran,:));
+      d = disturbance(w);
+      [t phi] = ode45(@sysODE, [0 tau], x(end,:), [], u(ran,:), d);
       x = [x; phi];
-      xNext = disturbance(phi(end,:), r);
-      x = [x; xNext];    
+      
+     disp('u')
+     disp(u(ran,:))
+     disp('d')
+     disp(d)
+
     end
     savefig('safe');
  
   end
   
-  if (mode == 'Q') % scots safe
+  if (strcmp(mode,'scots')) % scots safe
     openfig('problem');
     hold on
     drawnow
     
-    C = SymbolicSet('CSCOTS.bdd', 'projection', [1 2]);
+    C = SymbolicSet('scots/C.bdd', 'projection', [1 2]);
     c = C.points;
     plot(c(:,1),c(:,2),'.', 'color', [0.75 0.85 0.95], 'MarkerSize', 5);
     
     
-    S = SymbolicSet('S.bdd');
+    S = SymbolicSet('scots/S.bdd');
     eta = S.eta();
     eta = eta';
     tau = 0.5;
-    x = [1.2 5.6];
+    x = [1.2 5.52];
     v = [];
     
     T = 100;
@@ -156,20 +158,20 @@ function dcdc (mode, abstractions)
       u = C.getInputs(x(end,:));
       ran = randi([1 size(u,1)], 1, 1);
       v = [v; u(ran,:)];
-      r = eta / 2;
-      [t r] = ode45(@radODE, [0 tau], r, [], u(ran,:));
-      [t phi] = ode45(@sysODE, [0 tau], x(end,:), [], u(ran,:));
+      d = disturbance(w);
+      [t phi] = ode45(@sysODE, [0 tau], x(end,:), [], u(ran,:), d);
       x = [x; phi];
-      xNext = disturbance(phi(end,:), r);
-      x = [x; xNext];
+      
+     disp('u')
+     disp(u(ran,:))
+     disp('d')
+     disp(d)
     end
-    savefig('safeSCOTS');
-  end
-  
-  
+    savefig('scots/safe');
+  end  
 end 
 
-function dxdt = sysODE(t, x, u)
+function dxdt = sysODE(t, x, u, d)
   r0 = 1;
   vs = 1;
   rl = 0.05;
@@ -186,29 +188,11 @@ function dxdt = sysODE(t, x, u)
           5 * (r0 / (r0 + rc)) * (1 / xc)  (-1 / xc) * (1 / (r0 + rc)) ];
   end
   
-  dxdt = A*x + b;
+  dxdt = A*x + b + d';
 end
   
-function xNext = disturbance(x, r)
-  w = -r + (2 * r .* rand(size(x)));
-  xNext = x + w;
+function d = disturbance(w)
+  d = -w + (2 * w .* rand(size(w)));
 end
   
-function drdt = radODE(t, r, u)
-  r0 = 1;
-  rl = 0.05;
-  rc = rl / 10;
-  xl = 3;
-  xc = 70;
-  
-  if (u(1) == 1)
-    A = [ -rl / xl  0 ;  0  (-1 / xc) * (1 / (r0 + rc)) ] ;
-  else
-    A = [ (-1 / xl) * (rl + ((r0 * rc) / (r0 + rc)))  ((-1 / xl) * (r0 / (r0 + rc))) / 5 ;
-          5 * (r0 / (r0 + rc)) * (1 / xc)  (-1 / xc) * (1 / (r0 + rc)) ];
-  end
-  
-  drdt = A * r;
 
-end
-  

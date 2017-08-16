@@ -1,0 +1,26 @@
+adaptive.txt
+Xs_ initialized with full domain.
+X2s_ initialized with full domain.
+U_ initialized with full domain.
+Zs_, validZs_ initialized with empty domain.
+Cs_, validCs_ initialized with empty domain.
+------------------------------------------------initializeXXs: Elapsed time is 21.4252 seconds.
+Number of BDD variables: 65
+Ss_ initialized
+------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.00323305 seconds.
+Zs_ modified to BDD-1.
+infZs_ initialized to empty.
+etaX_:
+abstraction 0: 0.0045 0.0045 
+abstraction 1: 0.0015 0.0015 
+tau_:
+abstraction 0: 0.5
+abstraction 1: 0.5
+U:
+Number of elements in the transition relation: 55530
+Number of elements in the transition relation: 747427
+------------------------------------------------computeAbstractions: Elapsed time is 1.78806 seconds.
+Os_ removed from Ts_, TTs_.
+.............................................................61
+.............................................45
+----------------------------------------safe: Elapsed time is 1.08723 seconds.

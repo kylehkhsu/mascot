@@ -233,6 +233,12 @@ public:
         clog << "------------------------------------------------initializeSpec on Ss_: ";
         tt.toc();
 
+        // empty obstacles
+        for (int i = 0; i < numAbs_; i++) {
+            SymbolicSet* O = new SymbolicSet(*Xs_[i]);
+            Os_.push_back(O);
+        }
+
         // maximal fixed point starts with whole set
         for (int i = 0; i < numAbs_; i++) {
             Zs_[i]->symbolicSet_ = ddmgr_.bddOne();
@@ -349,10 +355,11 @@ public:
         \param[in]	verbose				If 1, prints additional information during synthesis to the log file.
         \return     1 if controller(s) satisfying specification is/are synthesized; 0 otherwise.
     */
-    int alwaysEventually(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
+    int alwaysEventually(int startAbs, int minToGoCoarser, int minToBeValid, int verbose = 1) {
         if (stage_ != 3) {
             error("Error: alwaysEventually called out of order.\n");
         }
+        int earlyBreak = 0;
 
         TicToc tt;
         tt.tic();
@@ -515,7 +522,7 @@ public:
         checkMakeDir("C");
         saveVec(Cs_, "C/C");
 
-        clog << "Domain of all controllers:\n";
+        cout << "Domain of all controllers:\n";
         Xs_[numAbs_-1]->printInfo(1);
         Xs_[numAbs_-1]->writeToFile("plotting/D.bdd");
     }
@@ -1064,6 +1071,7 @@ public:
 
         // removing obstacles from transition relation
         for (int i = 0; i < numAbs_; i++) {
+            Ts_[i]->printInfo(1);
             Ts_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_);
             *TTs_[i] &= !(Os_[i]->symbolicSet_);
         }
@@ -1316,7 +1324,6 @@ public:
                 Char[Length] = '\0'; 
                 SymbolicSet T(ddmgr_, Char);
                 Ab->transitionRelation_ = T.symbolicSet_;
-                T.printInfo(1);
             }
 
             std::clog << "Number of elements in the transition relation: " << Ab->getSize() << std::endl;

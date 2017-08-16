@@ -1,13 +1,12 @@
 
 function circleBall (mode, numAbs, controllers)
-  w = [0.2 0.2 0 0 0];
-
-  addpath(genpath('/home/kylehsu/control/SCOTS+Adaptive'));
+  w = [0 0 0 0 0];
+  addpath(genpath('../..'));
   
   % colors
-  colors=get(groot,'DefaultAxesColorOrder');  
- 
-  if (mode == 'S')
+  colors=get(groot,'DefaultAxesColorOrder');
+  
+  if (strcmp(mode, 'S'))
     figure
     hold on
     box on    
@@ -25,7 +24,7 @@ function circleBall (mode, numAbs, controllers)
     savefig('system');
   end
   
-  if (mode == 'P')
+  if (strcmp(mode,'P'))
     openfig('system');
     hold on
     drawnow
@@ -131,7 +130,7 @@ function circleBall (mode, numAbs, controllers)
     
     
   
-  if (mode == 'A') % always eventually
+  if (strcmp(mode, 'A')) % always eventually
     loops = 5;
   
     openfig('problem');
@@ -210,7 +209,9 @@ function circleBall (mode, numAbs, controllers)
 	  x = [x; phi];
 	
 	  disp('u')
-	  disp(u(ran,:))  
+	  disp(u(ran,:))
+	  disp('d')
+	  disp(d)
 	  
 	
 	  j = j + 1;
@@ -232,7 +233,7 @@ function circleBall (mode, numAbs, controllers)
   end   
       
 
-  if (mode == 'R')
+  if (strcmp(mode,'R'))
     openfig('problem');
     hold on
     drawnow
@@ -295,12 +296,14 @@ function circleBall (mode, numAbs, controllers)
 	u = C.getInputs(x(end,:));
 	ran = randi([1 size(u,1)], 1, 1);	
 	v = [v; u(ran,:)];
-	w = disturbance(w);
-	[t phi] = ode45(@ODE, [0 tau], x(end,:), [], u(ran,:), w);
+	d = disturbance(w);
+	[t phi] = ode45(@ODE, [0 tau], x(end,:), [], u(ran,:), d);
 	x = [x; phi];
 	
 	disp('u')
 	disp(u(ran,:))
+	disp('d')
+	disp(d)
 	
 	j = j + 1;
       end
@@ -314,8 +317,6 @@ function circleBall (mode, numAbs, controllers)
     savefig('reach');
   end
 end
-
-
 
 function d = disturbance(w)
   d = -w + (2 * w .* rand(size(w)));
