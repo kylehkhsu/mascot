@@ -10,8 +10,8 @@ using namespace std;
 using namespace scots;
 
 /* state space dim */
-int dimX = 2;
-int dimU = 2;
+#define dimX 2
+#define dimU 2
 
 /* disturbance */
 const double w[2] = {0.3, 0.3};

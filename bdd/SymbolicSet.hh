@@ -1158,17 +1158,19 @@ public:
     /* function: addPoint
             * adds the point(s) to the BDD */
     void addPoint(double* point) {
-        int minterm[nvars_] = {0};
+        int* minterm = new int[nvars_];
         pointToMinterm(point, minterm);
         addMinterm(minterm);
+        delete[] minterm;
     }
 
     /* function: remPoint
             * removes the point(s) from the BDD */
     void remPoint(double* point) {
-        int minterm[nvars_] = {0};
+        int* minterm = new int[nvars_];
         pointToMinterm(point, minterm);
         remMinterm(minterm);
+        delete[] minterm;
 
     }
 

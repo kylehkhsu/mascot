@@ -13,8 +13,8 @@ using namespace scots;
 using namespace helper;
 
 /* state space dim */
-int dimX = 3;
-int dimU = 2;
+#define dimX 3
+#define dimU 2
 
 /* data types for the ode solver */
 typedef std::array<double,3> X_type;
