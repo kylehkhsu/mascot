@@ -1313,7 +1313,7 @@ public:
         for (int i = 0; i < numAbs_; i++) {
             SymbolicModelGrowthBound<X_type, U_type>* Ab = new SymbolicModelGrowthBound<X_type, U_type>(Xs_[i], U_, X2s_[i]);
             if (readAbs_ == 0) {
-                Ab->computeTransitionRelation(sysNext, radNext, Xs_[i]->symbolicSet_, *solvers_[i]);
+                Ab->computeTransitionRelation(sysNext, radNext, *solvers_[i]);
 
             }
             else {

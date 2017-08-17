@@ -307,7 +307,7 @@ public:
         tt.tic();
         Ab_ = new SymbolicModelGrowthBound<X_type, U_type>(X_, U_, X2_);
         if (readAb_ == 0) {
-            Ab_->computeTransitionRelation(sysNext, radNext, X_->symbolicSet_, *solver_);
+            Ab_->computeTransitionRelation(sysNext, radNext, *solver_);
         }
         else {
             SymbolicSet T(ddmgr_, "scots/T.bdd");

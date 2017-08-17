@@ -49,7 +49,7 @@ public:
    *
    */
   template<class F1, class F2>
-  void computeTransitionRelation(F1 &system_post, F2 &radius_post, BDD &X, OdeSolver solver) {
+  void computeTransitionRelation(F1 &system_post, F2 &radius_post, OdeSolver solver) {
 
     /* create the BDD's with numbers 0,1,2,.., #gridPoints */
     size_t dim=stateSpace_->getDimension();
@@ -109,9 +109,8 @@ public:
     int* permute = new int[n];
     for(size_t i=0; i<nssVars_; i++)
       permute[preVars_[i]]=postVars_[i];
-//    BDD ss = stateSpace_->getSymbolicSet();
-//    BDD constraints=ss.Permute(permute);
-    BDD constraints = X.Permute(permute);
+    BDD ss = stateSpace_->getSymbolicSet();
+    BDD constraints=ss.Permute(permute);
     delete[] permute;
     int iter = 0;
     /** big loop over all state elements and input elements **/
