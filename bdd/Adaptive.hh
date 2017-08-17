@@ -389,7 +389,7 @@ public:
             for (int i = curAbs; i < numAbs_ - 1; i++) {
                 innerFinerAligned(Zs_[i], Zs_[i+1], i);
             }
-            Zs_[numAbs - 1]->symbolicSet_ &= Xs_[numAbs - 1]->symbolicSet_;
+            Zs_[numAbs_ - 1]->symbolicSet_ &= Xs_[numAbs_ - 1]->symbolicSet_;
             curAbs = numAbs_ - 1;
 
 
