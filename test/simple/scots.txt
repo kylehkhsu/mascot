@@ -3,7 +3,7 @@ etaX: 0.2 0.2
 tau: 0.3
 Initialized Compare object.
 No obstacle problem with specification.
-------------------------------------------------computeAbstractions: Elapsed time is 0.592339 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 0.320642 seconds.
 Obstacles removed from transition relation.
 ------------------------------normal SCOTS-----------------------------------
-Elapsed time is 0.227034 seconds.
+Elapsed time is 0.0111258 seconds.
