@@ -1,6 +1,6 @@
 
 function whirlpool (mode, numAbs, controllers)
-  w = [0 0 0 0 0];
+  w = [0.05 0.05 0 0 0];
   addpath(genpath('../..'));
   
   % colors

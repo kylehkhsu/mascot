@@ -12,12 +12,14 @@ using namespace std;
 using namespace scots;
 using namespace helper;
 
-#define dimX 5
+#define dimX 2+3
 #define dimU 2
 
+const double w[dimX] = {0.05, 0.05, 0, 0, 0};
+
 /* data types for the ode solver */
-typedef std::array<double,2+3> X_type;
-typedef std::array<double,2> U_type;
+typedef std::array<double, dimX> X_type;
+typedef std::array<double, dimU> U_type;
 
 /* we integrate the whirlpool ode by 0.3 sec (the result is stored in x)  */
 auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
@@ -33,8 +35,7 @@ auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
 
 /* computation of the growth bound (the result is stored in r)  */
 auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
-    auto radODE = [](X_type &drdt, const X_type &r, const U_type &u) -> void {
-        const double w[5] = {0, 0, 0, 0, 0};
+    auto radODE = [](X_type &drdt, const X_type &r, const U_type &u) -> void {        
         drdt[0] = -0.25*r[0] + 1*r[1] + w[0];
         drdt[1] = -0.25*r[0] + 0.5*r[1] + w[1];
         drdt[2] = 0;
@@ -93,8 +94,8 @@ int main() {
     double tau = 0.9;
     int numAbs = 2;
 
-    int readXX = 1; // if X or U has changed, needs to be 0
-    int readAbs = 1; // if X or U or O or dynamics has changed, needs to be 0
+    int readXX = 0; // if X or U has changed, needs to be 0
+    int readAbs = 0; // if X or U or O or dynamics has changed, needs to be 0
 
 
     Adaptive<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
