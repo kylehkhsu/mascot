@@ -14,11 +14,11 @@ using namespace scots;
 #define dimU 2
 
 /* disturbance */
-const double w[2] = {0.3, 0.3};
+const double w[dimX] = {0.3, 0.3};
 
 /* data types for the ode solver */
-typedef std::array<double,2> X_type;
-typedef std::array<double,2> U_type;
+typedef std::array<double, dimX> X_type;
+typedef std::array<double, dimU> U_type;
 
 /* we integrate the simple ode by 0.3 sec (the result is stored in x)  */
 auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
