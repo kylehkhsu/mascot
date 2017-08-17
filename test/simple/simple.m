@@ -1,10 +1,24 @@
 
 function simple (mode, numAbs, controllers)
-  w = [0.3 0.3];
+  w = [0.05 0.05];
   addpath(genpath('../..'));
   
   % colors
   colors=get(groot,'DefaultAxesColorOrder');  
+ 
+  if (strcmp(mode, 'T'))
+    openfig('system');
+    hold on
+    drawnow
+    
+    Zc = SymbolicSet('test/Zc.bdd');
+    Zf = SymbolicSet('test/Zf.bdd');
+    
+    plotCells(Zf, 'facecolor', colors(3,:)*0.5+0.5, 'edgec', colors(3,:), 'linew', 0.1)
+    drawnow
+    pause
+    plotCells(Zc, 'facecolor', colors(2,:)*0.5+0.5, 'edgec', colors(2,:), 'linew', 0.1)
+  end
  
   if (strcmp(mode, 'S'))
     figure

@@ -1010,24 +1010,28 @@ public:
 
     /*! Debugging function. Tests the functions for projecting a set from one state space abtraction to another. */
     template<class G_type>
-    void testProjections(G_type addG) {
+    void testProjections(G_type addG, int which) {
         int c = 0;
         SymbolicSet Zc(*Xs_[c]);
         SymbolicSet Zf(*Xs_[c+1]);
 
-        int which = 1;
-
         if (which == 1) {
+            cout << "Testing innerCoarserAligned.\n";
             addG(&Zf);
             TicToc tt;
             tt.tic();
 
+            double p[2] = {2, 2};
+            Zc.addPoint(p);
+
 //            innerCoarserRupak(&Zc, &Zf, c);
-//            innerCoarserAligned(&Zc, &Zf, c);
+            innerCoarserAligned(&Zc, &Zf, c);
 
             tt.toc();
         }
         else {
+            cout << "Testing innerFinerAligned.\n";
+
             addG(&Zc);
             TicToc tt;
             tt.tic();
@@ -1037,9 +1041,9 @@ public:
         }
 
 
-        clog << "Zf:\n";
+        cout << "Zf:\n";
         Zf.printInfo(1);
-        clog << "Zc:\n";
+        cout << "Zc:\n";
         Zc.printInfo(1);
 
         checkMakeDir("test");
@@ -1147,26 +1151,22 @@ public:
 
     /*! Initializes alignment_ by examining etaRatio_. */
     void initializeAlignment() {
-        int isAligned = 1;
-        int is2 = 1;
+        int onlyIntegers = 1;
+        int inRange = 1;
         for (int i = 0; i < dimX_; i++) {
-            if (etaRatio_[i] != 2) {
-                is2 = 0;
+            double etaRatio = etaRatio_[i];
+            int etaRatioInt = (int) etaRatio;
+            if (!(etaRatio == etaRatioInt)) {
+                onlyIntegers = 0;
             }
-            if ((etaRatio_[i] != 1) && (etaRatio_[i] != 3)) {
-                isAligned = 0;
+            if (etaRatio <= 0) {
+                inRange = 0;
             }
         }
-        if (!isAligned && !is2) {
-            error("Error: unsupported etaRatio, which must be either a combination of 1s and 3s, or only 2s.\n");
+        if (!onlyIntegers || !inRange) {
+            error("Error: unsupported etaRatio, which must be only positive integers.\n");
         }
-        if (isAligned) {
-            alignment_ = 13;
-        }
-        else if (is2) {
-            error("Error: unsupported etaRatio, which must be a combination of 1s and 3s.\n");
-            alignment_ = 2;
-        }
+        alignment_ = 1;
     }
 
     /*! Initializes the abstractions' state space grid parameters and time sampling parameters. */
@@ -1340,7 +1340,7 @@ public:
      *  \param[in]      c           0-index of the coarser abstraction (currently unnecessary/unused).
      */
     void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX, int c) {
-        if (alignment_ == 13) {
+        if (alignment_ == 1) {
             int* XfMinterm;
             double* xPoint = new double[dimX_];
             vector<double> XcPoint (dimX_, 0);

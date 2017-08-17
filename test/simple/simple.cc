@@ -14,7 +14,7 @@ using namespace scots;
 #define dimU 2
 
 /* disturbance */
-const double w[dimX] = {0.3, 0.3};
+const double w[dimX] = {0.05, 0.05};
 
 /* data types for the ode solver */
 typedef std::array<double, dimX> X_type;
@@ -100,6 +100,7 @@ int main() {
                                  dimU, lbU, ubU, etaU,
                                  etaRatio, tauRatio, nint,
                                  numAbs, readXX, readAbs, "adaptive.txt");
+//    abs.testProjections(simpleAddG, 1);
 
     abs.initializeReach(simpleAddG, simpleAddI, simpleAddO);
     abs.computeAbstractions(sysNext, radNext);

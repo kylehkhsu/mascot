@@ -1249,6 +1249,7 @@ public:
                 if (idx < 0 || idx > (int)nofGridPoints_[i]) {
                     std::ostringstream os;
                     os << "Error: SymbolicSet::pointToMinterm(double* point): index out of range";
+                    std::cout << "first grid point: " << firstGridPoint_[i] << '\n';
                     std::cout << "idx: " << idx << '\n';
                     throw std::runtime_error(os.str().c_str());
                 }
