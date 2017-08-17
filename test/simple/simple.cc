@@ -46,7 +46,7 @@ auto simpleAddO = [](SymbolicSet* O) -> void {
                       1, 0,
                       0,-1,
                       0, 1};
-    double h1[4] = {-4, 5, 1, 9};
+    double h1[4] = {-4, 5, 1, 9.3};
     O->addPolytope(4, H, h1, OUTER);
 };
 
@@ -85,13 +85,13 @@ int main() {
     double ubU[dimU]= {1, 1};
     double etaU[dimU]= {0.5, 0.5};
 
-    double etaRatio[dimX] = {3, 3};
-    double tauRatio = 3;
+    double etaRatio[dimX] = {2, 2};
+    double tauRatio = 2;
     int nint = 5;
 
-    double etaX[dimX]= {0.6, 0.6};
-    double tau = 0.9;
-    int numAbs = 2;
+    double etaX[dimX]= {0.8, 0.8};
+    double tau = 1.2;
+    int numAbs = 3;
 
     int readXX = 0; // if specification has changed, needs to be 0
     int readAbs = 0;
@@ -106,7 +106,7 @@ int main() {
     abs.computeAbstractions(sysNext, radNext);
 
 
-    int startAbs = 1;
+    int startAbs = 2;
     int minToGoCoarser = 1;
     int minToBeValid = 2;
     int earlyBreak = 1;
