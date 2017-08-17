@@ -141,10 +141,19 @@ public:
 
             eta_[i]=eta[i];
 
-            Nl=std::ceil(lb[i]/eta[i]);
-            Nu=std::floor(ub[i]/eta[i]);
+//            Nl=std::ceil(lb[i]/eta[i]);
+//            Nu=std::floor(ub[i]/eta[i]);
+            //kyle
+            Nl=std::floor((lb[i]+eta[i]/2)/eta[i]);
+            Nu=std::ceil((ub[i]-eta[i]/2)/eta[i]);
+            //end
+
             /* number of grid points */
-            nofGridPoints_[i]=(size_t)std::abs(Nu-Nl)+1;
+//            nofGridPoints_[i]=(size_t)std::abs(Nu-Nl)+1;
+            //kyle
+            nofGridPoints_[i]=(size_t)std::abs(Nu-Nl);
+            //end
+
             /* number of bits */
             if (nofGridPoints_[i]==1)
                 nofBddVars_[i]=1;
@@ -158,8 +167,12 @@ public:
                 indBddVars_[i][j]=var.NodeReadIndex();
             }
             /* first and last grid point coordinates */
-            lastGridPoint_[i]=Nu*eta[i];
-            firstGridPoint_[i]=Nl*eta[i];
+//            lastGridPoint_[i]=Nu*eta[i];
+//            firstGridPoint_[i]=Nl*eta[i];
+            //kyle
+            lastGridPoint_[i]=Nu*eta[i]-eta[i]/2;
+            firstGridPoint_[i]=Nl*eta[i]+eta[i]/2;
+            //end
         }
         /* number of total variables */
         nvars_=0;
@@ -1238,8 +1251,6 @@ public:
                     os << "Error: SymbolicSet::pointToMinterm(double* point): index out of range";
                     std::cout << "idx: " << idx << '\n';
                     throw std::runtime_error(os.str().c_str());
-
-
                 }
                 for (size_t j = 0; j < nofBddVars_[i]; j++) {
                     *p = idx % 2;

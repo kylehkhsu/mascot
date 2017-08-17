@@ -137,8 +137,10 @@ public:
       /* start with the computation of the indices */
       BDD post=ddmgr_->bddOne();
       for(size_t i=0; i<dim; i++) { 
+
         int lb = std::lround(((x[i]-r[i]-z[i]-first[i])/eta[i]));
         int ub = std::lround(((x[i]+r[i]+z[i]-first[i])/eta[i]));
+
         if(lb<0 || ub>=(int)ngp[i]) {
           post=ddmgr_->bddZero();
           break;
