@@ -13,8 +13,8 @@ using namespace scots;
 #define dimU 1
 
 /* data types for the ode solver */
-typedef std::array<double,2> X_type;
-typedef std::array<double,1> U_type;
+typedef std::array<double, dimX> X_type;
+typedef std::array<double, dimU> U_type;
 
 const double w[dimX] = {0.001, 0.001};
 
