@@ -12,7 +12,6 @@ using namespace std;
 using namespace scots;
 using namespace helper;
 
-/* state space dim */
 #define dimX 3
 #define dimU 2
 
@@ -113,7 +112,6 @@ void sub(double* lbX, double* ubX, double* etaX, double tau, double* lbU, double
     comp.computeAbstractions(sysNext, radNext);
     int earlyBreak = 1;
     comp.reachSCOTS(earlyBreak);
-
 }
 
 int main() {

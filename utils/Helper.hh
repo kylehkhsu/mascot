@@ -11,6 +11,7 @@
 #include <string>
 #include "SymbolicSet.hh"
 
+using std::clog;
 using std::cout;
 using std::string;
 
@@ -31,29 +32,16 @@ namespace helper {
         }
     }
 
-    /*! Prints the contents of an array to the console.
+    /*! Prints the contents of an array to a log file.
      *  \param[in] array    Array.
      *  \param[in] size     Number of elements.
      */
     template<class array_type>
     void printArray (array_type array, int size) {
         for (int i = 0; i < size; i++) {
-            cout << array[i] << ' ';
+            clog << array[i] << ' ';
         }
-        cout << '\n';
-    }
-
-    /*! Prints the contents of a 2D array to the console.
-     *  \param[in]  array       2D array.
-     *  \param[in]  size1       Number of rows.
-     *  \param[in]  size2       Number of columns.
-     */
-    template<class array_type>
-    void printArrayArray (array_type array, int size1, int size2) {
-        for (int i = 0; i < size1; i++) {
-            printArray(array[i], size2);
-        }
-        cout << '\n';
+        clog << '\n';
     }
 
     /*! Writes a vector of SymbolicSets into a subdirectory.
