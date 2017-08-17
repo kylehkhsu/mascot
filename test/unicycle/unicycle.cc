@@ -16,8 +16,8 @@ using namespace helper;
 #define dimU 2
 
 /* data types for the ode solver */
-typedef std::array<double,3> X_type;
-typedef std::array<double,2> U_type;
+typedef std::array<double, dimX> X_type;
+typedef std::array<double, dimU> U_type;
 
 /* we integrate the unicycle ode by 0.3 sec (the result is stored in x)  */
 auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
@@ -32,7 +32,7 @@ auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
 };
 
 /* computation of the growth bound (the result is stored in r)  */
-const double w[2] = {0.05, 0.05};
+const double w[dimX] = {0.05, 0.05};
 auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
     r[0] = r[0] + (r[2]*std::abs(u[0]) + w[0]) * tau;
     r[1] = r[1] + (r[2]*std::abs(u[0]) + w[1]) * tau;
