@@ -31,7 +31,7 @@ auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
         const double b[2]={vs/xl, 0};
 
         double a[2][2];
-        if(u[0]==1) {
+        if(u[0]==0.5) {
             a[0][0] = -rl / xl;
             a[0][1] = 0;
             a[1][0] = 0;
@@ -58,7 +58,7 @@ auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
         const double xc = 70.0 ;
 
         double a[2][2];
-        if(u[0]==1) {
+        if(u[0]==0.5) {
             a[0][0] = -rl / xl;
             a[0][1] = 0;
             a[1][0] = 0;
@@ -100,7 +100,7 @@ int main() {
     double lbX[dimX]  = {1.15, 5.45};
     double ubX[dimX]  = {1.55, 5.85};
 
-    double lbU[dimU]  = {1};
+    double lbU[dimU]  = {0};
     double ubU[dimU]  = {2};
     double etaU[dimU] = {1};
 
@@ -113,7 +113,7 @@ int main() {
     double tauRatio = 1;
 
     int numAbs = 2;
-    int readXX = 0; // if X, U have changed, needs to be 0.
+    int readXX = 1; // if X, U have changed, needs to be 0.
     int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
     Adaptive<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,

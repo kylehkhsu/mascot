@@ -32,7 +32,7 @@ function dcdc (mode, numAbs)
 %      S = SymbolicSet('S.bdd');
 %      plotCells(S, 'facecolor', colors(2,:)*0.5+0.5, 'edgec', colors(2,:), 'linew', 0.1)
 
-    v = [1.15 5.45; 1.55 5.45; 1.15 5.85; 1.55 5.85 ];
+    v = [1.15125 5.45025; 1.54875 5.45025; 1.15125 5.84925; 1.54875 5.84925 ];
     patch('vertices',v,'faces',[1 2 4 3],'facecolor','none','edgec',colors(2,:),'linew',1)
     hold on
     drawnow
@@ -181,7 +181,7 @@ function dxdt = sysODE(t, x, u, d)
   
   b = [(vs / xl); 0];
   
-  if (u(1) == 1)
+  if (u(1) == 0.5)
     A = [ -rl / xl  0 ;  0  (-1 / xc) * (1 / (r0 + rc)) ] ;
   else
     A = [ (-1 / xl) * (rl + ((r0 * rc) / (r0 + rc)))  ((-1 / xl) * (r0 / (r0 + rc))) / 5 ;
