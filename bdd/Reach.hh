@@ -1,6 +1,9 @@
 /*! \file Reach.hh
  *  Contains the Reach class. */
 
+#ifndef REACH_HH_
+#define REACH_HH_
+
 #include "Adaptive.hh"
 
 using namespace helper;
@@ -14,12 +17,8 @@ public:
     vector<SymbolicSet*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
     vector<SymbolicSet*> Is_; /*!< Instance of *Xs_[i] containing initial states. */
     vector<SymbolicSet*> Os_; /*!< Instance of *Xs_[i] containing unsafe (obstacle) states. */
-    vector<SymbolicSet*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
     vector<SymbolicSet*> validZs_; /*!< Contains winning states that act as savepoints. */
-
-    vector<SymbolicSet*> Cs_; /*!< Controller \subseteq *Xs_[i] x *U_. */
     vector<SymbolicSet*> validCs_; /*!< Controllers that act as savepoints. */
-
     vector<SymbolicSet*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
 
@@ -32,9 +31,19 @@ public:
                                    etaRatio, tauRatio, nint,
                                    numAbs, readXX, readAbs, logFile)
     {
-        cout << "hi.\n";
-
     }
+
+    /*! Deconstructor for a Reach object. */
+    ~Reach() {
+        deleteVec(Gs_);
+        deleteVec(Is_);
+        deleteVec(Os_);
+        deleteVec(validZs_);
+        deleteVec(validCs_);
+        deleteVec(finalCs_);
+        deleteVec(finalZs_);
+    }
+
     /*! One iteration in an adaptive minimal fixed point.
         \param[in]		minToGoCoarser		Minimum number of iterations at an abstraction (not coarsest) before attemping to project to the next coarser abstraction.
         \param[in]		minToBeValid		Minimum number of iterations at an abstraction (not finest) after having gone coarser before a controller is declared valid and saved as a backup.
@@ -56,17 +65,17 @@ public:
         clog << "controllers: " << finalCs_.size() << '\n';
 
         // get pre(Z)
-        BDD preF = this->preC(Zs_[*curAbs]->symbolicSet_, *curAbs);
+        BDD preF = this->preC(this->Zs_[*curAbs]->symbolicSet_, this->Ts_[*curAbs]->symbolicSet_, *this->TTs_[*curAbs], *curAbs);
         // disjunct with goal (minimal fixed point)
         preF |= Gs_[*curAbs]->symbolicSet_;
         // find new {(x,u)}
-        BDD N = preF & (!(Cs_[*curAbs]->symbolicSet_.ExistAbstract(*this->cubeU_)));
+        BDD N = preF & (!(this->Cs_[*curAbs]->symbolicSet_.ExistAbstract(*this->cubeU_)));
         // add new {(x,u)} to C
-        Cs_[*curAbs]->symbolicSet_ |= N;
+        this->Cs_[*curAbs]->symbolicSet_ |= N;
         // project onto Xs_[*curAbs]
-        Zs_[*curAbs]->symbolicSet_ = preF.ExistAbstract(*this->notXvars_[*curAbs]);
+        this->Zs_[*curAbs]->symbolicSet_ = preF.ExistAbstract(*this->notXvars_[*curAbs]);
 
-        if (((Zs_[*curAbs]->symbolicSet_ & Is_[*curAbs]->symbolicSet_) != this->ddmgr_->bddZero()) && (*reached == 0)) {
+        if (((this->Zs_[*curAbs]->symbolicSet_ & Is_[*curAbs]->symbolicSet_) != this->ddmgr_->bddZero()) && (*reached == 0)) {
             *reached = 1;
             if (earlyBreak == 1) {
                 saveCZ(*curAbs);
@@ -108,8 +117,8 @@ public:
                         *justCoarsed = 0;
 
                         // reset the current winning states and controller
-                        Zs_[*curAbs]->symbolicSet_ = validZs_[*curAbs]->symbolicSet_;
-                        Cs_[*curAbs]->symbolicSet_ = validCs_[*curAbs]->symbolicSet_;
+                        this->Zs_[*curAbs]->symbolicSet_ = validZs_[*curAbs]->symbolicSet_;
+                        this->Cs_[*curAbs]->symbolicSet_ = validCs_[*curAbs]->symbolicSet_;
 
                     }
                     else {
@@ -118,12 +127,12 @@ public:
                             clog << "Saving Z and C of abstraction " << *curAbs << " into valids, finals.\n";
                             clog << "Finding inner approximation of Zs_[" << *curAbs << "] and copying into validZs_[" << *curAbs+1 << "].\n";
                         }
-                        validZs_[*curAbs]->symbolicSet_ = Zs_[*curAbs]->symbolicSet_;
-                        validCs_[*curAbs]->symbolicSet_ = Cs_[*curAbs]->symbolicSet_;
+                        validZs_[*curAbs]->symbolicSet_ = this->Zs_[*curAbs]->symbolicSet_;
+                        validCs_[*curAbs]->symbolicSet_ = this->Cs_[*curAbs]->symbolicSet_;
 
                         saveCZ(*curAbs);
-                        this->innerFinerAligned(Zs_[*curAbs], Zs_[*curAbs+1], *curAbs);
-                        validZs_[*curAbs+1]->symbolicSet_ = Zs_[*curAbs+1]->symbolicSet_;
+                        this->innerFinerAligned(this->Zs_[*curAbs], this->Zs_[*curAbs+1], *curAbs);
+                        validZs_[*curAbs+1]->symbolicSet_ = this->Zs_[*curAbs+1]->symbolicSet_;
                     }
                     *curAbs += 1;
                     *iterCurAbs = 1;
@@ -147,7 +156,7 @@ public:
                         if (verbose) {
                             clog << "More new states, minToGoCoarser achieved; try going coarser.\n";
                         }
-                        int more = this->innerCoarserAligned(Zs_[*curAbs-1], Zs_[*curAbs], *curAbs-1);
+                        int more = this->innerCoarserAligned(this->Zs_[*curAbs-1], this->Zs_[*curAbs], *curAbs-1);
 
                         if (more == 0) {
                             if (verbose) {
@@ -162,11 +171,11 @@ public:
                                 clog << "Saving Z and C of abstraction " << *curAbs-1 << " into validZs_, validCs.\n";
                             }
                             saveCZ(*curAbs);
-                            validZs_[*curAbs]->symbolicSet_ = Zs_[*curAbs]->symbolicSet_;
-                            validCs_[*curAbs]->symbolicSet_ = Cs_[*curAbs]->symbolicSet_;
+                            validZs_[*curAbs]->symbolicSet_ = this->Zs_[*curAbs]->symbolicSet_;
+                            validCs_[*curAbs]->symbolicSet_ = this->Cs_[*curAbs]->symbolicSet_;
                             *justCoarsed = 1;
-                            validZs_[*curAbs-1]->symbolicSet_ = Zs_[*curAbs-1]->symbolicSet_;
-                            validCs_[*curAbs-1]->symbolicSet_ = Cs_[*curAbs-1]->symbolicSet_;
+                            validZs_[*curAbs-1]->symbolicSet_ = this->Zs_[*curAbs-1]->symbolicSet_;
+                            validCs_[*curAbs-1]->symbolicSet_ = this->Cs_[*curAbs-1]->symbolicSet_;
                             *curAbs -= 1;
                             *iterCurAbs = 1;
                         }
@@ -285,20 +294,16 @@ public:
         clog << "No obstacle problem with specification.\n";
 
         for (int i = 0; i < this->numAbs_; i++) {
-            SymbolicSet* Z = new SymbolicSet(*this->Xs_[i]);
-            Zs_.push_back(Z);
             SymbolicSet* validZ = new SymbolicSet(*this->Xs_[i]);
             validZs_.push_back(validZ);
         }
-        clog << "Zs_, validZs_ initialized with empty domain.\n";
+        clog << "validZs_ initialized with empty domain.\n";
 
         for (int i = 0; i < this->numAbs_; i++) {
-            SymbolicSet* C = new SymbolicSet(*this->Xs_[i], *this->U_);
-            Cs_.push_back(C);
-            SymbolicSet* validC = new SymbolicSet(*C);
+            SymbolicSet* validC = new SymbolicSet(*this->Xs_[i], *this->U_);
             validCs_.push_back(validC);
         }
-        clog << "Cs_, validCs_ initialized with empty domain.\n";
+        clog << "validCs_ initialized with empty domain.\n";
 
         saveVerify();
     }
@@ -307,11 +312,11 @@ public:
         \param[in] curAbs	0-index of the abstraction which the controller and controller domain that should be saved belong to.
     */
     void saveCZ(int curAbs) {
-        SymbolicSet* C = new SymbolicSet(*Cs_[curAbs]);
-        C->symbolicSet_ = Cs_[curAbs]->symbolicSet_;
+        SymbolicSet* C = new SymbolicSet(*this->Cs_[curAbs]);
+        C->symbolicSet_ = this->Cs_[curAbs]->symbolicSet_;
         finalCs_.push_back(C);
         SymbolicSet* Z = new SymbolicSet(*this->Xs_[curAbs]);
-        Z->symbolicSet_ = Zs_[curAbs]->symbolicSet_;
+        Z->symbolicSet_ = this->Zs_[curAbs]->symbolicSet_;
         finalZs_.push_back(Z);
     }
 
@@ -330,23 +335,9 @@ public:
         saveVec(Os_, "O/O");
     }
 
-    ~Reach() {
-        deleteVec(Gs_);
-        deleteVec(Is_);
-        deleteVec(Os_);
-        deleteVec(Zs_);
-        deleteVec(validZs_);
-
-        deleteVec(Cs_);
-        deleteVec(validCs_);
-
-        deleteVec(finalCs_);
-        deleteVec(finalZs_);
-    }
-
 };
 
-
-
 }
+
+#endif /* REACH_HH_ */
 
