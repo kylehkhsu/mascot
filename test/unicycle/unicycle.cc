@@ -15,6 +15,8 @@ using namespace helper;
 #define dimX 3
 #define dimU 2
 
+const double w[dimX] = {0.05, 0.05};
+
 /* data types for the ode solver */
 typedef std::array<double, dimX> X_type;
 typedef std::array<double, dimU> U_type;
@@ -32,7 +34,7 @@ auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
 };
 
 /* computation of the growth bound (the result is stored in r)  */
-const double w[dimX] = {0.05, 0.05};
+
 auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
     r[0] = r[0] + (r[2]*std::abs(u[0]) + w[0]) * tau;
     r[1] = r[1] + (r[2]*std::abs(u[0]) + w[1]) * tau;
@@ -119,14 +121,14 @@ int main() {
     double lbX[dimX] = {0, 0, -M_PI-0.4};
     double ubX[dimX] = {10, 10, M_PI+0.4};
 
-    double lbU[dimU] = {-1, -1.5};
-    double ubU[dimU] = {1, 1.5};
+    double lbU[dimU] = {-1.2, -1.6};
+    double ubU[dimU] = {1.2, 1.6};
     double etaU[dimU] = {.3, .2};
 
     int nint = 5;
 
     double etaX[dimX] = {0.6, 0.6, 0.3};
-    double tau = 1.2;
+    double tau = 0.9;
 
     double etaRatio[dimX] = {3, 3, 3};
     double tauRatio = 3;
