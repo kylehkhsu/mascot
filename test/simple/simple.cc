@@ -3,7 +3,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
-#include "Adaptive.hh"
+#include "Reach.hh"
 #include "Compare.hh"
 
 using namespace std;
@@ -76,6 +76,45 @@ void sub(double* lbX, double* ubX, double* etaX, double tau, double* lbU, double
     comp.reachSCOTS(earlyBreak);
 }
 
+//void testSynthesis() {
+//    double lbX[dimX]={0, 0};
+//    double ubX[dimX]={10, 10};
+
+//    double lbU[dimU]={-1.3, -1.3};
+//    double ubU[dimU]= {1.3, 1.3};
+//    double etaU[dimU]= {0.5, 0.5};
+
+//    double etaRatio[dimX] = {2, 2};
+//    double tauRatio = 2;
+//    int nint = 5;
+
+//    double etaX[dimX]= {0.8, 0.8};
+//    double tau = 1.2;
+//    int numAbs = 3;
+
+//    int readXX = 0; // if specification has changed, needs to be 0
+//    int readAbs = 0;
+
+//    Adaptive<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
+//                                 dimU, lbU, ubU, etaU,
+//                                 etaRatio, tauRatio, nint,
+//                                 numAbs, readXX, readAbs, "adaptive.txt");
+////    abs.testProjections(simpleAddG, 1);
+
+//    abs.initializeReach(simpleAddG, simpleAddI, simpleAddO);
+//    abs.computeAbstractions(sysNext, radNext);
+
+
+//    int startAbs = 2;
+//    int minToGoCoarser = 1;
+//    int minToBeValid = 2;
+//    int earlyBreak = 1;
+
+//    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+//    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs);
+
+//}
+
 int main() {
 
     double lbX[dimX]={0, 0};
@@ -96,15 +135,12 @@ int main() {
     int readXX = 0; // if specification has changed, needs to be 0
     int readAbs = 0;
 
-    Adaptive<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
-                                 dimU, lbU, ubU, etaU,
-                                 etaRatio, tauRatio, nint,
-                                 numAbs, readXX, readAbs, "adaptive.txt");
-//    abs.testProjections(simpleAddG, 1);
-
-    abs.initializeReach(simpleAddG, simpleAddI, simpleAddO);
+    Reach<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
+                              dimU, lbU, ubU, etaU,
+                              etaRatio, tauRatio, nint,
+                              numAbs, readXX, readAbs, "adaptive.txt");
+    abs.initialize(simpleAddG, simpleAddI, simpleAddO);
     abs.computeAbstractions(sysNext, radNext);
-
 
     int startAbs = 2;
     int minToGoCoarser = 1;
@@ -112,7 +148,7 @@ int main() {
     int earlyBreak = 1;
 
     abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
-    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs);
+
 
 
 }

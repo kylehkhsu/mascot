@@ -94,6 +94,17 @@ namespace helper {
             delete[] vec[i];
         }
     }
+
+    /*! Throws a logic error along with specified message and closes the log file.
+     *  \param[in]  msg     Error message to log to file.
+     */
+    template<class msg_type>
+    void error(msg_type msg) {
+        std::ostringstream os;
+        os << msg;
+        throw std::logic_error(os.str().c_str());
+        fclose(stderr);
+    }
 }
 
 #endif /* HELPER_HH_ */

@@ -3,7 +3,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
-#include "Adaptive.hh"
+#include "Safe.hh"
 #include "Compare.hh"
 
 using namespace scots;
@@ -116,13 +116,13 @@ int main() {
     int readXX = 1; // if X, U have changed, needs to be 0.
     int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
-    Adaptive<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
+    Safe<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
                                  dimU, lbU, ubU, etaU,
                                  etaRatio, tauRatio, nint,
                                  numAbs, readXX, readAbs, "adaptive.txt");
-    abs.initializeSafe(dcdcAddS);
+    abs.initialize(dcdcAddS);
     abs.computeAbstractions(sysNext, radNext);
     abs.safe();
 
-    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs);
+//    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs);
 }
