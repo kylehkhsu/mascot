@@ -61,7 +61,7 @@ auto whirlpoolAddG = [](SymbolicSet* G) -> void {
 };
 
 auto whirlpoolAddI = [](SymbolicSet* I) -> void {
-    double q[5] = {1, 1, 0, 4.6, 0};
+    double q[5] = {1, 1, 0.1, 4.6, 0};
     I->addPoint(q);
 };
 
@@ -79,8 +79,8 @@ void sub(double* lbX, double* ubX, double* etaX, double tau, double* lbU, double
 
 int main() {
 
-    double lbX[dimX]={-6, -6, -0.1, 2, -1.5};
-    double ubX[dimX]={ 6,  6,  0.1, 5,  1.5};
+    double lbX[dimX]={-6, -6,    0, 2, -1.5};
+    double ubX[dimX]={ 6,  6,  0.2, 5,  1.5};
 
     double lbU[dimU]= {-2, 0.5};
     double ubU[dimU]= { 2,   1};
@@ -94,7 +94,7 @@ int main() {
     double tau = 0.9;
     int numAbs = 2;
 
-    int readXX = 0; // if X or U has changed, needs to be 0
+    int readXX = 1; // if X or U has changed, needs to be 0
     int readAbs = 0; // if X or U or O or dynamics has changed, needs to be 0
 
 
