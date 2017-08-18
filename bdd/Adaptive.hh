@@ -214,6 +214,54 @@ public:
         saveVec(Os_, "O/O");
     }
 
+//    template<class G_type, class I_type, class O_type, class S_type>
+//    void initializeReachAndStay(G_type addG, I_type addI, O_type addO, S_type addS) {
+//        if (stage_ != 1) {
+//            error("Error: initializeReachAndStay called out of order.\n");
+//        }
+//        stage_ = 2;
+
+//        TicToc tt;
+//        tt.tic();
+//        initializeSpec(&Gs_, addG);
+//        clog << "Gs_ initialized.\n";
+//        initializeSpec(&Is_, addI);
+//        clog << "Is_ initialized.\n";
+//        initializeSpec(&Os_, addO);
+//        clog << "Os_ initialized.\n";
+//        initializeSpec(&Ss_, addS);
+//        clog << "Ss_ initialized\n";
+//        clog << "------------------------------------------------initializeSpec on Gs_, Is_, Os_, Ss_: ";
+//        tt.toc();
+
+//        // checking that specification is valid
+//        for (int i = 0; i < numAbs_; i++) {
+//            if ((Gs_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_.bddZero()) {
+//                error("Error: G and O have nonzero intersection.\n");
+//            }
+//            if ((Is_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_.bddZero()) {
+//                error("Error: I and O have nonzero intersection.\n");
+//            }
+//            if ((Ss_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_.bddZero()) {
+//                error("Error: S and O have nonzero intersection.\n");
+//            }
+//        }
+//        clog << "No obstacle problem with specification.\n";
+
+//        // maximal fixed point starts with whole set
+//        for (int i = 0; i < numAbs_; i++) {
+//            Zs_[i]->symbolicSet_ = ddmgr_.bddOne();
+//        }
+//        clog << "Zs_ modified to BDD-1.\n";
+
+//        for (int i = 0; i < numAbs_; i++) {
+//            SymbolicSet* infZ = new SymbolicSet(*Xs_[i]);
+//            infZs_.push_back(infZ);
+//        }
+//        clog << "infZs_ initialized to empty.\n";
+//    }
+
+
     /*! Initializes objects specific to the following specifications: safe.
         \param[in]	addS	Function pointer specifying the points that should be added to the potential safe set.
     */
@@ -294,6 +342,16 @@ public:
 
         saveVerifyReach();
     }
+
+//    int reachAndStay(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
+//        if (stage_ != 3) {
+//            error("Error: reachAndStay called out of order.\n");
+//        }
+//        TicToc tt;
+//        tt.tic();
+
+
+//    }
 
     /*!	Writes, should they exist, a sequence of controller and controller domain BDDs to directories 'C' and 'Z' respectively that satisfy the reachability specification.
         \param[in]  startAbs            0-index of the abstraction to start with.
@@ -471,6 +529,21 @@ public:
             nuIter += 1;
         }
     }
+//    /*! Maximal fixed-point for an entire abstraction. */
+//    void nu(BDD T, int* curAbs) {
+//        int iter = 1;
+//        while (1) {
+//            clog << ".";
+//            // get pre of current abtraction's Z disjuncted with projection of converged Z from previous abstraction
+//            Cs_[curAbs]->symbolicSet_ = preC(Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_, curAbs);
+//            // conjunct with safe set (maximal fixed point)
+//            Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
+//            // project onto Xs_[curAbs]
+//            BDD Z = Cs_[curAbs]->symbolicSet_.ExistAbstract(*notXvars_[curAbs]);
+//        }
+//    }
+
+
 
     /*! Writes, should they exist, controllers of specified abstractions that together satisfy a safety specification. */
     void safe() {
