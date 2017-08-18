@@ -11,7 +11,6 @@
 #include "SymbolicModelGrowthBound.hh"
 #include "FixedPoint.hh"
 #include "RungeKutta4.hh"
-#include "Profile.hh"
 #include "TicToc.hh"
 #include "Helper.hh"
 
@@ -31,7 +30,7 @@ template<class X_type, class U_type>
 class Adaptive {
 public:
 
-    Cudd ddmgr_; /*!< A single manager object common to all BDDs used in the program. */
+    Cudd* ddmgr_; /*!< A single manager object common to all BDDs used in the program. */
     int dimX_; /*!< Dimensionality of state space. */
     double* lbX_; /*!< Lowermost grid point of state space. */
     double* ubX_; /*!< Uppermost grid point of state space. */
@@ -111,6 +110,8 @@ public:
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
 
+        ddmgr_ = new Cudd;
+
         dimX_ = dimX;
         lbX_ = lbX;
         ubX_ = ubX;
@@ -174,6 +175,7 @@ public:
         deleteVec(Ss_);
         deleteVec(infZs_);
         fclose(stderr);
+        delete ddmgr_;
     }
 
 
@@ -214,6 +216,54 @@ public:
         saveVec(Os_, "O/O");
     }
 
+//    template<class G_type, class I_type, class O_type, class S_type>
+//    void initializeReachAndStay(G_type addG, I_type addI, O_type addO, S_type addS) {
+//        if (stage_ != 1) {
+//            error("Error: initializeReachAndStay called out of order.\n");
+//        }
+//        stage_ = 2;
+
+//        TicToc tt;
+//        tt.tic();
+//        initializeSpec(&Gs_, addG);
+//        clog << "Gs_ initialized.\n";
+//        initializeSpec(&Is_, addI);
+//        clog << "Is_ initialized.\n";
+//        initializeSpec(&Os_, addO);
+//        clog << "Os_ initialized.\n";
+//        initializeSpec(&Ss_, addS);
+//        clog << "Ss_ initialized\n";
+//        clog << "------------------------------------------------initializeSpec on Gs_, Is_, Os_, Ss_: ";
+//        tt.toc();
+
+//        // checking that specification is valid
+//        for (int i = 0; i < numAbs_; i++) {
+//            if ((Gs_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
+//                error("Error: G and O have nonzero intersection.\n");
+//            }
+//            if ((Is_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
+//                error("Error: I and O have nonzero intersection.\n");
+//            }
+//            if ((Ss_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
+//                error("Error: S and O have nonzero intersection.\n");
+//            }
+//        }
+//        clog << "No obstacle problem with specification.\n";
+
+//        // maximal fixed point starts with whole set
+//        for (int i = 0; i < numAbs_; i++) {
+//            Zs_[i]->symbolicSet_ = ddmgr_->bddOne();
+//        }
+//        clog << "Zs_ modified to BDD-1.\n";
+
+//        for (int i = 0; i < numAbs_; i++) {
+//            SymbolicSet* infZ = new SymbolicSet(*Xs_[i]);
+//            infZs_.push_back(infZ);
+//        }
+//        clog << "infZs_ initialized to empty.\n";
+//    }
+
+
     /*! Initializes objects specific to the following specifications: safe.
         \param[in]	addS	Function pointer specifying the points that should be added to the potential safe set.
     */
@@ -239,7 +289,7 @@ public:
 
         // maximal fixed point starts with whole set
         for (int i = 0; i < numAbs_; i++) {
-            Zs_[i]->symbolicSet_ = ddmgr_.bddOne();
+            Zs_[i]->symbolicSet_ = ddmgr_->bddOne();
         }
         clog << "Zs_ modified to BDD-1.\n";
 
@@ -277,10 +327,10 @@ public:
 
         // checking that specification is valid
         for (int i = 0; i < numAbs_; i++) {
-            if ((Gs_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_.bddZero()) {
+            if ((Gs_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
                 error("Error: G and O have nonzero intersection.\n");
             }
-            if ((Is_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_.bddZero()) {
+            if ((Is_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
                 error("Error: I and O have nonzero intersection.\n");
             }
         }
@@ -288,12 +338,22 @@ public:
 
         // minimal fixed point starts with null
         for (int i = 0; i < numAbs_; i++) {
-            Zs_[i]->symbolicSet_ = ddmgr_.bddZero();
+            Zs_[i]->symbolicSet_ = ddmgr_->bddZero();
         }
         clog << "Zs_ ensured to be empty.\n";
 
         saveVerifyReach();
     }
+
+//    int reachAndStay(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
+//        if (stage_ != 3) {
+//            error("Error: reachAndStay called out of order.\n");
+//        }
+//        TicToc tt;
+//        tt.tic();
+
+
+//    }
 
     /*!	Writes, should they exist, a sequence of controller and controller domain BDDs to directories 'C' and 'Z' respectively that satisfy the reachability specification.
         \param[in]  startAbs            0-index of the abstraction to start with.
@@ -452,8 +512,8 @@ public:
 
                 clog << "Resetting Zs, Cs.\n";
                 for (int i = 0; i < numAbs_; i++) {
-                    Zs_[i]->symbolicSet_ = ddmgr_.bddZero();
-                    Cs_[i]->symbolicSet_ = ddmgr_.bddZero();
+                    Zs_[i]->symbolicSet_ = ddmgr_->bddZero();
+                    Cs_[i]->symbolicSet_ = ddmgr_->bddZero();
                 }
 
                 size_t j = finalCs_.size();
@@ -471,6 +531,21 @@ public:
             nuIter += 1;
         }
     }
+//    /*! Maximal fixed-point for an entire abstraction. */
+//    void nu(BDD T, int* curAbs) {
+//        int iter = 1;
+//        while (1) {
+//            clog << ".";
+//            // get pre of current abtraction's Z disjuncted with projection of converged Z from previous abstraction
+//            Cs_[curAbs]->symbolicSet_ = preC(Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_, curAbs);
+//            // conjunct with safe set (maximal fixed point)
+//            Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
+//            // project onto Xs_[curAbs]
+//            BDD Z = Cs_[curAbs]->symbolicSet_.ExistAbstract(*notXvars_[curAbs]);
+//        }
+//    }
+
+
 
     /*! Writes, should they exist, controllers of specified abstractions that together satisfy a safety specification. */
     void safe() {
@@ -574,7 +649,7 @@ public:
         // project onto Xs_[*curAbs]
         Zs_[*curAbs]->symbolicSet_ = preF.ExistAbstract(*notXvars_[*curAbs]);
 
-        if (((Zs_[*curAbs]->symbolicSet_ & Is_[*curAbs]->symbolicSet_) != ddmgr_.bddZero()) && (*reached == 0)) {
+        if (((Zs_[*curAbs]->symbolicSet_ & Is_[*curAbs]->symbolicSet_) != ddmgr_->bddZero()) && (*reached == 0)) {
             *reached = 1;
             if (earlyBreak == 1) {
                 saveCZ(*curAbs);
@@ -585,7 +660,7 @@ public:
         }
 
         if (*iter != 1) { // first iteration will always fail since we start with an empty Z
-            if (N == ddmgr_.bddZero()) { // if iteration failed to yield new (x,u)
+            if (N == ddmgr_->bddZero()) { // if iteration failed to yield new (x,u)
                 if (*curAbs == numAbs_ - 1) { // if we're in the finest abstraction
                     if (*reached == 1) {
                         saveCZ(*curAbs);
@@ -763,13 +838,13 @@ public:
 
         SymbolicSet C(*Xs_[curAbs], *U_);
 
-        BDD Z = ddmgr_.bddZero();
+        BDD Z = ddmgr_->bddZero();
 
         SymbolicSet domain(C);
         domain.addGridPoints();
 
         int iter = 1;
-        while ((C.symbolicSet_ & Is_[curAbs]->symbolicSet_) == ddmgr_.bddZero()) {
+        while ((C.symbolicSet_ & Is_[curAbs]->symbolicSet_) == ddmgr_->bddZero()) {
 
             //             project onto Xs_[curAbs]
 
@@ -883,7 +958,7 @@ public:
         for (int i = 0; i < numAbs_; i++) {
             BDD* notXUvars = new BDD;
             BDD* notXvars = new BDD;
-            *notXUvars = ddmgr_.bddOne();
+            *notXUvars = ddmgr_->bddOne();
             for (int j = 0; j < numAbs_; j++) {
                 *notXUvars &= *cubesX2_[j];
                 if (i != j) {
@@ -978,7 +1053,7 @@ public:
 
         int* QcMintermWhole;
         SymbolicSet Ccf(Qcf);
-        BDD result = ddmgr_.bddZero();
+        BDD result = ddmgr_->bddZero();
         int* QcMinterm = new int[Qc.nvars_];
 
         for (Qc.begin(); !Qc.done(); Qc.next()) { // iterate over all coarse cells with any corresponding finer cells in Zf
@@ -996,7 +1071,7 @@ public:
 
         delete[] QcMinterm;
 
-        if (result == ddmgr_.bddZero()) {
+        if (result == ddmgr_->bddZero()) {
             return 0;
         }
 
@@ -1097,7 +1172,7 @@ public:
      */
     void initializeXX2UZCs() {
         for (int i = 0; i < numAbs_; i++) {
-            SymbolicSet* X = new SymbolicSet(ddmgr_, dimX_, lbX_, ubX_, etaX_[i], tau_[i][0]);
+            SymbolicSet* X = new SymbolicSet(*ddmgr_, dimX_, lbX_, ubX_, etaX_[i], tau_[i][0]);
             X->addGridPoints();
             Xs_.push_back(X);
         }
@@ -1110,7 +1185,7 @@ public:
         }
         clog << "X2s_ initialized with full domain.\n";
 
-        U_ = new SymbolicSet(ddmgr_, dimU_, lbU_, ubU_, etaU_, 0);
+        U_ = new SymbolicSet(*ddmgr_, dimU_, lbU_, ubU_, etaU_, 0);
         U_->addGridPoints();
         clog << "U_ initialized with full domain.\n";
 
@@ -1218,7 +1293,7 @@ public:
                 char Char[20];
                 size_t Length = Str.copy(Char, Str.length() + 1);
                 Char[Length] = '\0';
-                SymbolicSet XXSet(ddmgr_, Char);
+                SymbolicSet XXSet(*ddmgr_, Char);
                 XX->symbolicSet_ = XXSet.symbolicSet_;
             }
             XXs_.push_back(XX);
@@ -1252,15 +1327,15 @@ public:
             BDD* varsX2 = new BDD[X2s_[i]->nvars_];
 
             for (size_t j = 0; j < Xs_[i]->nvars_; j++) {
-                varsX[j] = ddmgr_.bddVar(Xs_[i]->idBddVars_[j]);
+                varsX[j] = ddmgr_->bddVar(Xs_[i]->idBddVars_[j]);
             }
 
             for (size_t j = 0; j < X2s_[i]->nvars_; j++) {
-                varsX2[j] = ddmgr_.bddVar(X2s_[i]->idBddVars_[j]);
+                varsX2[j] = ddmgr_->bddVar(X2s_[i]->idBddVars_[j]);
             }
 
-            *cubeX = ddmgr_.bddComputeCube(varsX, NULL, Xs_[i]->nvars_);
-            *cubeX2 = ddmgr_.bddComputeCube(varsX2, NULL, X2s_[i]->nvars_);
+            *cubeX = ddmgr_->bddComputeCube(varsX, NULL, Xs_[i]->nvars_);
+            *cubeX2 = ddmgr_->bddComputeCube(varsX2, NULL, X2s_[i]->nvars_);
 
 
             cubesX_.push_back(cubeX);
@@ -1319,7 +1394,7 @@ public:
                 char Char[20];
                 size_t Length = Str.copy(Char, Str.length() + 1);
                 Char[Length] = '\0'; 
-                SymbolicSet T(ddmgr_, Char);
+                SymbolicSet T(*ddmgr_, Char);
                 Ab->transitionRelation_ = T.symbolicSet_;
             }
 
@@ -1458,7 +1533,7 @@ public:
 
 //        for (int i = 0; i < numAbs_; i++) {
 //            clog << "X " << i << ":\n";
-//            BDD thesevars = ddmgr_.bddOne();
+//            BDD thesevars = ddmgr_->bddOne();
 //            for (int j = 0; j < numAbs_; j++) {
 //                thesevars &= *cubesX2_[j];
 //                if (i != j) {
