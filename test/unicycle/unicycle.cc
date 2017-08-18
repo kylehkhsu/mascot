@@ -54,16 +54,16 @@ auto unicycleAddO = [](SymbolicSet* O) -> void {
 //    double h1[4] = {-1,1.2,-0, 9};
 //    O->addPolytope(4,H,h1, OUTER);
 
-    double h2[4] = {-2.2, 2.4, -0, 4.4};
+    double h2[4] = {-2.2, 2.3, -0, 4.3};
     O->addPolytope(4, H, h2, OUTER);
 
-    double h3[4] = {-2.2, 2.4, -6, 10};
+    double h3[4] = {-2.2, 2.3, -6.2, 10};
     O->addPolytope(4, H, h3, OUTER);
 
-    double h4[4] = {-3.4, 3.6, -0, 8.4};
+    double h4[4] = {-3.4, 3.5, -0, 8.2};
     O->addPolytope(4, H, h4, OUTER);
 
-    double h5[4] = {-4.5, 5, -1.2, 10};
+    double h5[4] = {-4.6, 4.8, -1.5, 10};
     O->addPolytope(4,H,h5, OUTER);
 
 //    double h6[4] = {-5.8,6,-0,6};
@@ -75,7 +75,7 @@ auto unicycleAddO = [](SymbolicSet* O) -> void {
 //    double h8[4] = {-7,7.2,-1,10};
 //    O->addPolytope(4,H,h8, OUTER);
 
-    double h9[4] = {-7.6, 8, -0, 8.4};
+    double h9[4] = {-7.4, 7.6, -0, 8.2};
     O->addPolytope(4,H,h9, OUTER);
 
 //    double h10[4] = {-8.4,9.3,-8.3,8.5};
@@ -126,15 +126,15 @@ int main() {
     int nint = 5;
 
     double etaX[dimX] = {0.6, 0.6, 0.3};
-    double tau = 0.9;
+    double tau = 1.2;
 
     double etaRatio[dimX] = {3, 3, 3};
     double tauRatio = 3;
 
     int numAbs = 2;
     int startAbs = 1;
-    int readXX = 1;
-    int readAbs = 1;
+    int readXX = 0;
+    int readAbs = 0;
 
     Adaptive<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
                                  dimU, lbU, ubU, etaU,
@@ -146,7 +146,7 @@ int main() {
     int minToGoCoarser = 1;
     int minToBeValid = 5;
     int earlyBreak = 1;
-	
+
     abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
     sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs);
 }
