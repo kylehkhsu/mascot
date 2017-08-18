@@ -137,6 +137,54 @@ public:
         checkMakeDir("S");
         saveVec(Ss_,"S/S");
     }
+
+    //    /*! Debugging fucntion. Implementation of basic SCOTS safety (single abstraction) in the Adaptive framework. */
+    //    void safeBasicDebug(int verbose = 0) {
+    //        if (numAbs_ != 1) {
+    //            error("Error: For comparison with SCOTS, numAbs needs to be 1.\n");
+    //        }
+
+    //        int curAbs = 0;
+
+    //        TicToc tt;
+    //        tt.tic();
+
+    //        SymbolicSet C(*Xs_[curAbs], *U_);
+
+    //        int iter = 1;
+
+    //        while (1) {
+    //            // get pre(Z)
+    //            C.symbolicSet_ = preC(Zs_[curAbs]->symbolicSet_, curAbs);
+    //            // conjunct with safe set (maximal fixed point)
+    //            C.symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
+    //            // project onto Xs_[curAbs]
+    //            BDD Z = C.symbolicSet_.ExistAbstract(*notXvars_[curAbs]);
+
+    //            clog << "iter: " << iter << '\n';
+    //            iter += 1;
+
+    //            if (Z != Zs_[curAbs]->symbolicSet_) {
+    //                Zs_[curAbs]->symbolicSet_ = Z;
+    //            }
+    //            else {
+    //                break;
+    //            }
+    //        }
+
+    //        tt.toc();
+
+    //        C.printInfo(1);
+    //        checkMakeDir("debug");
+    //        C.writeToFile("debug/C.bdd");
+
+    //        SymbolicSet X(*Xs_[curAbs]);
+    //        X.symbolicSet_ = C.symbolicSet_.ExistAbstract(U_->getCube());
+
+    //        clog << "Domain of controller:\n";
+    //        X.printInfo(1);
+    //    }
+
 };
 }
 

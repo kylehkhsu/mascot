@@ -10,8 +10,6 @@
 
 #include "SymbolicModelGrowthBound.hh"
 #include "FixedPoint.hh"
-#include "RungeKutta4.hh"
-#include "TicToc.hh"
 #include "Helper.hh"
 
 
@@ -49,19 +47,11 @@ public:
     vector<double*> tau_; /*!< numAbs_ x 1 matrix of time steps. */
 
     vector<SymbolicSet*> Xs_; /*!< The numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
-    vector<SymbolicSet*> Is_; /*!< Instance of *Xs_[i] containing initial states. */
-    vector<SymbolicSet*> Os_; /*!< Instance of *Xs_[i] containing unsafe (obstacle) states. */
-    vector<SymbolicSet*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
     vector<SymbolicSet*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
-    vector<SymbolicSet*> validZs_; /*!< Contains winning states that act as savepoints. */
     vector<SymbolicSet*> X2s_; /*!< The numAbs_ "post" state space abstractions, coarsest (0) to finest. */
     vector<SymbolicSet*> XXs_; /*!< The numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the finer cell is a subset of the coarser cell. */
     SymbolicSet* U_; /*!< The single input space abstraction. */
     vector<SymbolicSet*> Cs_; /*!< Controller \subseteq *Xs_[i] x *U_. */
-    vector<SymbolicSet*> validCs_; /*!< Controllers that act as savepoints. */
-
-    vector<SymbolicSet*> Ss_; /*!< Instance of *Xs_[i] containing possible safe states. */
-    vector<SymbolicSet*> infZs_; /*!< Instance of *Xs_[i] containing projection of convergence of previous maximal fixed points. */
 
     int numBDDVars_; /*!< Total number of BDD variables used by ddmgr_. */
 
@@ -79,9 +69,6 @@ public:
 
     vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
     vector<SymbolicModelGrowthBound<X_type, U_type>*> Abs_; /*!< Abstractions containing the transition relation \subseteq *Xs_[i] x *U_ x *X2s_[i]. */
-
-    vector<SymbolicSet*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
-    vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
 
     int stage_; /*! Helps ensure user calls methods in correct order. */
 
@@ -149,16 +136,11 @@ public:
         deleteVecArray(etaX_);
         deleteVec(tau_);
         deleteVec(Xs_);
-        deleteVec(Is_);
-        deleteVec(Os_);
-        deleteVec(Gs_);
         deleteVec(Zs_);
-        deleteVec(validZs_);
         deleteVec(X2s_);
         deleteVec(XXs_);
         delete U_;
         deleteVec(Cs_);
-        deleteVec(validCs_);
         deleteVec(cubesX_);
         deleteVec(cubesX2_);
         delete cubeU_;
@@ -170,51 +152,23 @@ public:
         deleteVecArray(permutesX2toX_);
         deleteVec(solvers_);
         deleteVec(Abs_);
-        deleteVec(finalCs_);
-        deleteVec(finalZs_);
-        deleteVec(Ss_);
-        deleteVec(infZs_);
         fclose(stderr);
         delete ddmgr_;
     }
 
-
-    /*! Saves and prints to log file some information related to the safety specification. */
-    void saveVerifySafe() {
+    void saveVerify() {
         printEtaX();
         printTau();
         printVec(Xs_, "X");
         printVec(XXs_, "XX");
-        printVec(Ss_, "S");
-        clog << "U:\n";
-        U_->printInfo(1);
-        checkMakeDir("plotting");
-        Xs_[0]->writeToFile("plotting/X.bdd");
-        checkMakeDir("S");
-        saveVec(Ss_,"S/S");
-    }
-
-    /*! Saves and prints to log file some information related to the reachability/always-eventually specification. */
-    void saveVerifyReach() {
-        printEtaX();
-        printTau();
-        printVec(Xs_, "X");
-        printVec(XXs_, "XX");
-        printVec(Gs_, "G");
-        printVec(Os_, "O");
-        printVec(Is_, "I");
         cout << "U:\n";
         U_->printInfo(1);
-        checkMakeDir("plotting");
         Xs_[0]->writeToFile("plotting/X.bdd");
-        Gs_[numAbs_-1]->writeToFile("plotting/G.bdd");
-        Os_[numAbs_-1]->writeToFile("plotting/O.bdd");
-        Is_[numAbs_-1]->writeToFile("plotting/I.bdd");
-        checkMakeDir("G");
-        saveVec(Gs_, "G/G");
-        checkMakeDir("O");
-        saveVec(Os_, "O/O");
+
     }
+
+
+
 
 //    template<class G_type, class I_type, class O_type, class S_type>
 //    void initializeReachAndStay(G_type addG, I_type addI, O_type addO, S_type addS) {
@@ -264,86 +218,9 @@ public:
 //    }
 
 
-    /*! Initializes objects specific to the following specifications: safe.
-        \param[in]	addS	Function pointer specifying the points that should be added to the potential safe set.
-    */
-    template<class S_type>
-    void initializeSafe(S_type addS) {
-        if (stage_ != 1) {
-            error("Error: initializeSafe called out of order.\n");
-        }
-        stage_ = 2;
 
-        TicToc tt;
-        tt.tic();
-        initializeSpec(&Ss_, addS);
-        clog << "Ss_ initialized\n";
-        clog << "------------------------------------------------initializeSpec on Ss_: ";
-        tt.toc();
 
-        // empty obstacles
-        for (int i = 0; i < numAbs_; i++) {
-            SymbolicSet* O = new SymbolicSet(*Xs_[i]);
-            Os_.push_back(O);
-        }
 
-        // maximal fixed point starts with whole set
-        for (int i = 0; i < numAbs_; i++) {
-            Zs_[i]->symbolicSet_ = ddmgr_->bddOne();
-        }
-        clog << "Zs_ modified to BDD-1.\n";
-
-        for (int i = 0; i < numAbs_; i++) {
-            SymbolicSet* infZ = new SymbolicSet(*Xs_[i]);
-            infZs_.push_back(infZ);
-        }
-        clog << "infZs_ initialized to empty.\n";
-
-        saveVerifySafe();
-    }
-
-    /*! Initializes objects specific to the following specifications: always-eventually, reach-while-avoid.
-        \param[in]	addG	Function pointer specifying the points that should be added to the goal set.
-        \param[in]	addI	Function pointer specifying the points that should be added to the initial set.
-        \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
-    */
-    template<class G_type, class I_type, class O_type>
-    void initializeReach(G_type addG, I_type addI, O_type addO) {
-        if (stage_ != 1) {
-            error("Error: initializeReach called out of order.\n");
-        }
-        stage_ = 2;
-
-        TicToc tt;
-        tt.tic();
-        initializeSpec(&Gs_, addG);
-        clog << "Gs_ initialized.\n";
-        initializeSpec(&Is_, addI);
-        clog << "Is_ initialized.\n";
-        initializeSpec(&Os_, addO);
-        clog << "Os_ initialized.\n";
-        clog << "------------------------------------------------initializeSpec on Gs_, Is_, Os_: ";
-        tt.toc();
-
-        // checking that specification is valid
-        for (int i = 0; i < numAbs_; i++) {
-            if ((Gs_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
-                error("Error: G and O have nonzero intersection.\n");
-            }
-            if ((Is_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
-                error("Error: I and O have nonzero intersection.\n");
-            }
-        }
-        clog << "No obstacle problem with specification.\n";
-
-        // minimal fixed point starts with null
-        for (int i = 0; i < numAbs_; i++) {
-            Zs_[i]->symbolicSet_ = ddmgr_->bddZero();
-        }
-        clog << "Zs_ ensured to be empty.\n";
-
-        saveVerifyReach();
-    }
 
 //    int reachAndStay(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
 //        if (stage_ != 3) {
@@ -355,182 +232,7 @@ public:
 
 //    }
 
-    /*!	Writes, should they exist, a sequence of controller and controller domain BDDs to directories 'C' and 'Z' respectively that satisfy the reachability specification.
-        \param[in]  startAbs            0-index of the abstraction to start with.
-        \param[in]	minToGoCoarser		Minimum number of growing fixed point iterations needed before an attempt to go to a coarser abstraction.
-        \param[in]	minToBeValid		Minimum number of growing fixed point iterations needed before a controller is declared valid.
-        \param[in]  earlyBreak          If 1, the synthesis ends as soon as I meets the domain of C.
-        \param[in]	verbose				If 1, prints additional information during synthesis to the log file.
 
-        \return     1 if controller(s) satisfying specification is/are synthesized; 0 otherwise.
-    */
-    int reach(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
-        if (stage_ != 3) {
-            error("Error: reach called out of order.\n");
-        }
-
-        TicToc tt;
-        tt.tic();
-        int curAbs = startAbs;
-
-        int iter = 1;
-        int justCoarsed = 0;
-        int iterCurAbs = 1;
-        int reached = 0;
-        int stop = 0;
-
-        while (1) {
-            mu(minToGoCoarser, minToBeValid, earlyBreak, verbose, &curAbs, &iter, &justCoarsed, &iterCurAbs, &reached, &stop);
-            if (stop) {
-                break;
-            }
-        }
-        if (reached) {
-            clog << "Won.\n";
-
-            checkMakeDir("C");
-            saveVec(finalCs_, "C/C");
-            checkMakeDir("Z");
-            saveVec(finalZs_, "Z/Z");
-            clog << "----------------------------------------reach: ";
-            tt.toc();
-            return 1;
-        }
-        else {
-            clog << "Lost.\n";
-            clog << "----------------------------------------reach: ";
-            tt.toc();
-            return 0;
-        }
-    }
-
-    /*!	Writes, should they exist, a sequence of controller and controller domain BDDs to directories 'C' and 'Z' respectively that satisfy the Buchi box-diamond (aka always-eventually) specification.
-     *  Note: of the n resultant controllers in 'C', the n-1th, .., 1st controllers are to reach, and the nth controller is for when the system state is a goal state.
-        \param[in]  startAbs            0-index of the abstraction to start with.
-        \param[in]	minToGoCoarser		Minimum number of growing fixed point iterations needed before an attempt to go to a coarser abstraction.
-        \param[in]	minToBeValid		Minimum number of growing fixed point iterations needed before a controller is declared valid.
-        \param[in]  earlyBreak          If 1, reachability ends as soon as I meets the domain of C.
-        \param[in]	verbose				If 1, prints additional information during synthesis to the log file.
-        \return     1 if controller(s) satisfying specification is/are synthesized; 0 otherwise.
-    */
-    int alwaysEventually(int startAbs, int minToGoCoarser, int minToBeValid, int verbose = 1) {
-        if (stage_ != 3) {
-            error("Error: alwaysEventually called out of order.\n");
-        }
-        int earlyBreak = 0;
-
-        TicToc tt;
-        tt.tic();
-        int curAbs = startAbs;
-
-        int nuIter = 1;
-
-        while (1) {
-            clog << "------------------------------nu iteration: " << nuIter << "------------------------------\n";
-
-            int muIter = 1;
-            int justCoarsed = 0;
-            int iterCurAbs = 1;
-            int reached = 0;
-            int muStop = 0;
-            while (1) { // eventually
-                mu(minToGoCoarser, minToBeValid, earlyBreak, verbose, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &reached, &muStop);
-                if (muStop) {
-                    break;
-                }
-            }
-
-            clog << "\nAlwaysEventually: iteration " << nuIter << "\n";
-
-            // always
-            // project to the finest abstraction
-            for (int i = curAbs; i < numAbs_ - 1; i++) {
-                innerFinerAligned(Zs_[i], Zs_[i+1], i);
-            }
-            Zs_[numAbs_ - 1]->symbolicSet_ &= Xs_[numAbs_ - 1]->symbolicSet_;
-            curAbs = numAbs_ - 1;
-
-
-            BDD preQ = preC(Zs_[curAbs]->symbolicSet_, curAbs); // preC(X2)
-            BDD thing = preQ & Gs_[curAbs]->symbolicSet_; // R \cap preC(X2); converges to controller for goal states
-            BDD Q = thing.ExistAbstract(*notXvars_[curAbs]); // converges to goal states that are valid for the AE spec (i.e. can continue infinitely)
-
-            if ((Gs_[curAbs]->symbolicSet_ <= Q) && (Q <= Gs_[curAbs]->symbolicSet_)) {
-                clog << "Won.\n";
-
-                SymbolicSet* lastZ = finalZs_.back();
-                int abs = -1;
-                for (int i = 0; i < numAbs_; i++) {
-                    int sameEta = 1;
-                    for (int j = 0; j < dimX_; j++) {
-                        if (etaX_[i][j] != lastZ->eta_[j]) {
-                            sameEta = 0;
-                        }
-                    }
-                    int sameTau = tau_[i][0] == lastZ->tau_;
-
-                    if (sameEta && sameTau) {
-                        abs = i;
-                        break;
-                    }
-                }
-
-                clog << "Abstraction of E: " << abs << '\n';
-
-                SymbolicSet E(*Xs_[abs]);
-                E.symbolicSet_ = lastZ->symbolicSet_ & !(Gs_[abs]->symbolicSet_);
-                E.writeToFile("G/E.bdd");
-
-                SymbolicSet* goalC = new SymbolicSet(*Cs_[curAbs]);
-                goalC->symbolicSet_ = thing;
-                finalCs_.push_back(goalC);
-
-                SymbolicSet* goalZ = new SymbolicSet(*Zs_[curAbs]);
-                goalZ->symbolicSet_ = Q;
-                finalZs_.push_back(goalZ);
-
-                clog << finalCs_.size()<< '\n';
-
-                checkMakeDir("C");
-                saveVec(finalCs_, "C/C");
-                checkMakeDir("Z");
-                saveVec(finalZs_, "Z/Z");
-                clog << "----------------------------------------alwaysEventually: ";
-                tt.toc();
-
-                return 1;
-            }
-            else {
-                clog << "Continuing.\n";
-
-
-                clog << "Updating Gs.\n";
-                Gs_[curAbs]->symbolicSet_ = Q;
-                for (int i = curAbs; i > 0; i--) {
-                    innerCoarserAligned(Gs_[i-1], Gs_[i], i-1);
-                }
-
-                clog << "Resetting Zs, Cs.\n";
-                for (int i = 0; i < numAbs_; i++) {
-                    Zs_[i]->symbolicSet_ = ddmgr_->bddZero();
-                    Cs_[i]->symbolicSet_ = ddmgr_->bddZero();
-                }
-
-                size_t j = finalCs_.size();
-                for (size_t i = 0; i < j; i++) {
-                    delete finalCs_.back();
-                    finalCs_.pop_back();
-                    delete finalZs_.back();
-                    finalZs_.pop_back();
-                }
-
-                clog << "finalCs_.size(): " << finalCs_.size() << '\n';
-
-            }
-            clog << '\n';
-            nuIter += 1;
-        }
-    }
 //    /*! Maximal fixed-point for an entire abstraction. */
 //    void nu(BDD T, int* curAbs) {
 //        int iter = 1;
@@ -547,410 +249,23 @@ public:
 
 
 
-    /*! Writes, should they exist, controllers of specified abstractions that together satisfy a safety specification. */
-    void safe() {
-        if (stage_ != 3) {
-            error("Error: reach called out of order.\n");
-        }
-
-        TicToc tt;
-        tt.tic();
-
-        for (int curAbs = 0; curAbs < numAbs_; curAbs++) {
-            int iter = 1;
-            while (1) {
-                clog << ".";
-                // get pre of current abtraction's Z disjuncted with projection of converged Z from previous abstraction
-                Cs_[curAbs]->symbolicSet_ = preC(Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_, curAbs);
-                // conjunct with safe set (maximal fixed point)
-                Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
-                // project onto Xs_[curAbs]
-                BDD Z = Cs_[curAbs]->symbolicSet_.ExistAbstract(*notXvars_[curAbs]);
-
-                if (Z != Zs_[curAbs]->symbolicSet_) { // not converged
-                    Zs_[curAbs]->symbolicSet_ = Z; // update and continue
-                }
-                else { // converged
-                    clog << iter << '\n';
-                    Zs_[curAbs]->printInfo(1);
-                    break;
-                }
-                iter += 1;
-            }
-            if (curAbs != numAbs_ - 1) {
-                innerFinerAligned(Zs_[curAbs], infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
-
-                Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
-                *TTs_[curAbs+1] &= !(infZs_[curAbs+1]->symbolicSet_); // same as above
-            }
-            Xs_[curAbs]->symbolicSet_ = Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_; // for verification purposes
-        }
-
-        clog << "----------------------------------------safe: ";
-        tt.toc();
-
-        checkMakeDir("Z");
-        saveVec(Zs_, "Z/Z");
-        checkMakeDir("C");
-        saveVec(Cs_, "C/C");
-
-        cout << "Domain of all controllers:\n";
-        Xs_[numAbs_-1]->printInfo(1);
-        Xs_[numAbs_-1]->writeToFile("plotting/D.bdd");
-    }
-
     /*! Calculates the enforceable predecessor of the given set with respect to the transition relation at the specified level of abstraction.
      *  \param[in]  Z           BDD of the winning set.
      *  \param[in]  curAbs      0-index of the current abstraction.
      *  \return     BDD containing {(x,u)} for which all post states are in Z.
      */
-    BDD preC(BDD Z, int curAbs) {
+    BDD preC(BDD Z, BDD T, BDD TT, int curAbs) {
         // swap to X2s_[curAbs]
         BDD Z2 = Z.Permute(permutesXtoX2_[curAbs]);
         // posts outside of winning set
         BDD nZ2 = !Z2;
         // {(x,u)} with posts outside of winning set
-        BDD Fbdd = Ts_[curAbs]->symbolicSet_.AndAbstract(nZ2, *notXUvars_[curAbs]);
+        BDD Fbdd = T.AndAbstract(nZ2, *notXUvars_[curAbs]);
         // {(x,u)} with no posts outside of winning set
         BDD nF = !Fbdd;
         // get rid of junk
-        BDD preF = TTs_[curAbs]->AndAbstract(nF, *notXUvars_[curAbs]);
+        BDD preF = TT.AndAbstract(nF, *notXUvars_[curAbs]);
         return preF;
-    }
-
-    /*! One iteration in an adaptive minimal fixed point.
-        \param[in]		minToGoCoarser		Minimum number of iterations at an abstraction (not coarsest) before attemping to project to the next coarser abstraction.
-        \param[in]		minToBeValid		Minimum number of iterations at an abstraction (not finest) after having gone coarser before a controller is declared valid and saved as a backup.
-        \param[in]		earlyBreak			Whether the fixed point should end as soon as a strategy exists for the initial state.
-        \param[in]		verbose				Whether messages detailing the steps of the algorithm should be printed to the log file.
-        \param[in,out]	curAbs				0-index of the abstraction under consideration for the current iteration.
-        \param[in,out]	iter				Counter for the total number of iterations of the minimal fixed point.
-        \param[in,out]	justCoarsed			Status of the abstraction under consideration.
-        \param[in,out]	iterCurAbs			Counter for the consecutive number of iterations for the current abstraction.
-        \param[in,out]	reached				Whether the initial state has been declared winning.
-        \param[in,out]	stop				Whether the fixed point should end.
-    */
-    void mu(int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose, int* curAbs, int* iter, int* justCoarsed, int* iterCurAbs, int* reached, int* stop) {
-        clog << "current abstraction: " << *curAbs << '\n';
-        clog << "mu iteration: " << *iter << '\n';
-        clog << "justCoarsed: " << *justCoarsed << '\n';
-        clog << "iterCurAbs: " << *iterCurAbs << '\n';
-        clog << "reached: " << *reached << '\n';
-        clog << "controllers: " << finalCs_.size() << '\n';
-
-        // get pre(Z)
-        BDD preF = preC(Zs_[*curAbs]->symbolicSet_, *curAbs);
-        // disjunct with goal (minimal fixed point)
-        preF |= Gs_[*curAbs]->symbolicSet_;
-        // find new {(x,u)}
-        BDD N = preF & (!(Cs_[*curAbs]->symbolicSet_.ExistAbstract(*cubeU_)));
-        // add new {(x,u)} to C
-        Cs_[*curAbs]->symbolicSet_ |= N;
-        // project onto Xs_[*curAbs]
-        Zs_[*curAbs]->symbolicSet_ = preF.ExistAbstract(*notXvars_[*curAbs]);
-
-        if (((Zs_[*curAbs]->symbolicSet_ & Is_[*curAbs]->symbolicSet_) != ddmgr_->bddZero()) && (*reached == 0)) {
-            *reached = 1;
-            if (earlyBreak == 1) {
-                saveCZ(*curAbs);
-                *stop = 1;
-                clog << "\nTotal number of controllers: " << finalCs_.size() << '\n';
-                return;
-            }
-        }
-
-        if (*iter != 1) { // first iteration will always fail since we start with an empty Z
-            if (N == ddmgr_->bddZero()) { // if iteration failed to yield new (x,u)
-                if (*curAbs == numAbs_ - 1) { // if we're in the finest abstraction
-                    if (*reached == 1) {
-                        saveCZ(*curAbs);
-                    }
-                    else {
-                    }
-                    *stop = 1;
-                    clog << "\nTotal number of controllers: " << finalCs_.size() << '\n';
-                }
-                else {
-                    if (verbose) {
-                        clog << "No new winning states; going finer.\n";
-                    }
-                    if (*justCoarsed == 1) { // current controller has not been declared valid
-                        if (verbose) {
-                            clog << "Current controller has not been declared valid.\n";
-                            clog << "Removing last elements of finalCs_ and finalZs_.\n";
-                            clog << "Resetting Zs_[" << *curAbs << "] and Cs_[" << *curAbs << "] from valids.\n";
-                        }
-
-                        // remove the last saved C and F from finalCs_ and Fs_
-                        SymbolicSet* C = finalCs_.back();
-                        finalCs_.pop_back();
-                        delete(C);
-                        SymbolicSet* Z = finalZs_.back();
-                        finalZs_.pop_back();
-                        delete(Z);
-                        *justCoarsed = 0;
-
-                        // reset the current winning states and controller
-                        Zs_[*curAbs]->symbolicSet_ = validZs_[*curAbs]->symbolicSet_;
-                        Cs_[*curAbs]->symbolicSet_ = validCs_[*curAbs]->symbolicSet_;
-
-                    }
-                    else {
-                        if (verbose) {
-                            clog << "Current controller has been declared valid.\n";
-                            clog << "Saving Z and C of abstraction " << *curAbs << " into valids, finals.\n";
-                            clog << "Finding inner approximation of Zs_[" << *curAbs << "] and copying into validZs_[" << *curAbs+1 << "].\n";
-                        }
-                        validZs_[*curAbs]->symbolicSet_ = Zs_[*curAbs]->symbolicSet_;
-                        validCs_[*curAbs]->symbolicSet_ = Cs_[*curAbs]->symbolicSet_;
-
-                        saveCZ(*curAbs);
-                        innerFinerAligned(Zs_[*curAbs], Zs_[*curAbs+1], *curAbs);
-                        validZs_[*curAbs+1]->symbolicSet_ = Zs_[*curAbs+1]->symbolicSet_;
-                    }
-                    *curAbs += 1;
-                    *iterCurAbs = 1;
-                }
-            }
-            else { // if there were new (x,u)
-                if ((*justCoarsed == 1) && (*iterCurAbs >= minToBeValid)) {
-                    if (verbose) {
-                        clog << "Current controller now valid.\n";
-                    }
-                    *justCoarsed = 0;
-                }
-                if (*curAbs == 0) {
-                    if (verbose) {
-                        clog << "More new states, already at coarsest gridding, continuing.\n";
-                    }
-                    *iterCurAbs += 1;
-                }
-                else {
-                    if (*iterCurAbs >= minToGoCoarser) {
-                        if (verbose) {
-                            clog << "More new states, minToGoCoarser achieved; try going coarser.\n";
-                        }
-                        int more = innerCoarserAligned(Zs_[*curAbs-1], Zs_[*curAbs], *curAbs-1);
-
-                        if (more == 0) {
-                            if (verbose) {
-                                clog << "Projecting to coarser gives no more states in coarser; not changing abstraction.\n";
-                            }
-                            *iterCurAbs += 1;
-                        }
-                        else {
-                            if (verbose) {
-                                clog << "Projecting to coarser gives more states in coarser.\n";
-                                clog << "Saving Z and C of abstraction " << *curAbs << " into validZs, validCs, finalZs, finalCs.\n";
-                                clog << "Saving Z and C of abstraction " << *curAbs-1 << " into validZs_, validCs.\n";
-                            }
-                            saveCZ(*curAbs);
-                            validZs_[*curAbs]->symbolicSet_ = Zs_[*curAbs]->symbolicSet_;
-                            validCs_[*curAbs]->symbolicSet_ = Cs_[*curAbs]->symbolicSet_;
-                            *justCoarsed = 1;
-                            validZs_[*curAbs-1]->symbolicSet_ = Zs_[*curAbs-1]->symbolicSet_;
-                            validCs_[*curAbs-1]->symbolicSet_ = Cs_[*curAbs-1]->symbolicSet_;
-                            *curAbs -= 1;
-                            *iterCurAbs = 1;
-                        }
-                    }
-                    else {
-                        *iterCurAbs += 1;
-                    }
-                }
-            }
-        }
-        else {
-            if (verbose) {
-                clog << "First iteration, nothing happens.\n";
-            }
-        }
-
-        clog << "\n";
-        *iter += 1;
-    }
-
-    /*! Debugging fucntion. Implementation of basic SCOTS safety (single abstraction) in the Adaptive framework. */
-    void safeBasicDebug(int verbose = 0) {
-        if (numAbs_ != 1) {
-            error("Error: For comparison with SCOTS, numAbs needs to be 1.\n");
-        }
-
-        int curAbs = 0;
-
-        TicToc tt;
-        tt.tic();
-
-        SymbolicSet C(*Xs_[curAbs], *U_);
-
-        int iter = 1;
-
-        while (1) {
-            // get pre(Z)
-            C.symbolicSet_ = preC(Zs_[curAbs]->symbolicSet_, curAbs);
-            // conjunct with safe set (maximal fixed point)
-            C.symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
-            // project onto Xs_[curAbs]
-            BDD Z = C.symbolicSet_.ExistAbstract(*notXvars_[curAbs]);
-
-            clog << "iter: " << iter << '\n';
-            iter += 1;
-
-            if (Z != Zs_[curAbs]->symbolicSet_) {
-                Zs_[curAbs]->symbolicSet_ = Z;
-            }
-            else {
-                break;
-            }
-        }
-
-        tt.toc();
-
-        C.printInfo(1);
-        checkMakeDir("debug");
-        C.writeToFile("debug/C.bdd");
-
-        SymbolicSet X(*Xs_[curAbs]);
-        X.symbolicSet_ = C.symbolicSet_.ExistAbstract(U_->getCube());
-
-        clog << "Domain of controller:\n";
-        X.printInfo(1);
-    }
-
-    /*! Debugging function. Implementation of basic SCOTS reachability (single abstraction) in the Adaptive framework. */
-    template<class G_type, class I_type, class O_type>
-    void reachBasicDebug(int startAbs, G_type addG, I_type addI, O_type addO, int debug = 0) {
-
-        int curAbs = startAbs;
-
-        SymbolicSet G(*Xs_[curAbs]);
-        addG(&G);
-        SymbolicSet O(G);
-        addO(&O);
-        G.symbolicSet_ &= !(O.symbolicSet_);
-
-//        G.printInfo(1);
-
-        SymbolicSet F(*Xs_[curAbs], *U_);
-//        F.symbolicSet_ = G.symbolicSet_ & U_->symbolicSet_;
-//        F.printInfo(1);
-//        U_->printInfo(1);
-
-        SymbolicSet C(*Xs_[curAbs], *U_);
-
-        BDD Z = ddmgr_->bddZero();
-
-        SymbolicSet domain(C);
-        domain.addGridPoints();
-
-        int iter = 1;
-        while ((C.symbolicSet_ & Is_[curAbs]->symbolicSet_) == ddmgr_->bddZero()) {
-
-            //             project onto Xs_[curAbs]
-
-            Z = F.symbolicSet_.ExistAbstract(*notXvars_[curAbs]);
-
-            if (iter == debug) {
-                SymbolicSet Zss(*Xs_[curAbs]);
-                Zss.symbolicSet_ = Z;
-                clog << "Z = F.symbolicSet_.ExistAbstract(notXvars)\n";
-                Zss.printInfo(1);
-            }
-
-            // swap to X2s_[curAbs]
-            Z = Z.Permute(permutesXtoX2_[curAbs]);
-
-            SymbolicSet X2(*X2s_[curAbs]);
-            X2.symbolicSet_ = Z;
-            //            X2.printInfo(1);
-
-            BDD nZ = !Z;
-
-            if (iter == debug) {
-                X2.symbolicSet_ = nZ;
-                clog << "BDD nZ = !Z\n";
-                X2.printInfo(1);
-            }
-
-            BDD T = Abs_[curAbs]->transitionRelation_;
-            BDD Fbdd = T.AndAbstract(nZ, *notXUvars_[curAbs]);
-
-
-            SymbolicSet Tss(C, X2);
-            Tss.symbolicSet_ = T;
-            //            Tss.printInfo(1);
-
-            if (iter == debug) {
-                SymbolicSet Fss(*Xs_[curAbs], *U_);
-                Fss.symbolicSet_ = Fbdd;
-                clog << "BDD Fbdd = T.AndAbstract(nZ, notXUvars)\n";
-                Fss.printInfo(1);
-            }
-
-            BDD nF = !Fbdd;
-
-            if (iter == debug) {
-                SymbolicSet nFss(*Xs_[curAbs], *U_);
-                nFss.symbolicSet_ = nF;
-                clog << "BDD nF = !Fbdd\n";
-                nFss.printInfo(1);
-            }
-
-            BDD TT = T.ExistAbstract(*cubesX2_[curAbs]);
-            BDD preF = TT.AndAbstract(nF, *notXUvars_[curAbs]);
-
-            if (iter == debug) {
-                SymbolicSet preFss(*Xs_[curAbs], *U_);
-                preFss.symbolicSet_ = preF;
-                clog << "BDD preF = TT.AndAbstract(nF, notXUvars)\n";
-                preFss.printInfo(1);
-            }
-
-            preF |= G.symbolicSet_;
-
-            BDD N = preF & (!(C.symbolicSet_.ExistAbstract(*cubeU_)));
-
-            if (iter == debug) {
-                SymbolicSet Nss(*Xs_[curAbs], *U_);
-                Nss.symbolicSet_ = N;
-                clog << "BDD N = preF & (!(C.symbolicSet_.ExistAbstract(notXvars)))\n";
-                Nss.printInfo(1);
-            }
-
-            C.symbolicSet_ |= N;
-
-            F.symbolicSet_ = preF;
-
-            iter++;
-
-        }
-        clog << "iterations: " << iter << '\n';
-        C.printInfo(1);
-        checkMakeDir("debug");
-        C.writeToFile("debug/C.bdd");
-
-        // normal SCOTS sanity check
-        clog << "------------------------------normal SCOTS-----------------------------------\n";
-        FixedPoint fp(Abs_[curAbs]);
-        SymbolicSet C2(C);
-        C2.symbolicSet_ = fp.reach(G.symbolicSet_, Is_[curAbs]->symbolicSet_, 1, 1);
-//        C.symbolicSet_ &= domain.symbolicSet_;
-        C2.printInfo(1);
-
-        clog << "Cs are equal: " << ((C.symbolicSet_ <= C2.symbolicSet_) && (C2.symbolicSet_ <= C.symbolicSet_)) << "\n";
-//        domain.printInfo(2);
-    }
-
-    /*! Saves a snapshot of a controller and its domain into the sequence of final controllers and controller domains.
-        \param[in] curAbs	0-index of the abstraction which the controller and controller domain that should be saved belong to.
-    */
-    void saveCZ(int curAbs) {
-        SymbolicSet* C = new SymbolicSet(*Cs_[curAbs]);
-        C->symbolicSet_ = Cs_[curAbs]->symbolicSet_;
-        finalCs_.push_back(C);
-        SymbolicSet* Z = new SymbolicSet(*Xs_[curAbs]);
-        Z->symbolicSet_ = Zs_[curAbs]->symbolicSet_;
-        finalZs_.push_back(Z);
     }
 
     /*! Initializes the BDDs useful for existential abstraction. Must be called only after initializing Xs, U, and X2s. */
@@ -1145,12 +460,12 @@ public:
             saveVec(Ts_, "T/T");
         }
 
-        // removing obstacles from transition relation
-        for (int i = 0; i < numAbs_; i++) {
-            Ts_[i]->printInfo(1);
-            Ts_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_);
-            *TTs_[i] &= !(Os_[i]->symbolicSet_);
-        }
+//        // removing obstacles from transition relation
+//        for (int i = 0; i < numAbs_; i++) {
+//            Ts_[i]->printInfo(1);
+//            Ts_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_);
+//            *TTs_[i] &= !(Os_[i]->symbolicSet_);
+//        }
 
         clog << "Os_ removed from Ts_, TTs_.\n";
     }
@@ -1192,18 +507,15 @@ public:
         for (int i = 0; i < numAbs_; i++) {
             SymbolicSet* Z = new SymbolicSet(*Xs_[i]);
             Zs_.push_back(Z);
-            SymbolicSet* validZ = new SymbolicSet(*Xs_[i]);
-            validZs_.push_back(validZ);
+
         }
-        clog << "Zs_, validZs_ initialized with empty domain.\n";
+        clog << "Zs_ initialized with empty domain.\n";
 
         for (int i = 0; i < numAbs_; i++) {
             SymbolicSet* C = new SymbolicSet(*Xs_[i], *U_);
             Cs_.push_back(C);
-            SymbolicSet* validC = new SymbolicSet(*C);
-            validCs_.push_back(validC);
         }
-        clog << "Cs_, validCs_ initialized with empty domain.\n";
+        clog << "Cs_ initialized with empty domain.\n";
     }
 
     /*! Initializes Ts_ and TTs_.*/
@@ -1469,16 +781,6 @@ public:
 //        }
     }
 
-    /*! Throws a logic error along with specified message and closes the log file.
-     *  \param[in]  msg     Error message to log to file.
-     */
-    template<class msg_type>
-    void error(msg_type msg) {
-        std::ostringstream os;
-        os << msg;
-        throw std::logic_error(os.str().c_str());
-        fclose(stderr);
-    }
 
 
     /*! Prints information regarding the abstractions' grid parameters to the log file. */
@@ -1558,6 +860,7 @@ public:
     }
 
 };
+
 }
 
 #endif /* ADAPTIVE_HH_ */
