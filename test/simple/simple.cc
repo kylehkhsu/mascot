@@ -81,8 +81,8 @@ int main() {
     double lbX[dimX]={0, 0};
     double ubX[dimX]={10, 10};
 
-    double lbU[dimU]={-1, -1};
-    double ubU[dimU]= {1, 1};
+    double lbU[dimU]={-1.3, -1.3};
+    double ubU[dimU]= {1.3, 1.3};
     double etaU[dimU]= {0.5, 0.5};
 
     double etaRatio[dimX] = {2, 2};
@@ -90,7 +90,7 @@ int main() {
     int nint = 5;
 
     double etaX[dimX]= {0.8, 0.8};
-    double tau = 2;
+    double tau = 1.2;
     int numAbs = 3;
 
     int readXX = 0; // if specification has changed, needs to be 0
