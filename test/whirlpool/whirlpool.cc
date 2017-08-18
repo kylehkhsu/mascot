@@ -5,7 +5,7 @@
 
 #include "cuddObj.hh"
 
-#include "Adaptive.hh"
+#include "AlwaysEventually.hh"
 #include "Compare.hh"
 
 using namespace std;
@@ -98,12 +98,12 @@ int main() {
     int readAbs = 0; // if X or U or O or dynamics has changed, needs to be 0
 
 
-    Adaptive<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
+    AlwaysEventually<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
                                  dimU, lbU, ubU, etaU,
                                  etaRatio, tauRatio, nint,
                                  numAbs, readXX, readAbs, "adaptive.txt");
 
-    abs.initializeReach(whirlpoolAddG, whirlpoolAddI, whirlpoolAddO);
+    abs.initialize(whirlpoolAddG, whirlpoolAddI, whirlpoolAddO);
     abs.computeAbstractions(sysNext, radNext);
 
     int startAbs = 1;
@@ -113,6 +113,6 @@ int main() {
 
 //    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
     abs.alwaysEventually(startAbs, minToGoCoarser, minToBeValid);
-    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs, earlyBreak);
+//    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs, earlyBreak);
 
 }
