@@ -214,8 +214,6 @@ public:
         saveVec(Os_, "O/O");
     }
 
-
-
     /*! Initializes objects specific to the following specifications: safe.
         \param[in]	addS	Function pointer specifying the points that should be added to the potential safe set.
     */
@@ -506,8 +504,6 @@ public:
             }
             if (curAbs != numAbs_ - 1) {
                 innerFinerAligned(Zs_[curAbs], infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
-                Zs_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // take away above from the starting Z of the next abstraction
-                Ss_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // take away same from the S of the next abstraction
 
                 Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
                 *TTs_[curAbs+1] &= !(infZs_[curAbs+1]->symbolicSet_); // same as above

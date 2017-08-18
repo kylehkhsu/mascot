@@ -4,10 +4,10 @@ X2s_ initialized with full domain.
 U_ initialized with full domain.
 Zs_, validZs_ initialized with empty domain.
 Cs_, validCs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 0.0205512 seconds.
+------------------------------------------------initializeXXs: Elapsed time is 0.0234149 seconds.
 Number of BDD variables: 65
 Ss_ initialized
-------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.00501898 seconds.
+------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.00543609 seconds.
 Zs_ modified to BDD-1.
 infZs_ initialized to empty.
 etaX_:
@@ -19,8 +19,8 @@ abstraction 1: 0.5
 U:
 Number of elements in the transition relation: 55344
 Number of elements in the transition relation: 747821
-------------------------------------------------computeAbstractions: Elapsed time is 1.69286 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 1.74867 seconds.
 Os_ removed from Ts_, TTs_.
 ..............................................................62
 .............................................................61
-----------------------------------------safe: Elapsed time is 1.44192 seconds.
+----------------------------------------safe: Elapsed time is 1.42975 seconds.
