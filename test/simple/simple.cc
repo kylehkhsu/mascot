@@ -14,7 +14,7 @@ using namespace scots;
 #define dimU 2
 
 /* disturbance */
-const double w[dimX] = {0.05, 0.05};
+const double w[dimX] = {0.3, 0.3};
 
 /* data types for the ode solver */
 typedef std::array<double, dimX> X_type;
@@ -46,7 +46,7 @@ auto simpleAddO = [](SymbolicSet* O) -> void {
                       1, 0,
                       0,-1,
                       0, 1};
-    double h1[4] = {-4, 5, 1, 9.3};
+    double h1[4] = {-4, 5, 1, 9};
     O->addPolytope(4, H, h1, OUTER);
 };
 
@@ -55,7 +55,7 @@ auto simpleAddG = [](SymbolicSet* G) -> void {
                       1, 0,
                       0,-1,
                       0, 1};
-    double c[4] = {-8, 10, -8, 10};
+    double c[4] = {-7.5, 10, -7.5, 10};
     G->addPolytope(4, H, c, INNER);
 };
 
@@ -90,7 +90,7 @@ int main() {
     int nint = 5;
 
     double etaX[dimX]= {0.8, 0.8};
-    double tau = 1.2;
+    double tau = 2;
     int numAbs = 3;
 
     int readXX = 0; // if specification has changed, needs to be 0

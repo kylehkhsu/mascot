@@ -1,6 +1,6 @@
 
 function simple (mode, numAbs, controllers)
-  w = [0.05 0.05];
+  w = [0.3 0.3];
   addpath(genpath('../..'));
   
   % colors
