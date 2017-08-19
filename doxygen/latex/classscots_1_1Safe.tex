@@ -12,7 +12,7 @@ A class (derived from base \hyperlink{classscots_1_1Adaptive}{Adaptive}) that do
 Inheritance diagram for scots\+:\+:Safe$<$ X\+\_\+type, U\+\_\+type $>$\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classscots_1_1Safe}
+\includegraphics[height=3.000000cm]{classscots_1_1Safe}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -20,16 +20,16 @@ Inheritance diagram for scots\+:\+:Safe$<$ X\+\_\+type, U\+\_\+type $>$\+:\begin
 \item 
 \hyperlink{classscots_1_1Safe_a40024a9098c70cebc5842a09b46448b8}{Safe} (int dimX, double $\ast$lbX, double $\ast$ubX, double $\ast$etaX, double tau, int dimU, double $\ast$lbU, double $\ast$ubU, double $\ast$etaU, double $\ast$eta\+Ratio, double tau\+Ratio, int nint, int num\+Abs, int read\+XX, int read\+Abs, char $\ast$log\+File)
 \item 
+void \hyperlink{classscots_1_1Safe_ac9f2578f6b74602510ca5db4b2ef31b9}{nu} (int cur\+Abs)
+\item 
 void \hyperlink{classscots_1_1Safe_af5ea22ef6bd1f86dd1a6f7ef6e590492}{safe} ()
 \item 
-{\footnotesize template$<$class S\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Safe_af43dd97d2d0a63b06b72e9a435e70fcf}{initialize} (S\+\_\+type addS)
+{\footnotesize template$<$class S\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Safe_a8255c8172548f64907fedaddfcae9519}{initialize\+Safe} (S\+\_\+type addS)
 \item 
 void \hyperlink{classscots_1_1Safe_ab6866ae8860c91feb49467556f0a8598}{save\+Verify} ()
 \end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
-\item 
-vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Safe_a14fd7c2c700e6a4ea5d6d169febd4289}{Os\+\_\+}
 \item 
 vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Safe_a4c272a1e134f26e88c74a08c2703d934}{Ss\+\_\+}
 \item 
@@ -54,20 +54,27 @@ A class (derived from base \hyperlink{classscots_1_1Adaptive}{Adaptive}) that do
 Constructor for a \hyperlink{classscots_1_1Safe}{Safe} object. 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classscots_1_1Safe_af43dd97d2d0a63b06b72e9a435e70fcf}\label{classscots_1_1Safe_af43dd97d2d0a63b06b72e9a435e70fcf}} 
-\index{scots\+::\+Safe@{scots\+::\+Safe}!initialize@{initialize}}
-\index{initialize@{initialize}!scots\+::\+Safe@{scots\+::\+Safe}}
-\subsubsection{\texorpdfstring{initialize()}{initialize()}}
+\mbox{\Hypertarget{classscots_1_1Safe_a8255c8172548f64907fedaddfcae9519}\label{classscots_1_1Safe_a8255c8172548f64907fedaddfcae9519}} 
+\index{scots\+::\+Safe@{scots\+::\+Safe}!initialize\+Safe@{initialize\+Safe}}
+\index{initialize\+Safe@{initialize\+Safe}!scots\+::\+Safe@{scots\+::\+Safe}}
+\subsubsection{\texorpdfstring{initialize\+Safe()}{initializeSafe()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 template$<$class S\+\_\+type $>$ \\
-void \hyperlink{classscots_1_1Safe}{scots\+::\+Safe}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize (\begin{DoxyParamCaption}\item[{S\+\_\+type}]{addS }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+void \hyperlink{classscots_1_1Safe}{scots\+::\+Safe}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Safe (\begin{DoxyParamCaption}\item[{S\+\_\+type}]{addS }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Initializes objects specific to the following specifications\+: safe. 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em addS} & Function pointer specifying the points that should be added to the potential safe set. \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{classscots_1_1Safe_af5ea22ef6bd1f86dd1a6f7ef6e590492}\label{classscots_1_1Safe_af5ea22ef6bd1f86dd1a6f7ef6e590492}} 
+\mbox{\Hypertarget{classscots_1_1Safe_ac9f2578f6b74602510ca5db4b2ef31b9}\label{classscots_1_1Safe_ac9f2578f6b74602510ca5db4b2ef31b9}} 
+\index{scots\+::\+Safe@{scots\+::\+Safe}!nu@{nu}}
+\index{nu@{nu}!scots\+::\+Safe@{scots\+::\+Safe}}
+\subsubsection{\texorpdfstring{nu()}{nu()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Safe}{scots\+::\+Safe}$<$ X\+\_\+type, U\+\_\+type $>$\+::nu (\begin{DoxyParamCaption}\item[{int}]{cur\+Abs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\hyperlink{classscots_1_1Adaptive}{Adaptive} maximal fixed point. \mbox{\Hypertarget{classscots_1_1Safe_af5ea22ef6bd1f86dd1a6f7ef6e590492}\label{classscots_1_1Safe_af5ea22ef6bd1f86dd1a6f7ef6e590492}} 
 \index{scots\+::\+Safe@{scots\+::\+Safe}!safe@{safe}}
 \index{safe@{safe}!scots\+::\+Safe@{scots\+::\+Safe}}
 \subsubsection{\texorpdfstring{safe()}{safe()}}
@@ -91,14 +98,7 @@ Saves and prints to log file some information related to the safety specificatio
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Safe}{scots\+::\+Safe}$<$ X\+\_\+type, U\+\_\+type $>$\+::inf\+Zs\+\_\+}
 
-Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing projection of convergence of previous maximal fixed points. \mbox{\Hypertarget{classscots_1_1Safe_a14fd7c2c700e6a4ea5d6d169febd4289}\label{classscots_1_1Safe_a14fd7c2c700e6a4ea5d6d169febd4289}} 
-\index{scots\+::\+Safe@{scots\+::\+Safe}!Os\+\_\+@{Os\+\_\+}}
-\index{Os\+\_\+@{Os\+\_\+}!scots\+::\+Safe@{scots\+::\+Safe}}
-\subsubsection{\texorpdfstring{Os\+\_\+}{Os\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Safe}{scots\+::\+Safe}$<$ X\+\_\+type, U\+\_\+type $>$\+::Os\+\_\+}
-
-Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing unsafe (obstacle) states. \mbox{\Hypertarget{classscots_1_1Safe_a4c272a1e134f26e88c74a08c2703d934}\label{classscots_1_1Safe_a4c272a1e134f26e88c74a08c2703d934}} 
+Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing projection of convergence of previous maximal fixed points. \mbox{\Hypertarget{classscots_1_1Safe_a4c272a1e134f26e88c74a08c2703d934}\label{classscots_1_1Safe_a4c272a1e134f26e88c74a08c2703d934}} 
 \index{scots\+::\+Safe@{scots\+::\+Safe}!Ss\+\_\+@{Ss\+\_\+}}
 \index{Ss\+\_\+@{Ss\+\_\+}!scots\+::\+Safe@{scots\+::\+Safe}}
 \subsubsection{\texorpdfstring{Ss\+\_\+}{Ss\_}}

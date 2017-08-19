@@ -26,7 +26,7 @@ void \hyperlink{classscots_1_1Reach_a6787ba675345efb35d5b5dcd720cf389}{mu} (int 
 \item 
 int \hyperlink{classscots_1_1Reach_aae2c35919866a8235f822542a4bb3dfe}{reach} (int start\+Abs, int min\+To\+Go\+Coarser, int min\+To\+Be\+Valid, int early\+Break, int verbose=1)
 \item 
-{\footnotesize template$<$class G\+\_\+type , class I\+\_\+type , class O\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Reach_ab9c383f3cbb0556814479ea377e75baa}{initialize} (G\+\_\+type addG, I\+\_\+type addI, O\+\_\+type addO)
+{\footnotesize template$<$class G\+\_\+type , class I\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Reach_ad49c77293343ad0ce4f36c9deee45f00}{initialize\+Reach} (G\+\_\+type addG, I\+\_\+type addI)
 \item 
 void \hyperlink{classscots_1_1Reach_ada9bf5083703b737976effb85de28c4b}{save\+CZ} (int cur\+Abs)
 \item 
@@ -38,8 +38,6 @@ void \hyperlink{classscots_1_1Reach_ab9c39fa2834a0a8f08abe48838ae1c41}{save\+Ver
 vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Reach_af3fd5ddf192d97ec5dc650ad57e6c485}{Gs\+\_\+}
 \item 
 vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Reach_a3366767e4a2edbb8c683e0a74a709b10}{Is\+\_\+}
-\item 
-vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Reach_aaf92fe46eb13b4939c4bf350102135ce}{Os\+\_\+}
 \item 
 vector$<$ Symbolic\+Set $\ast$ $>$ \hyperlink{classscots_1_1Reach_a2f484ac1e7bd5a451b409c373149369c}{valid\+Zs\+\_\+}
 \item 
@@ -75,21 +73,19 @@ Constructor for a \hyperlink{classscots_1_1Reach}{Reach} object. \mbox{\Hypertar
 Deconstructor for a \hyperlink{classscots_1_1Reach}{Reach} object. 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classscots_1_1Reach_ab9c383f3cbb0556814479ea377e75baa}\label{classscots_1_1Reach_ab9c383f3cbb0556814479ea377e75baa}} 
-\index{scots\+::\+Reach@{scots\+::\+Reach}!initialize@{initialize}}
-\index{initialize@{initialize}!scots\+::\+Reach@{scots\+::\+Reach}}
-\subsubsection{\texorpdfstring{initialize()}{initialize()}}
+\mbox{\Hypertarget{classscots_1_1Reach_ad49c77293343ad0ce4f36c9deee45f00}\label{classscots_1_1Reach_ad49c77293343ad0ce4f36c9deee45f00}} 
+\index{scots\+::\+Reach@{scots\+::\+Reach}!initialize\+Reach@{initialize\+Reach}}
+\index{initialize\+Reach@{initialize\+Reach}!scots\+::\+Reach@{scots\+::\+Reach}}
+\subsubsection{\texorpdfstring{initialize\+Reach()}{initializeReach()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-template$<$class G\+\_\+type , class I\+\_\+type , class O\+\_\+type $>$ \\
-void \hyperlink{classscots_1_1Reach}{scots\+::\+Reach}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize (\begin{DoxyParamCaption}\item[{G\+\_\+type}]{addG,  }\item[{I\+\_\+type}]{addI,  }\item[{O\+\_\+type}]{addO }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+template$<$class G\+\_\+type , class I\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Reach}{scots\+::\+Reach}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Reach (\begin{DoxyParamCaption}\item[{G\+\_\+type}]{addG,  }\item[{I\+\_\+type}]{addI }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Initializes objects specific to the following specifications\+: always-\/eventually, reach-\/while-\/avoid. 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em addG} & Function pointer specifying the points that should be added to the goal set. \\
 \hline
 \mbox{\tt in}  & {\em addI} & Function pointer specifying the points that should be added to the initial set. \\
-\hline
-\mbox{\tt in}  & {\em addO} & Function pointer specifying the points that should be added to the obstacle set. \\
 \hline
 \end{DoxyParams}
 \mbox{\Hypertarget{classscots_1_1Reach_a6787ba675345efb35d5b5dcd720cf389}\label{classscots_1_1Reach_a6787ba675345efb35d5b5dcd720cf389}} 
@@ -195,14 +191,7 @@ Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing goal states. \mbox{\Hyp
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Reach}{scots\+::\+Reach}$<$ X\+\_\+type, U\+\_\+type $>$\+::Is\+\_\+}
 
-Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing initial states. \mbox{\Hypertarget{classscots_1_1Reach_aaf92fe46eb13b4939c4bf350102135ce}\label{classscots_1_1Reach_aaf92fe46eb13b4939c4bf350102135ce}} 
-\index{scots\+::\+Reach@{scots\+::\+Reach}!Os\+\_\+@{Os\+\_\+}}
-\index{Os\+\_\+@{Os\+\_\+}!scots\+::\+Reach@{scots\+::\+Reach}}
-\subsubsection{\texorpdfstring{Os\+\_\+}{Os\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-vector$<$Symbolic\+Set$\ast$$>$ \hyperlink{classscots_1_1Reach}{scots\+::\+Reach}$<$ X\+\_\+type, U\+\_\+type $>$\+::Os\+\_\+}
-
-Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing unsafe (obstacle) states. \mbox{\Hypertarget{classscots_1_1Reach_ade8c2425a8ff0cc7d7ed017412b6aa29}\label{classscots_1_1Reach_ade8c2425a8ff0cc7d7ed017412b6aa29}} 
+Instance of $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} containing initial states. \mbox{\Hypertarget{classscots_1_1Reach_ade8c2425a8ff0cc7d7ed017412b6aa29}\label{classscots_1_1Reach_ade8c2425a8ff0cc7d7ed017412b6aa29}} 
 \index{scots\+::\+Reach@{scots\+::\+Reach}!valid\+Cs\+\_\+@{valid\+Cs\+\_\+}}
 \index{valid\+Cs\+\_\+@{valid\+Cs\+\_\+}!scots\+::\+Reach@{scots\+::\+Reach}}
 \subsubsection{\texorpdfstring{valid\+Cs\+\_\+}{validCs\_}}

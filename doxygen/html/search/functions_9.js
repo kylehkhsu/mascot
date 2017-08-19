@@ -1,10 +1,7 @@
 var searchData=
 [
-  ['safe',['Safe',['../classscots_1_1Safe.html#a40024a9098c70cebc5842a09b46448b8',1,'scots::Safe::Safe(int dimX, double *lbX, double *ubX, double *etaX, double tau, int dimU, double *lbU, double *ubU, double *etaU, double *etaRatio, double tauRatio, int nint, int numAbs, int readXX, int readAbs, char *logFile)'],['../classscots_1_1Safe.html#af5ea22ef6bd1f86dd1a6f7ef6e590492',1,'scots::Safe::safe()']]],
-  ['safescots',['safeSCOTS',['../classscots_1_1Compare.html#ad54d4ddd0268b4a41e53f19d668ab8b0',1,'scots::Compare']]],
-  ['savecz',['saveCZ',['../classscots_1_1Reach.html#ada9bf5083703b737976effb85de28c4b',1,'scots::Reach']]],
-  ['savevec',['saveVec',['../Helper_8hh.html#afea778bfb31cba93e003c382413c36b2',1,'helper']]],
-  ['saveverify',['saveVerify',['../classscots_1_1Adaptive.html#ab1d6eeb4c4b6ec88e7e6a283a7dfd57d',1,'scots::Adaptive::saveVerify()'],['../classscots_1_1Reach.html#ab9c39fa2834a0a8f08abe48838ae1c41',1,'scots::Reach::saveVerify()'],['../classscots_1_1Safe.html#ab6866ae8860c91feb49467556f0a8598',1,'scots::Safe::saveVerify()']]],
-  ['saveverifyreach',['saveVerifyReach',['../classscots_1_1Compare.html#aa96846be5c881576f5add5ce32f7fe8a',1,'scots::Compare']]],
-  ['saveverifysafe',['saveVerifySafe',['../classscots_1_1Compare.html#a9e79295cd6f8c7eed65d29ca2667cff9',1,'scots::Compare']]]
+  ['reach',['reach',['../classscots_1_1Reach.html#aae2c35919866a8235f822542a4bb3dfe',1,'scots::Reach::reach(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose=1)'],['../classscots_1_1Reach.html#ac61b7e746e55013c48de47eb3dc00ff7',1,'scots::Reach::Reach(int dimX, double *lbX, double *ubX, double *etaX, double tau, int dimU, double *lbU, double *ubU, double *etaU, double *etaRatio, double tauRatio, int nint, int numAbs, int readXX, int readAbs, char *logFile)']]],
+  ['reachandstay',['reachAndStay',['../classscots_1_1ReachAndStay.html#a8615d9a4050bbb186a38fe0e3ae97c69',1,'scots::ReachAndStay::reachAndStay(G_type addG, I_type addI, int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak)'],['../classscots_1_1ReachAndStay.html#ae4bd2a2de95e4cd1287523c49b0b974d',1,'scots::ReachAndStay::ReachAndStay(int dimX, double *lbX, double *ubX, double *etaX, double tau, int dimU, double *lbU, double *ubU, double *etaU, double *etaRatio, double tauRatio, int nint, int numAbs, int readXX, int readAbs, char *logFile)']]],
+  ['reachscots',['reachSCOTS',['../classscots_1_1Compare.html#a506b87a62b1adde561d725e9cc1315e9',1,'scots::Compare']]],
+  ['removefromts',['removeFromTs',['../classscots_1_1Adaptive.html#a47e3334958032965fa6218ad0c24ac02',1,'scots::Adaptive']]]
 ];

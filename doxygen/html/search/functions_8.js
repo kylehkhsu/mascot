@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['reach',['reach',['../classscots_1_1Reach.html#aae2c35919866a8235f822542a4bb3dfe',1,'scots::Reach::reach(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose=1)'],['../classscots_1_1Reach.html#ac61b7e746e55013c48de47eb3dc00ff7',1,'scots::Reach::Reach(int dimX, double *lbX, double *ubX, double *etaX, double tau, int dimU, double *lbU, double *ubU, double *etaU, double *etaRatio, double tauRatio, int nint, int numAbs, int readXX, int readAbs, char *logFile)']]],
-  ['reachscots',['reachSCOTS',['../classscots_1_1Compare.html#a506b87a62b1adde561d725e9cc1315e9',1,'scots::Compare']]],
-  ['removefromts',['removeFromTs',['../classscots_1_1Adaptive.html#a47e3334958032965fa6218ad0c24ac02',1,'scots::Adaptive']]]
+  ['prec',['preC',['../classscots_1_1Adaptive.html#aa12a6d24ae6d46011215c2008181bbd2',1,'scots::Adaptive']]],
+  ['printarray',['printArray',['../Helper_8hh.html#ad3a9b9a5d8b46962dae72719f691201c',1,'helper']]],
+  ['printetax',['printEtaX',['../classscots_1_1Adaptive.html#af192d9fee4a464e21d88b2d9735c5053',1,'scots::Adaptive::printEtaX()'],['../classscots_1_1Compare.html#a4ed25bd656e43ea3693266843edb88d2',1,'scots::Compare::printEtaX()']]],
+  ['printtau',['printTau',['../classscots_1_1Adaptive.html#a7e3c0b5babfb943dcda7f7f5c89cbb3e',1,'scots::Adaptive::printTau()'],['../classscots_1_1Compare.html#a9f062bcfa755da8ba004045cb9605ab5',1,'scots::Compare::printTau()']]],
+  ['printvec',['printVec',['../Helper_8hh.html#a33cb7ae024bddfc7874b8aaa80d46f4b',1,'helper']]]
 ];

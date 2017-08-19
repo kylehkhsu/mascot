@@ -17,6 +17,7 @@ namespace scots {
 template<class X_type, class U_type>
 class ReachAndStay: public Reach<X_type, U_type>, public Safe<X_type, U_type> {
 public:
+
     /*! Constructor for a ReachAndStay object. */
     ReachAndStay(int dimX, double* lbX, double* ubX, double* etaX, double tau,
                  int dimU, double* lbU, double* ubU, double* etaU,
@@ -42,6 +43,14 @@ public:
 
     }
 
+    /*! Writes a series of controllers that satisfies a reach-and-stay specification.
+     *  \param[in]	addG	Function pointer specifying the points that should be added to the goal set.
+     *  \param[in]	addI	Function pointer specifying the points that should be added to the initial set.
+     *  \param[in]  startAbs            0-index of the abstraction to start with.
+     *  \param[in]	minToGoCoarser		Minimum number of growing fixed point iterations needed before an attempt to go to a coarser abstraction.
+     *  \param[in]	minToBeValid		Minimum number of growing fixed point iterations needed before a controller is declared valid.
+     *  \param[in]  earlyBreak          If 1, the synthesis ends as soon as I meets the domain of C.
+     */
     template<class G_type, class I_type>
     void reachAndStay(G_type addG, I_type addI, int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak) {
         this->initializeSafe(addG);
@@ -105,7 +114,6 @@ public:
 
         clog << "----------------------------------------reachAndStay: ";
         ttWhole.toc();
-
 
     }
 

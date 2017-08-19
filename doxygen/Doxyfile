@@ -790,7 +790,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../bdd/Adaptive.hh ../utils/Helper.hh ../bdd/Compare.hh ../bdd/Reach.hh ../bdd/Safe.hh ../bdd/AlwaysEventually.hh
+INPUT                  = ../bdd/Adaptive.hh ../utils/Helper.hh ../bdd/Compare.hh ../bdd/Reach.hh ../bdd/Safe.hh ../bdd/AlwaysEventually.hh ../bdd/ReachAndStay.hh
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

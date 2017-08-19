@@ -142,6 +142,9 @@ public:
         delete ddmgr_;
     }
 
+    /*! Initializes BDD-related data members.
+     *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
+     */
     template<class O_type>
     void initialize(O_type addO) {
 
