@@ -1,11 +1,14 @@
 adaptive.txt
+Initialized alignment.
+Initialized etaX_, tau_.
+Initialized solvers.
 Xs_ initialized with full domain.
 Os_ initialized according to specification.
 X2s_ initialized with full domain.
 U_ initialized with full domain.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 0.25648 seconds.
+------------------------------------------------initializeXXs: Elapsed time is 8.80568 seconds.
 Number of BDD variables: 66
 etaX_:
 abstraction 0: 0.8 0.8 
@@ -17,13 +20,13 @@ abstraction 1: 0.6
 abstraction 2: 0.3
 Gs_ initialized.
 Is_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.000554846 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.0395997 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
 Ts_ initialized with empty domain.
 Ts_ read from file.
-------------------------------------------------computeAbstractions: Elapsed time is 0.0170582 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 0.415731 seconds.
 TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
 current abstraction: 2
@@ -513,4 +516,4 @@ controllers: 6
 
 Total number of controllers: 7
 Won.
-----------------------------------------reach: Elapsed time is 0.136621 seconds.
+----------------------------------------reach: Elapsed time is 4.02661 seconds.

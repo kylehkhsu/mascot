@@ -1,21 +1,31 @@
 adaptive.txt
+Initialized alignment.
+Initialized etaX_, tau_.
+Initialized solvers.
 Xs_ initialized with full domain.
 Os_ initialized according to specification.
 X2s_ initialized with full domain.
 U_ initialized with full domain.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 0.407079 seconds.
+------------------------------------------------initializeXXs: Elapsed time is 0.392806 seconds.
 Number of BDD variables: 49
+etaX_:
+abstraction 0: 0.6 0.6 
+abstraction 1: 0.2 0.2 
+tau_:
+abstraction 0: 0.9
+abstraction 1: 0.3
 Gs_ initialized.
 Is_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.0137128 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.00666879 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
 Ts_ initialized with empty domain.
 Ts_ computed by sampling system behavior.
-------------------------------------------------computeAbstractions: Elapsed time is 1.24565 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 1.28205 seconds.
+Wrote Ts_ to file.
 TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
 ------------------------------nu iteration: 1------------------------------
@@ -1113,4 +1123,4 @@ AlwaysEventually: iteration 3
 Won.
 Abstraction of E: 1
 4
-----------------------------------------alwaysEventually: Elapsed time is 0.592535 seconds.
+----------------------------------------alwaysEventually: Elapsed time is 1.31281 seconds.

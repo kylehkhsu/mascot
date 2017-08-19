@@ -97,10 +97,9 @@ int main() {
     int readXX = 1; // if X or U has changed, needs to be 0
     int readAbs = 0; // if X or U or O or dynamics has changed, needs to be 0
 
-
-    AlwaysEventually<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
-                                 dimU, lbU, ubU, etaU,
-                                 etaRatio, tauRatio, nint,
+    System system(dimX, lbX, ubX, etaX, tau,
+                  dimU, lbU, ubU, etaU);
+    AlwaysEventually<X_type, U_type> abs(&system, etaRatio, tauRatio, nint,
                                  numAbs, readXX, readAbs, "adaptive.txt");
 
     abs.initialize(whirlpoolAddG, whirlpoolAddI, whirlpoolAddO);

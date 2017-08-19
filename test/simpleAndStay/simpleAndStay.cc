@@ -96,9 +96,9 @@ int main() {
     int readXX = 0; // if specification has changed, needs to be 0
     int readAbs = 0;
 
-    ReachAndStay<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
-                                     dimU, lbU, ubU, etaU,
-                                     etaRatio, tauRatio, nint,
+    System system(dimX, lbX, ubX, etaX, tau,
+                  dimU, lbU, ubU, etaU);
+    ReachAndStay<X_type, U_type> abs(&system, etaRatio, tauRatio, nint,
                                      numAbs, readXX, readAbs, "adaptive.txt");
     abs.initialize(simpleAddO);
     abs.computeAbstractions(sysNext, radNext);

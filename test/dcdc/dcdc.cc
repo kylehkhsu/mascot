@@ -120,10 +120,10 @@ int main() {
     int readXX = 1; // if X, U have changed, needs to be 0.
     int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
-    Safe<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
-                                 dimU, lbU, ubU, etaU,
-                                 etaRatio, tauRatio, nint,
-                                 numAbs, readXX, readAbs, "adaptive.txt");
+    System system(dimX, lbX, ubX, etaX, tau,
+                  dimU, lbU, ubU, etaU);
+    Safe<X_type, U_type> abs(&system, etaRatio, tauRatio, nint,
+                             numAbs, readXX, readAbs, "adaptive.txt");
     abs.initialize(dcdcAddO);
     abs.initializeSafe(dcdcAddS);
     abs.computeAbstractions(sysNext, radNext);
