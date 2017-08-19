@@ -92,8 +92,8 @@ Inheritance diagram for scots::Adaptive&lt; X_type, U_type &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5665d4b8db7cc7c1e1ecba0a512959d7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a5665d4b8db7cc7c1e1ecba0a512959d7">Adaptive</a> (int dimX, double *lbX, double *ubX, double *etaX, double tau, int dimU, double *lbU, double *ubU, double *etaU, double *etaRatio, double tauRatio, int nint, int numAbs, int readXX, int readAbs, char *logFile)</td></tr>
-<tr class="separator:a5665d4b8db7cc7c1e1ecba0a512959d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a376630f4de5c90857e243c305e3aaa53"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a376630f4de5c90857e243c305e3aaa53">Adaptive</a> (<a class="el" href="classscots_1_1System.html">System</a> *system, double *etaRatio, double tauRatio, int nSubInt, int numAbs, int readXX, int readAbs, char *logFile)</td></tr>
+<tr class="separator:a376630f4de5c90857e243c305e3aaa53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa20062d309691c2858912bc3fd9616e7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#aa20062d309691c2858912bc3fd9616e7">~Adaptive</a> ()</td></tr>
 <tr class="separator:aa20062d309691c2858912bc3fd9616e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acad37a2f5296206da9c7ab2b82e622fd"><td class="memTemplParams" colspan="2">template&lt;class O_type &gt; </td></tr>
@@ -128,10 +128,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1ec108254af99302f1aa0c0c97389a2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f23922cbd2768a8339c73928ddc9c5a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a8f23922cbd2768a8339c73928ddc9c5a">initializeAlignment</a> ()</td></tr>
 <tr class="separator:a8f23922cbd2768a8339c73928ddc9c5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dca1d73761d2678f981512dee5c325d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a3dca1d73761d2678f981512dee5c325d">initializeEtaTau</a> (double *etaX, double tau)</td></tr>
-<tr class="separator:a3dca1d73761d2678f981512dee5c325d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25cc058f39f38402ff914ae6b927393e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a25cc058f39f38402ff914ae6b927393e">initializeSolvers</a> (int nint)</td></tr>
-<tr class="separator:a25cc058f39f38402ff914ae6b927393e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a655af3ff313bd74cca9896846d71680d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a655af3ff313bd74cca9896846d71680d">initializeEtaTau</a> ()</td></tr>
+<tr class="separator:a655af3ff313bd74cca9896846d71680d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae560144f79da25ac086d5ac0589397a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ae560144f79da25ac086d5ac0589397a8">initializeSolvers</a> ()</td></tr>
+<tr class="separator:ae560144f79da25ac086d5ac0589397a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af08ee7fae4cf6c5ae1fcabb8699e0721"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#af08ee7fae4cf6c5ae1fcabb8699e0721">initializeXXs</a> ()</td></tr>
 <tr class="separator:af08ee7fae4cf6c5ae1fcabb8699e0721"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab75f4bbed30ecc70747185f36fcab200"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ab75f4bbed30ecc70747185f36fcab200">initializeNumBDDVars</a> ()</td></tr>
@@ -157,32 +157,22 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a9e6666734880dba708dd931348041274"><td class="memItemLeft" align="right" valign="top">Cudd *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a9e6666734880dba708dd931348041274">ddmgr_</a></td></tr>
 <tr class="separator:a9e6666734880dba708dd931348041274"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a852e87d359ae3c0fe13493bac80f35f6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a852e87d359ae3c0fe13493bac80f35f6">dimX_</a></td></tr>
-<tr class="separator:a852e87d359ae3c0fe13493bac80f35f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6018fcd45bd81cc0073f0bd1f375829d"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a6018fcd45bd81cc0073f0bd1f375829d">lbX_</a></td></tr>
-<tr class="separator:a6018fcd45bd81cc0073f0bd1f375829d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac50c58c4495d727acdb321a0b995426b"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ac50c58c4495d727acdb321a0b995426b">ubX_</a></td></tr>
-<tr class="separator:ac50c58c4495d727acdb321a0b995426b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac26b29e9c729fd641af851f87e2ee2b4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ac26b29e9c729fd641af851f87e2ee2b4">dimU_</a></td></tr>
-<tr class="separator:ac26b29e9c729fd641af851f87e2ee2b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebaf5b4abaa33f4494491cbe67b42b80"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#aebaf5b4abaa33f4494491cbe67b42b80">lbU_</a></td></tr>
-<tr class="separator:aebaf5b4abaa33f4494491cbe67b42b80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5c0bc8b175609073aa1f26ad6a83f1c"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#aa5c0bc8b175609073aa1f26ad6a83f1c">ubU_</a></td></tr>
-<tr class="separator:aa5c0bc8b175609073aa1f26ad6a83f1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc2e430a31aa9ceb8ab6593a9eb3e91f"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#acc2e430a31aa9ceb8ab6593a9eb3e91f">etaU_</a></td></tr>
-<tr class="separator:acc2e430a31aa9ceb8ab6593a9eb3e91f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c9f6e3b1ae0c7bcabeafb28732d67ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classscots_1_1System.html">System</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a3c9f6e3b1ae0c7bcabeafb28732d67ab">system_</a></td></tr>
+<tr class="separator:a3c9f6e3b1ae0c7bcabeafb28732d67ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0ae9692bf76a9d38cca670e9535310f"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#af0ae9692bf76a9d38cca670e9535310f">etaRatio_</a></td></tr>
 <tr class="separator:af0ae9692bf76a9d38cca670e9535310f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33592a853774854552908de4762f8f8c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a33592a853774854552908de4762f8f8c">tauRatio_</a></td></tr>
 <tr class="separator:a33592a853774854552908de4762f8f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8279bfd4ed3ffa12cc1775ee66cf0e21"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a8279bfd4ed3ffa12cc1775ee66cf0e21">nSubInt_</a></td></tr>
+<tr class="separator:a8279bfd4ed3ffa12cc1775ee66cf0e21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afdd5a499494efeb8538346ad9e0f329c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#afdd5a499494efeb8538346ad9e0f329c">numAbs_</a></td></tr>
 <tr class="separator:afdd5a499494efeb8538346ad9e0f329c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4f525a5a65b284da14369a54532cf39"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ad4f525a5a65b284da14369a54532cf39">alignment_</a></td></tr>
-<tr class="separator:ad4f525a5a65b284da14369a54532cf39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95926f102459b6ec3525040c791ff359"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a95926f102459b6ec3525040c791ff359">readXX_</a></td></tr>
 <tr class="separator:a95926f102459b6ec3525040c791ff359"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c2a7e89feeb75f0b51fdf9c8d1359e7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a8c2a7e89feeb75f0b51fdf9c8d1359e7">readAbs_</a></td></tr>
 <tr class="separator:a8c2a7e89feeb75f0b51fdf9c8d1359e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4f525a5a65b284da14369a54532cf39"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ad4f525a5a65b284da14369a54532cf39">alignment_</a></td></tr>
+<tr class="separator:ad4f525a5a65b284da14369a54532cf39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe9d5faea4bd01753070599200e224c5"><td class="memItemLeft" align="right" valign="top">vector&lt; double * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#abe9d5faea4bd01753070599200e224c5">etaX_</a></td></tr>
 <tr class="separator:abe9d5faea4bd01753070599200e224c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2276dbf06b4db12739aed70443c1a32d"><td class="memItemLeft" align="right" valign="top">vector&lt; double * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a2276dbf06b4db12739aed70443c1a32d">tau_</a></td></tr>
@@ -232,8 +222,8 @@ class scots::Adaptive&lt; X_type, U_type &gt;</h3>
 
 <p>A class that does abstraction-based synthesis with adaptive time- and state space-gridding. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5665d4b8db7cc7c1e1ecba0a512959d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5665d4b8db7cc7c1e1ecba0a512959d7">&#9670;&nbsp;</a></span>Adaptive()</h2>
+<a id="a376630f4de5c90857e243c305e3aaa53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a376630f4de5c90857e243c305e3aaa53">&#9670;&nbsp;</a></span>Adaptive()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -246,56 +236,8 @@ template&lt;class X_type , class U_type &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::<a class="el" href="classscots_1_1Adaptive.html">Adaptive</a> </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>dimX</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>lbX</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>ubX</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>etaX</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>tau</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>dimU</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>lbU</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>ubU</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>etaU</em>, </td>
+          <td class="paramtype"><a class="el" href="classscots_1_1System.html">System</a> *&#160;</td>
+          <td class="paramname"><em>system</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -313,7 +255,7 @@ template&lt;class X_type , class U_type &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>nint</em>, </td>
+          <td class="paramname"><em>nSubInt</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -353,18 +295,10 @@ template&lt;class X_type , class U_type &gt; </div>
 </div><div class="memdoc">
 <p>Constructor for an <a class="el" href="classscots_1_1Adaptive.html" title="A class that does abstraction-based synthesis with adaptive time- and state space-gridding. ">Adaptive</a> object. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">dimX</td><td>Dimensionality of the state space. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">lbX</td><td>Lowermost grid point of the state space. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">ubX</td><td>Uppermost grid point of the state space. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">etaX</td><td>Coarsest grid spacing of the state space. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tau</td><td>Coarsest time step. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dimU</td><td>Dimensionality of the input space. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">lbU</td><td>Lowermost grid point of the input space. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">ubU</td><td>Uppermost grid point of the input space. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">etaU</td><td>Grid spacing of the input space. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">system</td><td>Contains abstraction parameters. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">etaRatio</td><td>Ratio between grid spacings of the input space in consecutive abstractions. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tauRatio</td><td>Ratio between time steps of consecutive abstractions. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nint</td><td>Number of sub-intervals in ODE solving per time step. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nSubInt</td><td>Number of sub-intervals in ODE solving per time step. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">numAbs</td><td>Number of abstractions. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">readXX</td><td>Whether initializeXXs should be done by construction (0) or reading from files (1). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">readAbs</td><td>Whether initializeAbs should be done by construction (0) or reading from files (1). </td></tr>
@@ -627,8 +561,8 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="a3dca1d73761d2678f981512dee5c325d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3dca1d73761d2678f981512dee5c325d">&#9670;&nbsp;</a></span>initializeEtaTau()</h2>
+<a id="a655af3ff313bd74cca9896846d71680d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a655af3ff313bd74cca9896846d71680d">&#9670;&nbsp;</a></span>initializeEtaTau()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -641,19 +575,8 @@ template&lt;class X_type , class U_type &gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::initializeEtaTau </td>
           <td>(</td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>etaX</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>tau</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -750,8 +673,8 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="a25cc058f39f38402ff914ae6b927393e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a25cc058f39f38402ff914ae6b927393e">&#9670;&nbsp;</a></span>initializeSolvers()</h2>
+<a id="ae560144f79da25ac086d5ac0589397a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae560144f79da25ac086d5ac0589397a8">&#9670;&nbsp;</a></span>initializeSolvers()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -764,8 +687,7 @@ template&lt;class X_type , class U_type &gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::initializeSolvers </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>nint</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -775,12 +697,7 @@ template&lt;class X_type , class U_type &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Initializes the Runge-Katta ODE solvers. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">nint</td><td>Number of desired sub-steps for each time step in the numerical approximation process. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Initializes the Runge-Katta ODE solvers. </p>
 
 </div>
 </div>
@@ -1437,40 +1354,6 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="ac26b29e9c729fd641af851f87e2ee2b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac26b29e9c729fd641af851f87e2ee2b4">&#9670;&nbsp;</a></span>dimU_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">int <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::dimU_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Dimensionality of input space. </p>
-
-</div>
-</div>
-<a id="a852e87d359ae3c0fe13493bac80f35f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a852e87d359ae3c0fe13493bac80f35f6">&#9670;&nbsp;</a></span>dimX_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">int <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::dimX_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Dimensionality of state space. </p>
-
-</div>
-</div>
 <a id="af0ae9692bf76a9d38cca670e9535310f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af0ae9692bf76a9d38cca670e9535310f">&#9670;&nbsp;</a></span>etaRatio_</h2>
 
@@ -1488,23 +1371,6 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="acc2e430a31aa9ceb8ab6593a9eb3e91f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc2e430a31aa9ceb8ab6593a9eb3e91f">&#9670;&nbsp;</a></span>etaU_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">double* <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::etaU_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Grid spacing of input space abstraction in each dimension. </p>
-
-</div>
-</div>
 <a id="abe9d5faea4bd01753070599200e224c5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abe9d5faea4bd01753070599200e224c5">&#9670;&nbsp;</a></span>etaX_</h2>
 
@@ -1518,41 +1384,7 @@ template&lt;class X_type , class U_type &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>numAbs_ x dimX_ matrix of state space grid spacings. </p>
-
-</div>
-</div>
-<a id="aebaf5b4abaa33f4494491cbe67b42b80"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aebaf5b4abaa33f4494491cbe67b42b80">&#9670;&nbsp;</a></span>lbU_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">double* <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::lbU_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Lowermost grid point of input space. </p>
-
-</div>
-</div>
-<a id="a6018fcd45bd81cc0073f0bd1f375829d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6018fcd45bd81cc0073f0bd1f375829d">&#9670;&nbsp;</a></span>lbX_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">double* <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::lbX_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Lowermost grid point of state space. </p>
+<p>numAbs_ x *system_-&gt;dimX_ matrix of state space grid spacings. </p>
 
 </div>
 </div>
@@ -1587,6 +1419,23 @@ template&lt;class X_type , class U_type &gt; </div>
       </table>
 </div><div class="memdoc">
 <p>notXvars_[i] is a BDD over all ddmgr_ variables whose 1-term is DC for *Xs_[i] and 1 otherwise. </p>
+
+</div>
+</div>
+<a id="a8279bfd4ed3ffa12cc1775ee66cf0e21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8279bfd4ed3ffa12cc1775ee66cf0e21">&#9670;&nbsp;</a></span>nSubInt_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class X_type , class U_type &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::nSubInt_</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Number of sub-intervals in ODE solving per time step. </p>
 
 </div>
 </div>
@@ -1726,6 +1575,23 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
+<a id="a3c9f6e3b1ae0c7bcabeafb28732d67ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c9f6e3b1ae0c7bcabeafb28732d67ab">&#9670;&nbsp;</a></span>system_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class X_type , class U_type &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classscots_1_1System.html">System</a>* <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::system_</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Contains abstraction parameters. </p>
+
+</div>
+</div>
 <a id="a2276dbf06b4db12739aed70443c1a32d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2276dbf06b4db12739aed70443c1a32d">&#9670;&nbsp;</a></span>tau_</h2>
 
@@ -1808,40 +1674,6 @@ template&lt;class X_type , class U_type &gt; </div>
       </table>
 </div><div class="memdoc">
 <p>The single input space abstraction. </p>
-
-</div>
-</div>
-<a id="aa5c0bc8b175609073aa1f26ad6a83f1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa5c0bc8b175609073aa1f26ad6a83f1c">&#9670;&nbsp;</a></span>ubU_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">double* <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::ubU_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Uppermost grid point of input space. </p>
-
-</div>
-</div>
-<a id="ac50c58c4495d727acdb321a0b995426b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac50c58c4495d727acdb321a0b995426b">&#9670;&nbsp;</a></span>ubX_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">double* <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::ubX_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Uppermost grid point of state space. </p>
 
 </div>
 </div>

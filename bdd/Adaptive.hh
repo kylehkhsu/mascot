@@ -71,6 +71,7 @@ public:
      *  \param[in]  system      Contains abstraction parameters.
      *  \param[in]	etaRatio	Ratio between grid spacings of the input space in consecutive abstractions.
      *  \param[in]	tauRatio	Ratio between time steps of consecutive abstractions.
+     *  \param[in]  nSubInt     Number of sub-intervals in ODE solving per time step.
      *  \param[in]	numAbs		Number of abstractions.
      *  \param[in]	readXX		Whether initializeXXs should be done by construction (0) or reading from files (1).
      *  \param[in]	readAbs		Whether initializeAbs should be done by construction (0) or reading from files (1).

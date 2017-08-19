@@ -18,7 +18,7 @@ Inheritance diagram for scots\+:\+:Adaptive$<$ X\+\_\+type, U\+\_\+type $>$\+:\b
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classscots_1_1Adaptive_a5665d4b8db7cc7c1e1ecba0a512959d7}{Adaptive} (int dimX, double $\ast$lbX, double $\ast$ubX, double $\ast$etaX, double tau, int dimU, double $\ast$lbU, double $\ast$ubU, double $\ast$etaU, double $\ast$eta\+Ratio, double tau\+Ratio, int nint, int num\+Abs, int read\+XX, int read\+Abs, char $\ast$log\+File)
+\hyperlink{classscots_1_1Adaptive_a376630f4de5c90857e243c305e3aaa53}{Adaptive} (\hyperlink{classscots_1_1System}{System} $\ast$system, double $\ast$eta\+Ratio, double tau\+Ratio, int n\+Sub\+Int, int num\+Abs, int read\+XX, int read\+Abs, char $\ast$log\+File)
 \item 
 \hyperlink{classscots_1_1Adaptive_aa20062d309691c2858912bc3fd9616e7}{$\sim$\+Adaptive} ()
 \item 
@@ -48,9 +48,9 @@ void \hyperlink{classscots_1_1Adaptive_a111bfb2d3fd8eb0a3871da715985d534}{load\+
 \item 
 void \hyperlink{classscots_1_1Adaptive_a8f23922cbd2768a8339c73928ddc9c5a}{initialize\+Alignment} ()
 \item 
-void \hyperlink{classscots_1_1Adaptive_a3dca1d73761d2678f981512dee5c325d}{initialize\+Eta\+Tau} (double $\ast$etaX, double tau)
+void \hyperlink{classscots_1_1Adaptive_a655af3ff313bd74cca9896846d71680d}{initialize\+Eta\+Tau} ()
 \item 
-void \hyperlink{classscots_1_1Adaptive_a25cc058f39f38402ff914ae6b927393e}{initialize\+Solvers} (int nint)
+void \hyperlink{classscots_1_1Adaptive_ae560144f79da25ac086d5ac0589397a8}{initialize\+Solvers} ()
 \item 
 void \hyperlink{classscots_1_1Adaptive_af08ee7fae4cf6c5ae1fcabb8699e0721}{initialize\+X\+Xs} ()
 \item 
@@ -77,31 +77,21 @@ void \hyperlink{classscots_1_1Adaptive_a8ea5724cde577baf708496d6bef7e548}{debug}
 \item 
 Cudd $\ast$ \hyperlink{classscots_1_1Adaptive_a9e6666734880dba708dd931348041274}{ddmgr\+\_\+}
 \item 
-int \hyperlink{classscots_1_1Adaptive_a852e87d359ae3c0fe13493bac80f35f6}{dim\+X\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Adaptive_a6018fcd45bd81cc0073f0bd1f375829d}{lb\+X\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Adaptive_ac50c58c4495d727acdb321a0b995426b}{ub\+X\+\_\+}
-\item 
-int \hyperlink{classscots_1_1Adaptive_ac26b29e9c729fd641af851f87e2ee2b4}{dim\+U\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Adaptive_aebaf5b4abaa33f4494491cbe67b42b80}{lb\+U\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Adaptive_aa5c0bc8b175609073aa1f26ad6a83f1c}{ub\+U\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Adaptive_acc2e430a31aa9ceb8ab6593a9eb3e91f}{eta\+U\+\_\+}
+\hyperlink{classscots_1_1System}{System} $\ast$ \hyperlink{classscots_1_1Adaptive_a3c9f6e3b1ae0c7bcabeafb28732d67ab}{system\+\_\+}
 \item 
 double $\ast$ \hyperlink{classscots_1_1Adaptive_af0ae9692bf76a9d38cca670e9535310f}{eta\+Ratio\+\_\+}
 \item 
 double \hyperlink{classscots_1_1Adaptive_a33592a853774854552908de4762f8f8c}{tau\+Ratio\+\_\+}
 \item 
-int \hyperlink{classscots_1_1Adaptive_afdd5a499494efeb8538346ad9e0f329c}{num\+Abs\+\_\+}
+int \hyperlink{classscots_1_1Adaptive_a8279bfd4ed3ffa12cc1775ee66cf0e21}{n\+Sub\+Int\+\_\+}
 \item 
-int \hyperlink{classscots_1_1Adaptive_ad4f525a5a65b284da14369a54532cf39}{alignment\+\_\+}
+int \hyperlink{classscots_1_1Adaptive_afdd5a499494efeb8538346ad9e0f329c}{num\+Abs\+\_\+}
 \item 
 int \hyperlink{classscots_1_1Adaptive_a95926f102459b6ec3525040c791ff359}{read\+X\+X\+\_\+}
 \item 
 int \hyperlink{classscots_1_1Adaptive_a8c2a7e89feeb75f0b51fdf9c8d1359e7}{read\+Abs\+\_\+}
+\item 
+int \hyperlink{classscots_1_1Adaptive_ad4f525a5a65b284da14369a54532cf39}{alignment\+\_\+}
 \item 
 vector$<$ double $\ast$ $>$ \hyperlink{classscots_1_1Adaptive_abe9d5faea4bd01753070599200e224c5}{eta\+X\+\_\+}
 \item 
@@ -154,38 +144,22 @@ class scots\+::\+Adaptive$<$ X\+\_\+type, U\+\_\+type $>$}
 A class that does abstraction-\/based synthesis with adaptive time-\/ and state space-\/gridding. 
 
 \subsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classscots_1_1Adaptive_a5665d4b8db7cc7c1e1ecba0a512959d7}\label{classscots_1_1Adaptive_a5665d4b8db7cc7c1e1ecba0a512959d7}} 
+\mbox{\Hypertarget{classscots_1_1Adaptive_a376630f4de5c90857e243c305e3aaa53}\label{classscots_1_1Adaptive_a376630f4de5c90857e243c305e3aaa53}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!Adaptive@{Adaptive}}
 \index{Adaptive@{Adaptive}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{Adaptive()}{Adaptive()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-\hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::\hyperlink{classscots_1_1Adaptive}{Adaptive} (\begin{DoxyParamCaption}\item[{int}]{dimX,  }\item[{double $\ast$}]{lbX,  }\item[{double $\ast$}]{ubX,  }\item[{double $\ast$}]{etaX,  }\item[{double}]{tau,  }\item[{int}]{dimU,  }\item[{double $\ast$}]{lbU,  }\item[{double $\ast$}]{ubU,  }\item[{double $\ast$}]{etaU,  }\item[{double $\ast$}]{eta\+Ratio,  }\item[{double}]{tau\+Ratio,  }\item[{int}]{nint,  }\item[{int}]{num\+Abs,  }\item[{int}]{read\+XX,  }\item[{int}]{read\+Abs,  }\item[{char $\ast$}]{log\+File }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::\hyperlink{classscots_1_1Adaptive}{Adaptive} (\begin{DoxyParamCaption}\item[{\hyperlink{classscots_1_1System}{System} $\ast$}]{system,  }\item[{double $\ast$}]{eta\+Ratio,  }\item[{double}]{tau\+Ratio,  }\item[{int}]{n\+Sub\+Int,  }\item[{int}]{num\+Abs,  }\item[{int}]{read\+XX,  }\item[{int}]{read\+Abs,  }\item[{char $\ast$}]{log\+File }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Constructor for an \hyperlink{classscots_1_1Adaptive}{Adaptive} object. 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\tt in}  & {\em dimX} & Dimensionality of the state space. \\
-\hline
-\mbox{\tt in}  & {\em lbX} & Lowermost grid point of the state space. \\
-\hline
-\mbox{\tt in}  & {\em ubX} & Uppermost grid point of the state space. \\
-\hline
-\mbox{\tt in}  & {\em etaX} & Coarsest grid spacing of the state space. \\
-\hline
-\mbox{\tt in}  & {\em tau} & Coarsest time step. \\
-\hline
-\mbox{\tt in}  & {\em dimU} & Dimensionality of the input space. \\
-\hline
-\mbox{\tt in}  & {\em lbU} & Lowermost grid point of the input space. \\
-\hline
-\mbox{\tt in}  & {\em ubU} & Uppermost grid point of the input space. \\
-\hline
-\mbox{\tt in}  & {\em etaU} & Grid spacing of the input space. \\
+\mbox{\tt in}  & {\em system} & Contains abstraction parameters. \\
 \hline
 \mbox{\tt in}  & {\em eta\+Ratio} & Ratio between grid spacings of the input space in consecutive abstractions. \\
 \hline
 \mbox{\tt in}  & {\em tau\+Ratio} & Ratio between time steps of consecutive abstractions. \\
 \hline
-\mbox{\tt in}  & {\em nint} & Number of sub-\/intervals in O\+DE solving per time step. \\
+\mbox{\tt in}  & {\em n\+Sub\+Int} & Number of sub-\/intervals in O\+DE solving per time step. \\
 \hline
 \mbox{\tt in}  & {\em num\+Abs} & Number of abstractions. \\
 \hline
@@ -269,12 +243,12 @@ Initializes alignment\+\_\+ by examining eta\+Ratio\+\_\+. \mbox{\Hypertarget{cl
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Cubes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Initializes the B\+D\+Ds that are the precursors to not\+Xvars\+\_\+ and not\+X\+Uvars\+\_\+ \mbox{\Hypertarget{classscots_1_1Adaptive_a3dca1d73761d2678f981512dee5c325d}\label{classscots_1_1Adaptive_a3dca1d73761d2678f981512dee5c325d}} 
+Initializes the B\+D\+Ds that are the precursors to not\+Xvars\+\_\+ and not\+X\+Uvars\+\_\+ \mbox{\Hypertarget{classscots_1_1Adaptive_a655af3ff313bd74cca9896846d71680d}\label{classscots_1_1Adaptive_a655af3ff313bd74cca9896846d71680d}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Eta\+Tau@{initialize\+Eta\+Tau}}
 \index{initialize\+Eta\+Tau@{initialize\+Eta\+Tau}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{initialize\+Eta\+Tau()}{initializeEtaTau()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Eta\+Tau (\begin{DoxyParamCaption}\item[{double $\ast$}]{etaX,  }\item[{double}]{tau }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Eta\+Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Initializes the abstractions\textquotesingle{} state space grid parameters and time sampling parameters. \mbox{\Hypertarget{classscots_1_1Adaptive_a6a9af6f25e8c4015ceb24d704da26972}\label{classscots_1_1Adaptive_a6a9af6f25e8c4015ceb24d704da26972}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Not\+Vars@{initialize\+Not\+Vars}}
@@ -297,19 +271,14 @@ Initializes the number of total distinct B\+DD variables in use. \mbox{\Hypertar
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Permutes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Initializes the arrays of B\+DD variable I\+Ds that allow a B\+DD over an X domain to be projected to the identical B\+DD over the corresponding X2 domain. \mbox{\Hypertarget{classscots_1_1Adaptive_a25cc058f39f38402ff914ae6b927393e}\label{classscots_1_1Adaptive_a25cc058f39f38402ff914ae6b927393e}} 
+Initializes the arrays of B\+DD variable I\+Ds that allow a B\+DD over an X domain to be projected to the identical B\+DD over the corresponding X2 domain. \mbox{\Hypertarget{classscots_1_1Adaptive_ae560144f79da25ac086d5ac0589397a8}\label{classscots_1_1Adaptive_ae560144f79da25ac086d5ac0589397a8}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Solvers@{initialize\+Solvers}}
 \index{initialize\+Solvers@{initialize\+Solvers}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{initialize\+Solvers()}{initializeSolvers()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Solvers (\begin{DoxyParamCaption}\item[{int}]{nint }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+void \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Solvers (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Initializes the Runge-\/\+Katta O\+DE solvers. 
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\tt in}  & {\em nint} & Number of desired sub-\/steps for each time step in the numerical approximation process. \\
-\hline
-\end{DoxyParams}
-\mbox{\Hypertarget{classscots_1_1Adaptive_aac25a2399ed09b07ef546579c94b0726}\label{classscots_1_1Adaptive_aac25a2399ed09b07ef546579c94b0726}} 
+Initializes the Runge-\/\+Katta O\+DE solvers. \mbox{\Hypertarget{classscots_1_1Adaptive_aac25a2399ed09b07ef546579c94b0726}\label{classscots_1_1Adaptive_aac25a2399ed09b07ef546579c94b0726}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!initialize\+Spec@{initialize\+Spec}}
 \index{initialize\+Spec@{initialize\+Spec}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{initialize\+Spec()}{initializeSpec()}}
@@ -530,56 +499,21 @@ A B\+DD with a single minterm of all 1s over the domain of the input Symbolic\+S
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 Cudd$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::ddmgr\+\_\+}
 
-A single manager object common to all B\+D\+Ds used in the program. \mbox{\Hypertarget{classscots_1_1Adaptive_ac26b29e9c729fd641af851f87e2ee2b4}\label{classscots_1_1Adaptive_ac26b29e9c729fd641af851f87e2ee2b4}} 
-\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!dim\+U\+\_\+@{dim\+U\+\_\+}}
-\index{dim\+U\+\_\+@{dim\+U\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
-\subsubsection{\texorpdfstring{dim\+U\+\_\+}{dimU\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::dim\+U\+\_\+}
-
-Dimensionality of input space. \mbox{\Hypertarget{classscots_1_1Adaptive_a852e87d359ae3c0fe13493bac80f35f6}\label{classscots_1_1Adaptive_a852e87d359ae3c0fe13493bac80f35f6}} 
-\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!dim\+X\+\_\+@{dim\+X\+\_\+}}
-\index{dim\+X\+\_\+@{dim\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
-\subsubsection{\texorpdfstring{dim\+X\+\_\+}{dimX\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::dim\+X\+\_\+}
-
-Dimensionality of state space. \mbox{\Hypertarget{classscots_1_1Adaptive_af0ae9692bf76a9d38cca670e9535310f}\label{classscots_1_1Adaptive_af0ae9692bf76a9d38cca670e9535310f}} 
+A single manager object common to all B\+D\+Ds used in the program. \mbox{\Hypertarget{classscots_1_1Adaptive_af0ae9692bf76a9d38cca670e9535310f}\label{classscots_1_1Adaptive_af0ae9692bf76a9d38cca670e9535310f}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!eta\+Ratio\+\_\+@{eta\+Ratio\+\_\+}}
 \index{eta\+Ratio\+\_\+@{eta\+Ratio\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{eta\+Ratio\+\_\+}{etaRatio\_}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::eta\+Ratio\+\_\+}
 
-Ratio between state space grid spacings of consecutive abstractions. \mbox{\Hypertarget{classscots_1_1Adaptive_acc2e430a31aa9ceb8ab6593a9eb3e91f}\label{classscots_1_1Adaptive_acc2e430a31aa9ceb8ab6593a9eb3e91f}} 
-\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!eta\+U\+\_\+@{eta\+U\+\_\+}}
-\index{eta\+U\+\_\+@{eta\+U\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
-\subsubsection{\texorpdfstring{eta\+U\+\_\+}{etaU\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::eta\+U\+\_\+}
-
-Grid spacing of input space abstraction in each dimension. \mbox{\Hypertarget{classscots_1_1Adaptive_abe9d5faea4bd01753070599200e224c5}\label{classscots_1_1Adaptive_abe9d5faea4bd01753070599200e224c5}} 
+Ratio between state space grid spacings of consecutive abstractions. \mbox{\Hypertarget{classscots_1_1Adaptive_abe9d5faea4bd01753070599200e224c5}\label{classscots_1_1Adaptive_abe9d5faea4bd01753070599200e224c5}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!eta\+X\+\_\+@{eta\+X\+\_\+}}
 \index{eta\+X\+\_\+@{eta\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{eta\+X\+\_\+}{etaX\_}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 vector$<$double$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::eta\+X\+\_\+}
 
-num\+Abs\+\_\+ x dim\+X\+\_\+ matrix of state space grid spacings. \mbox{\Hypertarget{classscots_1_1Adaptive_aebaf5b4abaa33f4494491cbe67b42b80}\label{classscots_1_1Adaptive_aebaf5b4abaa33f4494491cbe67b42b80}} 
-\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!lb\+U\+\_\+@{lb\+U\+\_\+}}
-\index{lb\+U\+\_\+@{lb\+U\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
-\subsubsection{\texorpdfstring{lb\+U\+\_\+}{lbU\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::lb\+U\+\_\+}
-
-Lowermost grid point of input space. \mbox{\Hypertarget{classscots_1_1Adaptive_a6018fcd45bd81cc0073f0bd1f375829d}\label{classscots_1_1Adaptive_a6018fcd45bd81cc0073f0bd1f375829d}} 
-\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!lb\+X\+\_\+@{lb\+X\+\_\+}}
-\index{lb\+X\+\_\+@{lb\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
-\subsubsection{\texorpdfstring{lb\+X\+\_\+}{lbX\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::lb\+X\+\_\+}
-
-Lowermost grid point of state space. \mbox{\Hypertarget{classscots_1_1Adaptive_ac3f203003011bcea5176ef294ab7a8a0}\label{classscots_1_1Adaptive_ac3f203003011bcea5176ef294ab7a8a0}} 
+num\+Abs\+\_\+ x $\ast$system\+\_\+-\/$>$dim\+X\+\_\+ matrix of state space grid spacings. \mbox{\Hypertarget{classscots_1_1Adaptive_ac3f203003011bcea5176ef294ab7a8a0}\label{classscots_1_1Adaptive_ac3f203003011bcea5176ef294ab7a8a0}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!not\+X\+Uvars\+\_\+@{not\+X\+Uvars\+\_\+}}
 \index{not\+X\+Uvars\+\_\+@{not\+X\+Uvars\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{not\+X\+Uvars\+\_\+}{notXUvars\_}}
@@ -593,7 +527,14 @@ not\+X\+Uvars\+\_\+\mbox{[}i\mbox{]} is a B\+DD over all ddmgr\+\_\+ variables w
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 vector$<$B\+DD$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::not\+Xvars\+\_\+}
 
-not\+Xvars\+\_\+\mbox{[}i\mbox{]} is a B\+DD over all ddmgr\+\_\+ variables whose 1-\/term is DC for $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} and 1 otherwise. \mbox{\Hypertarget{classscots_1_1Adaptive_afdd5a499494efeb8538346ad9e0f329c}\label{classscots_1_1Adaptive_afdd5a499494efeb8538346ad9e0f329c}} 
+not\+Xvars\+\_\+\mbox{[}i\mbox{]} is a B\+DD over all ddmgr\+\_\+ variables whose 1-\/term is DC for $\ast$\+Xs\+\_\+\mbox{[}i\mbox{]} and 1 otherwise. \mbox{\Hypertarget{classscots_1_1Adaptive_a8279bfd4ed3ffa12cc1775ee66cf0e21}\label{classscots_1_1Adaptive_a8279bfd4ed3ffa12cc1775ee66cf0e21}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!n\+Sub\+Int\+\_\+@{n\+Sub\+Int\+\_\+}}
+\index{n\+Sub\+Int\+\_\+@{n\+Sub\+Int\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{n\+Sub\+Int\+\_\+}{nSubInt\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::n\+Sub\+Int\+\_\+}
+
+Number of sub-\/intervals in O\+DE solving per time step. \mbox{\Hypertarget{classscots_1_1Adaptive_afdd5a499494efeb8538346ad9e0f329c}\label{classscots_1_1Adaptive_afdd5a499494efeb8538346ad9e0f329c}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!num\+Abs\+\_\+@{num\+Abs\+\_\+}}
 \index{num\+Abs\+\_\+@{num\+Abs\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{num\+Abs\+\_\+}{numAbs\_}}
@@ -649,7 +590,14 @@ Whether X\+Xs\+\_\+ is computed or read from file. \mbox{\Hypertarget{classscots
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 vector$<$Ode\+Solver$\ast$$>$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::solvers\+\_\+}
 
-O\+DE solvers (Runge-\/\+Katta approximation) for each abstraction time step. \mbox{\Hypertarget{classscots_1_1Adaptive_a2276dbf06b4db12739aed70443c1a32d}\label{classscots_1_1Adaptive_a2276dbf06b4db12739aed70443c1a32d}} 
+O\+DE solvers (Runge-\/\+Katta approximation) for each abstraction time step. \mbox{\Hypertarget{classscots_1_1Adaptive_a3c9f6e3b1ae0c7bcabeafb28732d67ab}\label{classscots_1_1Adaptive_a3c9f6e3b1ae0c7bcabeafb28732d67ab}} 
+\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!system\+\_\+@{system\+\_\+}}
+\index{system\+\_\+@{system\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
+\subsubsection{\texorpdfstring{system\+\_\+}{system\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+\hyperlink{classscots_1_1System}{System}$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::system\+\_\+}
+
+Contains abstraction parameters. \mbox{\Hypertarget{classscots_1_1Adaptive_a2276dbf06b4db12739aed70443c1a32d}\label{classscots_1_1Adaptive_a2276dbf06b4db12739aed70443c1a32d}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!tau\+\_\+@{tau\+\_\+}}
 \index{tau\+\_\+@{tau\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{tau\+\_\+}{tau\_}}
@@ -684,21 +632,7 @@ T\+Ts\+\_\+\mbox{[}i\mbox{]} is Ts\+\_\+\mbox{[}i\mbox{]} with X2s\+\_\+\mbox{[}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 Symbolic\+Set$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::U\+\_\+}
 
-The single input space abstraction. \mbox{\Hypertarget{classscots_1_1Adaptive_aa5c0bc8b175609073aa1f26ad6a83f1c}\label{classscots_1_1Adaptive_aa5c0bc8b175609073aa1f26ad6a83f1c}} 
-\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!ub\+U\+\_\+@{ub\+U\+\_\+}}
-\index{ub\+U\+\_\+@{ub\+U\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
-\subsubsection{\texorpdfstring{ub\+U\+\_\+}{ubU\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::ub\+U\+\_\+}
-
-Uppermost grid point of input space. \mbox{\Hypertarget{classscots_1_1Adaptive_ac50c58c4495d727acdb321a0b995426b}\label{classscots_1_1Adaptive_ac50c58c4495d727acdb321a0b995426b}} 
-\index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!ub\+X\+\_\+@{ub\+X\+\_\+}}
-\index{ub\+X\+\_\+@{ub\+X\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
-\subsubsection{\texorpdfstring{ub\+X\+\_\+}{ubX\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Adaptive}{scots\+::\+Adaptive}$<$ X\+\_\+type, U\+\_\+type $>$\+::ub\+X\+\_\+}
-
-Uppermost grid point of state space. \mbox{\Hypertarget{classscots_1_1Adaptive_a532d1acf3db0235c7bbd551b41a040fc}\label{classscots_1_1Adaptive_a532d1acf3db0235c7bbd551b41a040fc}} 
+The single input space abstraction. \mbox{\Hypertarget{classscots_1_1Adaptive_a532d1acf3db0235c7bbd551b41a040fc}\label{classscots_1_1Adaptive_a532d1acf3db0235c7bbd551b41a040fc}} 
 \index{scots\+::\+Adaptive@{scots\+::\+Adaptive}!X2s\+\_\+@{X2s\+\_\+}}
 \index{X2s\+\_\+@{X2s\+\_\+}!scots\+::\+Adaptive@{scots\+::\+Adaptive}}
 \subsubsection{\texorpdfstring{X2s\+\_\+}{X2s\_}}
