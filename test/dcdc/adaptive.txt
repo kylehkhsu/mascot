@@ -5,16 +5,16 @@ X2s_ initialized with full domain.
 U_ initialized with full domain.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 0.0387724 seconds.
+------------------------------------------------initializeXXs: Elapsed time is 0.0291346 seconds.
 Number of BDD variables: 65
 Ss_ initialized
-------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.0054285 seconds.
+------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.00517957 seconds.
 Zs_ modified to BDD-1.
 infZs_ initialized to empty.
 Ts_ initialized with empty domain.
 Ts_ computed by sampling system behavior.
-------------------------------------------------computeAbstractions: Elapsed time is 1.74212 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 1.72912 seconds.
 TTs_ initialized by ExistAbstracting from Ts_.
 ..............................................................62
 .............................................................61
-----------------------------------------safe: Elapsed time is 1.43266 seconds.
+----------------------------------------safe: Elapsed time is 1.42271 seconds.
