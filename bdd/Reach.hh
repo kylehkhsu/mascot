@@ -14,12 +14,11 @@ namespace scots {
  *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for a reach specification.
  */
 template<class X_type, class U_type>
-class Reach: public Adaptive<X_type, U_type> {
+class Reach: public virtual Adaptive<X_type, U_type> {
 public:
 
     vector<SymbolicSet*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
     vector<SymbolicSet*> Is_; /*!< Instance of *Xs_[i] containing initial states. */
-    vector<SymbolicSet*> Os_; /*!< Instance of *Xs_[i] containing unsafe (obstacle) states. */
     vector<SymbolicSet*> validZs_; /*!< Contains winning states that act as savepoints. */
     vector<SymbolicSet*> validCs_; /*!< Controllers that act as savepoints. */
     vector<SymbolicSet*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
@@ -34,6 +33,7 @@ public:
                                    dimU, lbU, ubU, etaU,
                                    etaRatio, tauRatio, nint,
                                    numAbs, readXX, readAbs, logFile)
+
     {
     }
 
@@ -41,7 +41,6 @@ public:
     ~Reach() {
         deleteVec(Gs_);
         deleteVec(Is_);
-        deleteVec(Os_);
         deleteVec(validZs_);
         deleteVec(validCs_);
         deleteVec(finalCs_);
@@ -221,7 +220,7 @@ public:
         tt.tic();
 
         // removing obstacles from transition relation
-        this->removeFromTs(&Os_);
+        this->removeFromTs(&(this->Os_));
 
         clog << "Os_ removed from Ts_, TTs_.\n";
 
@@ -262,10 +261,9 @@ public:
     /*! Initializes objects specific to the following specifications: always-eventually, reach-while-avoid.
         \param[in]	addG	Function pointer specifying the points that should be added to the goal set.
         \param[in]	addI	Function pointer specifying the points that should be added to the initial set.
-        \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
     */
-    template<class G_type, class I_type, class O_type>
-    void initialize(G_type addG, I_type addI, O_type addO) {
+    template<class G_type, class I_type>
+    void initializeReach(G_type addG, I_type addI) {
         if (this->stage_ != 1) {
             error("Error: initializeReach called out of order.\n");
         }
@@ -277,17 +275,15 @@ public:
         clog << "Gs_ initialized.\n";
         this->initializeSpec(&Is_, addI);
         clog << "Is_ initialized.\n";
-        this->initializeSpec(&Os_, addO);
-        clog << "Os_ initialized.\n";
         clog << "------------------------------------------------initializeSpec on Gs_, Is_, Os_: ";
         tt.toc();
 
         // checking that specification is valid
         for (int i = 0; i < this->numAbs_; i++) {
-            if ((Gs_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != this->ddmgr_->bddZero()) {
+            if ((Gs_[i]->symbolicSet_ & this->Os_[i]->symbolicSet_) != this->ddmgr_->bddZero()) {
                 error("Error: G and O have nonzero intersection.\n");
             }
-            if ((Is_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != this->ddmgr_->bddZero()) {
+            if ((Is_[i]->symbolicSet_ & this->Os_[i]->symbolicSet_) != this->ddmgr_->bddZero()) {
                 error("Error: I and O have nonzero intersection.\n");
             }
         }
@@ -323,16 +319,13 @@ public:
     /*! Saves and prints to log file some information related to the reachability/always-eventually specification. */
     void saveVerify() {
         printVec(Gs_, "G");
-        printVec(Os_, "O");
         printVec(Is_, "I");
         checkMakeDir("plotting");
         Gs_[this->numAbs_-1]->writeToFile("plotting/G.bdd");
-        Os_[this->numAbs_-1]->writeToFile("plotting/O.bdd");
         Is_[this->numAbs_-1]->writeToFile("plotting/I.bdd");
         checkMakeDir("G");
         saveVec(Gs_, "G/G");
-        checkMakeDir("O");
-        saveVec(Os_, "O/O");
+
     }
 
     //    /*! Debugging function. Implementation of basic SCOTS reachability (single abstraction) in the Adaptive framework. */

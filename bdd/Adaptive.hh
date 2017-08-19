@@ -47,6 +47,7 @@ public:
     vector<double*> tau_; /*!< numAbs_ x 1 matrix of time steps. */
 
     vector<SymbolicSet*> Xs_; /*!< The numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
+    vector<SymbolicSet*> Os_; /*!< Instance of *Xs_[i] containing unsafe (obstacle) states. */
     vector<SymbolicSet*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
     vector<SymbolicSet*> X2s_; /*!< The numAbs_ "post" state space abstractions, coarsest (0) to finest. */
     vector<SymbolicSet*> XXs_; /*!< The numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the finer cell is a subset of the coarser cell. */
@@ -116,19 +117,6 @@ public:
         initializeAlignment();
         initializeEtaTau(etaX, tau);
         initializeSolvers(nint);
-        initializeXX2UZCs();
-
-        TicToc tt;
-        tt.tic();
-        initializeXXs();
-        clog << "------------------------------------------------initializeXXs: ";
-        tt.toc();
-
-        initializeNumBDDVars();
-        initializePermutes();
-        initializeCubes();
-        initializeNotVars();
-
     }
 
     /*! Destructor for an Adaptive object. */
@@ -136,6 +124,7 @@ public:
         deleteVecArray(etaX_);
         deleteVec(tau_);
         deleteVec(Xs_);
+        deleteVec(Os_);
         deleteVec(Zs_);
         deleteVec(X2s_);
         deleteVec(XXs_);
@@ -156,20 +145,37 @@ public:
         delete ddmgr_;
     }
 
+    template<class O_type>
+    void initialize(O_type addO) {
+
+        initializeXOX2UZCs(addO);
+
+        TicToc tt;
+        tt.tic();
+        initializeXXs();
+        clog << "------------------------------------------------initializeXXs: ";
+        tt.toc();
+
+        initializeNumBDDVars();
+        initializePermutes();
+        initializeCubes();
+        initializeNotVars();
+    }
+
     /*! Prints information to the console/log file for the user, and saves some other information. */
     void saveVerify() {
         printEtaX();
         printTau();
         printVec(Xs_, "X");
+        printVec(Os_, "O");
         printVec(XXs_, "XX");
         cout << "U:\n";
         U_->printInfo(1);
         Xs_[0]->writeToFile("plotting/X.bdd");
-
+        Os_[numAbs_-1]->writeToFile("plotting/O.bdd");
+        checkMakeDir("O");
+        saveVec(Os_, "O/O");
     }
-
-
-
 
 //    template<class G_type, class I_type, class O_type, class S_type>
 //    void initializeReachAndStay(G_type addG, I_type addI, O_type addO, S_type addS) {
@@ -528,15 +534,20 @@ public:
         }
     }
 
-    /*! Initializes the vectors of SymbolicSets Xs_, X2s_, Us_, Zs_, validZs_, Cs_, validCs_.
+    /*! Initializes the vectors of SymbolicSets Xs_, Os_, X2s_, Us_, Zs_, validZs_, Cs_, validCs_.
+     *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
      */
-    void initializeXX2UZCs() {
+    template<class O_type>
+    void initializeXOX2UZCs(O_type addO) {
         for (int i = 0; i < numAbs_; i++) {
             SymbolicSet* X = new SymbolicSet(*ddmgr_, dimX_, lbX_, ubX_, etaX_[i], tau_[i][0]);
             X->addGridPoints();
             Xs_.push_back(X);
         }
         clog << "Xs_ initialized with full domain.\n";
+
+        initializeSpec(&Os_, addO);
+        clog << "Os_ initialized according to specification.\n";
 
         for (int i = 0; i < numAbs_; i++) {
             SymbolicSet* X2 = new SymbolicSet(*Xs_[i], 1);

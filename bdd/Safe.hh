@@ -14,9 +14,8 @@ namespace scots {
  *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for a safe specification.
  */
 template<class X_type, class U_type>
-class Safe: public Adaptive<X_type, U_type> {
+class Safe: public virtual Adaptive<X_type, U_type> {
 public:
-    vector<SymbolicSet*> Os_; /*!< Instance of *Xs_[i] containing unsafe (obstacle) states. */
     vector<SymbolicSet*> Ss_; /*!< Instance of *Xs_[i] containing safe states. */
     vector<SymbolicSet*> infZs_; /*!< Instance of *Xs_[i] containing projection of convergence of previous maximal fixed points. */
 
@@ -29,11 +28,11 @@ public:
                                    dimU, lbU, ubU, etaU,
                                    etaRatio, tauRatio, nint,
                                    numAbs, readXX, readAbs, logFile)
+
     {
     }
 
     ~Safe() {
-        deleteVec(Os_);
         deleteVec(Ss_);
         deleteVec(infZs_);
     }
@@ -48,7 +47,7 @@ public:
         tt.tic();
 
         // removing obstacles from transition relation
-        this->removeFromTs(&Os_);
+        this->removeFromTs(&(this->Os_));
 
         for (int curAbs = 0; curAbs < this->numAbs_; curAbs++) {
             int iter = 1;
@@ -97,7 +96,7 @@ public:
         \param[in]	addS	Function pointer specifying the points that should be added to the potential safe set.
     */
     template<class S_type>
-    void initialize(S_type addS) {
+    void initializeSafe(S_type addS) {
         if (this->stage_ != 1) {
             error("Error: initializeSafe called out of order.\n");
         }
@@ -109,12 +108,6 @@ public:
         clog << "Ss_ initialized\n";
         clog << "------------------------------------------------initializeSpec on Ss_: ";
         tt.toc();
-
-        // empty obstacles
-        for (int i = 0; i < this->numAbs_; i++) {
-            SymbolicSet* O = new SymbolicSet(*this->Xs_[i]);
-            Os_.push_back(O);
-        }
 
         // maximal fixed point starts with whole set
         for (int i = 0; i < this->numAbs_; i++) {

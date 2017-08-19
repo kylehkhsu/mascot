@@ -194,7 +194,6 @@ public:
     /*! Implementation of always-eventually using functions in a SCOTS::FixedPoint object. For comparison with the Adaptive version. */
     void alwaysEventuallySCOTS() {
 
-        int curAbs = 0;
         int outerIter = 1;
         int earlyBreak = 0;
         int verbose = 1;

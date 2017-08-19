@@ -14,7 +14,7 @@ namespace scots {
  *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for an always-eventually specification.
  */
 template<class X_type, class U_type>
-class AlwaysEventually: public Reach<X_type, U_type> {
+class AlwaysEventually: public virtual Reach<X_type, U_type> {
 public:
 
     /*! Constructor for an AlwaysEventually object. */
@@ -25,7 +25,11 @@ public:
                      : Reach<X_type, U_type>(dimX, lbX, ubX, etaX, tau,
                                              dimU, lbU, ubU, etaU,
                                              etaRatio, tauRatio, nint,
-                                             numAbs, readXX, readAbs, logFile)
+                                             numAbs, readXX, readAbs, logFile),
+                       Adaptive<X_type, U_type>(dimX, lbX, ubX, etaX, tau,
+                                                dimU, lbU, ubU, etaU,
+                                                etaRatio, tauRatio, nint,
+                                                numAbs, readXX, readAbs, logFile)
     {
     }
 
@@ -55,7 +59,7 @@ public:
         tt.tic();
 
         // removing obstacles from transition relation
-        this->removeFromTs(&Os_);
+        this->removeFromTs(&(this->Os_));
 
         clog << "Os_ removed from Ts_, TTs_.\n";
 
