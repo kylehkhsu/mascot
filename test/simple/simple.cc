@@ -139,7 +139,8 @@ int main() {
                               dimU, lbU, ubU, etaU,
                               etaRatio, tauRatio, nint,
                               numAbs, readXX, readAbs, "adaptive.txt");
-    abs.initialize(simpleAddG, simpleAddI, simpleAddO);
+    abs.initialize(simpleAddO);
+    abs.initializeReach(simpleAddG, simpleAddI);
     abs.computeAbstractions(sysNext, radNext);
 
     int startAbs = 2;

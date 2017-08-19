@@ -75,6 +75,10 @@ auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
     solver(radODE, r, u);
 };
 
+auto dcdcAddO = [](SymbolicSet* O) -> void {
+    ;
+};
+
 auto dcdcAddS = [](SymbolicSet* S) -> void {
     double H[4*2] = {-1,  0,
                          1,  0,
@@ -120,7 +124,8 @@ int main() {
                                  dimU, lbU, ubU, etaU,
                                  etaRatio, tauRatio, nint,
                                  numAbs, readXX, readAbs, "adaptive.txt");
-    abs.initialize(dcdcAddS);
+    abs.initialize(dcdcAddO);
+    abs.initializeSafe(dcdcAddS);
     abs.computeAbstractions(sysNext, radNext);
     abs.safe();
 

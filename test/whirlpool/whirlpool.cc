@@ -109,7 +109,6 @@ int main() {
     int startAbs = 1;
     int minToGoCoarser = 2;
     int minToBeValid = 5;
-    int earlyBreak = 1;
 
 //    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
     abs.alwaysEventually(startAbs, minToGoCoarser, minToBeValid);

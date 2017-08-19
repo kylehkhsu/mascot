@@ -1,22 +1,22 @@
 adaptive.txt
 Xs_ initialized with full domain.
+Os_ initialized according to specification.
 X2s_ initialized with full domain.
 U_ initialized with full domain.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 0.362933 seconds.
+------------------------------------------------initializeXXs: Elapsed time is 0.407079 seconds.
 Number of BDD variables: 49
 Gs_ initialized.
 Is_ initialized.
-Os_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.00441386 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.0137128 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
-Number of elements in the transition relation: 44354
-Number of elements in the transition relation: 401456
-------------------------------------------------computeAbstractions: Elapsed time is 1.21834 seconds.
-Os_ removed from Ts_, TTs_.
+Ts_ initialized with empty domain.
+Ts_ computed by sampling system behavior.
+------------------------------------------------computeAbstractions: Elapsed time is 1.24565 seconds.
+TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
 ------------------------------nu iteration: 1------------------------------
 current abstraction: 1
@@ -1113,4 +1113,4 @@ AlwaysEventually: iteration 3
 Won.
 Abstraction of E: 1
 4
-----------------------------------------alwaysEventually: Elapsed time is 0.626762 seconds.
+----------------------------------------alwaysEventually: Elapsed time is 0.592535 seconds.

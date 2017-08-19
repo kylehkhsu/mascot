@@ -94,13 +94,13 @@ int main() {
                                  etaRatio, tauRatio, nint,
                                  numAbs, readXX, readAbs, "adaptive.txt");
 
-    abs.initialize(whirlpoolAddG, whirlpoolAddI, whirlpoolAddO);
+    abs.initialize(whirlpoolAddO);
+    abs.initializeReach(whirlpoolAddG, whirlpoolAddI);
     abs.computeAbstractions(sysNext, radNext);
 
     int startAbs = 1;
     int minToGoCoarser = 2;
     int minToBeValid = 5;
-    int earlyBreak = 1;
 
 //    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
     abs.alwaysEventually(startAbs, minToGoCoarser, minToBeValid);
