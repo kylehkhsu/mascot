@@ -55,8 +55,8 @@ auto simpleAddG = [](SymbolicSet* G) -> void {
                       1, 0,
                       0,-1,
                       0, 1};
-    double c[4] = {-7.5, 10, -7.5, 10};
-    G->addPolytope(4, H, c, INNER);
+    double h[4] = {-7.5, 10, -7.5, 10};
+    G->addPolytope(4, H, h, INNER);
 };
 
 auto simpleAddI = [](SymbolicSet* I) -> void {
@@ -94,13 +94,13 @@ int main() {
     int numAbs = 3;
 
     int readXX = 0; // if specification has changed, needs to be 0
-    int readAbs = 1;
+    int readAbs = 0;
 
-    Reach<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
-                              dimU, lbU, ubU, etaU,
-                              etaRatio, tauRatio, nint,
-                              numAbs, readXX, readAbs, "adaptive.txt");
-    abs.initialize(simpleAddG, simpleAddI, simpleAddO);
+    ReachAndStay<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
+                                     dimU, lbU, ubU, etaU,
+                                     etaRatio, tauRatio, nint,
+                                     numAbs, readXX, readAbs, "adaptive.txt");
+    abs.initialize(simpleAddO);
     abs.computeAbstractions(sysNext, radNext);
 
     int startAbs = 2;
@@ -108,8 +108,5 @@ int main() {
     int minToBeValid = 2;
     int earlyBreak = 1;
 
-    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
-
-
-
+    abs.reachAndStay(simpleAddG, simpleAddI, startAbs, minToGoCoarser, minToBeValid, earlyBreak);
 }

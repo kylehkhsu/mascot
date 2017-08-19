@@ -5,7 +5,7 @@ X2s_ initialized with full domain.
 U_ initialized with full domain.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 0.25648 seconds.
+------------------------------------------------initializeXXs: Elapsed time is 0.259014 seconds.
 Number of BDD variables: 66
 etaX_:
 abstraction 0: 0.8 0.8 
@@ -15,16 +15,28 @@ tau_:
 abstraction 0: 1.2
 abstraction 1: 0.6
 abstraction 2: 0.3
+Ts_ initialized with empty domain.
+Ts_ computed by sampling system behavior.
+------------------------------------------------computeAbstractions: Elapsed time is 1.25645 seconds.
+Wrote Ts_ to file.
+TTs_ initialized by ExistAbstracting from Ts_.
+Ss_ initialized
+------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.000729718 seconds.
+Zs_ modified to BDD-1.
+infZs_ initialized to empty.
+...3
+..2
+..2
+----------------------------------------safe: Elapsed time is 0.00625724 seconds.
 Gs_ initialized.
 Is_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.000554846 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.000442628 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
-Ts_ initialized with empty domain.
+Gs_, Zs_, Cs_ reset to BDD-0.
+Gs_ set to projections of domain of safety controllers.
 Ts_ read from file.
-------------------------------------------------computeAbstractions: Elapsed time is 0.0170582 seconds.
-TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
 current abstraction: 2
 mu iteration: 1
@@ -513,4 +525,5 @@ controllers: 6
 
 Total number of controllers: 7
 Won.
-----------------------------------------reach: Elapsed time is 0.136621 seconds.
+----------------------------------------reach: Elapsed time is 0.13533 seconds.
+----------------------------------------reachAndStay: Elapsed time is 0.284763 seconds.

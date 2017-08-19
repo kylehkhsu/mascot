@@ -1,24 +1,10 @@
 
-function simple (mode, numAbs, controllers)
+function simpleAndStay (mode, numAbs, reachCs)
   w = [0.3 0.3];
   addpath(genpath('../..'));
   
   % colors
   colors=get(groot,'DefaultAxesColorOrder');  
- 
-  if (strcmp(mode, 'T'))
-    openfig('system');
-    hold on
-    drawnow
-    
-    Zc = SymbolicSet('test/Zc.bdd');
-    Zf = SymbolicSet('test/Zf.bdd');
-    
-    plotCells(Zf, 'facecolor', colors(3,:)*0.5+0.5, 'edgec', colors(3,:), 'linew', 0.1)
-    drawnow
-    pause
-    plotCells(Zc, 'facecolor', colors(2,:)*0.5+0.5, 'edgec', colors(2,:), 'linew', 0.1)
-  end
  
   if (strcmp(mode, 'S'))
     figure
@@ -69,7 +55,7 @@ function simple (mode, numAbs, controllers)
 
   end     
 
-  if (strcmp(mode,'R'))
+  if (strcmp(mode,'RS'))
 
     disp('w')
     disp(w)
@@ -86,7 +72,7 @@ function simple (mode, numAbs, controllers)
     
     j = 1;
     start = 1;
-    for i = controllers:-1:1
+    for i = reachCs:-1:1
       disp(['iteration: ' int2str(i)])
       
       C = SymbolicSet(['C/C' int2str(i) '.bdd'], 'projection', [1 2]);
@@ -141,32 +127,12 @@ function simple (mode, numAbs, controllers)
 	j = j + 1;
       end
     end
-%      plotCells(G,'facecolor',colors(2,:)*0.5+0.5,'edgec',colors(2,:),'linew',.1)
-    savefig('simulation');
-  end
-  
-  if (strcmp(mode,'scots'))
-    openfig('problem');
-    hold on
-    drawnow
     
-    I = SymbolicSet('scots/I.bdd');
-    x = I.points();
-    x = x(1,:);
-    x = [x; x];
     v = [];
+    T = 10;        
     
-    G = SymbolicSet('scots/G.bdd');
-    eta = G.eta;
-    tau = eta(1)*3/2;
-    
-    C = SymbolicSet('scots/C.bdd', 'projection', [1 2]);
-    
-    j = 1;
-    
-    while(1)
+    for j = 1:T/tau
       disp(j)
-      disp(x(end-1,:))
       disp(x(end,:))
       
       if (mod(j,1) == 0)
@@ -175,13 +141,23 @@ function simple (mode, numAbs, controllers)
 	pause
       end
       
-      if (G.isElement(x(end,:)))
-	plot(x(:,1),x(:,2),'k.-')
-	drawnow
-	pause
-	break
+      foundController = 0;      
+      for i = 1:numAbs
+	Z = SymbolicSet(['Z/safeZ' int2str(i) '.bdd']);
+	if (Z.isElement(x(end,:)))
+	  eta = Z.eta;
+	  eta = eta';
+	  C = SymbolicSet(['C/safeC' int2str(i) '.bdd']);
+	  foundController = 1;
+	  disp(['Controller: ' int2str(i)])
+	  break;
+	end
       end
-  
+      if (~foundController)
+	disp('No controller for state found. Breaking.')
+	break;
+      end
+      
       u = C.getInputs(x(end,:));
       ran = randi([1 size(u,1)], 1, 1);
       v = [v; u(ran,:)];
@@ -189,11 +165,16 @@ function simple (mode, numAbs, controllers)
       [t phi] = ode45(@sysODE, [0 tau], x(end,:), [], u(ran,:), d);
       x = [x; phi];
       
-      j = j + 1;
+     disp('u')
+     disp(u(ran,:))
+     disp('d')
+     disp(d)
+
     end
-    savefig('scots/simulation')
-  end    
-  
+
+    savefig('reachAndStay');
+  end
+    
 end
 
 function d = disturbance(w)
