@@ -133,7 +133,7 @@ int main() {
     int numAbs = 3;
 
     int readXX = 0; // if specification has changed, needs to be 0
-    int readAbs = 0;
+    int readAbs = 1;
 
     Reach<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
                               dimU, lbU, ubU, etaU,
