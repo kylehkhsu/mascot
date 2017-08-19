@@ -104,12 +104,13 @@ void together() {
 
     SymbolicSet X(mgr, dimX + dimB, lbX, ubX, etaX, tau);
     X.addGridPoints();
-//    X.printInfo(1);
+    //    X.printInfo(1);
+
+
+    //    U.printInfo(1);
+    SymbolicSet X2(X, 1);
     SymbolicSet U(mgr, dimU, lbU, ubU, etaU, 0);
     U.addGridPoints();
-//    U.printInfo(1);
-    SymbolicSet X2(X, 1);
-
     SymbolicModelGrowthBound<XB_type, U_type> Abs(&X, &U, &X2);
 
     Abs.computeTransitionRelation(sysNextTog, radNextTog, solver);
@@ -159,8 +160,21 @@ void separate() {
 
     SymbolicSet TD = absD.getTransitionRelation();
     SymbolicSet TP = absP.getTransitionRelation();
-    SymbolicSet T(TD, TP);
-    T.symbolicSet_ = TD.symbolicSet_ & TP.symbolicSet_;
+    TP.printInfo(1);
+
+    // get 'rid' of dummy input
+    SymbolicSet TPP(B, B2);
+    TPP.symbolicSet_ = TP.symbolicSet_.ExistAbstract(Y.getCube());
+    TPP.printInfo(1);
+
+    // construct composed T SymbolicSet
+    SymbolicSet d1(X, B);
+    SymbolicSet d2(d1, U);
+    SymbolicSet d3(d2, X2);
+    SymbolicSet T(d3, B2);
+
+
+    T.symbolicSet_ = TD.symbolicSet_ & TPP.symbolicSet_;
     T.printInfo(1);
 
 
@@ -169,33 +183,6 @@ void separate() {
 
 
 int main() {
-//    double lbX[dimX]={-6, -6};
-//    double ubX[dimX]={ 6,  6 };
-//    double etaX[dimX]= {0.6, 0.6};
-//    double tau = 0.9;
-//    double lbU[dimU]= {-2, 0.5};
-//    double ubU[dimU]= { 2,   1};
-//    double etaU[dimU]= {0.5, 0.2};
-
-//    double lbB[dimB] = {   0,   2, -1.5};
-//    double ubB[dimB] = { 0.2,   5,  1.5};
-//    double etaB[dimB] = {0.2, 0.2,  0.2};
-//    double lbY[1] = { 0};
-//    double ubY[1] = { 1};
-//    double etaY[1] = {1};
-
-//    System dynamics(dimX, lbX, ubX, etaX, tau, dimU, lbU, ubU, etaU);
-//    System predicate(dimB, lbB, ubB, etaB, tau, 1, lbY, ubY, etaY);
-//    X_type x;
-//    U_type u;
-//    B_type b;
-//    Y_type y;
-
-//    Product prod(2);
-//    prod.computeAbstraction(&dynamics, sysNextSepX, radNextSepX, x, u);
-//    prod.computeAbstraction(&predicate, sysNextSepB, radNextSepB, b, y);
-
-//    prod.product();
 
 
 
