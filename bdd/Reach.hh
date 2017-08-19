@@ -209,9 +209,6 @@ public:
         \return     1 if controller(s) satisfying specification is/are synthesized; 0 otherwise.
     */
     int reach(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
-        if (this->stage_ != 3) {
-            error("Error: reach called out of order.\n");
-        }
         if ( (startAbs < 0) || (startAbs >= this->numAbs_) ) {
             error("Error: startAbs out of range.\n");
         }
@@ -264,10 +261,6 @@ public:
     */
     template<class G_type, class I_type>
     void initializeReach(G_type addG, I_type addI) {
-        if (this->stage_ != 1) {
-            error("Error: initializeReach called out of order.\n");
-        }
-        this->stage_ = 2;
 
         TicToc tt;
         tt.tic();

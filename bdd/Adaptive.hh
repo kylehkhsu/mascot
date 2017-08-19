@@ -71,8 +71,6 @@ public:
     vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
     vector<SymbolicModelGrowthBound<X_type, U_type>*> Abs_; /*!< Abstractions containing the transition relation \subseteq *Xs_[i] x *U_ x *X2s_[i]. */
 
-    int stage_; /*!< Helps ensure user calls methods in correct order. */
-
     /*!	Constructor for an Adaptive object.
         \param[in]	dimX		Dimensionality of the state space.
         \param[in]	lbX			Lowermost grid point of the state space.
@@ -112,7 +110,6 @@ public:
         numAbs_ = numAbs;
         readXX_ = readXX;
         readAbs_ = readAbs;
-        stage_ = 1;
 
         initializeAlignment();
         initializeEtaTau(etaX, tau);
@@ -160,6 +157,8 @@ public:
         initializePermutes();
         initializeCubes();
         initializeNotVars();
+
+        saveVerify();
     }
 
     /*! Prints information to the console/log file for the user, and saves some other information. */
@@ -452,10 +451,6 @@ public:
     */
     template<class sys_type, class rad_type>
     void computeAbstractions(sys_type sysNext, rad_type radNext) {
-        if (stage_ != 2) {
-            error("Error: computeAbstractions called out of order.\n");
-        }
-        stage_ = 3;
 
         for (int i = 0; i < numAbs_; i++) {
             SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
@@ -485,6 +480,7 @@ public:
         if (readAbs_ == 0) {
             checkMakeDir("T");
             saveVec(Ts_, "T/T");
+            clog << "Wrote Ts_ to file.\n";
         }
 
         for (int i = 0; i < numAbs_; i++) {

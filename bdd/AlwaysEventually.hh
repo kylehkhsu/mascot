@@ -47,9 +47,6 @@ public:
         \return     1 if controller(s) satisfying specification is/are synthesized; 0 otherwise.
      */
     int alwaysEventually(int startAbs, int minToGoCoarser, int minToBeValid, int verbose = 1) {
-        if (this->stage_ != 3) {
-            error("Error: alwaysEventually called out of order.\n");
-        }
         if ( (startAbs < 0) || (startAbs >= this->numAbs_) ) {
             error("Error: startAbs out of range.\n");
         }

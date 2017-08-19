@@ -37,11 +37,39 @@ public:
         deleteVec(infZs_);
     }
 
+    /*! Adaptive maximal fixed point. */
+    void nu(int curAbs) {
+        int iter = 1;
+        while (1) {
+            clog << ".";
+            // get pre of current abtraction's Z disjuncted with projection of converged Z from previous abstraction
+            this->Cs_[curAbs]->symbolicSet_ = this->preC(this->Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs);
+            // conjunct with safe set (maximal fixed point)
+            this->Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
+            // project onto Xs_[curAbs]
+            BDD Z = this->Cs_[curAbs]->symbolicSet_.ExistAbstract(*this->notXvars_[curAbs]);
+
+            if (Z != this->Zs_[curAbs]->symbolicSet_) { // not converged
+                this->Zs_[curAbs]->symbolicSet_ = Z; // update and continue
+            }
+            else { // converged
+                clog << iter << '\n';
+                this->Zs_[curAbs]->printInfo(1);
+                break;
+            }
+            iter += 1;
+        }
+        if (curAbs != this->numAbs_ - 1) {
+            this->innerFinerAligned(this->Zs_[curAbs], this->infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
+
+            this->Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
+            *this->TTs_[curAbs+1] &= !(infZs_[curAbs+1]->symbolicSet_); // same as above
+        }
+        this->Xs_[curAbs]->symbolicSet_ = this->Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_; // for verification purposes
+    }
+
     /*! Writes, should they exist, controllers of specified abstractions that together satisfy a safety specification. */
     void safe() {
-        if (this->stage_ != 3) {
-            error("Error: reach called out of order.\n");
-        }
 
         TicToc tt;
         tt.tic();
@@ -50,33 +78,7 @@ public:
         this->removeFromTs(&(this->Os_));
 
         for (int curAbs = 0; curAbs < this->numAbs_; curAbs++) {
-            int iter = 1;
-            while (1) {
-                clog << ".";
-                // get pre of current abtraction's Z disjuncted with projection of converged Z from previous abstraction
-                this->Cs_[curAbs]->symbolicSet_ = this->preC(this->Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs);
-                // conjunct with safe set (maximal fixed point)
-                this->Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
-                // project onto Xs_[curAbs]
-                BDD Z = this->Cs_[curAbs]->symbolicSet_.ExistAbstract(*this->notXvars_[curAbs]);
-
-                if (Z != this->Zs_[curAbs]->symbolicSet_) { // not converged
-                    this->Zs_[curAbs]->symbolicSet_ = Z; // update and continue
-                }
-                else { // converged
-                    clog << iter << '\n';
-                    this->Zs_[curAbs]->printInfo(1);
-                    break;
-                }
-                iter += 1;
-            }
-            if (curAbs != this->numAbs_ - 1) {
-                this->innerFinerAligned(this->Zs_[curAbs], this->infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
-
-                this->Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
-                *this->TTs_[curAbs+1] &= !(infZs_[curAbs+1]->symbolicSet_); // same as above
-            }
-            this->Xs_[curAbs]->symbolicSet_ = this->Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_; // for verification purposes
+            nu(curAbs);
         }
 
         clog << "----------------------------------------safe: ";
@@ -97,10 +99,6 @@ public:
     */
     template<class S_type>
     void initializeSafe(S_type addS) {
-        if (this->stage_ != 1) {
-            error("Error: initializeSafe called out of order.\n");
-        }
-        this->stage_ = 2;
 
         TicToc tt;
         tt.tic();
