@@ -18,26 +18,25 @@ possibly perturbed nonlinear control systems with respect to safety and reachabi
 
     `$./configure --enable-shared --enable-obj --enable-dddmp --prefix=/opt/local/`
 
-- SCOTS itself is a header only library. You only need to add SCOTS source
+- SCOTS-Adaptive is a header only library. You need only add the SCOTS source
   directory to the include directory in the compiler command. 
 
     Further details are found in the readme files in example directories and in the manual.
-    For installing and running SCOTS on Windows, please refer to the readme-win.txt file.
 
 ### Directory structure
 
 - ./bdd/
-    Contains the source C++ source code for the SCOTS classes 
-    which use Binary Decision Diagrams as underlying data structure
+    Contains the source C++ source code for the SCOTS, SCOTS-Adaptive classes 
+    which use Binary Decision Diagrams as the underlying data structure
 
-- ./doc/
+- ./doxygen/
     C++ Class documentation directory
   
 - ./examples/
     Some C++/Matlab programs demonstrating the usage of basic SCOTS
   
 - ./test/
-    Examples demonstrating the usage and performance of SCOTS+Adaptive
+    Examples demonstrating the usage and performance of SCOTS-Adaptive
   
 - ./mfiles
     Contains an mfile as a wrapper to the mex-file functions
