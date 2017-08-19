@@ -19,21 +19,13 @@ class ReachAndStay: public Reach<X_type, U_type>, public Safe<X_type, U_type> {
 public:
 
     /*! Constructor for a ReachAndStay object. */
-    ReachAndStay(int dimX, double* lbX, double* ubX, double* etaX, double tau,
-                 int dimU, double* lbU, double* ubU, double* etaU,
-                 double* etaRatio, double tauRatio, int nint,
+    ReachAndStay(System* system, double* etaRatio, double tauRatio, int nint,
                  int numAbs, int readXX, int readAbs, char* logFile)
-                 : Reach<X_type, U_type>(dimX, lbX, ubX, etaX, tau,
-                                         dimU, lbU, ubU, etaU,
-                                         etaRatio, tauRatio, nint,
+                 : Reach<X_type, U_type>(system, etaRatio, tauRatio, nint,
                                          numAbs, readXX, readAbs, logFile),
-                   Safe<X_type, U_type>(dimX, lbX, ubX, etaX, tau,
-                                        dimU, lbU, ubU, etaU,
-                                        etaRatio, tauRatio, nint,
+                   Safe<X_type, U_type>(system, etaRatio, tauRatio, nint,
                                         numAbs, readXX, readAbs, logFile),
-                   Adaptive<X_type, U_type>(dimX, lbX, ubX, etaX, tau,
-                                            dimU, lbU, ubU, etaU,
-                                            etaRatio, tauRatio, nint,
+                   Adaptive<X_type, U_type>(system, etaRatio, tauRatio, nint,
                                             numAbs, readXX, readAbs, logFile)
     {
     }

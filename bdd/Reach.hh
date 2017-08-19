@@ -25,15 +25,10 @@ public:
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
 
     /*! Constructor for a Reach object. */
-    Reach(int dimX, double* lbX, double* ubX, double* etaX, double tau,
-          int dimU, double* lbU, double* ubU, double* etaU,
-          double* etaRatio, double tauRatio, int nint,
+    Reach(System* system, double* etaRatio, double tauRatio, int nint,
           int numAbs, int readXX, int readAbs, char* logFile)
-        : Adaptive<X_type, U_type>(dimX, lbX, ubX, etaX, tau,
-                                   dimU, lbU, ubU, etaU,
-                                   etaRatio, tauRatio, nint,
+        : Adaptive<X_type, U_type>(system, etaRatio, tauRatio, nint,
                                    numAbs, readXX, readAbs, logFile)
-
     {
     }
 

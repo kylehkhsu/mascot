@@ -18,17 +18,11 @@ class AlwaysEventually: public virtual Reach<X_type, U_type> {
 public:
 
     /*! Constructor for an AlwaysEventually object. */
-    AlwaysEventually(int dimX, double* lbX, double* ubX, double* etaX, double tau,
-                     int dimU, double* lbU, double* ubU, double* etaU,
-                     double* etaRatio, double tauRatio, int nint,
+    AlwaysEventually(System* system, double* etaRatio, double tauRatio, int nint,
                      int numAbs, int readXX, int readAbs, char* logFile)
-                     : Reach<X_type, U_type>(dimX, lbX, ubX, etaX, tau,
-                                             dimU, lbU, ubU, etaU,
-                                             etaRatio, tauRatio, nint,
+                     : Reach<X_type, U_type>(system, etaRatio, tauRatio, nint,
                                              numAbs, readXX, readAbs, logFile),
-                       Adaptive<X_type, U_type>(dimX, lbX, ubX, etaX, tau,
-                                                dimU, lbU, ubU, etaU,
-                                                etaRatio, tauRatio, nint,
+                       Adaptive<X_type, U_type>(system, etaRatio, tauRatio, nint,
                                                 numAbs, readXX, readAbs, logFile)
     {
     }
@@ -102,7 +96,7 @@ public:
                 int abs = -1;
                 for (int i = 0; i < this->numAbs_; i++) {
                     int sameEta = 1;
-                    for (int j = 0; j < this->dimX_; j++) {
+                    for (int j = 0; j < *this->system_->dimX_; j++) {
                         if (this->etaX_[i][j] != lastZ->eta_[j]) {
                             sameEta = 0;
                         }

@@ -20,15 +20,10 @@ public:
     vector<SymbolicSet*> infZs_; /*!< Instance of *Xs_[i] containing projection of convergence of previous maximal fixed points. */
 
     /*! Constructor for a Safe object. */
-    Safe(int dimX, double* lbX, double* ubX, double* etaX, double tau,
-          int dimU, double* lbU, double* ubU, double* etaU,
-          double* etaRatio, double tauRatio, int nint,
+    Safe(System* system, double* etaRatio, double tauRatio, int nint,
           int numAbs, int readXX, int readAbs, char* logFile)
-        : Adaptive<X_type, U_type>(dimX, lbX, ubX, etaX, tau,
-                                   dimU, lbU, ubU, etaU,
-                                   etaRatio, tauRatio, nint,
+        : Adaptive<X_type, U_type>(system, etaRatio, tauRatio, nint,
                                    numAbs, readXX, readAbs, logFile)
-
     {
     }
 

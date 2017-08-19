@@ -11,6 +11,7 @@
 #include "SymbolicModelGrowthBound.hh"
 #include "FixedPoint.hh"
 #include "Helper.hh"
+#include "System.hh"
 
 
 using std::clog;
@@ -29,21 +30,16 @@ class Adaptive {
 public:
 
     Cudd* ddmgr_; /*!< A single manager object common to all BDDs used in the program. */
-    int dimX_; /*!< Dimensionality of state space. */
-    double* lbX_; /*!< Lowermost grid point of state space. */
-    double* ubX_; /*!< Uppermost grid point of state space. */
-    int dimU_; /*!< Dimensionality of input space. */
-    double* lbU_; /*!< Lowermost grid point of input space. */
-    double* ubU_; /*!< Uppermost grid point of input space. */
-    double* etaU_; /*!< Grid spacing of input space abstraction in each dimension. */
+    System* system_; /*!< Contains abstraction parameters. */
     double* etaRatio_; /*!< Ratio between state space grid spacings of consecutive abstractions. */
     double tauRatio_; /*!< Ratio between time steps of consecutive abstractions. */
+    int nSubInt_; /*!< Number of sub-intervals in ODE solving per time step. */
     int numAbs_; /*!< Number of abstractions of different granularity. */
-    int alignment_; /*!< Affects how XX is defined, determined by etaRatio_. */
     int readXX_; /*!< Whether XXs_ is computed or read from file. */
     int readAbs_; /*!< Whether Abs_ is computed or read from file. */
 
-    vector<double*> etaX_; /*!< numAbs_ x dimX_ matrix of state space grid spacings. */
+    int alignment_; /*!< Affects how XX is defined, determined by etaRatio_. */
+    vector<double*> etaX_; /*!< numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
     vector<double*> tau_; /*!< numAbs_ x 1 matrix of time steps. */
 
     vector<SymbolicSet*> Xs_; /*!< The numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
@@ -72,48 +68,30 @@ public:
     vector<SymbolicModelGrowthBound<X_type, U_type>*> Abs_; /*!< Abstractions containing the transition relation \subseteq *Xs_[i] x *U_ x *X2s_[i]. */
 
     /*!	Constructor for an Adaptive object.
-        \param[in]	dimX		Dimensionality of the state space.
-        \param[in]	lbX			Lowermost grid point of the state space.
-        \param[in]	ubX 		Uppermost grid point of the state space.
-        \param[in]	etaX 		Coarsest grid spacing of the state space.
-        \param[in]	tau 		Coarsest time step.
-        \param[in]	dimU		Dimensionality of the input space.
-        \param[in]	lbU 		Lowermost grid point of the input space.
-        \param[in]	ubU			Uppermost grid point of the input space.
-        \param[in] 	etaU		Grid spacing of the input space.
-        \param[in]	etaRatio	Ratio between grid spacings of the input space in consecutive abstractions.
-        \param[in]	tauRatio	Ratio between time steps of consecutive abstractions.
-        \param[in]  nint        Number of sub-intervals in ODE solving per time step.
-        \param[in]	numAbs		Number of abstractions.
-        \param[in]	readXX		Whether initializeXXs should be done by construction (0) or reading from files (1).
-        \param[in]	readAbs		Whether initializeAbs should be done by construction (0) or reading from files (1).
-        \param[in]  logFile     Filename of program log.
-    */
-    Adaptive(int dimX, double* lbX, double* ubX, double* etaX, double tau,
-             int dimU, double* lbU, double* ubU, double* etaU,
-             double* etaRatio, double tauRatio, int nint,
-             int numAbs, int readXX, int readAbs, char* logFile) {
+     *  \param[in]  system      Contains abstraction parameters.
+     *  \param[in]	etaRatio	Ratio between grid spacings of the input space in consecutive abstractions.
+     *  \param[in]	tauRatio	Ratio between time steps of consecutive abstractions.
+     *  \param[in]	numAbs		Number of abstractions.
+     *  \param[in]	readXX		Whether initializeXXs should be done by construction (0) or reading from files (1).
+     *  \param[in]	readAbs		Whether initializeAbs should be done by construction (0) or reading from files (1).
+     *  \param[in]  logFile     Filename of program log.
+     */
+    Adaptive(System* system, double* etaRatio, double tauRatio, int nSubInt, int numAbs, int readXX, int readAbs, char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
 
         ddmgr_ = new Cudd;
-
-        dimX_ = dimX;
-        lbX_ = lbX;
-        ubX_ = ubX;
-        dimU_ = dimU;
-        lbU_ = lbU;
-        ubU_ = ubU;
-        etaU_ = etaU;
+        system_ = system;
         etaRatio_ = etaRatio;
         tauRatio_ = tauRatio;
+        nSubInt_ = nSubInt;
         numAbs_ = numAbs;
         readXX_ = readXX;
         readAbs_ = readAbs;
 
         initializeAlignment();
-        initializeEtaTau(etaX, tau);
-        initializeSolvers(nint);
+        initializeEtaTau();
+        initializeSolvers();
     }
 
     /*! Destructor for an Adaptive object. */
@@ -318,7 +296,7 @@ public:
 //    */
 //    void innerFinerAll2(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
 
-//        int dimX = dimX_;
+//        int dimX = *system_->dimX_;
 //        double* etaX = etaX_[c+1];
 
 //        auto f = [Zc, dimX, etaX](double* x)->bool {
@@ -366,7 +344,7 @@ public:
 
         /* Use numFiner to check if the right number of finer cells are in Zf for a particular corresponding cell in Zc. */
         int numFiner = 1;
-        for (int i = 0; i < dimX_; i++) {
+        for (int i = 0; i < *system_->dimX_; i++) {
             numFiner *= etaRatio_[i];
         }
 
@@ -539,7 +517,7 @@ public:
     template<class O_type>
     void initializeXOX2UZCs(O_type addO) {
         for (int i = 0; i < numAbs_; i++) {
-            SymbolicSet* X = new SymbolicSet(*ddmgr_, dimX_, lbX_, ubX_, etaX_[i], tau_[i][0]);
+            SymbolicSet* X = new SymbolicSet(*ddmgr_, *system_->dimX_, system_->lbX_, system_->ubX_, etaX_[i], tau_[i][0]);
             X->addGridPoints();
             Xs_.push_back(X);
         }
@@ -555,7 +533,7 @@ public:
         }
         clog << "X2s_ initialized with full domain.\n";
 
-        U_ = new SymbolicSet(*ddmgr_, dimU_, lbU_, ubU_, etaU_, 0);
+        U_ = new SymbolicSet(*ddmgr_, *system_->dimU_, system_->lbU_, system_->ubU_, system_->etaU_, 0);
         U_->addGridPoints();
         clog << "U_ initialized with full domain.\n";
 
@@ -577,7 +555,7 @@ public:
     void initializeAlignment() {
         int onlyIntegers = 1;
         int inRange = 1;
-        for (int i = 0; i < dimX_; i++) {
+        for (int i = 0; i < *system_->dimX_; i++) {
             double etaRatio = etaRatio_[i];
             int etaRatioInt = (int) etaRatio;
             if (!(etaRatio == etaRatioInt)) {
@@ -591,44 +569,48 @@ public:
             error("Error: unsupported etaRatio, which must be only positive integers.\n");
         }
         alignment_ = 1;
+        clog << "Initialized alignment.\n";
     }
 
     /*! Initializes the abstractions' state space grid parameters and time sampling parameters. */
-    void initializeEtaTau(double* etaX, double tau) {
-        double* etaCur = new double[dimX_];
-        for (int i = 0; i < dimX_; i++) {
-            etaCur[i] = etaX[i];
+    void initializeEtaTau() {
+        double* etaCur = new double[*system_->dimX_];
+        for (int i = 0; i < *system_->dimX_; i++) {
+            etaCur[i] = system_->etaX_[i];
         }
         double* tauCur = new double;
-        *tauCur = tau;
+        *tauCur = *system_->tau_;
 
         for (int i = 0; i < numAbs_; i++) {
-            double* etai = new double[dimX_];
+            double* etai = new double[*system_->dimX_];
             double* taui = new double;
-            for (int j = 0; j < dimX_; j++) {
+            for (int j = 0; j < *system_->dimX_; j++) {
                 etai[j] = etaCur[j];
             }
             *taui = *tauCur;
             etaX_.push_back(etai);
             tau_.push_back(taui);
 
-            for (int j = 0; j < dimX_; j++) {
+            for (int j = 0; j < *system_->dimX_; j++) {
                 etaCur[j] /= etaRatio_[j];
             }
             *tauCur /= tauRatio_;
         }
+
+        clog << "Initialized etaX_, tau_.\n";
+
         delete[] etaCur;
         delete tauCur;
     }
 
     /*! Initializes the Runge-Katta ODE solvers.
-     *  \param[in]  nint        Number of desired sub-steps for each time step in the numerical approximation process.
      */
-    void initializeSolvers(int nint) {
+    void initializeSolvers() {
         for (int i = 0; i < numAbs_; i++) {
-            OdeSolver* solver = new OdeSolver(dimX_, nint, *tau_[i]);
+            OdeSolver* solver = new OdeSolver(*system_->dimX_, nSubInt_, *tau_[i]);
             solvers_.push_back(solver);
         }
+        clog << "Initialized solvers.\n";
     }
 
     /*! Initializes SymbolicSets containing the mappings between consecutive state space abstractions. Reads and writes BDDs from/to file depending on readXXs_. */
@@ -736,9 +718,9 @@ public:
     void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX, int c) {
         if (alignment_ == 1) {
             int* XfMinterm;
-            double* xPoint = new double[dimX_];
-            vector<double> XcPoint (dimX_, 0);
-            double* XXPoint = new double[dimX_ + dimX_];
+            double* xPoint = new double[*system_->dimX_];
+            vector<double> XcPoint (*system_->dimX_, 0);
+            double* XXPoint = new double[*system_->dimX_ + *system_->dimX_];
 
             int totalIter = Xf->symbolicSet_.CountMinterm(Xf->nvars_);
             int iter = 0;
@@ -756,14 +738,14 @@ public:
 
                 XfMinterm = (int*)Xf->currentMinterm();
                 Xf->mintermToElement(XfMinterm, xPoint);
-                for (int i = 0; i < dimX_; i++) {
+                for (int i = 0; i < *system_->dimX_; i++) {
                     XcPoint[i] = xPoint[i];
                 }
                 if (!(Xc->isElement(XcPoint))) {
                     continue;
                 }
-                for (int i = 0; i < dimX_+dimX_; i++) {
-                    XXPoint[i] = xPoint[i % dimX_];
+                for (int i = 0; i < *system_->dimX_+*system_->dimX_; i++) {
+                    XXPoint[i] = xPoint[i % *system_->dimX_];
                 }
                 XX->addPoint(XXPoint);
             }
@@ -776,13 +758,13 @@ public:
         }
 //        else if (alignment_ == 2) {
 //            int* XfMinterm;
-//            double xPoint[dimX_] = {0};
-//            double xPointPlus[dimX_] = {0};
-//            double xPointMinus[dimX_] = {0};
+//            double xPoint[*system_->dimX_] = {0};
+//            double xPointPlus[*system_->dimX_] = {0};
+//            double xPointMinus[*system_->dimX_] = {0};
 //            for (Xf->begin(); !Xf->done(); Xf->next()) {
 //                XfMinterm = (int*)Xf->currentMinterm();
 //                Xf->mintermToElement(XfMinterm, xPoint);
-//                for (int i = 0; i < dimX_; i++) {
+//                for (int i = 0; i < *system_->dimX_; i++) {
 //                    xPointPlus[i] = xPoint[i] + etaX_[c][i];
 //                    xPointMinus[i] = xPoint[i] - etaX_[c][i];
 //                }
@@ -799,7 +781,7 @@ public:
         clog << "etaX_:\n";
         for (size_t i = 0; i < etaX_.size(); i++) {
             clog << "abstraction " << i << ": ";
-            for (int j = 0; j < dimX_; j++) {
+            for (int j = 0; j < *system_->dimX_; j++) {
                 clog << etaX_[i][j] << " ";
             }
             clog << '\n';
