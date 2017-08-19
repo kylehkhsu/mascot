@@ -1,9 +1,6 @@
 var searchData=
 [
-  ['safe',['safe',['../classscots_1_1Adaptive.html#a76d026d45bd794eba3ef69c18835dd54',1,'scots::Adaptive']]],
-  ['safebasicdebug',['safeBasicDebug',['../classscots_1_1Adaptive.html#a1c7b5c07621e61b846b70e949b92b0b7',1,'scots::Adaptive']]],
-  ['savecz',['saveCZ',['../classscots_1_1Adaptive.html#ad3b8d9cf97cd0967409c14361a40d779',1,'scots::Adaptive']]],
-  ['savevec',['saveVec',['../Helper_8hh.html#afea778bfb31cba93e003c382413c36b2',1,'helper']]],
-  ['saveverifyreach',['saveVerifyReach',['../classscots_1_1Adaptive.html#aed48ef46c84bf6797bea16f896e44e3a',1,'scots::Adaptive::saveVerifyReach()'],['../classscots_1_1Compare.html#aa96846be5c881576f5add5ce32f7fe8a',1,'scots::Compare::saveVerifyReach()']]],
-  ['saveverifysafe',['saveVerifySafe',['../classscots_1_1Adaptive.html#a629133566055e6445983b86082838b96',1,'scots::Adaptive']]]
+  ['reach',['reach',['../classscots_1_1Reach.html#aae2c35919866a8235f822542a4bb3dfe',1,'scots::Reach::reach(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose=1)'],['../classscots_1_1Reach.html#ac61b7e746e55013c48de47eb3dc00ff7',1,'scots::Reach::Reach(int dimX, double *lbX, double *ubX, double *etaX, double tau, int dimU, double *lbU, double *ubU, double *etaU, double *etaRatio, double tauRatio, int nint, int numAbs, int readXX, int readAbs, char *logFile)']]],
+  ['reachscots',['reachSCOTS',['../classscots_1_1Compare.html#a506b87a62b1adde561d725e9cc1315e9',1,'scots::Compare']]],
+  ['removefromts',['removeFromTs',['../classscots_1_1Adaptive.html#a47e3334958032965fa6218ad0c24ac02',1,'scots::Adaptive']]]
 ];

@@ -10,6 +10,9 @@ using namespace helper;
 
 namespace scots {
 
+/*! \class Safe
+ *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for a safe specification.
+ */
 template<class X_type, class U_type>
 class Safe: public Adaptive<X_type, U_type> {
 public:
@@ -17,6 +20,7 @@ public:
     vector<SymbolicSet*> Ss_; /*!< Instance of *Xs_[i] containing safe states. */
     vector<SymbolicSet*> infZs_; /*!< Instance of *Xs_[i] containing projection of convergence of previous maximal fixed points. */
 
+    /*! Constructor for a Safe object. */
     Safe(int dimX, double* lbX, double* ubX, double* etaX, double tau,
           int dimU, double* lbU, double* ubU, double* etaU,
           double* etaRatio, double tauRatio, int nint,

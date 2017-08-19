@@ -12,7 +12,7 @@ A class that provides comparison using basic S\+C\+O\+TS.
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classscots_1_1Compare_a06f6c44e21931f635f157d213b1834ba}{Compare} (int dimX, double $\ast$lbX, double $\ast$ubX, double $\ast$etaX, double tau, int dimU, double $\ast$lbU, double $\ast$ubU, double $\ast$etaU, int nint, int read\+Ab, char $\ast$log\+File)
+\hyperlink{classscots_1_1Compare_a41fa2b26a7292b46edd3dfc7a6f8c5ee}{Compare} (int dimX, double $\ast$lbX, double $\ast$ubX, double $\ast$etaX, double tau, int dimU, double $\ast$lbU, double $\ast$ubU, double $\ast$etaU, double $\ast$eta\+Ratio, double tau\+Ratio, int nint, int num\+Abs, int read\+Ab, char $\ast$log\+File)
 \item 
 \hyperlink{classscots_1_1Compare_abcd6b6626afb98b977a1c9d64ef438f2}{$\sim$\+Compare} ()
 \item 
@@ -22,36 +22,26 @@ void \hyperlink{classscots_1_1Compare_aa96846be5c881576f5add5ce32f7fe8a}{save\+V
 \item 
 void \hyperlink{classscots_1_1Compare_a506b87a62b1adde561d725e9cc1315e9}{reach\+S\+C\+O\+TS} (int early\+Break, int verbose=1)
 \item 
+void \hyperlink{classscots_1_1Compare_afbc28a076ac3c620d4eae4b8af905877}{always\+Eventually\+S\+C\+O\+TS} ()
+\item 
+void \hyperlink{classscots_1_1Compare_a9e79295cd6f8c7eed65d29ca2667cff9}{save\+Verify\+Safe} ()
+\item 
+{\footnotesize template$<$class S\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Compare_aec4ea9d5132711c734141bd9ed060752}{initialize\+Safe} (S\+\_\+type addS)
+\item 
+void \hyperlink{classscots_1_1Compare_ad54d4ddd0268b4a41e53f19d668ab8b0}{safe\+S\+C\+O\+TS} ()
+\item 
 {\footnotesize template$<$class sys\+\_\+type , class rad\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Compare_a3bdf985c18d37edf8ee63ea00f6b2635}{compute\+Abstractions} (sys\+\_\+type sys\+Next, rad\+\_\+type rad\+Next)
 \item 
 {\footnotesize template$<$class msg\+\_\+type $>$ }\\void \hyperlink{classscots_1_1Compare_ae694b20dbe9ceb8db5f80508e7c65488}{error} (msg\+\_\+type msg)
 \item 
-void \hyperlink{classscots_1_1Compare_a2c8283a2b01ed98365a74c49d0e89911}{print\+EtaX} ()
+void \hyperlink{classscots_1_1Compare_a4ed25bd656e43ea3693266843edb88d2}{print\+EtaX} (double $\ast$etaX, int dimX)
 \item 
-void \hyperlink{classscots_1_1Compare_a318f5349a3b0465bec67a5419d630695}{print\+Tau} ()
+void \hyperlink{classscots_1_1Compare_a9f062bcfa755da8ba004045cb9605ab5}{print\+Tau} (double tau)
 \end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
 Cudd \hyperlink{classscots_1_1Compare_a330d650aa232026ba22f43aa81974af9}{ddmgr\+\_\+}
-\item 
-int \hyperlink{classscots_1_1Compare_a5ca0b67f243d75684e573bdf39750298}{dim\+X\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Compare_a73eb8628cb603f8e3fd914e01368c457}{lb\+X\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Compare_a1ce31ce906f325470edb135b65a3a01a}{ub\+X\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Compare_ae5fae0a0ea064b629885b69cc32014d1}{eta\+X\+\_\+}
-\item 
-double \hyperlink{classscots_1_1Compare_a1746834841252ede3651c0f5bfc3e27f}{tau\+\_\+}
-\item 
-int \hyperlink{classscots_1_1Compare_a4bcfca4afdbb0cc4d0d656702e9f2498}{dim\+U\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Compare_a2e5b605b24f26910ea99264de9474a33}{lb\+U\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Compare_a0b0e2f9dd8e872f49eb2a190d9e09dff}{ub\+U\+\_\+}
-\item 
-double $\ast$ \hyperlink{classscots_1_1Compare_a5bc5261e5403a3e984020cd8b05b587a}{eta\+U\+\_\+}
 \item 
 int \hyperlink{classscots_1_1Compare_ad18456a4cc253ae0d300cda74517e64b}{read\+Ab\+\_\+}
 \item 
@@ -73,12 +63,13 @@ Symbolic\+Set $\ast$ \hyperlink{classscots_1_1Compare_aeb0830d94286ae12672cf1ea1
 \item 
 Symbolic\+Set $\ast$ \hyperlink{classscots_1_1Compare_a2512f264f83a21365693bbd506b9e7a2}{S\+\_\+}
 \item 
+Symbolic\+Set $\ast$ \hyperlink{classscots_1_1Compare_ae1a8d5e076e059cda7124581dc3d05ab}{Z\+\_\+}
+\item 
 Ode\+Solver $\ast$ \hyperlink{classscots_1_1Compare_aa42864e8794631891d01f0367e1db277}{solver\+\_\+}
 \item 
 Symbolic\+Model\+Growth\+Bound$<$ X\+\_\+type, U\+\_\+type $>$ $\ast$ \hyperlink{classscots_1_1Compare_a0ec2c4c168dc46f79616a393c1cda103}{Ab\+\_\+}
 \item 
-\mbox{\Hypertarget{classscots_1_1Compare_ae036e8066fed2391f333c8f64282f12e}\label{classscots_1_1Compare_ae036e8066fed2391f333c8f64282f12e}} 
-int {\bfseries stage\+\_\+}
+int \hyperlink{classscots_1_1Compare_ae036e8066fed2391f333c8f64282f12e}{stage\+\_\+}
 \end{DoxyCompactItemize}
 
 
@@ -89,14 +80,12 @@ class scots\+::\+Compare$<$ X\+\_\+type, U\+\_\+type $>$}
 A class that provides comparison using basic S\+C\+O\+TS. 
 
 \subsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classscots_1_1Compare_a06f6c44e21931f635f157d213b1834ba}\label{classscots_1_1Compare_a06f6c44e21931f635f157d213b1834ba}} 
+\mbox{\Hypertarget{classscots_1_1Compare_a41fa2b26a7292b46edd3dfc7a6f8c5ee}\label{classscots_1_1Compare_a41fa2b26a7292b46edd3dfc7a6f8c5ee}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!Compare@{Compare}}
 \index{Compare@{Compare}!scots\+::\+Compare@{scots\+::\+Compare}}
 \subsubsection{\texorpdfstring{Compare()}{Compare()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-\hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::\hyperlink{classscots_1_1Compare}{Compare} (\begin{DoxyParamCaption}\item[{int}]{dimX,  }\item[{double $\ast$}]{lbX,  }\item[{double $\ast$}]{ubX,  }\item[{double $\ast$}]{etaX,  }\item[{double}]{tau,  }\item[{int}]{dimU,  }\item[{double $\ast$}]{lbU,  }\item[{double $\ast$}]{ubU,  }\item[{double $\ast$}]{etaU,  }\item[{int}]{nint,  }\item[{int}]{read\+Ab,  }\item[{char $\ast$}]{log\+File }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-Helps ensure user calls methods in correct order.
+\hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::\hyperlink{classscots_1_1Compare}{Compare} (\begin{DoxyParamCaption}\item[{int}]{dimX,  }\item[{double $\ast$}]{lbX,  }\item[{double $\ast$}]{ubX,  }\item[{double $\ast$}]{etaX,  }\item[{double}]{tau,  }\item[{int}]{dimU,  }\item[{double $\ast$}]{lbU,  }\item[{double $\ast$}]{ubU,  }\item[{double $\ast$}]{etaU,  }\item[{double $\ast$}]{eta\+Ratio,  }\item[{double}]{tau\+Ratio,  }\item[{int}]{nint,  }\item[{int}]{num\+Abs,  }\item[{int}]{read\+Ab,  }\item[{char $\ast$}]{log\+File }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Constructor for a \hyperlink{classscots_1_1Compare}{Compare} object. 
 \begin{DoxyParams}[1]{Parameters}
@@ -118,9 +107,17 @@ Constructor for a \hyperlink{classscots_1_1Compare}{Compare} object.
 \hline
 \mbox{\tt in}  & {\em etaU} & Grid spacing of the input space. \\
 \hline
+\mbox{\tt in}  & {\em eta\+Ratio} & (\hyperlink{Adaptive_8hh}{Adaptive.\+hh}) Ratio between grid spacings of the input space in consecutive abstractions. \\
+\hline
+\mbox{\tt in}  & {\em tau\+Ratio} & (\hyperlink{Adaptive_8hh}{Adaptive.\+hh}) Ratio between time steps of consecutive abstractions. \\
+\hline
 \mbox{\tt in}  & {\em nint} & Number of sub-\/intervals in O\+DE solving per time step. \\
 \hline
-\mbox{\tt in}  & {\em read\+Abs} & Whether initialize\+Abs should be done by construction (0) or reading from files (1). \\
+\mbox{\tt in}  & {\em num\+Abs} & (\hyperlink{Adaptive_8hh}{Adaptive.\+hh}) Number of abstractions. \\
+\hline
+\mbox{\tt in}  & {\em read\+Ab} & Whether transition relation should constructed (0) or read from file (1). \\
+\hline
+\mbox{\tt in}  & {\em log\+File} & Filename of program log. \\
 \hline
 \end{DoxyParams}
 \mbox{\Hypertarget{classscots_1_1Compare_abcd6b6626afb98b977a1c9d64ef438f2}\label{classscots_1_1Compare_abcd6b6626afb98b977a1c9d64ef438f2}} 
@@ -133,15 +130,20 @@ Constructor for a \hyperlink{classscots_1_1Compare}{Compare} object.
 Destructor for a \hyperlink{classscots_1_1Compare}{Compare} object. 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classscots_1_1Compare_a3bdf985c18d37edf8ee63ea00f6b2635}\label{classscots_1_1Compare_a3bdf985c18d37edf8ee63ea00f6b2635}} 
+\mbox{\Hypertarget{classscots_1_1Compare_afbc28a076ac3c620d4eae4b8af905877}\label{classscots_1_1Compare_afbc28a076ac3c620d4eae4b8af905877}} 
+\index{scots\+::\+Compare@{scots\+::\+Compare}!always\+Eventually\+S\+C\+O\+TS@{always\+Eventually\+S\+C\+O\+TS}}
+\index{always\+Eventually\+S\+C\+O\+TS@{always\+Eventually\+S\+C\+O\+TS}!scots\+::\+Compare@{scots\+::\+Compare}}
+\subsubsection{\texorpdfstring{always\+Eventually\+S\+C\+O\+T\+S()}{alwaysEventuallySCOTS()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::always\+Eventually\+S\+C\+O\+TS (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Implementation of always-\/eventually using functions in a S\+C\+O\+T\+S\+::\+Fixed\+Point object. For comparison with the \hyperlink{classscots_1_1Adaptive}{Adaptive} version. \mbox{\Hypertarget{classscots_1_1Compare_a3bdf985c18d37edf8ee63ea00f6b2635}\label{classscots_1_1Compare_a3bdf985c18d37edf8ee63ea00f6b2635}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!compute\+Abstractions@{compute\+Abstractions}}
 \index{compute\+Abstractions@{compute\+Abstractions}!scots\+::\+Compare@{scots\+::\+Compare}}
 \subsubsection{\texorpdfstring{compute\+Abstractions()}{computeAbstractions()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 template$<$class sys\+\_\+type , class rad\+\_\+type $>$ \\
 void \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::compute\+Abstractions (\begin{DoxyParamCaption}\item[{sys\+\_\+type}]{sys\+Next,  }\item[{rad\+\_\+type}]{rad\+Next }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-Implementation of always-\/eventually using functions in a S\+C\+O\+T\+S\+::\+Fixed\+Point object. For comparison with the \hyperlink{classscots_1_1Adaptive}{Adaptive} version.
 
 Initializes Symbolic\+Model\+Growth\+Bound objects for each abstraction as well as Ts\+\_\+, T\+Ts\+\_\+ for use in the fixed points. 
 \begin{DoxyParams}[1]{Parameters}
@@ -180,19 +182,32 @@ Initializes objects specific to the following specifications\+: always-\/eventua
 \mbox{\tt in}  & {\em addO} & Function pointer specifying the points that should be added to the obstacle set. \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{classscots_1_1Compare_a2c8283a2b01ed98365a74c49d0e89911}\label{classscots_1_1Compare_a2c8283a2b01ed98365a74c49d0e89911}} 
+\mbox{\Hypertarget{classscots_1_1Compare_aec4ea9d5132711c734141bd9ed060752}\label{classscots_1_1Compare_aec4ea9d5132711c734141bd9ed060752}} 
+\index{scots\+::\+Compare@{scots\+::\+Compare}!initialize\+Safe@{initialize\+Safe}}
+\index{initialize\+Safe@{initialize\+Safe}!scots\+::\+Compare@{scots\+::\+Compare}}
+\subsubsection{\texorpdfstring{initialize\+Safe()}{initializeSafe()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+template$<$class S\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::initialize\+Safe (\begin{DoxyParamCaption}\item[{S\+\_\+type}]{addS }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Initializes objects specific to the following specifications\+: safe. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em addS} & Function pointer specifying the points that should be added to the potential safe set. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classscots_1_1Compare_a4ed25bd656e43ea3693266843edb88d2}\label{classscots_1_1Compare_a4ed25bd656e43ea3693266843edb88d2}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!print\+EtaX@{print\+EtaX}}
 \index{print\+EtaX@{print\+EtaX}!scots\+::\+Compare@{scots\+::\+Compare}}
 \subsubsection{\texorpdfstring{print\+Eta\+X()}{printEtaX()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-void \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::print\+EtaX (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+void \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::print\+EtaX (\begin{DoxyParamCaption}\item[{double $\ast$}]{etaX,  }\item[{int}]{dimX }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Prints information regarding the abstractions\textquotesingle{} grid parameters to the log file. \mbox{\Hypertarget{classscots_1_1Compare_a318f5349a3b0465bec67a5419d630695}\label{classscots_1_1Compare_a318f5349a3b0465bec67a5419d630695}} 
+Prints information regarding the abstractions\textquotesingle{} grid parameters to the log file. \mbox{\Hypertarget{classscots_1_1Compare_a9f062bcfa755da8ba004045cb9605ab5}\label{classscots_1_1Compare_a9f062bcfa755da8ba004045cb9605ab5}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!print\+Tau@{print\+Tau}}
 \index{print\+Tau@{print\+Tau}!scots\+::\+Compare@{scots\+::\+Compare}}
 \subsubsection{\texorpdfstring{print\+Tau()}{printTau()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-void \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::print\+Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+void \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::print\+Tau (\begin{DoxyParamCaption}\item[{double}]{tau }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Prints information regarding the time sampling parameter to the log file. \mbox{\Hypertarget{classscots_1_1Compare_a506b87a62b1adde561d725e9cc1315e9}\label{classscots_1_1Compare_a506b87a62b1adde561d725e9cc1315e9}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!reach\+S\+C\+O\+TS@{reach\+S\+C\+O\+TS}}
@@ -208,14 +223,28 @@ Implementation of reachability using only a scots\+::\+Fixed\+Point object. For 
 \mbox{\tt in}  & {\em verbose} & If 1, prints additional information during synthesis to the log file. \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{classscots_1_1Compare_aa96846be5c881576f5add5ce32f7fe8a}\label{classscots_1_1Compare_aa96846be5c881576f5add5ce32f7fe8a}} 
+\mbox{\Hypertarget{classscots_1_1Compare_ad54d4ddd0268b4a41e53f19d668ab8b0}\label{classscots_1_1Compare_ad54d4ddd0268b4a41e53f19d668ab8b0}} 
+\index{scots\+::\+Compare@{scots\+::\+Compare}!safe\+S\+C\+O\+TS@{safe\+S\+C\+O\+TS}}
+\index{safe\+S\+C\+O\+TS@{safe\+S\+C\+O\+TS}!scots\+::\+Compare@{scots\+::\+Compare}}
+\subsubsection{\texorpdfstring{safe\+S\+C\+O\+T\+S()}{safeSCOTS()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::safe\+S\+C\+O\+TS (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Implementation of safety using functions in a S\+C\+O\+T\+S\+::\+Fixed\+Point object. For comparison with the \hyperlink{classscots_1_1Adaptive}{Adaptive} version. \mbox{\Hypertarget{classscots_1_1Compare_aa96846be5c881576f5add5ce32f7fe8a}\label{classscots_1_1Compare_aa96846be5c881576f5add5ce32f7fe8a}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!save\+Verify\+Reach@{save\+Verify\+Reach}}
 \index{save\+Verify\+Reach@{save\+Verify\+Reach}!scots\+::\+Compare@{scots\+::\+Compare}}
 \subsubsection{\texorpdfstring{save\+Verify\+Reach()}{saveVerifyReach()}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 void \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::save\+Verify\+Reach (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Saves and prints to console some information related to the reachability/always-\/eventually specification. 
+Saves and prints to console some information related to the reachability/always-\/eventually specification. \mbox{\Hypertarget{classscots_1_1Compare_a9e79295cd6f8c7eed65d29ca2667cff9}\label{classscots_1_1Compare_a9e79295cd6f8c7eed65d29ca2667cff9}} 
+\index{scots\+::\+Compare@{scots\+::\+Compare}!save\+Verify\+Safe@{save\+Verify\+Safe}}
+\index{save\+Verify\+Safe@{save\+Verify\+Safe}!scots\+::\+Compare@{scots\+::\+Compare}}
+\subsubsection{\texorpdfstring{save\+Verify\+Safe()}{saveVerifySafe()}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+void \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::save\+Verify\+Safe (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Saves and prints to log file some information related to the safety specification. 
 
 \subsection{Member Data Documentation}
 \mbox{\Hypertarget{classscots_1_1Compare_a0ec2c4c168dc46f79616a393c1cda103}\label{classscots_1_1Compare_a0ec2c4c168dc46f79616a393c1cda103}} 
@@ -239,35 +268,7 @@ Controller. \mbox{\Hypertarget{classscots_1_1Compare_a330d650aa232026ba22f43aa81
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 Cudd \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::ddmgr\+\_\+}
 
-A single manager object common to all B\+D\+Ds used in the program. \mbox{\Hypertarget{classscots_1_1Compare_a4bcfca4afdbb0cc4d0d656702e9f2498}\label{classscots_1_1Compare_a4bcfca4afdbb0cc4d0d656702e9f2498}} 
-\index{scots\+::\+Compare@{scots\+::\+Compare}!dim\+U\+\_\+@{dim\+U\+\_\+}}
-\index{dim\+U\+\_\+@{dim\+U\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
-\subsubsection{\texorpdfstring{dim\+U\+\_\+}{dimU\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-int \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::dim\+U\+\_\+}
-
-Dimensionality of input space. \mbox{\Hypertarget{classscots_1_1Compare_a5ca0b67f243d75684e573bdf39750298}\label{classscots_1_1Compare_a5ca0b67f243d75684e573bdf39750298}} 
-\index{scots\+::\+Compare@{scots\+::\+Compare}!dim\+X\+\_\+@{dim\+X\+\_\+}}
-\index{dim\+X\+\_\+@{dim\+X\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
-\subsubsection{\texorpdfstring{dim\+X\+\_\+}{dimX\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-int \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::dim\+X\+\_\+}
-
-Dimensionality of state space. \mbox{\Hypertarget{classscots_1_1Compare_a5bc5261e5403a3e984020cd8b05b587a}\label{classscots_1_1Compare_a5bc5261e5403a3e984020cd8b05b587a}} 
-\index{scots\+::\+Compare@{scots\+::\+Compare}!eta\+U\+\_\+@{eta\+U\+\_\+}}
-\index{eta\+U\+\_\+@{eta\+U\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
-\subsubsection{\texorpdfstring{eta\+U\+\_\+}{etaU\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::eta\+U\+\_\+}
-
-Grid spacing of input space abstraction in each dimension. \mbox{\Hypertarget{classscots_1_1Compare_ae5fae0a0ea064b629885b69cc32014d1}\label{classscots_1_1Compare_ae5fae0a0ea064b629885b69cc32014d1}} 
-\index{scots\+::\+Compare@{scots\+::\+Compare}!eta\+X\+\_\+@{eta\+X\+\_\+}}
-\index{eta\+X\+\_\+@{eta\+X\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
-\subsubsection{\texorpdfstring{eta\+X\+\_\+}{etaX\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::eta\+X\+\_\+}
-
-Grid spacing in state space abstraction in each dimension. \mbox{\Hypertarget{classscots_1_1Compare_a1a7d912c19ff01269353ec705a257ad6}\label{classscots_1_1Compare_a1a7d912c19ff01269353ec705a257ad6}} 
+A single manager object common to all B\+D\+Ds used in the program. \mbox{\Hypertarget{classscots_1_1Compare_a1a7d912c19ff01269353ec705a257ad6}\label{classscots_1_1Compare_a1a7d912c19ff01269353ec705a257ad6}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!G\+\_\+@{G\+\_\+}}
 \index{G\+\_\+@{G\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
 \subsubsection{\texorpdfstring{G\+\_\+}{G\_}}
@@ -281,21 +282,7 @@ Instance of $\ast$\+X\+\_\+ containing goal states. \mbox{\Hypertarget{classscot
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 Symbolic\+Set$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::I\+\_\+}
 
-Instance of $\ast$\+X\+\_\+ containing initial states. \mbox{\Hypertarget{classscots_1_1Compare_a2e5b605b24f26910ea99264de9474a33}\label{classscots_1_1Compare_a2e5b605b24f26910ea99264de9474a33}} 
-\index{scots\+::\+Compare@{scots\+::\+Compare}!lb\+U\+\_\+@{lb\+U\+\_\+}}
-\index{lb\+U\+\_\+@{lb\+U\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
-\subsubsection{\texorpdfstring{lb\+U\+\_\+}{lbU\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::lb\+U\+\_\+}
-
-Lowermost grid point of input space. \mbox{\Hypertarget{classscots_1_1Compare_a73eb8628cb603f8e3fd914e01368c457}\label{classscots_1_1Compare_a73eb8628cb603f8e3fd914e01368c457}} 
-\index{scots\+::\+Compare@{scots\+::\+Compare}!lb\+X\+\_\+@{lb\+X\+\_\+}}
-\index{lb\+X\+\_\+@{lb\+X\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
-\subsubsection{\texorpdfstring{lb\+X\+\_\+}{lbX\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::lb\+X\+\_\+}
-
-Lowermost grid point of state space. \mbox{\Hypertarget{classscots_1_1Compare_a5dd50527db402893630c209d05be4ef0}\label{classscots_1_1Compare_a5dd50527db402893630c209d05be4ef0}} 
+Instance of $\ast$\+X\+\_\+ containing initial states. \mbox{\Hypertarget{classscots_1_1Compare_a5dd50527db402893630c209d05be4ef0}\label{classscots_1_1Compare_a5dd50527db402893630c209d05be4ef0}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!O\+\_\+@{O\+\_\+}}
 \index{O\+\_\+@{O\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
 \subsubsection{\texorpdfstring{O\+\_\+}{O\_}}
@@ -323,42 +310,28 @@ Instance of $\ast$\+X\+\_\+ containing possible safe states. \mbox{\Hypertarget{
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 Ode\+Solver$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::solver\+\_\+}
 
-O\+DE solver (Runge-\/\+Katta approximation) for an abstraction time step. \mbox{\Hypertarget{classscots_1_1Compare_aeb0830d94286ae12672cf1ea183afb1d}\label{classscots_1_1Compare_aeb0830d94286ae12672cf1ea183afb1d}} 
+O\+DE solver (Runge-\/\+Katta approximation) for an abstraction time step. \mbox{\Hypertarget{classscots_1_1Compare_ae036e8066fed2391f333c8f64282f12e}\label{classscots_1_1Compare_ae036e8066fed2391f333c8f64282f12e}} 
+\index{scots\+::\+Compare@{scots\+::\+Compare}!stage\+\_\+@{stage\+\_\+}}
+\index{stage\+\_\+@{stage\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
+\subsubsection{\texorpdfstring{stage\+\_\+}{stage\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+int \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::stage\+\_\+}
+
+Helps ensure user calls methods in correct order. \mbox{\Hypertarget{classscots_1_1Compare_aeb0830d94286ae12672cf1ea183afb1d}\label{classscots_1_1Compare_aeb0830d94286ae12672cf1ea183afb1d}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!T\+\_\+@{T\+\_\+}}
 \index{T\+\_\+@{T\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
 \subsubsection{\texorpdfstring{T\+\_\+}{T\_}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 Symbolic\+Set$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::T\+\_\+}
 
-Transition relation. \mbox{\Hypertarget{classscots_1_1Compare_a1746834841252ede3651c0f5bfc3e27f}\label{classscots_1_1Compare_a1746834841252ede3651c0f5bfc3e27f}} 
-\index{scots\+::\+Compare@{scots\+::\+Compare}!tau\+\_\+@{tau\+\_\+}}
-\index{tau\+\_\+@{tau\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
-\subsubsection{\texorpdfstring{tau\+\_\+}{tau\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::tau\+\_\+}
-
-Time step. \mbox{\Hypertarget{classscots_1_1Compare_ac341e6c2534e4bb4ab248cc767c33b8d}\label{classscots_1_1Compare_ac341e6c2534e4bb4ab248cc767c33b8d}} 
+Transition relation. \mbox{\Hypertarget{classscots_1_1Compare_ac341e6c2534e4bb4ab248cc767c33b8d}\label{classscots_1_1Compare_ac341e6c2534e4bb4ab248cc767c33b8d}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!U\+\_\+@{U\+\_\+}}
 \index{U\+\_\+@{U\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
 \subsubsection{\texorpdfstring{U\+\_\+}{U\_}}
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 Symbolic\+Set$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::U\+\_\+}
 
-The input space abstraction. \mbox{\Hypertarget{classscots_1_1Compare_a0b0e2f9dd8e872f49eb2a190d9e09dff}\label{classscots_1_1Compare_a0b0e2f9dd8e872f49eb2a190d9e09dff}} 
-\index{scots\+::\+Compare@{scots\+::\+Compare}!ub\+U\+\_\+@{ub\+U\+\_\+}}
-\index{ub\+U\+\_\+@{ub\+U\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
-\subsubsection{\texorpdfstring{ub\+U\+\_\+}{ubU\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::ub\+U\+\_\+}
-
-Uppermost grid point of input space. \mbox{\Hypertarget{classscots_1_1Compare_a1ce31ce906f325470edb135b65a3a01a}\label{classscots_1_1Compare_a1ce31ce906f325470edb135b65a3a01a}} 
-\index{scots\+::\+Compare@{scots\+::\+Compare}!ub\+X\+\_\+@{ub\+X\+\_\+}}
-\index{ub\+X\+\_\+@{ub\+X\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
-\subsubsection{\texorpdfstring{ub\+X\+\_\+}{ubX\_}}
-{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
-double$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::ub\+X\+\_\+}
-
-Uppermost grid point of state space. \mbox{\Hypertarget{classscots_1_1Compare_a3f1ba24992e2dfe24358087aeecb5a75}\label{classscots_1_1Compare_a3f1ba24992e2dfe24358087aeecb5a75}} 
+The input space abstraction. \mbox{\Hypertarget{classscots_1_1Compare_a3f1ba24992e2dfe24358087aeecb5a75}\label{classscots_1_1Compare_a3f1ba24992e2dfe24358087aeecb5a75}} 
 \index{scots\+::\+Compare@{scots\+::\+Compare}!X2\+\_\+@{X2\+\_\+}}
 \index{X2\+\_\+@{X2\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
 \subsubsection{\texorpdfstring{X2\+\_\+}{X2\_}}
@@ -372,7 +345,14 @@ The \char`\"{}post\char`\"{} state space. \mbox{\Hypertarget{classscots_1_1Compa
 {\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
 Symbolic\+Set$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::X\+\_\+}
 
-State space. 
+State space. \mbox{\Hypertarget{classscots_1_1Compare_ae1a8d5e076e059cda7124581dc3d05ab}\label{classscots_1_1Compare_ae1a8d5e076e059cda7124581dc3d05ab}} 
+\index{scots\+::\+Compare@{scots\+::\+Compare}!Z\+\_\+@{Z\+\_\+}}
+\index{Z\+\_\+@{Z\+\_\+}!scots\+::\+Compare@{scots\+::\+Compare}}
+\subsubsection{\texorpdfstring{Z\+\_\+}{Z\_}}
+{\footnotesize\ttfamily template$<$class X\+\_\+type , class U\+\_\+type $>$ \\
+Symbolic\+Set$\ast$ \hyperlink{classscots_1_1Compare}{scots\+::\+Compare}$<$ X\+\_\+type, U\+\_\+type $>$\+::Z\+\_\+}
+
+Instance of $\ast$\+X\+\_\+ containing winning states. 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

@@ -70,7 +70,7 @@ public:
     vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
     vector<SymbolicModelGrowthBound<X_type, U_type>*> Abs_; /*!< Abstractions containing the transition relation \subseteq *Xs_[i] x *U_ x *X2s_[i]. */
 
-    int stage_; /*! Helps ensure user calls methods in correct order. */
+    int stage_; /*!< Helps ensure user calls methods in correct order. */
 
     /*!	Constructor for an Adaptive object.
         \param[in]	dimX		Dimensionality of the state space.
@@ -156,6 +156,7 @@ public:
         delete ddmgr_;
     }
 
+    /*! Prints information to the console/log file for the user, and saves some other information. */
     void saveVerify() {
         printEtaX();
         printTau();
@@ -250,7 +251,9 @@ public:
 
 
     /*! Calculates the enforceable predecessor of the given set with respect to the transition relation at the specified level of abstraction.
-     *  \param[in]  Z           BDD of the winning set.
+     *  \param[in]  Z           The winning set.
+     *  \param[in]  T           The transition relation.
+     *  \param[in]  TT          The transition relation with post states existentially abstracted.
      *  \param[in]  curAbs      0-index of the current abstraction.
      *  \return     BDD containing {(x,u)} for which all post states are in Z.
      */

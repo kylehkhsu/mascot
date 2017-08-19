@@ -97,6 +97,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a204cd701ae182be7b10e2017e259285b"><td class="memTemplParams" colspan="2">template&lt;class vec_type &gt; </td></tr>
 <tr class="memitem:a204cd701ae182be7b10e2017e259285b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Helper_8hh.html#a204cd701ae182be7b10e2017e259285b">helper::deleteVecArray</a> (vec_type vec)</td></tr>
 <tr class="separator:a204cd701ae182be7b10e2017e259285b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8511b1f612df58fa2d54b823cf6c1f7a"><td class="memTemplParams" colspan="2">template&lt;class msg_type &gt; </td></tr>
+<tr class="memitem:a8511b1f612df58fa2d54b823cf6c1f7a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Helper_8hh.html#a8511b1f612df58fa2d54b823cf6c1f7a">helper::error</a> (msg_type msg)</td></tr>
+<tr class="separator:a8511b1f612df58fa2d54b823cf6c1f7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Contains helper functions. </p>
@@ -173,6 +176,32 @@ template&lt;class vec_type &gt; </div>
 <p>Frees a vector's arrays from heap memory. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">vec</td><td>Vector of arrays. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="file_a8511b1f612df58fa2d54b823cf6c1f7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a8511b1f612df58fa2d54b823cf6c1f7a">&#9670;&nbsp;</a></span>error()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class msg_type &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void helper::error </td>
+          <td>(</td>
+          <td class="paramtype">msg_type&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Throws a logic error along with specified message and closes the log file. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>Error message to log to file. </td></tr>
   </table>
   </dd>
 </dl>

@@ -19,6 +19,8 @@
 {\footnotesize template$<$class vec\+\_\+type , class prefix\+\_\+type $>$ }\\void \hyperlink{Helper_8hh_a33cb7ae024bddfc7874b8aaa80d46f4b}{helper\+::print\+Vec} (vec\+\_\+type vec, prefix\+\_\+type vec\+Prefix)
 \item 
 {\footnotesize template$<$class vec\+\_\+type $>$ }\\void \hyperlink{Helper_8hh_a204cd701ae182be7b10e2017e259285b}{helper\+::delete\+Vec\+Array} (vec\+\_\+type vec)
+\item 
+{\footnotesize template$<$class msg\+\_\+type $>$ }\\void \hyperlink{Helper_8hh_a8511b1f612df58fa2d54b823cf6c1f7a}{helper\+::error} (msg\+\_\+type msg)
 \end{DoxyCompactItemize}
 
 
@@ -60,6 +62,18 @@ void helper\+::delete\+Vec\+Array (\begin{DoxyParamCaption}\item[{vec\+\_\+type}
 Frees a vector\textquotesingle{}s arrays from heap memory. 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em vec} & Vector of arrays. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{Helper_8hh_file_a8511b1f612df58fa2d54b823cf6c1f7a}\label{Helper_8hh_file_a8511b1f612df58fa2d54b823cf6c1f7a}} 
+\index{Helper.\+hh@{Helper.\+hh}!error@{error}}
+\index{error@{error}!Helper.\+hh@{Helper.\+hh}}
+\subsubsection{\texorpdfstring{error()}{error()}}
+{\footnotesize\ttfamily template$<$class msg\+\_\+type $>$ \\
+void helper\+::error (\begin{DoxyParamCaption}\item[{msg\+\_\+type}]{msg }\end{DoxyParamCaption})}
+
+Throws a logic error along with specified message and closes the log file. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em msg} & Error message to log to file. \\
 \hline
 \end{DoxyParams}
 \mbox{\Hypertarget{Helper_8hh_file_ad3a9b9a5d8b46962dae72719f691201c}\label{Helper_8hh_file_ad3a9b9a5d8b46962dae72719f691201c}} 

@@ -10,6 +10,9 @@ using namespace helper;
 
 namespace scots {
 
+/*! \class Reach
+ *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for a reach specification.
+ */
 template<class X_type, class U_type>
 class Reach: public Adaptive<X_type, U_type> {
 public:
@@ -22,6 +25,7 @@ public:
     vector<SymbolicSet*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
 
+    /*! Constructor for a Reach object. */
     Reach(int dimX, double* lbX, double* ubX, double* etaX, double tau,
           int dimU, double* lbU, double* ubU, double* etaU,
           double* etaRatio, double tauRatio, int nint,

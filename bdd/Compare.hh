@@ -44,12 +44,12 @@ public:
     SymbolicSet* T_; /*!< Transition relation. */
 
     SymbolicSet* S_; /*!< Instance of *X_ containing possible safe states. */
-    SymbolicSet* Z_;
+    SymbolicSet* Z_; /*!< Instance of *X_ containing winning states. */
 
     OdeSolver* solver_; /*!< ODE solver (Runge-Katta approximation) for an abstraction time step. */
     SymbolicModelGrowthBound<X_type, U_type>* Ab_; /*!< Abstraction containing the transition relation. */
 
-    int stage_; /*! Helps ensure user calls methods in correct order. */
+    int stage_; /*!< Helps ensure user calls methods in correct order. */
 
     /*!	Constructor for a Compare object.
         \param[in]	dimX		Dimensionality of the state space.

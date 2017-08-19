@@ -76,6 +76,17 @@ $(function() {
  <a href="classscots_1_1Adaptive.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Adaptive_8hh_source.html">Adaptive.hh</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for scots::Adaptive&lt; X_type, U_type &gt;:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classscots_1_1Adaptive.png" usemap="#scots::Adaptive_3C_20X_5Ftype_2C_20U_5Ftype_20_3E_map" alt=""/>
+  <map id="scots::Adaptive_3C_20X_5Ftype_2C_20U_5Ftype_20_3E_map" name="scots::Adaptive_3C_20X_5Ftype_2C_20U_5Ftype_20_3E_map">
+<area href="classscots_1_1Reach.html" title="A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for a ..." alt="scots::Reach&lt; X_type, U_type &gt;" shape="rect" coords="0,56,259,80"/>
+<area href="classscots_1_1Safe.html" title="A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for a ..." alt="scots::Safe&lt; X_type, U_type &gt;" shape="rect" coords="269,56,528,80"/>
+<area href="classscots_1_1AlwaysEventually.html" title="A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for an..." alt="scots::AlwaysEventually&lt; X_type, U_type &gt;" shape="rect" coords="0,112,259,136"/>
+</map>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -83,54 +94,32 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a5665d4b8db7cc7c1e1ecba0a512959d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa20062d309691c2858912bc3fd9616e7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#aa20062d309691c2858912bc3fd9616e7">~Adaptive</a> ()</td></tr>
 <tr class="separator:aa20062d309691c2858912bc3fd9616e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a629133566055e6445983b86082838b96"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a629133566055e6445983b86082838b96">saveVerifySafe</a> ()</td></tr>
-<tr class="separator:a629133566055e6445983b86082838b96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed48ef46c84bf6797bea16f896e44e3a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#aed48ef46c84bf6797bea16f896e44e3a">saveVerifyReach</a> ()</td></tr>
-<tr class="separator:aed48ef46c84bf6797bea16f896e44e3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb37f63b898de0d0013839d3b9d1db2f"><td class="memTemplParams" colspan="2">template&lt;class S_type &gt; </td></tr>
-<tr class="memitem:abb37f63b898de0d0013839d3b9d1db2f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#abb37f63b898de0d0013839d3b9d1db2f">initializeSafe</a> (S_type addS)</td></tr>
-<tr class="separator:abb37f63b898de0d0013839d3b9d1db2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63afb68f37f6140095c2460d07fc19cb"><td class="memTemplParams" colspan="2">template&lt;class G_type , class I_type , class O_type &gt; </td></tr>
-<tr class="memitem:a63afb68f37f6140095c2460d07fc19cb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a63afb68f37f6140095c2460d07fc19cb">initializeReach</a> (G_type addG, I_type addI, O_type addO)</td></tr>
-<tr class="separator:a63afb68f37f6140095c2460d07fc19cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94aa585894b725d174c1a33c938a11bf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a94aa585894b725d174c1a33c938a11bf">reach</a> (int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose=1)</td></tr>
-<tr class="separator:a94aa585894b725d174c1a33c938a11bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf645bf4507f575426dfdd29de47dfe2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#aaf645bf4507f575426dfdd29de47dfe2">alwaysEventually</a> (int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose=1)</td></tr>
-<tr class="separator:aaf645bf4507f575426dfdd29de47dfe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76d026d45bd794eba3ef69c18835dd54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a76d026d45bd794eba3ef69c18835dd54">safe</a> ()</td></tr>
-<tr class="separator:a76d026d45bd794eba3ef69c18835dd54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a7b7cbccffbff31c135c9d5bd4d7ec0"><td class="memItemLeft" align="right" valign="top">BDD&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a4a7b7cbccffbff31c135c9d5bd4d7ec0">preC</a> (BDD Z, int curAbs)</td></tr>
-<tr class="separator:a4a7b7cbccffbff31c135c9d5bd4d7ec0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56ba7fb25e948dd1f2fa0c7380ca59e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a56ba7fb25e948dd1f2fa0c7380ca59e6">mu</a> (int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose, int *curAbs, int *iter, int *justCoarsed, int *iterCurAbs, int *reached, int *stop)</td></tr>
-<tr class="separator:a56ba7fb25e948dd1f2fa0c7380ca59e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c7b5c07621e61b846b70e949b92b0b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a1c7b5c07621e61b846b70e949b92b0b7">safeBasicDebug</a> (int verbose=0)</td></tr>
-<tr class="separator:a1c7b5c07621e61b846b70e949b92b0b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1663a6a4ab0ffe2025f954be4fe4116"><td class="memTemplParams" colspan="2">template&lt;class G_type , class I_type , class O_type &gt; </td></tr>
-<tr class="memitem:ae1663a6a4ab0ffe2025f954be4fe4116"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ae1663a6a4ab0ffe2025f954be4fe4116">reachBasicDebug</a> (int startAbs, G_type addG, I_type addI, O_type addO, int <a class="el" href="classscots_1_1Adaptive.html#a8ea5724cde577baf708496d6bef7e548">debug</a>=0)</td></tr>
-<tr class="separator:ae1663a6a4ab0ffe2025f954be4fe4116"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3b8d9cf97cd0967409c14361a40d779"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ad3b8d9cf97cd0967409c14361a40d779">saveCZ</a> (int curAbs)</td></tr>
-<tr class="separator:ad3b8d9cf97cd0967409c14361a40d779"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1d6eeb4c4b6ec88e7e6a283a7dfd57d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ab1d6eeb4c4b6ec88e7e6a283a7dfd57d">saveVerify</a> ()</td></tr>
+<tr class="separator:ab1d6eeb4c4b6ec88e7e6a283a7dfd57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa12a6d24ae6d46011215c2008181bbd2"><td class="memItemLeft" align="right" valign="top">BDD&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#aa12a6d24ae6d46011215c2008181bbd2">preC</a> (BDD Z, BDD T, BDD TT, int curAbs)</td></tr>
+<tr class="separator:aa12a6d24ae6d46011215c2008181bbd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a9af6f25e8c4015ceb24d704da26972"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a6a9af6f25e8c4015ceb24d704da26972">initializeNotVars</a> ()</td></tr>
 <tr class="separator:a6a9af6f25e8c4015ceb24d704da26972"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4c5423a62b8c11110d0a2bdcc96d4fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#af4c5423a62b8c11110d0a2bdcc96d4fb">innerFinerAligned</a> (SymbolicSet *Zc, SymbolicSet *Zf, int c)</td></tr>
 <tr class="separator:af4c5423a62b8c11110d0a2bdcc96d4fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4054eda5087611f78dddb2c378fcbb6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a4054eda5087611f78dddb2c378fcbb6e">innerFinerAll2</a> (SymbolicSet *Zc, SymbolicSet *Zf, int c)</td></tr>
-<tr class="separator:a4054eda5087611f78dddb2c378fcbb6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01f8f69d290f9c81f76f6ab44d9ef193"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a01f8f69d290f9c81f76f6ab44d9ef193">innerCoarserAligned</a> (SymbolicSet *Zc, SymbolicSet *Zf, int c)</td></tr>
 <tr class="separator:a01f8f69d290f9c81f76f6ab44d9ef193"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4f1995704cf927fff530e715a6214ec"><td class="memTemplParams" colspan="2">template&lt;class G_type &gt; </td></tr>
-<tr class="memitem:aa4f1995704cf927fff530e715a6214ec"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#aa4f1995704cf927fff530e715a6214ec">testProjections</a> (G_type addG)</td></tr>
-<tr class="separator:aa4f1995704cf927fff530e715a6214ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a715bff15ed2365485cca7818c71479"><td class="memTemplParams" colspan="2">template&lt;class G_type &gt; </td></tr>
+<tr class="memitem:a9a715bff15ed2365485cca7818c71479"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a9a715bff15ed2365485cca7818c71479">testProjections</a> (G_type addG, int which)</td></tr>
+<tr class="separator:a9a715bff15ed2365485cca7818c71479"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6aeb2170e7223c1396454ab2b83fb09"><td class="memTemplParams" colspan="2">template&lt;class sys_type , class rad_type &gt; </td></tr>
 <tr class="memitem:af6aeb2170e7223c1396454ab2b83fb09"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#af6aeb2170e7223c1396454ab2b83fb09">computeAbstractions</a> (sys_type sysNext, rad_type radNext)</td></tr>
 <tr class="separator:af6aeb2170e7223c1396454ab2b83fb09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a111bfb2d3fd8eb0a3871da715985d534"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a111bfb2d3fd8eb0a3871da715985d534">loadTs</a> ()</td></tr>
+<tr class="separator:a111bfb2d3fd8eb0a3871da715985d534"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47e3334958032965fa6218ad0c24ac02"><td class="memTemplParams" colspan="2">template&lt;class vec_type &gt; </td></tr>
+<tr class="memitem:a47e3334958032965fa6218ad0c24ac02"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a47e3334958032965fa6218ad0c24ac02">removeFromTs</a> (vec_type *vec)</td></tr>
+<tr class="separator:a47e3334958032965fa6218ad0c24ac02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac25a2399ed09b07ef546579c94b0726"><td class="memTemplParams" colspan="2">template&lt;class vec_type , class spec_type &gt; </td></tr>
 <tr class="memitem:aac25a2399ed09b07ef546579c94b0726"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#aac25a2399ed09b07ef546579c94b0726">initializeSpec</a> (vec_type *vec, spec_type addSpec)</td></tr>
 <tr class="separator:aac25a2399ed09b07ef546579c94b0726"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7b09416eb224909dcfddcb6487b3b82"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ad7b09416eb224909dcfddcb6487b3b82">initializeXX2UZCs</a> ()</td></tr>
 <tr class="separator:ad7b09416eb224909dcfddcb6487b3b82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec99424e29ff42e2e7e46f747cb6ed34"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#aec99424e29ff42e2e7e46f747cb6ed34">initializeTs</a> ()</td></tr>
-<tr class="separator:aec99424e29ff42e2e7e46f747cb6ed34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f23922cbd2768a8339c73928ddc9c5a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a8f23922cbd2768a8339c73928ddc9c5a">initializeAlignment</a> ()</td></tr>
 <tr class="separator:a8f23922cbd2768a8339c73928ddc9c5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3dca1d73761d2678f981512dee5c325d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a3dca1d73761d2678f981512dee5c325d">initializeEtaTau</a> (double *etaX, double tau)</td></tr>
@@ -145,14 +134,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2b4a5e42c1a4fca883c132b02295bf11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7351461977b9be0f07ec2974531af677"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a7351461977b9be0f07ec2974531af677">initializePermutes</a> ()</td></tr>
 <tr class="separator:a7351461977b9be0f07ec2974531af677"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8e0a243c51d3596f994f2b0668892e4"><td class="memTemplParams" colspan="2">template&lt;class sys_type , class rad_type &gt; </td></tr>
-<tr class="memitem:ae8e0a243c51d3596f994f2b0668892e4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ae8e0a243c51d3596f994f2b0668892e4">initializeAbs</a> (sys_type sysNext, rad_type radNext)</td></tr>
-<tr class="separator:ae8e0a243c51d3596f994f2b0668892e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e6a4284b5f3ef75816aaaefaf8fe51a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a4e6a4284b5f3ef75816aaaefaf8fe51a">mapAbstractions</a> (SymbolicSet *Xc, SymbolicSet *Xf, SymbolicSet *awkXX, SymbolicSet *subsetXX, int c)</td></tr>
-<tr class="separator:a4e6a4284b5f3ef75816aaaefaf8fe51a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a550bbb19126456c000595d7e647edb25"><td class="memTemplParams" colspan="2">template&lt;class msg_type &gt; </td></tr>
-<tr class="memitem:a550bbb19126456c000595d7e647edb25"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a550bbb19126456c000595d7e647edb25">error</a> (msg_type msg)</td></tr>
-<tr class="separator:a550bbb19126456c000595d7e647edb25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5513d2aa66399f472082def1d8befced"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a5513d2aa66399f472082def1d8befced">mapAbstractions</a> (SymbolicSet *Xc, SymbolicSet *Xf, SymbolicSet *XX, int c)</td></tr>
+<tr class="separator:a5513d2aa66399f472082def1d8befced"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af192d9fee4a464e21d88b2d9735c5053"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#af192d9fee4a464e21d88b2d9735c5053">printEtaX</a> ()</td></tr>
 <tr class="separator:af192d9fee4a464e21d88b2d9735c5053"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e3c0b5babfb943dcda7f7f5c89cbb3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a7e3c0b5babfb943dcda7f7f5c89cbb3e">printTau</a> ()</td></tr>
@@ -166,8 +149,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a4d986f797368f4e1f74dd7d8a37df2dd"><td class="memItemLeft" align="right" valign="top">Cudd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a4d986f797368f4e1f74dd7d8a37df2dd">ddmgr_</a></td></tr>
-<tr class="separator:a4d986f797368f4e1f74dd7d8a37df2dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e6666734880dba708dd931348041274"><td class="memItemLeft" align="right" valign="top">Cudd *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a9e6666734880dba708dd931348041274">ddmgr_</a></td></tr>
+<tr class="separator:a9e6666734880dba708dd931348041274"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a852e87d359ae3c0fe13493bac80f35f6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a852e87d359ae3c0fe13493bac80f35f6">dimX_</a></td></tr>
 <tr class="separator:a852e87d359ae3c0fe13493bac80f35f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6018fcd45bd81cc0073f0bd1f375829d"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a6018fcd45bd81cc0073f0bd1f375829d">lbX_</a></td></tr>
@@ -200,32 +183,16 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a2276dbf06b4db12739aed70443c1a32d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae43471177bc6b7d3229a9497b46ee343"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ae43471177bc6b7d3229a9497b46ee343">Xs_</a></td></tr>
 <tr class="separator:ae43471177bc6b7d3229a9497b46ee343"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1421430af54b816e57d7cc4db6f1a83d"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a1421430af54b816e57d7cc4db6f1a83d">Is_</a></td></tr>
-<tr class="separator:a1421430af54b816e57d7cc4db6f1a83d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abed6bfd1256157d4b943078f6486ee36"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#abed6bfd1256157d4b943078f6486ee36">Os_</a></td></tr>
-<tr class="separator:abed6bfd1256157d4b943078f6486ee36"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4184aca345cd09023c656bc616c2ee9a"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a4184aca345cd09023c656bc616c2ee9a">Gs_</a></td></tr>
-<tr class="separator:a4184aca345cd09023c656bc616c2ee9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a387e00a300c8c75d3a4eb6181dfab9c4"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a387e00a300c8c75d3a4eb6181dfab9c4">Zs_</a></td></tr>
 <tr class="separator:a387e00a300c8c75d3a4eb6181dfab9c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af160394c89efaa08d8830a1df066586d"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#af160394c89efaa08d8830a1df066586d">validZs_</a></td></tr>
-<tr class="separator:af160394c89efaa08d8830a1df066586d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a532d1acf3db0235c7bbd551b41a040fc"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a532d1acf3db0235c7bbd551b41a040fc">X2s_</a></td></tr>
 <tr class="separator:a532d1acf3db0235c7bbd551b41a040fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7e9ac7e500e7f06931138b68ad48aac"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ae7e9ac7e500e7f06931138b68ad48aac">awkXXs_</a></td></tr>
-<tr class="separator:ae7e9ac7e500e7f06931138b68ad48aac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b47913f64f175d3b2b1bebdfcb4ec39"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a8b47913f64f175d3b2b1bebdfcb4ec39">subsetXXs_</a></td></tr>
-<tr class="separator:a8b47913f64f175d3b2b1bebdfcb4ec39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c52621889e3ea22c888c93cd14e5a76"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a3c52621889e3ea22c888c93cd14e5a76">XXs_</a></td></tr>
+<tr class="separator:a3c52621889e3ea22c888c93cd14e5a76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89fa563cfea5b9a7bec6a705ca412a18"><td class="memItemLeft" align="right" valign="top">SymbolicSet *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a89fa563cfea5b9a7bec6a705ca412a18">U_</a></td></tr>
 <tr class="separator:a89fa563cfea5b9a7bec6a705ca412a18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4937d441ac9758f33bcceeb9975fb1ce"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a4937d441ac9758f33bcceeb9975fb1ce">Cs_</a></td></tr>
 <tr class="separator:a4937d441ac9758f33bcceeb9975fb1ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad470ad33182f03ad7b3dd5fe9e5271d5"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ad470ad33182f03ad7b3dd5fe9e5271d5">validCs_</a></td></tr>
-<tr class="separator:ad470ad33182f03ad7b3dd5fe9e5271d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4afb0056b1ab5f1f73b1740806267044"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a4afb0056b1ab5f1f73b1740806267044">Ss_</a></td></tr>
-<tr class="separator:a4afb0056b1ab5f1f73b1740806267044"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad197683891b126e16f0f377d778fd352"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ad197683891b126e16f0f377d778fd352">infZs_</a></td></tr>
-<tr class="separator:ad197683891b126e16f0f377d778fd352"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a753d83283386610f1a2283af5cbeba73"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a753d83283386610f1a2283af5cbeba73">numBDDVars_</a></td></tr>
 <tr class="separator:a753d83283386610f1a2283af5cbeba73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac82296bd0392bccf2a0e4af9ba70ff37"><td class="memItemLeft" align="right" valign="top">vector&lt; BDD * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ac82296bd0392bccf2a0e4af9ba70ff37">cubesX_</a></td></tr>
@@ -250,12 +217,7 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a0b300511b5f746c7b24ead30dc0ca9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab51fe5639ecc8fd046c1d2d56fb25890"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicModelGrowthBound&lt; X_type, U_type &gt; * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ab51fe5639ecc8fd046c1d2d56fb25890">Abs_</a></td></tr>
 <tr class="separator:ab51fe5639ecc8fd046c1d2d56fb25890"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a70ee2d2b4efe4f5eb20d08a596ec7b"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#a5a70ee2d2b4efe4f5eb20d08a596ec7b">finalCs_</a></td></tr>
-<tr class="separator:a5a70ee2d2b4efe4f5eb20d08a596ec7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af22209ae22c8b2dd921be22cc51a36dd"><td class="memItemLeft" align="right" valign="top">vector&lt; SymbolicSet * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#af22209ae22c8b2dd921be22cc51a36dd">finalZs_</a></td></tr>
-<tr class="separator:af22209ae22c8b2dd921be22cc51a36dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae144310a281203fc51c67bf060bd9858"><td class="memItemLeft" align="right" valign="top"><a id="ae144310a281203fc51c67bf060bd9858"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>stage_</b></td></tr>
+<tr class="memitem:ae144310a281203fc51c67bf060bd9858"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classscots_1_1Adaptive.html#ae144310a281203fc51c67bf060bd9858">stage_</a></td></tr>
 <tr class="separator:ae144310a281203fc51c67bf060bd9858"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -383,7 +345,6 @@ template&lt;class X_type , class U_type &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Helps ensure user calls methods in correct order.</p>
 <p>Constructor for an <a class="el" href="classscots_1_1Adaptive.html" title="A class that does abstraction-based synthesis with adaptive time- and state space-gridding. ">Adaptive</a> object. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">dimX</td><td>Dimensionality of the state space. </td></tr>
@@ -401,6 +362,7 @@ template&lt;class X_type , class U_type &gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">numAbs</td><td>Number of abstractions. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">readXX</td><td>Whether initializeXXs should be done by construction (0) or reading from files (1). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">readAbs</td><td>Whether initializeAbs should be done by construction (0) or reading from files (1). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">logFile</td><td>Filename of program log. </td></tr>
   </table>
   </dd>
 </dl>
@@ -436,73 +398,6 @@ template&lt;class X_type , class U_type &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aaf645bf4507f575426dfdd29de47dfe2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf645bf4507f575426dfdd29de47dfe2">&#9670;&nbsp;</a></span>alwaysEventually()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::alwaysEventually </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>startAbs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>minToGoCoarser</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>minToBeValid</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>earlyBreak</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>verbose</em> = <code>1</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Writes, should they exist, a sequence of controller and controller domain BDDs to directories 'C' and 'Z' respectively that satisfy the Buchi box-diamond (aka always-eventually) specification. Note: of the n resultant controllers in 'C', the n-1th, .., 1st controllers are to reach, and the nth controller is for when the system state is a goal state. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">startAbs</td><td>0-index of the abstraction to start with. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">minToGoCoarser</td><td>Minimum number of growing fixed point iterations needed before an attempt to go to a coarser abstraction. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">minToBeValid</td><td>Minimum number of growing fixed point iterations needed before a controller is declared valid. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">earlyBreak</td><td>If 1, reachability ends as soon as I meets the domain of C. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">verbose</td><td>If 1, prints additional information during synthesis to the log file. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>1 if controller(s) satisfying specification is/are synthesized; 0 otherwise. </dd></dl>
-
-</div>
-</div>
 <a id="a5e8e6dc690e2c800338fd2c866af8889"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5e8e6dc690e2c800338fd2c866af8889">&#9670;&nbsp;</a></span>checkCubes()</h2>
 
@@ -631,89 +526,6 @@ template&lt;class X_type , class U_type &gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Debugging function. </p>
-
-</div>
-</div>
-<a id="a550bbb19126456c000595d7e647edb25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a550bbb19126456c000595d7e647edb25">&#9670;&nbsp;</a></span>error()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<div class="memtemplate">
-template&lt;class msg_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::error </td>
-          <td>(</td>
-          <td class="paramtype">msg_type&#160;</td>
-          <td class="paramname"><em>msg</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Throws a logic error along with specified message and closes the log file. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>Error message to log to file. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ae8e0a243c51d3596f994f2b0668892e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8e0a243c51d3596f994f2b0668892e4">&#9670;&nbsp;</a></span>initializeAbs()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<div class="memtemplate">
-template&lt;class sys_type , class rad_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::initializeAbs </td>
-          <td>(</td>
-          <td class="paramtype">sys_type&#160;</td>
-          <td class="paramname"><em>sysNext</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">rad_type&#160;</td>
-          <td class="paramname"><em>radNext</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Initializes the transition relations for the abstractions. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">sysNext</td><td>Specification of system dynamics. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">radNext</td><td>Specification of state uncertainty growth bound. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -896,96 +708,6 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="a63afb68f37f6140095c2460d07fc19cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a63afb68f37f6140095c2460d07fc19cb">&#9670;&nbsp;</a></span>initializeReach()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<div class="memtemplate">
-template&lt;class G_type , class I_type , class O_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::initializeReach </td>
-          <td>(</td>
-          <td class="paramtype">G_type&#160;</td>
-          <td class="paramname"><em>addG</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">I_type&#160;</td>
-          <td class="paramname"><em>addI</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">O_type&#160;</td>
-          <td class="paramname"><em>addO</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Initializes objects specific to the following specifications: always-eventually, reach-while-avoid. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">addG</td><td>Function pointer specifying the points that should be added to the goal set. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">addI</td><td>Function pointer specifying the points that should be added to the initial set. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">addO</td><td>Function pointer specifying the points that should be added to the obstacle set. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="abb37f63b898de0d0013839d3b9d1db2f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb37f63b898de0d0013839d3b9d1db2f">&#9670;&nbsp;</a></span>initializeSafe()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<div class="memtemplate">
-template&lt;class S_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::initializeSafe </td>
-          <td>(</td>
-          <td class="paramtype">S_type&#160;</td>
-          <td class="paramname"><em>addS</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Initializes objects specific to the following specifications: safe. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">addS</td><td>Function pointer specifying the points that should be added to the potential safe set. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a25cc058f39f38402ff914ae6b927393e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a25cc058f39f38402ff914ae6b927393e">&#9670;&nbsp;</a></span>initializeSolvers()</h2>
 
@@ -1064,34 +786,6 @@ template&lt;class vec_type , class spec_type &gt; </div>
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="aec99424e29ff42e2e7e46f747cb6ed34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec99424e29ff42e2e7e46f747cb6ed34">&#9670;&nbsp;</a></span>initializeTs()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::initializeTs </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Initializes Ts_ and TTs_. </p>
 
 </div>
 </div>
@@ -1192,6 +886,14 @@ template&lt;class X_type , class U_type &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Inner-approximates a set of states in a coarser abstraction with a finer abstraction. Optimal only if each element of etaRatio_ is 2 (or a greater power of; not 1!). </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">Zc</td><td>Winning states in the coarser abstraction. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">Zf</td><td>Winning states in the finer abstraction. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>0-index of the coarser abstraction.</td></tr>
+  </table>
+  </dd>
+</dl>
 <p>Inner-approximates a set of states in a finer abstraction with a coarser abstraction. This version takes advantage of the fact that cells in the two abstractions are aligned, which occurs if all elements of etaRatio_ are a power of 3. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">Zc</td><td>Winning states in the coarser abstraction. </td></tr>
@@ -1256,8 +958,8 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="a4054eda5087611f78dddb2c378fcbb6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4054eda5087611f78dddb2c378fcbb6e">&#9670;&nbsp;</a></span>innerFinerAll2()</h2>
+<a id="a111bfb2d3fd8eb0a3871da715985d534"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a111bfb2d3fd8eb0a3871da715985d534">&#9670;&nbsp;</a></span>loadTs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1268,27 +970,10 @@ template&lt;class X_type , class U_type &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::innerFinerAll2 </td>
+          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::loadTs </td>
           <td>(</td>
-          <td class="paramtype">SymbolicSet *&#160;</td>
-          <td class="paramname"><em>Zc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
-          <td class="paramtype">SymbolicSet *&#160;</td>
-          <td class="paramname"><em>Zf</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>c</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -1297,19 +982,12 @@ template&lt;class X_type , class U_type &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Inner-approximates a set of states in a coarser abstraction with a finer abstraction. Optimal only if each element of etaRatio_ is 2 (or a greater power of; not 1!). </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">Zc</td><td>Winning states in the coarser abstraction. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">Zf</td><td>Winning states in the finer abstraction. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>0-index of the coarser abstraction. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Reads transition relation BDDs from file and saves them into Ts_. </p>
 
 </div>
 </div>
-<a id="a4e6a4284b5f3ef75816aaaefaf8fe51a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e6a4284b5f3ef75816aaaefaf8fe51a">&#9670;&nbsp;</a></span>mapAbstractions()</h2>
+<a id="a5513d2aa66399f472082def1d8befced"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5513d2aa66399f472082def1d8befced">&#9670;&nbsp;</a></span>mapAbstractions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1335,13 +1013,7 @@ template&lt;class X_type , class U_type &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">SymbolicSet *&#160;</td>
-          <td class="paramname"><em>awkXX</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SymbolicSet *&#160;</td>
-          <td class="paramname"><em>subsetXX</em>, </td>
+          <td class="paramname"><em>XX</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1365,8 +1037,7 @@ template&lt;class X_type , class U_type &gt; </div>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">Xc</td><td>Coarser state space abstraction. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">Xf</td><td>Finer state space abstraction. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">awkXX</td><td>Mapping for two cells that meet at all (currently unnecessary/unused). </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">subsetXX</td><td>Mapping for a finer cell to the coarser cell that is its superset. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">XX</td><td>Mapping for a finer cell to the coarser cell that is its superset. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>0-index of the coarser abstraction (currently unnecessary/unused). </td></tr>
   </table>
   </dd>
@@ -1374,109 +1045,8 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="a56ba7fb25e948dd1f2fa0c7380ca59e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56ba7fb25e948dd1f2fa0c7380ca59e6">&#9670;&nbsp;</a></span>mu()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::mu </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>minToGoCoarser</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>minToBeValid</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>earlyBreak</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>verbose</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>curAbs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>iter</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>justCoarsed</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>iterCurAbs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>reached</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>stop</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>One iteration in an adaptive minimal fixed point. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">minToGoCoarser</td><td>Minimum number of iterations at an abstraction (not coarsest) before attemping to project to the next coarser abstraction. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">minToBeValid</td><td>Minimum number of iterations at an abstraction (not finest) after having gone coarser before a controller is declared valid and saved as a backup. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">earlyBreak</td><td>Whether the fixed point should end as soon as a strategy exists for the initial state. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">verbose</td><td>Whether messages detailing the steps of the algorithm should be printed to the log file. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">curAbs</td><td>0-index of the abstraction under consideration for the current iteration. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">iter</td><td>Counter for the total number of iterations of the minimal fixed point. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">justCoarsed</td><td>Status of the abstraction under consideration. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">iterCurAbs</td><td>Counter for the consecutive number of iterations for the current abstraction. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">reached</td><td>Whether the initial state has been declared winning. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">stop</td><td>Whether the fixed point should end. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a4a7b7cbccffbff31c135c9d5bd4d7ec0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4a7b7cbccffbff31c135c9d5bd4d7ec0">&#9670;&nbsp;</a></span>preC()</h2>
+<a id="aa12a6d24ae6d46011215c2008181bbd2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa12a6d24ae6d46011215c2008181bbd2">&#9670;&nbsp;</a></span>preC()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1491,6 +1061,18 @@ template&lt;class X_type , class U_type &gt; </div>
           <td>(</td>
           <td class="paramtype">BDD&#160;</td>
           <td class="paramname"><em>Z</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">BDD&#160;</td>
+          <td class="paramname"><em>T</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">BDD&#160;</td>
+          <td class="paramname"><em>TT</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1510,9 +1092,12 @@ template&lt;class X_type , class U_type &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Maximal fixed-point for an entire abstraction.</p>
 <p>Calculates the enforceable predecessor of the given set with respect to the transition relation at the specified level of abstraction. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">Z</td><td>BDD of the winning set. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Z</td><td>The winning set. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">T</td><td>The transition relation. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">TT</td><td>The transition relation with post states existentially abstracted. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">curAbs</td><td>0-index of the current abstraction. </td></tr>
   </table>
   </dd>
@@ -1577,51 +1162,25 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="a94aa585894b725d174c1a33c938a11bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a94aa585894b725d174c1a33c938a11bf">&#9670;&nbsp;</a></span>reach()</h2>
+<a id="a47e3334958032965fa6218ad0c24ac02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47e3334958032965fa6218ad0c24ac02">&#9670;&nbsp;</a></span>removeFromTs()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class X_type , class U_type &gt; </div>
+<div class="memtemplate">
+template&lt;class vec_type &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::reach </td>
+          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::removeFromTs </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>startAbs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">vec_type *&#160;</td>
+          <td class="paramname"><em>vec</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>minToGoCoarser</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>minToBeValid</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>earlyBreak</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>verbose</em> = <code>1</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -1630,172 +1189,17 @@ template&lt;class X_type , class U_type &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Writes, should they exist, a sequence of controller and controller domain BDDs to directories 'C' and 'Z' respectively that satisfy the reachability specification. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Removes a series of sets of states from the pre-states of the series of transition relations. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">startAbs</td><td>0-index of the abstraction to start with. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">minToGoCoarser</td><td>Minimum number of growing fixed point iterations needed before an attempt to go to a coarser abstraction. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">minToBeValid</td><td>Minimum number of growing fixed point iterations needed before a controller is declared valid. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">earlyBreak</td><td>If 1, the synthesis ends as soon as I meets the domain of C. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">verbose</td><td>If 1, prints additional information during synthesis to the log file.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>1 if controller(s) satisfying specification is/are synthesized; 0 otherwise. </dd></dl>
-
-</div>
-</div>
-<a id="ae1663a6a4ab0ffe2025f954be4fe4116"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1663a6a4ab0ffe2025f954be4fe4116">&#9670;&nbsp;</a></span>reachBasicDebug()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<div class="memtemplate">
-template&lt;class G_type , class I_type , class O_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::reachBasicDebug </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>startAbs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">G_type&#160;</td>
-          <td class="paramname"><em>addG</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">I_type&#160;</td>
-          <td class="paramname"><em>addI</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">O_type&#160;</td>
-          <td class="paramname"><em>addO</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>debug</em> = <code>0</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Debugging function. Implementation of basic SCOTS reachability (single abstraction) in the <a class="el" href="classscots_1_1Adaptive.html" title="A class that does abstraction-based synthesis with adaptive time- and state space-gridding. ">Adaptive</a> framework. </p>
-
-</div>
-</div>
-<a id="a76d026d45bd794eba3ef69c18835dd54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76d026d45bd794eba3ef69c18835dd54">&#9670;&nbsp;</a></span>safe()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::safe </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Writes, should they exist, controllers of specified abstractions that together satisfy a safety specification. </p>
-
-</div>
-</div>
-<a id="a1c7b5c07621e61b846b70e949b92b0b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c7b5c07621e61b846b70e949b92b0b7">&#9670;&nbsp;</a></span>safeBasicDebug()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::safeBasicDebug </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>verbose</em> = <code>0</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Debugging fucntion. Implementation of basic SCOTS safety (single abstraction) in the <a class="el" href="classscots_1_1Adaptive.html" title="A class that does abstraction-based synthesis with adaptive time- and state space-gridding. ">Adaptive</a> framework. </p>
-
-</div>
-</div>
-<a id="ad3b8d9cf97cd0967409c14361a40d779"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3b8d9cf97cd0967409c14361a40d779">&#9670;&nbsp;</a></span>saveCZ()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::saveCZ </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>curAbs</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Saves a snapshot of a controller and its domain into the sequence of final controllers and controller domains. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">curAbs</td><td>0-index of the abstraction which the controller and controller domain that should be saved belong to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">vec</td><td>Pointer to vector of SymbolicSets whose BDDs are removed from Ts_ and TTs_. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="aed48ef46c84bf6797bea16f896e44e3a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed48ef46c84bf6797bea16f896e44e3a">&#9670;&nbsp;</a></span>saveVerifyReach()</h2>
+<a id="ab1d6eeb4c4b6ec88e7e6a283a7dfd57d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1d6eeb4c4b6ec88e7e6a283a7dfd57d">&#9670;&nbsp;</a></span>saveVerify()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1806,7 +1210,7 @@ template&lt;class X_type , class U_type &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::saveVerifyReach </td>
+          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::saveVerify </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1818,40 +1222,12 @@ template&lt;class X_type , class U_type &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Saves and prints to log file some information related to the reachability/always-eventually specification. </p>
+<p>Prints information to the console/log file for the user, and saves some other information. </p>
 
 </div>
 </div>
-<a id="a629133566055e6445983b86082838b96"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a629133566055e6445983b86082838b96">&#9670;&nbsp;</a></span>saveVerifySafe()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::saveVerifySafe </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Saves and prints to log file some information related to the safety specification. </p>
-
-</div>
-</div>
-<a id="aa4f1995704cf927fff530e715a6214ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4f1995704cf927fff530e715a6214ec">&#9670;&nbsp;</a></span>testProjections()</h2>
+<a id="a9a715bff15ed2365485cca7818c71479"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a715bff15ed2365485cca7818c71479">&#9670;&nbsp;</a></span>testProjections()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1867,8 +1243,18 @@ template&lt;class G_type &gt; </div>
           <td class="memname">void <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::testProjections </td>
           <td>(</td>
           <td class="paramtype">G_type&#160;</td>
-          <td class="paramname"><em>addG</em></td><td>)</td>
+          <td class="paramname"><em>addG</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>which</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -1913,23 +1299,6 @@ template&lt;class X_type , class U_type &gt; </div>
       </table>
 </div><div class="memdoc">
 <p>Affects how XX is defined, determined by etaRatio_. </p>
-
-</div>
-</div>
-<a id="ae7e9ac7e500e7f06931138b68ad48aac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7e9ac7e500e7f06931138b68ad48aac">&#9670;&nbsp;</a></span>awkXXs_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::awkXXs_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>The numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the cells are not disjoint and neither is a subset of the other. </p>
 
 </div>
 </div>
@@ -2001,8 +1370,8 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="a4d986f797368f4e1f74dd7d8a37df2dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d986f797368f4e1f74dd7d8a37df2dd">&#9670;&nbsp;</a></span>ddmgr_</h2>
+<a id="a9e6666734880dba708dd931348041274"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e6666734880dba708dd931348041274">&#9670;&nbsp;</a></span>ddmgr_</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2010,7 +1379,7 @@ template&lt;class X_type , class U_type &gt; </div>
 template&lt;class X_type , class U_type &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Cudd <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::ddmgr_</td>
+          <td class="memname">Cudd* <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::ddmgr_</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -2100,91 +1469,6 @@ template&lt;class X_type , class U_type &gt; </div>
       </table>
 </div><div class="memdoc">
 <p>numAbs_ x dimX_ matrix of state space grid spacings. </p>
-
-</div>
-</div>
-<a id="a5a70ee2d2b4efe4f5eb20d08a596ec7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a70ee2d2b4efe4f5eb20d08a596ec7b">&#9670;&nbsp;</a></span>finalCs_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::finalCs_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Sequence of controllers that satisfy the specification. </p>
-
-</div>
-</div>
-<a id="af22209ae22c8b2dd921be22cc51a36dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af22209ae22c8b2dd921be22cc51a36dd">&#9670;&nbsp;</a></span>finalZs_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::finalZs_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Sequence of domains of finalCs_. </p>
-
-</div>
-</div>
-<a id="a4184aca345cd09023c656bc616c2ee9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4184aca345cd09023c656bc616c2ee9a">&#9670;&nbsp;</a></span>Gs_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::Gs_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Instance of *Xs_[i] containing goal states. </p>
-
-</div>
-</div>
-<a id="ad197683891b126e16f0f377d778fd352"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad197683891b126e16f0f377d778fd352">&#9670;&nbsp;</a></span>infZs_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::infZs_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Instance of *Xs_[i] containing projection of convergence of previous maximal fixed points. </p>
-
-</div>
-</div>
-<a id="a1421430af54b816e57d7cc4db6f1a83d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1421430af54b816e57d7cc4db6f1a83d">&#9670;&nbsp;</a></span>Is_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::Is_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Instance of *Xs_[i] containing initial states. </p>
 
 </div>
 </div>
@@ -2290,23 +1574,6 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="abed6bfd1256157d4b943078f6486ee36"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abed6bfd1256157d4b943078f6486ee36">&#9670;&nbsp;</a></span>Os_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::Os_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Instance of *Xs_[i] containing unsafe (obstacle) states. </p>
-
-</div>
-</div>
 <a id="a88edb6662310c07120d07c9dff968ddc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a88edb6662310c07120d07c9dff968ddc">&#9670;&nbsp;</a></span>permutesX2toX_</h2>
 
@@ -2392,8 +1659,8 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="a4afb0056b1ab5f1f73b1740806267044"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4afb0056b1ab5f1f73b1740806267044">&#9670;&nbsp;</a></span>Ss_</h2>
+<a id="ae144310a281203fc51c67bf060bd9858"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae144310a281203fc51c67bf060bd9858">&#9670;&nbsp;</a></span>stage_</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2401,28 +1668,11 @@ template&lt;class X_type , class U_type &gt; </div>
 template&lt;class X_type , class U_type &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::Ss_</td>
+          <td class="memname">int <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::stage_</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Instance of *Xs_[i] containing possible safe states. </p>
-
-</div>
-</div>
-<a id="a8b47913f64f175d3b2b1bebdfcb4ec39"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b47913f64f175d3b2b1bebdfcb4ec39">&#9670;&nbsp;</a></span>subsetXXs_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::subsetXXs_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>The numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the finer cell is a subset of the coarser cell. </p>
+<p>Helps ensure user calls methods in correct order. </p>
 
 </div>
 </div>
@@ -2545,40 +1795,6 @@ template&lt;class X_type , class U_type &gt; </div>
 
 </div>
 </div>
-<a id="ad470ad33182f03ad7b3dd5fe9e5271d5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad470ad33182f03ad7b3dd5fe9e5271d5">&#9670;&nbsp;</a></span>validCs_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::validCs_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Controllers that act as savepoints. </p>
-
-</div>
-</div>
-<a id="af160394c89efaa08d8830a1df066586d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af160394c89efaa08d8830a1df066586d">&#9670;&nbsp;</a></span>validZs_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class X_type , class U_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::validZs_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Contains winning states that act as savepoints. </p>
-
-</div>
-</div>
 <a id="a532d1acf3db0235c7bbd551b41a040fc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a532d1acf3db0235c7bbd551b41a040fc">&#9670;&nbsp;</a></span>X2s_</h2>
 
@@ -2610,6 +1826,23 @@ template&lt;class X_type , class U_type &gt; </div>
       </table>
 </div><div class="memdoc">
 <p>The numAbs_ "pre" state space abstractions, coarsest (0) to finest. </p>
+
+</div>
+</div>
+<a id="a3c52621889e3ea22c888c93cd14e5a76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c52621889e3ea22c888c93cd14e5a76">&#9670;&nbsp;</a></span>XXs_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class X_type , class U_type &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">vector&lt;SymbolicSet*&gt; <a class="el" href="classscots_1_1Adaptive.html">scots::Adaptive</a>&lt; X_type, U_type &gt;::XXs_</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the finer cell is a subset of the coarser cell. </p>
 
 </div>
 </div>

@@ -10,10 +10,14 @@ using namespace helper;
 
 namespace scots {
 
+/*! \class AlwaysEventually
+ *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for an always-eventually specification.
+ */
 template<class X_type, class U_type>
 class AlwaysEventually: public Reach<X_type, U_type> {
 public:
 
+    /*! Constructor for an AlwaysEventually object. */
     AlwaysEventually(int dimX, double* lbX, double* ubX, double* etaX, double tau,
                      int dimU, double* lbU, double* ubU, double* etaU,
                      double* etaRatio, double tauRatio, int nint,
@@ -35,7 +39,6 @@ public:
         \param[in]  startAbs            0-index of the abstraction to start with.
         \param[in]	minToGoCoarser		Minimum number of growing fixed point iterations needed before an attempt to go to a coarser abstraction.
         \param[in]	minToBeValid		Minimum number of growing fixed point iterations needed before a controller is declared valid.
-        \param[in]  earlyBreak          If 1, reachability ends as soon as I meets the domain of C.
         \param[in]	verbose				If 1, prints additional information during synthesis to the log file.
         \return     1 if controller(s) satisfying specification is/are synthesized; 0 otherwise.
      */
