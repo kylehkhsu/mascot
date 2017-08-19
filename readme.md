@@ -4,7 +4,7 @@
 possibly perturbed nonlinear control systems with respect to safety and reachability specifications.
 SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
 
-**SCOTS-Adaptive** enables multi-layer abstractions to expedite the fixed point procedure in the synthesis.
+**SCOTS-Adaptive** builds on SCOTS by using multi-layer abstractions to enable adaptive fixed points in the abstract controller synthesis.
 
 
 ### Requirements
