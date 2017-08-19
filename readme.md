@@ -2,6 +2,7 @@
 
 **SCOTS**, by Matthias Rungger et al., is a C++ tool (with a small Matlab interface) to synthesize controllers for
 possibly perturbed nonlinear control systems with respect to safety and reachability specifications.
+SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
 
 **SCOTS-Adaptive** enables multi-layer abstractions to expedite the fixed point procedure in the synthesis.
 
