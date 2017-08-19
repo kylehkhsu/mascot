@@ -44,11 +44,7 @@ public:
         tt.tic();
 
         // removing obstacles from transition relation
-        for (int i = 0; i < this->numAbs_; i++) {
-            this->Ts_[i]->printInfo(1);
-            this->Ts_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_);
-            *this->TTs_[i] &= !(Os_[i]->symbolicSet_);
-        }
+        this->removeFromTs(&Os_);
 
         for (int curAbs = 0; curAbs < this->numAbs_; curAbs++) {
             int iter = 1;

@@ -50,12 +50,9 @@ public:
 
         TicToc tt;
         tt.tic();
+
         // removing obstacles from transition relation
-        for (int i = 0; i < this->numAbs_; i++) {
-            this->Ts_[i]->printInfo(1);
-            this->Ts_[i]->symbolicSet_ &= !(this->Os_[i]->symbolicSet_);
-            *this->TTs_[i] &= !(this->Os_[i]->symbolicSet_);
-        }
+        this->removeFromTs(&Os_);
 
         clog << "Os_ removed from Ts_, TTs_.\n";
 

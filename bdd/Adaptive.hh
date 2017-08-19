@@ -458,16 +458,15 @@ public:
         if (readAbs_ == 0) {
             checkMakeDir("T");
             saveVec(Ts_, "T/T");
+        }        
+    }
+
+    template<class vec_type>
+    void removeFromTs(vec_type* vec) {
+        for (int i = 0; i < numAbs_; i++) {
+            Ts_[i]->symbolicSet_ &= !(vec[0][i]->symbolicSet_);
+            *TTs_[i] &= !(vec[0][i]->symbolicSet_);
         }
-
-//        // removing obstacles from transition relation
-//        for (int i = 0; i < numAbs_; i++) {
-//            Ts_[i]->printInfo(1);
-//            Ts_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_);
-//            *TTs_[i] &= !(Os_[i]->symbolicSet_);
-//        }
-
-        clog << "Os_ removed from Ts_, TTs_.\n";
     }
 
     /*! Initializes a vector of SymbolicSets that is an instance of Xs_ containing points as specified by addSpec.
