@@ -390,7 +390,10 @@ public:
             nofBddVars_[i] = set1.nofBddVars_[i];
         }
         for (size_t i=0; i<set2.dim_;i++)  {
-            z_[set1.dim_+i] = set1.z_[i];
+//            z_[set1.dim_+i] = set1.z_[i];
+            //kyle
+            z_[set1.dim_+i] = set2.z_[i];
+            //end
             eta_[set1.dim_+i] = set2.eta_[i];
             lastGridPoint_[set1.dim_+i] = set2.lastGridPoint_[i];
             firstGridPoint_[set1.dim_+i] = set2.firstGridPoint_[i];
