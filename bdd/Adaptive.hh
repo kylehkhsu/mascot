@@ -299,37 +299,37 @@ public:
         Zf->symbolicSet_ = Q.ExistAbstract(*notXvars_[c+1]) & Xs_[c+1]->symbolicSet_;
     }
 
-    /*!	Inner-approximates a set of states in a coarser abstraction with a finer abstraction.
-        Optimal only if each element of etaRatio_ is 2 (or a greater power of; not 1!).
-        \param[in]      Zc      Winning states in the coarser abstraction.
-        \param[in,out]  Zf      Winning states in the finer abstraction.
-        \param[in]      c       0-index of the coarser abstraction.
-    */
-    void innerFinerAll2(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+//    /*!	Inner-approximates a set of states in a coarser abstraction with a finer abstraction.
+//        Optimal only if each element of etaRatio_ is 2 (or a greater power of; not 1!).
+//        \param[in]      Zc      Winning states in the coarser abstraction.
+//        \param[in,out]  Zf      Winning states in the finer abstraction.
+//        \param[in]      c       0-index of the coarser abstraction.
+//    */
+//    void innerFinerAll2(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
 
-        int dimX = dimX_;
-        double* etaX = etaX_[c+1];
+//        int dimX = dimX_;
+//        double* etaX = etaX_[c+1];
 
-        auto f = [Zc, dimX, etaX](double* x)->bool {
-            std::vector<double> exPlus(x, x + dimX);
-            std::vector<double> exMinus(x, x + dimX);
-            for (int i = 0; i < dimX; i++) {
-                exPlus[i] += etaX[i];
-                exMinus[i] -= etaX[i];
+//        auto f = [Zc, dimX, etaX](double* x)->bool {
+//            std::vector<double> exPlus(x, x + dimX);
+//            std::vector<double> exMinus(x, x + dimX);
+//            for (int i = 0; i < dimX; i++) {
+//                exPlus[i] += etaX[i];
+//                exMinus[i] -= etaX[i];
 
-//                clog << exPlus[i] << ' ' << exMinus[i] << '\n';
-            }
-//            if (Zc->isElement(exPlus) && Zc->isElement(exMinus)) {
-//                clog << "x: " << x[0] << ' ' << x[1] << '\n';
+////                clog << exPlus[i] << ' ' << exMinus[i] << '\n';
 //            }
-            return (Zc->isElement(exPlus) && Zc->isElement(exMinus));
+////            if (Zc->isElement(exPlus) && Zc->isElement(exMinus)) {
+////                clog << "x: " << x[0] << ' ' << x[1] << '\n';
+////            }
+//            return (Zc->isElement(exPlus) && Zc->isElement(exMinus));
 
-        };
-        int iter = Zf->addByFunction(f);
+//        };
+//        int iter = Zf->addByFunction(f);
 
-        clog << "iterations: " << iter << '\n';
+//        clog << "iterations: " << iter << '\n';
 
-    }
+//    }
 
     /*!	Inner-approximates a set of states in a finer abstraction with a coarser abstraction.
         This version takes advantage of the fact that cells in the two abstractions are aligned,
@@ -448,19 +448,62 @@ public:
         }
         stage_ = 3;
 
+        for (int i = 0; i < numAbs_; i++) {
+            SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
+            Ts_.push_back(T);
+        }
+        clog << "Ts_ initialized with empty domain.\n";
+
         TicToc tt;
         tt.tic();
-        initializeAbs(sysNext, radNext);
+        if (readAbs_ == 0) {
+            for (int i = 0; i < numAbs_; i++) {
+                SymbolicModelGrowthBound<X_type, U_type>* Ab = new SymbolicModelGrowthBound<X_type, U_type>(Xs_[i], U_, X2s_[i]);
+                Ab->computeTransitionRelation(sysNext, radNext, *solvers_[i]);
+                Abs_.push_back(Ab);
+
+                Ts_[i]->symbolicSet_ = Ab->transitionRelation_;
+            }
+            clog << "Ts_ computed by sampling system behavior.\n";
+        }
+        else {
+            loadTs();
+        }
+
         clog << "------------------------------------------------computeAbstractions: ";
         tt.toc();
 
-        initializeTs();
         if (readAbs_ == 0) {
             checkMakeDir("T");
             saveVec(Ts_, "T/T");
-        }        
+        }
+
+        for (int i = 0; i < numAbs_; i++) {
+            BDD* TT = new BDD;
+            *TT = Ts_[i]->symbolicSet_.ExistAbstract(*cubesX2_[i]);
+            TTs_.push_back(TT);
+        }
+        clog << "TTs_ initialized by ExistAbstracting from Ts_.\n";
     }
 
+    /*! Reads transition relation BDDs from file and saves them into Ts_. */
+    void loadTs() {
+        for (int i = 0; i < numAbs_; i++) {
+            string Str = "T/T";
+            Str += std::to_string(i+1);
+            Str += ".bdd";
+            char Char[20];
+            size_t Length = Str.copy(Char, Str.length() + 1);
+            Char[Length] = '\0';
+            SymbolicSet T(*ddmgr_, Char);
+            Ts_[i]->symbolicSet_ = T.symbolicSet_;
+        }
+        clog << "Ts_ read from file.\n";
+    }
+
+    /*! Removes a series of sets of states from the pre-states of the series of transition relations.
+     *  \param[in] vec      Pointer to vector of SymbolicSets whose BDDs are removed from Ts_ and TTs_.
+     */
     template<class vec_type>
     void removeFromTs(vec_type* vec) {
         for (int i = 0; i < numAbs_; i++) {
@@ -515,20 +558,6 @@ public:
             Cs_.push_back(C);
         }
         clog << "Cs_ initialized with empty domain.\n";
-    }
-
-    /*! Initializes Ts_ and TTs_.*/
-    void initializeTs() {
-        for (int i = 0; i < numAbs_; i++) {
-            SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
-            T->symbolicSet_ = Abs_[i]->transitionRelation_;
-
-            BDD* TT = new BDD;
-            *TT = T->symbolicSet_.ExistAbstract(*cubesX2_[i]);
-
-            Ts_.push_back(T);
-            TTs_.push_back(TT);
-        }
     }
 
     /*! Initializes alignment_ by examining etaRatio_. */
@@ -682,36 +711,6 @@ public:
 
             permutesXtoX2_.push_back(permuteXtoX2);
             permutesX2toX_.push_back(permuteX2toX);
-        }
-    }
-
-    /*! Initializes the transition relations for the abstractions.
-     *  \param[in]  sysNext     Specification of system dynamics.
-     *  \param[in]  radNext     Specification of state uncertainty growth bound.
-     */
-    template<class sys_type, class rad_type>
-    void initializeAbs(sys_type sysNext, rad_type radNext) {
-
-        for (int i = 0; i < numAbs_; i++) {
-            SymbolicModelGrowthBound<X_type, U_type>* Ab = new SymbolicModelGrowthBound<X_type, U_type>(Xs_[i], U_, X2s_[i]);
-            if (readAbs_ == 0) {
-                Ab->computeTransitionRelation(sysNext, radNext, *solvers_[i]);
-
-            }
-            else {
-                string Str = "T/T";
-                Str += std::to_string(i+1);
-                Str += ".bdd";
-                char Char[20];
-                size_t Length = Str.copy(Char, Str.length() + 1);
-                Char[Length] = '\0'; 
-                SymbolicSet T(*ddmgr_, Char);
-                Ab->transitionRelation_ = T.symbolicSet_;
-            }
-
-            std::clog << "Number of elements in the transition relation: " << Ab->getSize() << std::endl;
-
-            Abs_.push_back(Ab);
         }
     }
 
