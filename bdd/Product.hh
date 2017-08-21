@@ -23,7 +23,7 @@ namespace scots {
 template<class X_type, class U_type>
 class Product: public Adaptive<X_type, U_type> {
 public:
-    Cudd* ddmgr_;
+    Cudd* prodDdmgr_;
     System* dyn_;
     vector<System*> preds_;
 
@@ -45,6 +45,10 @@ public:
     vector<SymbolicSet*> dynTs_;
     vector<vector<SymbolicSet*>*> predsTs_;
 
+    vector<SymbolicSet*> prodTs_;
+
+    System* system_;
+
     Product(char* logFile)
         : Adaptive<X_type, U_type>(logFile) {}
 
@@ -62,11 +66,40 @@ public:
         delete predU_;
         deleteVec(dynTs_);
         deleteVecVec(predsTs_);
-        delete ddmgr_;
+        deleteVec(prodTs_);
+        delete system_;
+        delete prodDdmgr_;
     }
 
+    void computeProducts() {
+        vector<SymbolicSet*> curTs;
+
+
+        for (int i = 0; i < *dyn_->numAbs_; i++) {
+            SymbolicSet* T = new SymbolicSet(*dynTs_[i]);
+            T->symbolicSet_ = dynTs_[i]->symbolicSet_;
+            curTs.push_back(T);
+            for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
+                SymbolicSet* curT = new SymbolicSet(*(curTs.back()), *((*predsTs_[iPred])[i]));
+                curT->symbolicSet_ = (curTs.back())->symbolicSet_ & ((*predsTs_[iPred])[i])->symbolicSet_;
+                curTs.push_back(curT);
+                curT->printInfo(1);
+            }
+
+            SymbolicSet* prodT = new SymbolicSet(*(curTs.back()));
+            prodT->symbolicSet_ = (curTs.back())->symbolicSet_;
+            prodTs_.push_back(prodT);
+        }
+        deleteVec(curTs);
+
+        checkMakeDir("T");
+        saveVec(prodTs_, "T/T");
+        clog << "Wrote prodTs_ to file.\n";
+    }
+
+
     void initializeProduct(System* dyn, vector<System*> preds) {
-        ddmgr_ = new Cudd;
+        prodDdmgr_ = new Cudd;
         dyn_ = dyn;
         preds_ = preds;
 
@@ -88,8 +121,11 @@ public:
 
     }
 
-
-
+    template<class O_type>
+    void initializeAdaptive(int readXX, int readAbs, O_type addO) {
+        initializeProductSystem();
+        this->initialize(system_, readXX, readAbs, addO);
+    }
 
     template<class sys_type, class rad_type, class x_type, class u_type>
     void computeDynAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u) {
@@ -103,7 +139,7 @@ public:
 
             dynTs_.push_back(dynT);
 
-            T.printInfo(1);
+//            T.printInfo(1);
         }
     }
 
@@ -114,16 +150,17 @@ public:
             predAb.computeTransitionRelation(sysNext, radNext, *(*predsSolvers_[iPred])[i]);
 
             SymbolicSet T = predAb.getTransitionRelation();
-            SymbolicSet* predT = new SymbolicSet(T);
-            predT->symbolicSet_ = T.symbolicSet_;
+            SymbolicSet* predT = new SymbolicSet(*(*predsXs_[iPred])[i], *(*predsX2s_[iPred])[i]);
+            predT->symbolicSet_ = T.symbolicSet_.ExistAbstract(predU_->getCube());
 
             predsTs_[iPred]->push_back(predT);
 
-            T.printInfo(1);
+//            T.printInfo(1);
+//            predT->printInfo(1);
         }
     }
 
-    System* getProductSystem() {
+    void initializeProductSystem() {
         int dimX = 0;
         dimX = dimX + *dyn_->dimX_;
         for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
@@ -157,24 +194,26 @@ public:
 
         cout << "ind: " << ind << '\n';
 
-        System* system = new System(dimX, lbX, ubX, etaX, *dyn_->tau_,
+        system_ = new System(dimX, lbX, ubX, etaX, *dyn_->tau_,
                                     *dyn_->dimU_, dyn_->lbU_, dyn_->ubU_, dyn_->etaU_,
                                     etaRatio, *dyn_->tauRatio_, *dyn_->nSubInt_, *dyn_->numAbs_);
-        return system;
     }
 
     void initializeProductSolvers() {
+        for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
+            vector<OdeSolver*>* predSolvers = new vector<OdeSolver*>;
+            predsSolvers_.push_back(predSolvers);
+        }
+
         for (int i = 0; i < *dyn_->numAbs_; i++) {
             OdeSolver* dynSolver = new OdeSolver(*dyn_->dimX_, *dyn_->nSubInt_, allTau_[i][0]);
             dynSolvers_.push_back(dynSolver);
 
-            vector<OdeSolver*>* predSolvers = new vector<OdeSolver*>;
             for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
                 System* pred = preds_[iPred];
                 OdeSolver* predSolver = new OdeSolver(*pred->dimX_, *pred->nSubInt_, allTau_[i][0]);
-                predSolvers->push_back(predSolver);
+                predsSolvers_[iPred]->push_back(predSolver);
             }
-            predsSolvers_.push_back(predSolvers);
         }
 
         cout << "Initialized dyn's, preds' ODE solvers.\n";
@@ -244,13 +283,13 @@ public:
         }
 
         for (int i = 0; i < *dyn_->numAbs_; i++) {
-            SymbolicSet* dynX = new SymbolicSet(*ddmgr_, *dyn_->dimX_, dyn_->lbX_, dyn_->ubX_, dynEtaXs_[i], allTau_[i][0]);
+            SymbolicSet* dynX = new SymbolicSet(*prodDdmgr_, *dyn_->dimX_, dyn_->lbX_, dyn_->ubX_, dynEtaXs_[i], allTau_[i][0]);
             dynX->addGridPoints();
             dynXs_.push_back(dynX);
 
             for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
                 System* pred = preds_[iPred];
-                SymbolicSet* predX = new SymbolicSet(*ddmgr_, *pred->dimX_, pred->lbX_, pred->ubX_, (*predsEtaXs_[iPred])[i], allTau_[i][0]);
+                SymbolicSet* predX = new SymbolicSet(*prodDdmgr_, *pred->dimX_, pred->lbX_, pred->ubX_, (*predsEtaXs_[iPred])[i], allTau_[i][0]);
                 predX->addGridPoints();
                 predsXs_[iPred]->push_back(predX);
             }
@@ -266,11 +305,11 @@ public:
             }
         }
 
-        dynU_ = new SymbolicSet(*ddmgr_, *dyn_->dimU_, dyn_->lbU_, dyn_->ubU_, dyn_->etaU_, 0);
+        dynU_ = new SymbolicSet(*prodDdmgr_, *dyn_->dimU_, dyn_->lbU_, dyn_->ubU_, dyn_->etaU_, 0);
         dynU_->addGridPoints();
 
         System* pred = preds_[0];
-        predU_ = new SymbolicSet(*ddmgr_, *pred->dimU_, pred->lbU_, pred->ubU_, pred->etaU_, 0);
+        predU_ = new SymbolicSet(*prodDdmgr_, *pred->dimU_, pred->lbU_, pred->ubU_, pred->etaU_, 0);
         predU_->addGridPoints();
 
         clog << "Initialized dyn's, preds' Xs, X2s, U.\n";

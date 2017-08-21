@@ -123,13 +123,13 @@ void together() {
     U.printInfo(1);
 
 
-//    SymbolicModelGrowthBound<XB_type, U_type> Abs(&X, &U, &X2);
+    SymbolicModelGrowthBound<XB_type, U_type> Abs(&X, &U, &X2);
 
-//    Abs.computeTransitionRelation(sysNextTog, radNextTog, solver);
+    Abs.computeTransitionRelation(sysNextTog, radNextTog, solver);
 
-//    SymbolicSet T = Abs.getTransitionRelation();
-//    tt.toc();
-//    T.printInfo(1);
+    SymbolicSet T = Abs.getTransitionRelation();
+    tt.toc();
+    T.printInfo(1);
 }
 
 void separate() {
@@ -204,7 +204,7 @@ void product() {
     X_type x;
     U_type u;
 
-    double dynEtaRatio[dimX] = {1, 1};
+    double dynEtaRatio[dimX] = {3, 3};
     double dynTauRatio = 1;
 
     double lbB[dimB] = {   0,   2, -1.5};
@@ -234,17 +234,20 @@ void product() {
     abs.initializeProduct(&dyn, balls);
     abs.computeDynAbstractions(sysNextSepX, radNextSepX, x, u);
     abs.computePredAbstractions(sysNextSepB, radNextSepB, b, y, 0);
+    abs.computeProducts();
 
-    abs.initialize(abs.getProductSystem(), 1, 1, dummyAddO);
-
+    int readXX = 0;
+    int readAbs = 1;
+    abs.initializeAdaptive(readXX, readAbs, dummyAddO);
+    abs.computeAbstractions(sysNextTog, radNextTog);
 }
 
 
 int main() {
 
-//    product();
-//    together();
-    separate();
+    product();
+    together();
+//    separate();
 
 
 

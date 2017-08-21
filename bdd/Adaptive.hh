@@ -94,7 +94,7 @@ public:
         deleteVec(solvers_);
         deleteVec(Abs_);
         fclose(stderr);
-        delete ddmgr_;
+        delete ddmgr_;        
     }
 
     /*! Initializes data members.
@@ -148,6 +148,7 @@ public:
         printVec(XXs_, "XX");
         cout << "U:\n";
         U_->printInfo(1);
+        checkMakeDir("plotting");
         Xs_[0]->writeToFile("plotting/X.bdd");
         Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
         checkMakeDir("O");
@@ -271,6 +272,8 @@ public:
             notXUvars_.push_back(notXUvars);
             notXvars_.push_back(notXvars);
         }
+
+        clog << "Initialized notVars.\n";
     }
 
     /*!	Inner-approximates a set of states in a coarser abstraction with a finer abstraction.
@@ -480,6 +483,8 @@ public:
             Char[Length] = '\0';
             SymbolicSet T(*ddmgr_, Char);
             Ts_[i]->symbolicSet_ = T.symbolicSet_;
+
+            Ts_[i]->printInfo(1);
         }
         clog << "Ts_ read from file.\n";
     }
@@ -683,6 +688,8 @@ public:
 //        U.symbolicSet_ = *cubeU_;
 //        clog << "cubeU: " << '\n';
 //        U.printInfo(2);
+
+        clog << "Initialized cubes.\n";
     }
 
     /*! Initializes the arrays of BDD variable IDs that allow a BDD over an X domain to be projected to the identical BDD over the corresponding X2 domain.
@@ -704,6 +711,8 @@ public:
             permutesXtoX2_.push_back(permuteXtoX2);
             permutesX2toX_.push_back(permuteX2toX);
         }
+
+        clog << "Initialized permutes.\n";
     }
 
     /*! Generates a mapping between two consecutive state space abstractions.

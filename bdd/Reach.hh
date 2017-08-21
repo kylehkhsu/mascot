@@ -4,7 +4,7 @@
 #ifndef REACH_HH_
 #define REACH_HH_
 
-#include "Adaptive.hh"
+#include "Product.hh"
 
 using namespace helper;
 
@@ -14,7 +14,7 @@ namespace scots {
  *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for a reach specification.
  */
 template<class X_type, class U_type>
-class Reach: public virtual Adaptive<X_type, U_type> {
+class Reach: public virtual Product<X_type, U_type> {
 public:
 
     vector<SymbolicSet*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
@@ -26,7 +26,7 @@ public:
 
     /*! Constructor for a Reach object. */
     Reach(char* logFile)
-        : Adaptive<X_type, U_type>(logFile)
+        : Product<X_type, U_type>(logFile)
     {
     }
 
