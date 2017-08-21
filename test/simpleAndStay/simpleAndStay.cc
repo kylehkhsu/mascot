@@ -97,10 +97,10 @@ int main() {
     int readAbs = 0;
 
     System system(dimX, lbX, ubX, etaX, tau,
-                  dimU, lbU, ubU, etaU);
-    ReachAndStay<X_type, U_type> abs(&system, etaRatio, tauRatio, nint,
-                                     numAbs, readXX, readAbs, "adaptive.txt");
-    abs.initialize(simpleAddO);
+                  dimU, lbU, ubU, etaU,
+                  etaRatio, tauRatio, nint, numAbs);
+    ReachAndStay<X_type, U_type> abs("adaptive.txt");
+    abs.initialize(&system, readXX, readAbs, simpleAddO);
     abs.computeAbstractions(sysNext, radNext);
 
     int startAbs = 2;
@@ -109,4 +109,5 @@ int main() {
     int earlyBreak = 1;
 
     abs.reachAndStay(simpleAddG, simpleAddI, startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+    return 1;
 }
