@@ -20,10 +20,8 @@ public:
     vector<SymbolicSet*> infZs_; /*!< Instance of *Xs_[i] containing projection of convergence of previous maximal fixed points. */
 
     /*! Constructor for a Safe object. */
-    Safe(System* system, double* etaRatio, double tauRatio, int nint,
-          int numAbs, int readXX, int readAbs, char* logFile)
-        : Adaptive<X_type, U_type>(system, etaRatio, tauRatio, nint,
-                                   numAbs, readXX, readAbs, logFile)
+    Safe(char* logFile)
+        : Adaptive<X_type, U_type>(logFile)
     {
     }
 
@@ -54,7 +52,7 @@ public:
             }
             iter += 1;
         }
-        if (curAbs != this->numAbs_ - 1) {
+        if (curAbs != *this->system_->numAbs_ - 1) {
             this->innerFinerAligned(this->Zs_[curAbs], this->infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
 
             this->Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
@@ -72,7 +70,7 @@ public:
         // removing obstacles from transition relation
         this->removeFromTs(&(this->Os_));
 
-        for (int curAbs = 0; curAbs < this->numAbs_; curAbs++) {
+        for (int curAbs = 0; curAbs < *this->system_->numAbs_; curAbs++) {
             nu(curAbs);
         }
 
@@ -85,8 +83,8 @@ public:
         saveVec(this->Cs_, "C/C");
 
         cout << "Domain of all controllers:\n";
-        this->Xs_[this->numAbs_-1]->printInfo(1);
-        this->Xs_[this->numAbs_-1]->writeToFile("plotting/D.bdd");
+        this->Xs_[*this->system_->numAbs_-1]->printInfo(1);
+        this->Xs_[*this->system_->numAbs_-1]->writeToFile("plotting/D.bdd");
     }
 
     /*! Initializes objects specific to the following specifications: safe.
@@ -103,12 +101,12 @@ public:
         tt.toc();
 
         // maximal fixed point starts with whole set
-        for (int i = 0; i < this->numAbs_; i++) {
+        for (int i = 0; i < *this->system_->numAbs_; i++) {
             this->Zs_[i]->symbolicSet_ = this->ddmgr_->bddOne();
         }
         clog << "Zs_ modified to BDD-1.\n";
 
-        for (int i = 0; i < this->numAbs_; i++) {
+        for (int i = 0; i < *this->system_->numAbs_; i++) {
             SymbolicSet* infZ = new SymbolicSet(*this->Xs_[i]);
             infZs_.push_back(infZ);
         }

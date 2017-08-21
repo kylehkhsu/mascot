@@ -18,12 +18,9 @@ class AlwaysEventually: public virtual Reach<X_type, U_type> {
 public:
 
     /*! Constructor for an AlwaysEventually object. */
-    AlwaysEventually(System* system, double* etaRatio, double tauRatio, int nint,
-                     int numAbs, int readXX, int readAbs, char* logFile)
-                     : Reach<X_type, U_type>(system, etaRatio, tauRatio, nint,
-                                             numAbs, readXX, readAbs, logFile),
-                       Adaptive<X_type, U_type>(system, etaRatio, tauRatio, nint,
-                                                numAbs, readXX, readAbs, logFile)
+    AlwaysEventually(char* logFile)
+                     : Reach<X_type, U_type>(logFile),
+                       Adaptive<X_type, U_type>(logFile)
     {
     }
 
@@ -41,7 +38,7 @@ public:
         \return     1 if controller(s) satisfying specification is/are synthesized; 0 otherwise.
      */
     int alwaysEventually(int startAbs, int minToGoCoarser, int minToBeValid, int verbose = 1) {
-        if ( (startAbs < 0) || (startAbs >= this->numAbs_) ) {
+        if ( (startAbs < 0) || (startAbs >= *this->system_->numAbs_) ) {
             error("Error: startAbs out of range.\n");
         }
         int earlyBreak = 0;
@@ -78,11 +75,11 @@ public:
 
             // always
             // project to the finest abstraction
-            for (int i = curAbs; i < this->numAbs_ - 1; i++) {
+            for (int i = curAbs; i < *this->system_->numAbs_ - 1; i++) {
                 this->innerFinerAligned(this->Zs_[i], this->Zs_[i+1], i);
             }
-            this->Zs_[this->numAbs_ - 1]->symbolicSet_ &= this->Xs_[this->numAbs_ - 1]->symbolicSet_;
-            curAbs = this->numAbs_ - 1;
+            this->Zs_[*this->system_->numAbs_ - 1]->symbolicSet_ &= this->Xs_[*this->system_->numAbs_ - 1]->symbolicSet_;
+            curAbs = *this->system_->numAbs_ - 1;
 
 
             BDD preQ = this->preC(this->Zs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs); // preC(X2)
@@ -94,7 +91,7 @@ public:
 
                 SymbolicSet* lastZ = this->finalZs_.back();
                 int abs = -1;
-                for (int i = 0; i < this->numAbs_; i++) {
+                for (int i = 0; i < *this->system_->numAbs_; i++) {
                     int sameEta = 1;
                     for (int j = 0; j < *this->system_->dimX_; j++) {
                         if (this->etaX_[i][j] != lastZ->eta_[j]) {
@@ -145,7 +142,7 @@ public:
                 }
 
                 clog << "Resetting Zs, Cs.\n";
-                for (int i = 0; i < this->numAbs_; i++) {
+                for (int i = 0; i < *this->system_->numAbs_; i++) {
                     this->Zs_[i]->symbolicSet_ = this->ddmgr_->bddZero();
                     this->Cs_[i]->symbolicSet_ = this->ddmgr_->bddZero();
                 }

@@ -31,22 +31,19 @@ public:
 
     Cudd* ddmgr_; /*!< A single manager object common to all BDDs used in the program. */
     System* system_; /*!< Contains abstraction parameters. */
-    double* etaRatio_; /*!< Ratio between state space grid spacings of consecutive abstractions. */
-    double tauRatio_; /*!< Ratio between time steps of consecutive abstractions. */
-    int nSubInt_; /*!< Number of sub-intervals in ODE solving per time step. */
-    int numAbs_; /*!< Number of abstractions of different granularity. */
+    System* predicates_;
     int readXX_; /*!< Whether XXs_ is computed or read from file. */
     int readAbs_; /*!< Whether Abs_ is computed or read from file. */
 
     int alignment_; /*!< Affects how XX is defined, determined by etaRatio_. */
-    vector<double*> etaX_; /*!< numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
-    vector<double*> tau_; /*!< numAbs_ x 1 matrix of time steps. */
+    vector<double*> etaX_; /*!< *system_->numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
+    vector<double*> tau_; /*!< *system_->numAbs_ x 1 matrix of time steps. */
 
-    vector<SymbolicSet*> Xs_; /*!< The numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
+    vector<SymbolicSet*> Xs_; /*!< The *system_->numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
     vector<SymbolicSet*> Os_; /*!< Instance of *Xs_[i] containing unsafe (obstacle) states. */
     vector<SymbolicSet*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
-    vector<SymbolicSet*> X2s_; /*!< The numAbs_ "post" state space abstractions, coarsest (0) to finest. */
-    vector<SymbolicSet*> XXs_; /*!< The numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the finer cell is a subset of the coarser cell. */
+    vector<SymbolicSet*> X2s_; /*!< The *system_->numAbs_ "post" state space abstractions, coarsest (0) to finest. */
+    vector<SymbolicSet*> XXs_; /*!< The *system_->numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the finer cell is a subset of the coarser cell. */
     SymbolicSet* U_; /*!< The single input space abstraction. */
     vector<SymbolicSet*> Cs_; /*!< Controller \subseteq *Xs_[i] x *U_. */
 
@@ -69,30 +66,16 @@ public:
 
     /*!	Constructor for an Adaptive object.
      *  \param[in]  system      Contains abstraction parameters.
-     *  \param[in]	etaRatio	Ratio between grid spacings of the input space in consecutive abstractions.
-     *  \param[in]	tauRatio	Ratio between time steps of consecutive abstractions.
-     *  \param[in]  nSubInt     Number of sub-intervals in ODE solving per time step.
-     *  \param[in]	numAbs		Number of abstractions.
      *  \param[in]	readXX		Whether initializeXXs should be done by construction (0) or reading from files (1).
      *  \param[in]	readAbs		Whether initializeAbs should be done by construction (0) or reading from files (1).
      *  \param[in]  logFile     Filename of program log.
      */
-    Adaptive(System* system, double* etaRatio, double tauRatio, int nSubInt, int numAbs, int readXX, int readAbs, char* logFile) {
+    Adaptive(char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
 
         ddmgr_ = new Cudd;
-        system_ = system;
-        etaRatio_ = etaRatio;
-        tauRatio_ = tauRatio;
-        nSubInt_ = nSubInt;
-        numAbs_ = numAbs;
-        readXX_ = readXX;
-        readAbs_ = readAbs;
 
-        initializeAlignment();
-        initializeEtaTau();
-        initializeSolvers();
     }
 
     /*! Destructor for an Adaptive object. */
@@ -121,11 +104,24 @@ public:
         delete ddmgr_;
     }
 
+    template<class O_type>
+    void initialize(System* system, int readXX, int readAbs, O_type addO) {
+        system_ = system;
+        readXX_ = readXX;
+        readAbs_ = readAbs;
+
+        initializeAlignment();
+        initializeEtaTau();
+        initializeSolvers();
+
+        initializeBDDs(addO);
+    }
+
     /*! Initializes BDD-related data members.
      *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
      */
     template<class O_type>
-    void initialize(O_type addO) {
+    void initializeBDDs(O_type addO) {
 
         initializeXX2UOZCs(addO);
 
@@ -153,7 +149,7 @@ public:
         cout << "U:\n";
         U_->printInfo(1);
         Xs_[0]->writeToFile("plotting/X.bdd");
-        Os_[numAbs_-1]->writeToFile("plotting/O.bdd");
+        Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
         checkMakeDir("O");
         saveVec(Os_, "O/O");
     }
@@ -179,7 +175,7 @@ public:
 //        tt.toc();
 
 //        // checking that specification is valid
-//        for (int i = 0; i < numAbs_; i++) {
+//        for (int i = 0; i < *system_->numAbs_; i++) {
 //            if ((Gs_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
 //                error("Error: G and O have nonzero intersection.\n");
 //            }
@@ -193,12 +189,12 @@ public:
 //        clog << "No obstacle problem with specification.\n";
 
 //        // maximal fixed point starts with whole set
-//        for (int i = 0; i < numAbs_; i++) {
+//        for (int i = 0; i < *system_->numAbs_; i++) {
 //            Zs_[i]->symbolicSet_ = ddmgr_->bddOne();
 //        }
 //        clog << "Zs_ modified to BDD-1.\n";
 
-//        for (int i = 0; i < numAbs_; i++) {
+//        for (int i = 0; i < *system_->numAbs_; i++) {
 //            SymbolicSet* infZ = new SymbolicSet(*Xs_[i]);
 //            infZs_.push_back(infZ);
 //        }
@@ -260,11 +256,11 @@ public:
 
     /*! Initializes the BDDs useful for existential abstraction. Must be called only after initializing Xs, U, and X2s. */
     void initializeNotVars() {
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             BDD* notXUvars = new BDD;
             BDD* notXvars = new BDD;
             *notXUvars = ddmgr_->bddOne();
-            for (int j = 0; j < numAbs_; j++) {
+            for (int j = 0; j < *system_->numAbs_; j++) {
                 *notXUvars &= *cubesX2_[j];
                 if (i != j) {
                     *notXUvars &= *cubesX_[j];
@@ -346,7 +342,7 @@ public:
         /* Use numFiner to check if the right number of finer cells are in Zf for a particular corresponding cell in Zc. */
         int numFiner = 1;
         for (int i = 0; i < *system_->dimX_; i++) {
-            numFiner *= etaRatio_[i];
+            numFiner *= system_->etaRatio_[i];
         }
 
         SymbolicSet Qcf(*XXs_[c]);
@@ -434,7 +430,7 @@ public:
     template<class sys_type, class rad_type>
     void computeAbstractions(sys_type sysNext, rad_type radNext) {
 
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
             Ts_.push_back(T);
         }
@@ -443,7 +439,7 @@ public:
         TicToc tt;
         tt.tic();
         if (readAbs_ == 0) {
-            for (int i = 0; i < numAbs_; i++) {
+            for (int i = 0; i < *system_->numAbs_; i++) {
                 SymbolicModelGrowthBound<X_type, U_type>* Ab = new SymbolicModelGrowthBound<X_type, U_type>(Xs_[i], U_, X2s_[i]);
                 Ab->computeTransitionRelation(sysNext, radNext, *solvers_[i]);
                 Abs_.push_back(Ab);
@@ -465,7 +461,7 @@ public:
             clog << "Wrote Ts_ to file.\n";
         }
 
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             BDD* TT = new BDD;
             *TT = Ts_[i]->symbolicSet_.ExistAbstract(*cubesX2_[i]);
             TTs_.push_back(TT);
@@ -475,7 +471,7 @@ public:
 
     /*! Reads transition relation BDDs from file and saves them into Ts_. */
     void loadTs() {
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             string Str = "T/T";
             Str += std::to_string(i+1);
             Str += ".bdd";
@@ -493,7 +489,7 @@ public:
      */
     template<class vec_type>
     void removeFromTs(vec_type* vec) {
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             Ts_[i]->symbolicSet_ &= !(vec[0][i]->symbolicSet_);
             *TTs_[i] &= !(vec[0][i]->symbolicSet_);
         }
@@ -505,7 +501,7 @@ public:
      */
     template<class vec_type, class spec_type>
     void initializeSpec(vec_type* vec, spec_type addSpec) {
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* Xinstance = new SymbolicSet(*Xs_[i]);
             addSpec(Xinstance);
             vec->push_back(Xinstance);
@@ -517,14 +513,14 @@ public:
      */
     template<class O_type>
     void initializeXX2UOZCs(O_type addO) {
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* X = new SymbolicSet(*ddmgr_, *system_->dimX_, system_->lbX_, system_->ubX_, etaX_[i], tau_[i][0]);
             X->addGridPoints();
             Xs_.push_back(X);
         }
         clog << "Xs_ initialized with full domain.\n";
 
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* X2 = new SymbolicSet(*Xs_[i], 1);
             X2->addGridPoints();
             X2s_.push_back(X2);
@@ -538,14 +534,14 @@ public:
         initializeSpec(&Os_, addO);
         clog << "Os_ initialized according to specification.\n";
 
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* Z = new SymbolicSet(*Xs_[i]);
             Zs_.push_back(Z);
 
         }
         clog << "Zs_ initialized with empty domain.\n";
 
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* C = new SymbolicSet(*Xs_[i], *U_);
             Cs_.push_back(C);
         }
@@ -557,7 +553,7 @@ public:
         int onlyIntegers = 1;
         int inRange = 1;
         for (int i = 0; i < *system_->dimX_; i++) {
-            double etaRatio = etaRatio_[i];
+            double etaRatio = system_->etaRatio_[i];
             int etaRatioInt = (int) etaRatio;
             if (!(etaRatio == etaRatioInt)) {
                 onlyIntegers = 0;
@@ -582,7 +578,7 @@ public:
         double* tauCur = new double;
         *tauCur = *system_->tau_;
 
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             double* etai = new double[*system_->dimX_];
             double* taui = new double;
             for (int j = 0; j < *system_->dimX_; j++) {
@@ -593,9 +589,9 @@ public:
             tau_.push_back(taui);
 
             for (int j = 0; j < *system_->dimX_; j++) {
-                etaCur[j] /= etaRatio_[j];
+                etaCur[j] /= system_->etaRatio_[j];
             }
-            *tauCur /= tauRatio_;
+            *tauCur /= *system_->tauRatio_;
         }
 
         clog << "Initialized etaX_, tau_.\n";
@@ -607,8 +603,8 @@ public:
     /*! Initializes the Runge-Katta ODE solvers.
      */
     void initializeSolvers() {
-        for (int i = 0; i < numAbs_; i++) {
-            OdeSolver* solver = new OdeSolver(*system_->dimX_, nSubInt_, *tau_[i]);
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            OdeSolver* solver = new OdeSolver(*system_->dimX_, *system_->nSubInt_, *tau_[i]);
             solvers_.push_back(solver);
         }
         clog << "Initialized solvers.\n";
@@ -616,7 +612,7 @@ public:
 
     /*! Initializes SymbolicSets containing the mappings between consecutive state space abstractions. Reads and writes BDDs from/to file depending on readXXs_. */
     void initializeXXs() {
-        for (int i = 0; i < numAbs_ - 1; i++) {
+        for (int i = 0; i < *system_->numAbs_ - 1; i++) {
             SymbolicSet* XX = new SymbolicSet(*Xs_[i], *Xs_[i+1]);
 
             if (readXX_ == 0) {
@@ -644,7 +640,7 @@ public:
     /*! Initializes the number of total distinct BDD variables in use. */
     void initializeNumBDDVars() {
         numBDDVars_ = 0;
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             numBDDVars_ += Xs_[i]->nvars_;
             numBDDVars_ += X2s_[i]->nvars_;
         }
@@ -655,7 +651,7 @@ public:
 
     /*! Initializes the BDDs that are the precursors to notXvars_ and notXUvars_ */
     void initializeCubes() {
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             BDD* cubeX = new BDD;
             BDD* cubeX2 = new BDD;
 
@@ -692,7 +688,7 @@ public:
     /*! Initializes the arrays of BDD variable IDs that allow a BDD over an X domain to be projected to the identical BDD over the corresponding X2 domain.
      */
     void initializePermutes() {
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             int* permuteXtoX2 = new int[numBDDVars_];
             int* permuteX2toX = new int[numBDDVars_];
             for (int j = 0; j < numBDDVars_; j++) {
@@ -799,7 +795,7 @@ public:
 
     /*! Debugging function. */
     void checkPermutes() {
-        for (int i = 0; i < numAbs_; i++) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
             clog << "X:\n";
             Xs_[i]->printInfo(1);
             clog << "X2:\n";
@@ -817,7 +813,7 @@ public:
     /*! Debugging function. */
     void checkCubes() {
 
-        // for numAbs_ = 2
+        // for *system_->numAbs_ = 2
 
         SymbolicSet Xs(*Xs_[0], *Xs_[1]);
         SymbolicSet X2s(*X2s_[0], *X2s_[1]);
@@ -827,10 +823,10 @@ public:
         all.symbolicSet_ = *cubesX_[0];
         all.printInfo(2);
 
-//        for (int i = 0; i < numAbs_; i++) {
+//        for (int i = 0; i < *system_->numAbs_; i++) {
 //            clog << "X " << i << ":\n";
 //            BDD thesevars = ddmgr_->bddOne();
-//            for (int j = 0; j < numAbs_; j++) {
+//            for (int j = 0; j < *system_->numAbs_; j++) {
 //                thesevars &= *cubesX2_[j];
 //                if (i != j) {
 //                    thesevars &= *cubesX_[j];

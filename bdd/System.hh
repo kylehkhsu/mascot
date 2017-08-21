@@ -22,20 +22,29 @@ public:
     double* lbU_; /*!< Lowermost grid point of input space. */
     double* ubU_; /*!< Uppermost grid point of input space. */
     double* etaU_; /*!< Grid spacing of input space abstraction in each dimension. */
+    double* etaRatio_; /*!< Ratio between state space grid spacings of consecutive abstractions. */
+    double* tauRatio_; /*!< Ratio between time steps of consecutive abstractions. */
+    int* nSubInt_; /*!< Number of sub-intervals in ODE solving per time step. */
+    int* numAbs_; /*!< Number of abstractions of different granularity. */
 
     /*! Constructor for a System object.
-        \param[in]	dimX		Dimensionality of the state space.
-        \param[in]	lbX			Lowermost grid point of the state space.
-        \param[in]	ubX 		Uppermost grid point of the state space.
-        \param[in]	etaX 		Coarsest grid spacing of the state space.
-        \param[in]	tau 		Coarsest time step.
-        \param[in]	dimU		Dimensionality of the input space.
-        \param[in]	lbU 		Lowermost grid point of the input space.
-        \param[in]	ubU			Uppermost grid point of the input space.
-        \param[in] 	etaU		Grid spacing of the input space.
-    */
+     *  \param[in]	dimX		Dimensionality of the state space.
+     *  \param[in]	lbX			Lowermost grid point of the state space.
+     *  \param[in]	ubX 		Uppermost grid point of the state space.
+     *  \param[in]	etaX 		Coarsest grid spacing of the state space.
+     *  \param[in]	tau 		Coarsest time step.
+     *  \param[in]	dimU		Dimensionality of the input space.
+     *  \param[in]	lbU 		Lowermost grid point of the input space.
+     *  \param[in]	ubU			Uppermost grid point of the input space.
+     *  \param[in] 	etaU		Grid spacing of the input space.
+     *  \param[in]	etaRatio	Ratio between grid spacings of the input space in consecutive abstractions.
+     *  \param[in]	tauRatio	Ratio between time steps of consecutive abstractions.
+     *  \param[in]  nSubInt     Number of sub-intervals in ODE solving per time step.
+     *  \param[in]	numAbs		Number of abstractions.
+     */
     System(int dimX, double* lbX, double* ubX, double* etaX, double tau,
-          int dimU, double* lbU, double* ubU, double* etaU) {
+           int dimU, double* lbU, double* ubU, double* etaU,
+           double* etaRatio, double tauRatio, int nSubInt, int numAbs) {
         dimX_ = new int;
         lbX_ = new double[dimX];
         ubX_ = new double[dimX];
@@ -45,12 +54,17 @@ public:
         lbU_ = new double[dimU];
         ubU_ = new double[dimU];
         etaU_ = new double[dimU];
+        etaRatio_ = new double[dimX];
+        tauRatio_ = new double;
+        nSubInt_ = new int;
+        numAbs_ = new int;
 
         *dimX_ = dimX;
         for (int i = 0; i < dimX; i++) {
             lbX_[i] = lbX[i];
             ubX_[i] = ubX[i];
             etaX_[i] = etaX[i];
+            etaRatio_[i] = etaRatio[i];
         }
         *tau_ = tau;
         *dimU_ = dimU;
@@ -59,6 +73,9 @@ public:
             ubU_[i] = ubU[i];
             etaU_[i] = etaU[i];
         }
+        *tauRatio_ = tauRatio;
+        *nSubInt_ = nSubInt;
+        *numAbs_ = numAbs;
     }
 
     /*! Destructor for a System object. */
@@ -72,6 +89,10 @@ public:
         delete[] lbU_;
         delete[] ubU_;
         delete[] etaU_;
+        delete[] etaRatio_;
+        delete tauRatio_;
+        delete nSubInt_;
+        delete numAbs_;
     }
 };
 }

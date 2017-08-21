@@ -19,14 +19,10 @@ class ReachAndStay: public Reach<X_type, U_type>, public Safe<X_type, U_type> {
 public:
 
     /*! Constructor for a ReachAndStay object. */
-    ReachAndStay(System* system, double* etaRatio, double tauRatio, int nint,
-                 int numAbs, int readXX, int readAbs, char* logFile)
-                 : Reach<X_type, U_type>(system, etaRatio, tauRatio, nint,
-                                         numAbs, readXX, readAbs, logFile),
-                   Safe<X_type, U_type>(system, etaRatio, tauRatio, nint,
-                                        numAbs, readXX, readAbs, logFile),
-                   Adaptive<X_type, U_type>(system, etaRatio, tauRatio, nint,
-                                            numAbs, readXX, readAbs, logFile)
+    ReachAndStay(char* logFile)
+                 : Reach<X_type, U_type>(logFile),
+                   Safe<X_type, U_type>(logFile),
+                   Adaptive<X_type, U_type>(logFile)
     {
     }
 
@@ -55,7 +51,7 @@ public:
 
         // solving safety
         ttSafe.tic();
-        for (int curAbs = 0; curAbs < this->numAbs_; curAbs++) {
+        for (int curAbs = 0; curAbs < *this->system_->numAbs_; curAbs++) {
             this->nu(curAbs);
         }
         clog << "----------------------------------------safe: ";
@@ -69,10 +65,10 @@ public:
         this->initializeReach(addI, addI);
 
         cout << "\nDomain of all safety controllers:\n";
-        this->Xs_[this->numAbs_-1]->printInfo(1);
+        this->Xs_[*this->system_->numAbs_-1]->printInfo(1);
 
         // Safe initialized all Zs_ to BDD-1, initializeReach was BS for Gs_.
-        for (int i = 0; i < this->numAbs_; i++) {
+        for (int i = 0; i < *this->system_->numAbs_; i++) {
             this->Gs_[i]->symbolicSet_ = this->ddmgr_->bddZero();
             this->Zs_[i]->symbolicSet_ = this->ddmgr_->bddZero();
             this->Cs_[i]->symbolicSet_ = this->ddmgr_->bddZero();
@@ -80,17 +76,17 @@ public:
         clog << "Gs_, Zs_, Cs_ reset to BDD-0.\n";
 
         // Xs_[numAbs-1] contains combined domains of all safety controllers in the finest abstraction.
-        this->Gs_[this->numAbs_-1]->symbolicSet_ = this->Xs_[this->numAbs_-1]->symbolicSet_;
+        this->Gs_[*this->system_->numAbs_-1]->symbolicSet_ = this->Xs_[*this->system_->numAbs_-1]->symbolicSet_;
 
         // Xs_ were changed during safety.
-        for (int i = 0; i < this->numAbs_; i++) {
+        for (int i = 0; i < *this->system_->numAbs_; i++) {
             this->Xs_[i]->addGridPoints();
         }
         clog << "Xs_ reset to full domain.\n";
 
-        this->Gs_[this->numAbs_-1]->writeToFile("plotting/G.bdd");
+        this->Gs_[*this->system_->numAbs_-1]->writeToFile("plotting/G.bdd");
 
-        for (int i = this->numAbs_-1; i > 0; i--) {
+        for (int i = *this->system_->numAbs_-1; i > 0; i--) {
             this->innerCoarserAligned(this->Gs_[i-1], this->Gs_[i], i-1);
             this->Gs_[i-1]->printInfo(1);
         }

@@ -25,10 +25,8 @@ public:
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
 
     /*! Constructor for a Reach object. */
-    Reach(System* system, double* etaRatio, double tauRatio, int nint,
-          int numAbs, int readXX, int readAbs, char* logFile)
-        : Adaptive<X_type, U_type>(system, etaRatio, tauRatio, nint,
-                                   numAbs, readXX, readAbs, logFile)
+    Reach(char* logFile)
+        : Adaptive<X_type, U_type>(logFile)
     {
     }
 
@@ -85,7 +83,7 @@ public:
 
         if (*iter != 1) { // first iteration will always fail since we start with an empty Z
             if (N == this->ddmgr_->bddZero()) { // if iteration failed to yield new (x,u)
-                if (*curAbs == this->numAbs_ - 1) { // if we're in the finest abstraction
+                if (*curAbs == *this->system_->numAbs_ - 1) { // if we're in the finest abstraction
                     if (*reached == 1) {
                         saveCZ(*curAbs);
                     }
@@ -204,7 +202,7 @@ public:
         \return     1 if controller(s) satisfying specification is/are synthesized; 0 otherwise.
     */
     int reach(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
-        if ( (startAbs < 0) || (startAbs >= this->numAbs_) ) {
+        if ( (startAbs < 0) || (startAbs >= *this->system_->numAbs_) ) {
             error("Error: startAbs out of range.\n");
         }
 
@@ -267,7 +265,7 @@ public:
         tt.toc();
 
         // checking that specification is valid
-        for (int i = 0; i < this->numAbs_; i++) {
+        for (int i = 0; i < *this->system_->numAbs_; i++) {
             if ((Gs_[i]->symbolicSet_ & this->Os_[i]->symbolicSet_) != this->ddmgr_->bddZero()) {
                 error("Error: G and O have nonzero intersection.\n");
             }
@@ -277,13 +275,13 @@ public:
         }
         clog << "No obstacle problem with specification.\n";
 
-        for (int i = 0; i < this->numAbs_; i++) {
+        for (int i = 0; i < *this->system_->numAbs_; i++) {
             SymbolicSet* validZ = new SymbolicSet(*this->Xs_[i]);
             validZs_.push_back(validZ);
         }
         clog << "validZs_ initialized with empty domain.\n";
 
-        for (int i = 0; i < this->numAbs_; i++) {
+        for (int i = 0; i < *this->system_->numAbs_; i++) {
             SymbolicSet* validC = new SymbolicSet(*this->Xs_[i], *this->U_);
             validCs_.push_back(validC);
         }
@@ -309,8 +307,8 @@ public:
         printVec(Gs_, "G");
         printVec(Is_, "I");
         checkMakeDir("plotting");
-        Gs_[this->numAbs_-1]->writeToFile("plotting/G.bdd");
-        Is_[this->numAbs_-1]->writeToFile("plotting/I.bdd");
+        Gs_[*this->system_->numAbs_-1]->writeToFile("plotting/G.bdd");
+        Is_[*this->system_->numAbs_-1]->writeToFile("plotting/I.bdd");
         checkMakeDir("G");
         saveVec(Gs_, "G/G");
 
