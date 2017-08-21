@@ -21,7 +21,7 @@ using namespace helper;
 #define dimB 3
 #define dimY 1
 
-const int numAbs = 1;
+const int numAbs = 2;
 const double tau = 0.9;
 const int nint = 5;
 
@@ -131,7 +131,7 @@ void product() {
     abs.initializeReach(whirlpoolAddG, whirlpoolAddI);
     abs.computeAbstractions(dynSysNext, dynRadNext);
 
-    int startAbs = 0;
+    int startAbs = 1;
     int minToGoCoarser = 2;
     int minToBeValid = 5;
     int earlyBreak = 1;
