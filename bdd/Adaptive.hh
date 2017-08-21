@@ -127,7 +127,7 @@ public:
     template<class O_type>
     void initialize(O_type addO) {
 
-        initializeXOX2UZCs(addO);
+        initializeXX2UOZCs(addO);
 
         TicToc tt;
         tt.tic();
@@ -516,16 +516,13 @@ public:
      *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
      */
     template<class O_type>
-    void initializeXOX2UZCs(O_type addO) {
+    void initializeXX2UOZCs(O_type addO) {
         for (int i = 0; i < numAbs_; i++) {
             SymbolicSet* X = new SymbolicSet(*ddmgr_, *system_->dimX_, system_->lbX_, system_->ubX_, etaX_[i], tau_[i][0]);
             X->addGridPoints();
             Xs_.push_back(X);
         }
         clog << "Xs_ initialized with full domain.\n";
-
-        initializeSpec(&Os_, addO);
-        clog << "Os_ initialized according to specification.\n";
 
         for (int i = 0; i < numAbs_; i++) {
             SymbolicSet* X2 = new SymbolicSet(*Xs_[i], 1);
@@ -537,6 +534,9 @@ public:
         U_ = new SymbolicSet(*ddmgr_, *system_->dimU_, system_->lbU_, system_->ubU_, system_->etaU_, 0);
         U_->addGridPoints();
         clog << "U_ initialized with full domain.\n";
+
+        initializeSpec(&Os_, addO);
+        clog << "Os_ initialized according to specification.\n";
 
         for (int i = 0; i < numAbs_; i++) {
             SymbolicSet* Z = new SymbolicSet(*Xs_[i]);
