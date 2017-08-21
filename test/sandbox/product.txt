@@ -1,0 +1,20 @@
+product.txt
+Initialized dyn's, preds' etaXs, taus.
+Initialized dyn's, preds' Xs, X2s, U.
+Initialized alignment.
+Initialized etaXs_, tau_.
+Initialized solvers.
+Xs_ initialized with full domain.
+X2s_ initialized with full domain.
+U_ initialized with full domain.
+Os_ initialized according to specification.
+Zs_ initialized with empty domain.
+Cs_ initialized with empty domain.
+------------------------------------------------initializeXXs: Elapsed time is 6.66e-07 seconds.
+Number of BDD variables: 43
+etaXs_:
+abstraction 0: 0.6 0.6 0.2 0.2 0.2 
+tau_:
+abstraction 0: 0.9
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  Error: Unable to open file for writing.plotting/X.bdd'.

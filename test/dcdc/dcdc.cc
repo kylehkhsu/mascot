@@ -122,9 +122,9 @@ int main() {
 
     System system(dimX, lbX, ubX, etaX, tau,
                   dimU, lbU, ubU, etaU);
-    Safe<X_type, U_type> abs(&system, etaRatio, tauRatio, nint,
-                             numAbs, readXX, readAbs, "adaptive.txt");
-    abs.initialize(dcdcAddO);
+    Safe<X_type, U_type> abs("adaptive.txt");
+    abs.initialize(&system, etaRatio, tauRatio, nint,
+                   numAbs, readXX, readAbs, dcdcAddO);
     abs.initializeSafe(dcdcAddS);
     abs.computeAbstractions(sysNext, radNext);
     abs.safe();

@@ -3,6 +3,8 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
+#include <tuple>
+
 #include "cuddObj.hh"
 
 #include "Adaptive.hh"
@@ -19,6 +21,11 @@ using namespace helper;
 #define dimX 2
 #define dimU 2
 #define dimB 3
+#define dimY 1
+
+const int numAbs = 1;
+const double tau = 0.9;
+const int nint = 5;
 
 const double w[dimX + dimB] = {0, 0, 0, 0, 0};
 
@@ -85,6 +92,10 @@ auto radNextSepB = [](B_type &r, Y_type &u, double tau, OdeSolver solver) -> voi
     r[2] = 0;
 };
 
+auto dummyAddO = [](SymbolicSet* O) -> void {
+    ;
+};
+
 void together() {
     TicToc tt;
     tt.tic();
@@ -104,20 +115,21 @@ void together() {
 
     SymbolicSet X(mgr, dimX + dimB, lbX, ubX, etaX, tau);
     X.addGridPoints();
-    //    X.printInfo(1);
-
-
-    //    U.printInfo(1);
+    X.printInfo(1);
     SymbolicSet X2(X, 1);
     SymbolicSet U(mgr, dimU, lbU, ubU, etaU, 0);
     U.addGridPoints();
-    SymbolicModelGrowthBound<XB_type, U_type> Abs(&X, &U, &X2);
+    X2.printInfo(1);
+    U.printInfo(1);
 
-    Abs.computeTransitionRelation(sysNextTog, radNextTog, solver);
 
-    SymbolicSet T = Abs.getTransitionRelation();
-    tt.toc();
-    T.printInfo(1);
+//    SymbolicModelGrowthBound<XB_type, U_type> Abs(&X, &U, &X2);
+
+//    Abs.computeTransitionRelation(sysNextTog, radNextTog, solver);
+
+//    SymbolicSet T = Abs.getTransitionRelation();
+//    tt.toc();
+//    T.printInfo(1);
 }
 
 void separate() {
@@ -149,16 +161,18 @@ void separate() {
     U.addGridPoints();
     Y.addGridPoints();
 
-    SymbolicModelGrowthBound<X_type, U_type> absD(&X, &U, &X2);
-    SymbolicModelGrowthBound<B_type, Y_type> absP(&B, &Y, &B2);
 
     OdeSolver solverD(dimX, 5, tau);
     OdeSolver solverP(dimB, 5, tau);
+
+    SymbolicModelGrowthBound<X_type, U_type> absD(&X, &U, &X2);
+    SymbolicModelGrowthBound<B_type, Y_type> absP(&B, &Y, &B2);
 
     absD.computeTransitionRelation(sysNextSepX, radNextSepX, solverD);
     absP.computeTransitionRelation(sysNextSepB, radNextSepB, solverP);
 
     SymbolicSet TD = absD.getTransitionRelation();
+    TD.printInfo(1);
     SymbolicSet TP = absP.getTransitionRelation();
     TP.printInfo(1);
 
@@ -180,12 +194,55 @@ void separate() {
 
 }
 
+void product() {
+    double lbX[dimX]={-6, -6};
+    double ubX[dimX]={ 6,  6 };
+    double etaX[dimX]= {0.6, 0.6};
+    double lbU[dimU]= {-2, 0.5};
+    double ubU[dimU]= { 2,   1};
+    double etaU[dimU]= {0.5, 0.2};
+    X_type x;
+    U_type u;
+
+    double dynEtaRatio[dimX] = {1, 1};
+    double dynTauRatio = 1;
+
+    double lbB[dimB] = {   0,   2, -1.5};
+    double ubB[dimB] = { 0.2,   5,  1.5};
+    double etaB[dimB] = {0.2, 0.2,  0.2};
+    double lbY[1] = { 0};
+    double ubY[1] = { 1};
+    double etaY[1] = {1};
+    B_type b;
+    Y_type y;
+
+    double ballEtaRatio[dimB] = {1, 1, 1};
+    double ballTauRatio = 1;
+
+    System dyn(dimX, lbX, ubX, etaX, tau,
+               dimU, lbU, ubU, etaU,
+               dynEtaRatio, dynTauRatio, nint, numAbs);
+
+    System ball(dimB, lbB, ubB, etaB, tau,
+                dimY, lbY, ubY, etaY,
+                ballEtaRatio, ballTauRatio, nint, numAbs);
+    vector<System*> balls;
+    balls.push_back(&ball);
+
+    Product<XB_type, U_type> abs("product.txt");
+
+    abs.initializeProduct(&dyn, balls);
+    abs.computeDynAbstractions(sysNextSepX, radNextSepX, x, u);
+    abs.computePredAbstractions(sysNextSepB, radNextSepB, b, y, 0);
+
+    abs.initialize(abs.getProductSystem(), 1, 1, dummyAddO);
+
+}
 
 
 int main() {
 
-
-
+//    product();
 //    together();
     separate();
 

@@ -1,4 +1,4 @@
-/*! \file Reach.hh
+/*! \file Safe.hh
  *  Contains the Safe class. */
 
 #ifndef SAFE_HH_

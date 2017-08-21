@@ -73,6 +73,14 @@ namespace helper {
         }
     }
 
+    template<class vecVec_type>
+    void deleteVecVec(vecVec_type vecVec) {
+        for (size_t i = 0; i < vecVec.size(); i++) {
+            deleteVec(*vecVec[i]);
+            delete vecVec[i];
+        }
+    }
+
     /*! Prints a vector's SymbolicSets to the console.
      *  \param[in]  vec         Vector of SymbolicSets.
      *  \param[in]  vecPrefix   Name of a SymbolicSet.
@@ -92,6 +100,14 @@ namespace helper {
     void deleteVecArray(vec_type vec) {
         for (size_t i = 0; i < vec.size(); i++) {
             delete[] vec[i];
+        }
+    }
+
+    template<class vecVec_type>
+    void deleteVecVecArray(vecVec_type vecVec) {
+        for (size_t i = 0; i < vecVec.size(); i++) {
+            deleteVecArray(*vecVec[i]);
+            delete vecVec[i];
         }
     }
 

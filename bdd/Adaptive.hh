@@ -31,12 +31,11 @@ public:
 
     Cudd* ddmgr_; /*!< A single manager object common to all BDDs used in the program. */
     System* system_; /*!< Contains abstraction parameters. */
-    System* predicates_;
     int readXX_; /*!< Whether XXs_ is computed or read from file. */
     int readAbs_; /*!< Whether Abs_ is computed or read from file. */
 
     int alignment_; /*!< Affects how XX is defined, determined by etaRatio_. */
-    vector<double*> etaX_; /*!< *system_->numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
+    vector<double*> etaXs_; /*!< *system_->numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
     vector<double*> tau_; /*!< *system_->numAbs_ x 1 matrix of time steps. */
 
     vector<SymbolicSet*> Xs_; /*!< The *system_->numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
@@ -65,22 +64,16 @@ public:
     vector<SymbolicModelGrowthBound<X_type, U_type>*> Abs_; /*!< Abstractions containing the transition relation \subseteq *Xs_[i] x *U_ x *X2s_[i]. */
 
     /*!	Constructor for an Adaptive object.
-     *  \param[in]  system      Contains abstraction parameters.
-     *  \param[in]	readXX		Whether initializeXXs should be done by construction (0) or reading from files (1).
-     *  \param[in]	readAbs		Whether initializeAbs should be done by construction (0) or reading from files (1).
      *  \param[in]  logFile     Filename of program log.
      */
     Adaptive(char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
-
-        ddmgr_ = new Cudd;
-
     }
 
     /*! Destructor for an Adaptive object. */
     ~Adaptive() {
-        deleteVecArray(etaX_);
+        deleteVecArray(etaXs_);
         deleteVec(tau_);
         deleteVec(Xs_);
         deleteVec(Os_);
@@ -104,8 +97,15 @@ public:
         delete ddmgr_;
     }
 
+    /*! Initializes data members.
+     *  \param[in]  system      Contains abstraction parameters.
+     *  \param[in]	readXX		Whether initializeXXs should be done by construction (0) or reading from files (1).
+     *  \param[in]	readAbs		Whether initializeAbs should be done by construction (0) or reading from files (1).
+     *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
+     */
     template<class O_type>
     void initialize(System* system, int readXX, int readAbs, O_type addO) {
+        ddmgr_ = new Cudd;
         system_ = system;
         readXX_ = readXX;
         readAbs_ = readAbs;
@@ -294,7 +294,7 @@ public:
 //    void innerFinerAll2(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
 
 //        int dimX = *system_->dimX_;
-//        double* etaX = etaX_[c+1];
+//        double* etaX = etaXs_[c+1];
 
 //        auto f = [Zc, dimX, etaX](double* x)->bool {
 //            std::vector<double> exPlus(x, x + dimX);
@@ -514,7 +514,7 @@ public:
     template<class O_type>
     void initializeXX2UOZCs(O_type addO) {
         for (int i = 0; i < *system_->numAbs_; i++) {
-            SymbolicSet* X = new SymbolicSet(*ddmgr_, *system_->dimX_, system_->lbX_, system_->ubX_, etaX_[i], tau_[i][0]);
+            SymbolicSet* X = new SymbolicSet(*ddmgr_, *system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[i], tau_[i][0]);
             X->addGridPoints();
             Xs_.push_back(X);
         }
@@ -579,13 +579,13 @@ public:
         *tauCur = *system_->tau_;
 
         for (int i = 0; i < *system_->numAbs_; i++) {
-            double* etai = new double[*system_->dimX_];
+            double* etaX = new double[*system_->dimX_];
             double* taui = new double;
             for (int j = 0; j < *system_->dimX_; j++) {
-                etai[j] = etaCur[j];
+                etaX[j] = etaCur[j];
             }
             *taui = *tauCur;
-            etaX_.push_back(etai);
+            etaXs_.push_back(etaX);
             tau_.push_back(taui);
 
             for (int j = 0; j < *system_->dimX_; j++) {
@@ -594,7 +594,7 @@ public:
             *tauCur /= *system_->tauRatio_;
         }
 
-        clog << "Initialized etaX_, tau_.\n";
+        clog << "Initialized etaXs_, tau_.\n";
 
         delete[] etaCur;
         delete tauCur;
@@ -762,8 +762,8 @@ public:
 //                XfMinterm = (int*)Xf->currentMinterm();
 //                Xf->mintermToElement(XfMinterm, xPoint);
 //                for (int i = 0; i < *system_->dimX_; i++) {
-//                    xPointPlus[i] = xPoint[i] + etaX_[c][i];
-//                    xPointMinus[i] = xPoint[i] - etaX_[c][i];
+//                    xPointPlus[i] = xPoint[i] + etaXs_[c][i];
+//                    xPointMinus[i] = xPoint[i] - etaXs_[c][i];
 //                }
 
 
@@ -775,11 +775,11 @@ public:
 
     /*! Prints information regarding the abstractions' grid parameters to the log file. */
     void printEtaX() {
-        clog << "etaX_:\n";
-        for (size_t i = 0; i < etaX_.size(); i++) {
+        clog << "etaXs_:\n";
+        for (size_t i = 0; i < etaXs_.size(); i++) {
             clog << "abstraction " << i << ": ";
             for (int j = 0; j < *system_->dimX_; j++) {
-                clog << etaX_[i][j] << " ";
+                clog << etaXs_[i][j] << " ";
             }
             clog << '\n';
         }
@@ -788,7 +788,7 @@ public:
     /*! Prints information regarding the abstractions' time sampling parameter to the log file. */
     void printTau() {
         clog << "tau_:\n";
-        for (size_t i = 0; i < etaX_.size(); i++) {
+        for (size_t i = 0; i < etaXs_.size(); i++) {
             clog << "abstraction " << i << ": " << *tau_[i] << '\n';
         }
     }
