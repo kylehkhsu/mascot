@@ -737,11 +737,13 @@ public:
 //                std::cout << '\n';
             ++it; ++k;
         }
+
         delete[] x;
         delete[] bddVars;
 
         symbolicSet_|=set;
         //kyle
+        std::cout << '\n';
         symbolicSet_ &= computeGridPoints();
         //end
 
