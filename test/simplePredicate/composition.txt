@@ -1,9 +1,23 @@
 composition.txt
 Initialized base's, auxs' etaXs, taus.
-Initialized base's, auxs', prods' Xs, X2s to full.
-Initialized base's, auxs', prods' XXs via mapAbstractions.
-Initialized prods' Cs to empty.
-Initialized prods' Ts to empty.
+Initialized base's Xs to full, Zs to empty.
+Initialized auxs' Xs to full.
+Initialized prods' Xs to full, Is to empty, Zs to empty, validZs to empty.
+Initialized base's X2s to empty.
+Initialized auxs' X2s to empty.
+Initialized prods' X2s to empty.
+Initialized base's, auxs', via mapAbstractions, and prods' XXs via composition.
+Initialized prods' Cs to empty, validCs to empty.
+Initialized prods' Ts, TTs to empty.
 Initialized base's, auxs', prods' cubesX, cubesX2.
 Number of BDD variables: 74
 Initialized prods' permutes.
+Initialized prodsGs[0].
+Initialized baseIs.
+Initialized auxsIs[0].
+Initialized baseOs.
+Computed base's transition relations.
+Computed aux0's transition relations.
+Composed initial conditions, stored in prods' Is.
+Composed transition relations, stored in prods' Ts.
+Composed reduced transition relations, stored in prods' TTs.

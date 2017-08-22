@@ -8,7 +8,7 @@
 #include "TicToc.hh"
 #include "RungeKutta4.hh"
 #include "FixedPoint.hh"
-#include "Composition.hh"
+#include "GBuchi.hh"
 
 using namespace std;
 using namespace scots;
@@ -50,7 +50,7 @@ auto baseRadNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> voi
     solver(radODE, r, u);
 };
 
-auto ballSysNext = [](B_type &x, Y_type &u, double tau, OdeSolver solver) -> void {
+auto aux0SysNext = [](B_type &x, Y_type &u, double tau, OdeSolver solver) -> void {
     auto ODE = [](B_type &xx, const B_type &x, Y_type &u) -> void {
         xx[0] = 0;
         xx[1] = x[2];
@@ -59,25 +59,30 @@ auto ballSysNext = [](B_type &x, Y_type &u, double tau, OdeSolver solver) -> voi
     solver(ODE, x, u);
 };
 
-auto ballRadNext= [](B_type &r, Y_type &u, double tau, OdeSolver solver) -> void {
+auto aux0RadNext= [](B_type &r, Y_type &u, double tau, OdeSolver solver) -> void {
     r[0] = 0;
     r[1] = 0;
     r[2] = 0;
 };
 
-auto dummyAddO = [](SymbolicSet* O) -> void {
+auto baseAddO = [](SymbolicSet* O) -> void {
     ;
 };
 
-auto whirlpoolAddG = [](SymbolicSet* G) -> void {
+auto prod0AddG = [](SymbolicSet* G) -> void {
     auto f = [](double* x)->bool {
         return sqrt(pow(x[0]-x[2], 2) + pow(x[1]-x[3], 2)) <= 1;
     };
     G->addByFunction(f);
 };
 
-auto whirlpoolAddI = [](SymbolicSet* I) -> void {
-    double q[5] = {1, 1, 0.1, 4.6, 0};
+auto baseAddI = [](SymbolicSet* I) -> void {
+    double q[dimX] = {1, 1};
+    I->addPoint(q);
+};
+
+auto aux0AddI = [](SymbolicSet* I) -> void {
+    double q[dimB] = {0.1, 4.6, 0};
     I->addPoint(q);
 };
 
@@ -113,11 +118,17 @@ void composition() {
     vector<System*> balls;
     balls.push_back(&ball);
 
-    Composition abs("composition.txt");
+    GBuchi abs("composition.txt");
 
     abs.initialize(&base, balls);
+
+    abs.initializeProdGs(prod0AddG, 0);
+    abs.initializeBaseIs(baseAddI);
+    abs.initializeAuxIs(aux0AddI, 0);
+    abs.initializeBaseOs(baseAddO);
+
     abs.computeBaseAbstractions(baseSysNext, baseRadNext, x, u);
-    abs.computeAuxAbstractions(ballSysNext, ballRadNext, b, y, 0);
+    abs.computeAuxAbstractions(aux0SysNext, aux0RadNext, b, y, 0);
     abs.composeAbstractions();
 
 }

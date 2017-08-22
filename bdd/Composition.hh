@@ -19,7 +19,6 @@ namespace scots {
 /*! \class Composition
  *  \brief A class that synthesizes multi-layer abstractions of compositional systems.
  */
-
 class Composition {
 public:
     Cudd* ddmgr_;
@@ -44,8 +43,22 @@ public:
     vector<vector<SymbolicSet*>*> prodsX2s_;
     vector<vector<SymbolicSet*>*> prodsXXs_;
 
+    vector<SymbolicSet*> baseOs_;
+    vector<vector<SymbolicSet*>*> prodsGs_;
+    vector<SymbolicSet*> baseIs_;
+    vector<vector<SymbolicSet*>*> auxsIs_;
+    vector<vector<SymbolicSet*>*> prodsIs_;
+
+    vector<SymbolicSet*> baseZs_;
+    vector<vector<SymbolicSet*>*> prodsZs_;
+    vector<vector<SymbolicSet*>*> prodsValidZs_;
+    vector<vector<SymbolicSet*>*> prodsValidCs_;
+    vector<vector<SymbolicSet*>*> prodsFinalZs_;
+    vector<vector<SymbolicSet*>*> prodsFinalCs_;
+
     vector<vector<SymbolicSet*>*> prodsCs_;
     vector<vector<SymbolicSet*>*> prodsTs_;
+    vector<vector<SymbolicSet*>*> prodsTTs_;
 
     SymbolicSet* baseU_;
     SymbolicSet* auxU_;
@@ -53,14 +66,10 @@ public:
     vector<SymbolicSet*> baseTs_;
     vector<vector<SymbolicSet*>*> auxsTs_;
 
-    vector<SymbolicSet*> prodTs_;
-
     vector<BDD*> baseCubesX_;
     vector<BDD*> baseCubesX2_;
     vector<vector<BDD*>*> auxsCubesX_;
     vector<vector<BDD*>*> auxsCubesX2_;
-    vector<vector<BDD*>*> prodsCubesX_; // useless?
-    vector<vector<BDD*>*> prodsCubesX2_; // useless?
     vector<BDD*> baseNotXUVars_;
     vector<BDD*> baseNotXVars_;
     vector<vector<BDD*>*> prodsNotXUVars_;
@@ -77,7 +86,7 @@ public:
     ~Composition() {
         deleteVecArray(baseEtaXs_);
         deleteVecVecArray(auxsEtaXs_);
-        deleteVec(allTau_);        
+        deleteVec(allTau_);
         deleteVec(baseSolvers_);
         deleteVecVec(auxsSolvers_);
 
@@ -91,22 +100,33 @@ public:
         deleteVecVec(prodsX2s_);
         deleteVecVec(prodsXXs_);
 
-        delete baseU_;
-        delete auxU_;
+        deleteVec(baseOs_);
+        deleteVecVec(prodsGs_);
+        deleteVec(baseIs_);
+        deleteVecVec(auxsIs_);
+        deleteVecVec(prodsIs_);
+
+        deleteVec(baseZs_);
+        deleteVecVec(prodsZs_);
+        deleteVecVec(prodsValidZs_);
+        deleteVecVec(prodsValidCs_);
+        deleteVecVec(prodsFinalZs_);
+        deleteVecVec(prodsFinalCs_);
 
         deleteVecVec(prodsCs_);
         deleteVecVec(prodsTs_);
+        deleteVecVec(prodsTTs_);
+
+        delete baseU_;
+        delete auxU_;
 
         deleteVec(baseTs_);
         deleteVecVec(auxsTs_);
-        deleteVec(prodTs_);
 
         deleteVec(baseCubesX_);
         deleteVec(baseCubesX2_);
         deleteVecVec(auxsCubesX_);
         deleteVecVec(auxsCubesX2_);
-        deleteVecVec(prodsCubesX_);
-        deleteVecVec(prodsCubesX2_);
         deleteVec(baseNotXUVars_);
         deleteVec(baseNotXVars_);
         deleteVecVec(prodsNotXUVars_);
@@ -119,18 +139,63 @@ public:
         delete ddmgr_;
     }
 
+    template<class I_t>
+    void initializeBaseIs(I_t addI) {
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            SymbolicSet* baseI = new SymbolicSet(*baseXs_[iAbs]);
+            addI(baseI);
+            baseIs_.push_back(baseI);
+        }
+        clog << "Initialized baseIs.\n";
+        printVec(baseIs_, "baseI");
+    }
+
+    template<class I_t>
+    void initializeAuxIs(I_t addI, int iAux) {
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            SymbolicSet* auxI = new SymbolicSet(*((*auxsXs_[iAux])[iAbs]));
+            addI(auxI);
+            auxsIs_[iAux]->push_back(auxI);
+        }
+        clog << "Initialized auxsIs[" << iAux << "].\n";
+        printVecVec(auxsIs_, "auxsIs");
+    }
+
+    template<class G_t>
+    void initializeProdGs(G_t addG, int iAux) {
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            SymbolicSet* prodG = new SymbolicSet(*((*prodsXs_[iAux])[iAbs]));
+            addG(prodG);
+            prodsGs_[iAux]->push_back(prodG);
+        }
+        clog << "Initialized prodsGs[" << iAux << "].\n";
+    }
+
+    template<class O_t>
+    void initializeBaseOs(O_t addO) {
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            SymbolicSet* baseO = new SymbolicSet(*baseXs_[iAbs]);
+            addO(baseO);
+            baseOs_.push_back(baseO);
+        }
+        clog << "Initialized baseOs.\n";
+    }
+
     void composeAbstractions() {
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                ((*prodsIs_[iAux])[iAbs])->symbolicSet_ = baseIs_[iAbs]->symbolicSet_ & ((*auxsIs_[iAux])[iAbs])->symbolicSet_;
                 ((*prodsTs_[iAux])[iAbs])->symbolicSet_ = baseTs_[iAbs]->symbolicSet_ & ((*auxsTs_[iAux])[iAbs])->symbolicSet_;
+                ((*prodsTTs_[iAux])[iAbs])->symbolicSet_ = ((*prodsTs_[iAux])[iAbs])->symbolicSet_.ExistAbstract(*((*prodsNotXUVars_[iAux])[iAbs]));
             }
         }
+        clog << "Composed initial conditions, stored in prods' Is.\n";
+        clog << "Composed transition relations, stored in prods' Ts.\n";
+        clog << "Composed reduced transition relations, stored in prods' TTs.\n";
 
         printVecVec(prodsTs_, "prodsTs");
+        printVecVec(prodsTTs_, "prodsTTs");
     }
-
-
-
 
     void initialize(System* base, vector<System*> auxs) {
         ddmgr_ = new Cudd;
@@ -143,15 +208,11 @@ public:
 
         initializeEtaTau();
         initializeSolvers();
+        initializeVecVecs();
         initializeBDDs();
 
-        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
-            vector<SymbolicSet*>* auxTs = new vector<SymbolicSet*>;
-            auxsTs_.push_back(auxTs);
-        }
-
-//        baseXs_[0]->printInfo(1);
-//        (*auxsXs_[0])[0]->printInfo(1);
+        //        baseXs_[0]->printInfo(1);
+        //        (*auxsXs_[0])[0]->printInfo(1);
 
     }
 
@@ -167,8 +228,9 @@ public:
 
             baseTs_.push_back(baseT);
 
-//            T.printInfo(1);
+            //            T.printInfo(1);
         }
+        clog << "Computed base's transition relations.\n";
     }
 
     template<class sys_type, class rad_type, class x_type, class u_type>
@@ -183,9 +245,10 @@ public:
 
             auxsTs_[iAux]->push_back(auxT);
 
-//            T.printInfo(1);
-//            auxT->printInfo(1);
+            //            T.printInfo(1);
+            //            auxT->printInfo(1);
         }
+        clog << "Computed aux" << iAux << "'s transition relations.\n";
     }
 
     void initializeSolvers() {
@@ -263,49 +326,69 @@ public:
 
     }
 
-    void initializeBDDs() {
+    void initializeVecVecs() {
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
             vector<SymbolicSet*>* auxXs = new vector<SymbolicSet*>;
-            auxsXs_.push_back(auxXs);
             vector<SymbolicSet*>* auxX2s = new vector<SymbolicSet*>;
-            auxsX2s_.push_back(auxX2s);
             vector<SymbolicSet*>* auxXXs = new vector<SymbolicSet*>;
-            auxsXXs_.push_back(auxXXs);
             vector<SymbolicSet*>* prodXs = new vector<SymbolicSet*>;
-            prodsXs_.push_back(prodXs);
             vector<SymbolicSet*>* prodX2s = new vector<SymbolicSet*>;
-            prodsX2s_.push_back(prodX2s);
             vector<SymbolicSet*>* prodXXs = new vector<SymbolicSet*>;
-            prodsXXs_.push_back(prodXXs);
+            vector<SymbolicSet*>* prodZs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodCs = new vector<SymbolicSet*>;
-            prodsCs_.push_back(prodCs);
             vector<SymbolicSet*>* prodTs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* prodTTs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* prodGs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* auxIs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* prodIs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* auxTs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* prodValidZs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* prodValidCs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* prodFinalZs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* prodFinalCs = new vector<SymbolicSet*>;
+            auxsXs_.push_back(auxXs);
+            auxsX2s_.push_back(auxX2s);
+            auxsXXs_.push_back(auxXXs);
+            prodsXs_.push_back(prodXs);
+            prodsX2s_.push_back(prodX2s);
+            prodsXXs_.push_back(prodXXs);
+            prodsZs_.push_back(prodZs);
+            prodsCs_.push_back(prodCs);
             prodsTs_.push_back(prodTs);
+            prodsTTs_.push_back(prodTTs);
+            prodsGs_.push_back(prodGs);
+            auxsIs_.push_back(auxIs);
+            prodsIs_.push_back(prodIs);
+            auxsTs_.push_back(auxTs);
+            prodsValidZs_.push_back(prodValidZs);
+            prodsValidCs_.push_back(prodValidCs);
+            prodsFinalZs_.push_back(prodFinalZs);
+            prodsFinalCs_.push_back(prodFinalCs);
 
             vector<BDD*>* auxCubesX = new vector<BDD*>;
             vector<BDD*>* auxCubesX2 = new vector<BDD*>;
-            vector<BDD*>* prodCubesX = new vector<BDD*>;
-            vector<BDD*>* prodCubesX2 = new vector<BDD*>;
-            auxsCubesX_.push_back(auxCubesX);
-            auxsCubesX2_.push_back(auxCubesX2);
-            prodsCubesX_.push_back(prodCubesX);
-            prodsCubesX2_.push_back(prodCubesX2);
-
             vector<int*>* prodPermutesXtoX2 = new vector<int*>;
             vector<int*>* prodPermutesX2toX = new vector<int*>;
-            prodsPermutesXtoX2_.push_back(prodPermutesXtoX2);
-            prodsPermutesX2toX_.push_back(prodPermutesX2toX);
-
             vector<BDD*>* prodNotXUVars = new vector<BDD*>;
             vector<BDD*>* prodNotXVars = new vector<BDD*>;
+            auxsCubesX_.push_back(auxCubesX);
+            auxsCubesX2_.push_back(auxCubesX2);
+            prodsPermutesXtoX2_.push_back(prodPermutesXtoX2);
+            prodsPermutesX2toX_.push_back(prodPermutesX2toX);
             prodsNotXUVars_.push_back(prodNotXUVars);
             prodsNotXVars_.push_back(prodNotXVars);
         }
+    }
+
+    void initializeBDDs() {
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             SymbolicSet* baseX = new SymbolicSet(*ddmgr_, *base_->dimX_, base_->lbX_, base_->ubX_, baseEtaXs_[iAbs], allTau_[iAbs][0]);
             baseX->addGridPoints();
             baseXs_.push_back(baseX);
+
+            SymbolicSet* baseZ = new SymbolicSet(*baseX);
+            baseZs_.push_back(baseZ);
 
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 System* aux = auxs_[iAux];
@@ -316,8 +399,20 @@ public:
                 SymbolicSet* prodX = new SymbolicSet(*baseXs_[iAbs], *auxX);
                 prodX->addGridPoints();
                 prodsXs_[iAux]->push_back(prodX);
+
+                SymbolicSet* prodI = new SymbolicSet(*prodX);
+                prodsIs_[iAux]->push_back(prodI);
+
+                SymbolicSet* prodZ = new SymbolicSet(*prodX);
+                prodsZs_[iAux]->push_back(prodZ);
+
+                SymbolicSet* prodValidZ = new SymbolicSet(*prodX);
+                prodsValidZs_[iAux]->push_back(prodValidZ);
             }
         }
+        clog << "Initialized base's Xs to full, Zs to empty.\n";
+        clog << "Initialized auxs' Xs to full.\n";
+        clog << "Initialized prods' Xs to full, Is to empty, Zs to empty, validZs to empty.\n";
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             SymbolicSet* baseX2 = new SymbolicSet(*baseXs_[iAbs], 1);
@@ -331,7 +426,10 @@ public:
                 prodsX2s_[iAux]->push_back(prodX2);
             }
         }
-        clog << "Initialized base's, auxs', prods' Xs, X2s to full.\n";
+        clog << "Initialized base's X2s to empty.\n";
+        clog << "Initialized auxs' X2s to empty.\n";
+        clog << "Initialized prods' X2s to empty.\n";
+
 
         for (int iAbs = 0; iAbs < *base_->numAbs_ - 1; iAbs++) {
             SymbolicSet* baseXX = new SymbolicSet(*baseXs_[iAbs], *baseXs_[iAbs+1]);
@@ -348,7 +446,7 @@ public:
                 prodsXXs_[iAux]->push_back(prodXX);
             }
         }
-        clog << "Initialized base's, auxs', prods' XXs via mapAbstractions.\n";
+        clog << "Initialized base's, auxs', via mapAbstractions, and prods' XXs via composition.\n";
 
         baseU_ = new SymbolicSet(*ddmgr_, *base_->dimU_, base_->lbU_, base_->ubU_, base_->etaU_, 0);
         baseU_->addGridPoints();
@@ -361,17 +459,26 @@ public:
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 SymbolicSet* prodC = new SymbolicSet(*((*prodsXs_[iAux])[iAbs]), *baseU_);
                 prodsCs_[iAux]->push_back(prodC);
+
+                SymbolicSet* prodValidC = new SymbolicSet(*prodC);
+                prodsValidCs_[iAux]->push_back(prodValidC);
             }
         }
-        clog << "Initialized prods' Cs to empty.\n";
+        clog << "Initialized prods' Cs to empty, validCs to empty.\n";
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 SymbolicSet* prodT = new SymbolicSet(*((*prodsCs_[iAux])[iAbs]), *((*prodsX2s_[iAux])[iAbs]));
                 prodsTs_[iAux]->push_back(prodT);
+                SymbolicSet* prodTT = new SymbolicSet(*((*prodsCs_[iAux])[iAbs]));
+                prodsTTs_[iAux]->push_back(prodTT);
             }
         }
-        clog << "Initialized prods' Ts to empty.\n";
+        clog << "Initialized prods' Ts, TTs to empty.\n";
+
+        //        for (int iAbs = 0; iAbs < *base_->numAbs_; iABs++) {
+        //            Symboli
+        //        }
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             BDD* baseCubeX = new BDD;
@@ -384,18 +491,12 @@ public:
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 BDD* auxCubeX = new BDD;
                 BDD* auxCubeX2 = new BDD;
-                BDD* prodCubeX = new BDD;
-                BDD* prodCubeX2 = new BDD;
 
                 *auxCubeX = ((*auxsXs_[iAux])[iAbs])->getCube();
                 *auxCubeX2 = ((*auxsX2s_[iAux])[iAbs])->getCube();
-                *prodCubeX = ((*prodsXs_[iAux])[iAbs])->getCube();
-                *prodCubeX2 = ((*prodsX2s_[iAux])[iAbs])->getCube();
 
                 auxsCubesX_[iAux]->push_back(auxCubeX);
                 auxsCubesX2_[iAux]->push_back(auxCubeX2);
-                prodsCubesX_[iAux]->push_back(prodCubeX);
-                prodsCubesX2_[iAux]->push_back(prodCubeX2);
             }
         }
         clog << "Initialized base's, auxs', prods' cubesX, cubesX2.\n";
@@ -468,15 +569,15 @@ public:
         }
 
         printVec(baseXs_, "baseXs");
-//        printVec(baseXXs_, "baseXXs");
+        //        printVec(baseXXs_, "baseXXs");
 
-//        printVecVec(auxsXs_, "auxsXs");
-//        printVecVec(auxsXXs_, "auxsXXs");
+        //        printVecVec(auxsXs_, "auxsXs");
+        //        printVecVec(auxsXXs_, "auxsXXs");
 
         printVecVec(prodsXs_, "prodsXs");
-//        printVecVec(prodsXXs_, "prodsXXs");
+        //        printVecVec(prodsXXs_, "prodsXXs");
 
-//        printVecVec(prodsTs_, "prodsTs");
+        //        printVecVec(prodsTs_, "prodsTs");
 
 
         checkNotVars();
@@ -535,11 +636,11 @@ public:
         SymbolicSet d3(d2, *((*prodsX2s_[0])[1]));
         SymbolicSet d4(d3, *baseU_);
         SymbolicSet all(d4, *auxU_);
-//        all.symbolicSet_ = *((*auxsCubesX_[0])[0]);
-//        all.printInfo(2);
+        //        all.symbolicSet_ = *((*auxsCubesX_[0])[0]);
+        //        all.printInfo(2);
 
-//        all.symbolicSet_ = *((*prodsNotXVars_[0])[0]);
-//        all.printInfo(2);
+        //        all.symbolicSet_ = *((*prodsNotXVars_[0])[0]);
+        //        all.printInfo(2);
 
         all.symbolicSet_ = *baseNotXVars_[1];
         cout << "baseNotXVars_[1]:\n";
@@ -549,4 +650,4 @@ public:
 
 }
 
-#endif /* Product_HH_ */
+#endif /* Composition_HH_ */
