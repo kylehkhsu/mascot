@@ -1,7 +1,12 @@
 product.txt
 Initialized base's, auxs' etaXs, taus.
-Initialized base's, auxs' Xs, X2s, U.
-Initialized prods' Xs, X2s.
+Initialized base's, auxs', prods' Xs, X2s to full.
+Initialized base's, auxs', prods' XXs via mapAbstractions.
+Initialized prods' Cs to empty.
+Initialized prods' Ts to empty.
+Initialized base's, auxs', prods' cubesX, cubesX2.
+Number of BDD variables: 74
+Initialized prods' permutes.
 Wrote prodTs_ to file.
 Initialized alignment.
 Initialized etaXs_, tau_.
@@ -12,7 +17,7 @@ U_ initialized with full domain.
 Os_ initialized according to specification.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 3.91558 seconds.
+------------------------------------------------initializeXXs: Elapsed time is 4.21267 seconds.
 Number of BDD variables: 73
 Initialized permutes.
 Initialized cubes.
@@ -25,13 +30,13 @@ abstraction 0: 1.8
 abstraction 1: 0.9
 Gs_ initialized.
 Is_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.324462 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.348084 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
 Ts_ initialized with empty domain.
 Ts_ read from file.
-------------------------------------------------computeAbstractions: Elapsed time is 2.08848 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 2.0241 seconds.
 TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
 current abstraction: 1
@@ -187,4 +192,4 @@ controllers: 1
 
 Total number of controllers: 2
 Won.
-----------------------------------------reach: Elapsed time is 2.19579 seconds.
+----------------------------------------reach: Elapsed time is 2.17879 seconds.

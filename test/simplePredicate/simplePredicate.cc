@@ -120,6 +120,7 @@ void product() {
     abs.initializeProduct(&base, balls);
     abs.computeBaseAbstractions(baseSysNext, baseRadNext, x, u);
     abs.computeAuxAbstractions(ballSysNext, ballRadNext, b, y, 0);
+    abs.constructAbstractions();
     abs.computeProducts();
 
     int readXX = 0;

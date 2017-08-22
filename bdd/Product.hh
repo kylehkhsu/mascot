@@ -30,17 +30,23 @@ public:
     vector<double*> baseEtaXs_;
     vector<vector<double*>*> auxsEtaXs_;
     vector<double*> allTau_;
-
     vector<OdeSolver*> baseSolvers_;
     vector<vector<OdeSolver*>*> auxsSolvers_;
 
     vector<SymbolicSet*> baseXs_;
-    vector<vector<SymbolicSet*>*> auxsXs_;
     vector<SymbolicSet*> baseX2s_;
+    vector<SymbolicSet*> baseXXs_;
+
+    vector<vector<SymbolicSet*>*> auxsXs_;
     vector<vector<SymbolicSet*>*> auxsX2s_;
+    vector<vector<SymbolicSet*>*> auxsXXs_;
 
     vector<vector<SymbolicSet*>*> prodsXs_;
     vector<vector<SymbolicSet*>*> prodsX2s_;
+    vector<vector<SymbolicSet*>*> prodsXXs_;
+
+    vector<vector<SymbolicSet*>*> prodsCs_;
+    vector<vector<SymbolicSet*>*> prodsTs_;
 
     SymbolicSet* baseU_;
     SymbolicSet* auxU_;
@@ -50,6 +56,20 @@ public:
 
     vector<SymbolicSet*> prodTs_;
 
+    vector<BDD*> baseCubesX_;
+    vector<BDD*> baseCubesX2_;
+    vector<vector<BDD*>*> auxsCubesX_;
+    vector<vector<BDD*>*> auxsCubesX2_;
+    vector<vector<BDD*>*> prodsCubesX_; // useless?
+    vector<vector<BDD*>*> prodsCubesX2_; // useless?
+    vector<BDD*> baseNotXUVars_;
+    vector<BDD*> baseNotXVars_;
+    vector<vector<BDD*>*> prodsNotXUVars_;
+    vector<vector<BDD*>*> prodsNotXVars_;
+
+    vector<vector<int*>*> prodsPermutesXtoX2_;
+    vector<vector<int*>*> prodsPermutesX2toX_;
+
     System* system_;
 
     Product(char* logFile)
@@ -58,23 +78,56 @@ public:
     ~Product() {
         deleteVecArray(baseEtaXs_);
         deleteVecVecArray(auxsEtaXs_);
-        deleteVec(allTau_);
+        deleteVec(allTau_);        
         deleteVec(baseSolvers_);
         deleteVecVec(auxsSolvers_);
+
         deleteVec(baseXs_);
-        deleteVecVec(auxsXs_);
         deleteVec(baseX2s_);
+        deleteVec(baseXXs_);
+        deleteVecVec(auxsXs_);
         deleteVecVec(auxsX2s_);
+        deleteVecVec(auxsXXs_);
         deleteVecVec(prodsXs_);
         deleteVecVec(prodsX2s_);
+        deleteVecVec(prodsXXs_);
 
         delete baseU_;
         delete auxU_;
+
+        deleteVecVec(prodsCs_);
+        deleteVecVec(prodsTs_);
+
         deleteVec(baseTs_);
         deleteVecVec(auxsTs_);
         deleteVec(prodTs_);
+
+        deleteVec(baseCubesX_);
+        deleteVec(baseCubesX2_);
+        deleteVecVec(auxsCubesX_);
+        deleteVecVec(auxsCubesX2_);
+        deleteVecVec(prodsCubesX_);
+        deleteVecVec(prodsCubesX2_);
+        deleteVec(baseNotXUVars_);
+        deleteVec(baseNotXVars_);
+        deleteVecVec(prodsNotXUVars_);
+        deleteVecVec(prodsNotXVars_);
+
+        deleteVecVecArray(prodsPermutesXtoX2_);
+        deleteVecVecArray(prodsPermutesX2toX_);
+
         delete system_;
         delete prodDdmgr_;
+    }
+
+    void constructAbstractions() {
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                ((*prodsTs_[iAux])[iAbs])->symbolicSet_ = baseTs_[iAbs]->symbolicSet_ & ((*auxsTs_[iAux])[iAbs])->symbolicSet_;
+            }
+        }
+
+        printVecVec(prodsTs_, "prodsTs");
     }
 
     void computeProducts() {
@@ -150,7 +203,7 @@ public:
     }
 
     template<class sys_type, class rad_type, class x_type, class u_type>
-    void computeAuxAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u, int iAux) {
+    void computeAuxAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u, size_t iAux) {
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             SymbolicModelGrowthBound<x_type, u_type> auxAb((*auxsXs_[iAux])[iAbs], auxU_, (*auxsX2s_[iAux])[iAbs]);
             auxAb.computeTransitionRelation(sysNext, radNext, *(*auxsSolvers_[iAux])[iAbs]);
@@ -286,10 +339,37 @@ public:
             auxsXs_.push_back(auxXs);
             vector<SymbolicSet*>* auxX2s = new vector<SymbolicSet*>;
             auxsX2s_.push_back(auxX2s);
+            vector<SymbolicSet*>* auxXXs = new vector<SymbolicSet*>;
+            auxsXXs_.push_back(auxXXs);
             vector<SymbolicSet*>* prodXs = new vector<SymbolicSet*>;
             prodsXs_.push_back(prodXs);
             vector<SymbolicSet*>* prodX2s = new vector<SymbolicSet*>;
             prodsX2s_.push_back(prodX2s);
+            vector<SymbolicSet*>* prodXXs = new vector<SymbolicSet*>;
+            prodsXXs_.push_back(prodXXs);
+            vector<SymbolicSet*>* prodCs = new vector<SymbolicSet*>;
+            prodsCs_.push_back(prodCs);
+            vector<SymbolicSet*>* prodTs = new vector<SymbolicSet*>;
+            prodsTs_.push_back(prodTs);
+
+            vector<BDD*>* auxCubesX = new vector<BDD*>;
+            vector<BDD*>* auxCubesX2 = new vector<BDD*>;
+            vector<BDD*>* prodCubesX = new vector<BDD*>;
+            vector<BDD*>* prodCubesX2 = new vector<BDD*>;
+            auxsCubesX_.push_back(auxCubesX);
+            auxsCubesX2_.push_back(auxCubesX2);
+            prodsCubesX_.push_back(prodCubesX);
+            prodsCubesX2_.push_back(prodCubesX2);
+
+            vector<int*>* prodPermutesXtoX2 = new vector<int*>;
+            vector<int*>* prodPermutesX2toX = new vector<int*>;
+            prodsPermutesXtoX2_.push_back(prodPermutesXtoX2);
+            prodsPermutesX2toX_.push_back(prodPermutesX2toX);
+
+            vector<BDD*>* prodNotXUVars = new vector<BDD*>;
+            vector<BDD*>* prodNotXVars = new vector<BDD*>;
+            prodsNotXUVars_.push_back(prodNotXUVars);
+            prodsNotXVars_.push_back(prodNotXVars);
         }
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
@@ -317,10 +397,28 @@ public:
                 SymbolicSet* auxX2 = new SymbolicSet(*((*auxsXs_[iAux])[iAbs]), 1);
                 auxsX2s_[iAux]->push_back(auxX2);
 
-                SymbolicSet* prodX2 = new SymbolicSet(*baseX2s_[iAbs]);
+                SymbolicSet* prodX2 = new SymbolicSet(*baseX2s_[iAbs], *((*auxsX2s_[iAux])[iAbs]));
                 prodsX2s_[iAux]->push_back(prodX2);
             }
         }
+        clog << "Initialized base's, auxs', prods' Xs, X2s to full.\n";
+
+        for (int iAbs = 0; iAbs < *base_->numAbs_ - 1; iAbs++) {
+            SymbolicSet* baseXX = new SymbolicSet(*baseXs_[iAbs], *baseXs_[iAbs+1]);
+            this->mapAbstractions(baseXs_[iAbs], baseXs_[iAbs+1], baseXX, iAbs);
+            baseXXs_.push_back(baseXX);
+
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                SymbolicSet* auxXX = new SymbolicSet(*((*auxsXs_[iAux])[iAbs]), *((*auxsXs_[iAux])[iAbs+1]));
+                this->mapAbstractions((*auxsXs_[iAux])[iAbs], (*auxsXs_[iAux])[iAbs+1], auxXX, iAbs);
+                auxsXXs_[iAux]->push_back(auxXX);
+
+                SymbolicSet* prodXX = new SymbolicSet(*((*prodsXs_[iAux])[iAbs]), *((*prodsXs_[iAux])[iAbs+1]));
+                prodXX->symbolicSet_ = baseXX->symbolicSet_ & auxXX->symbolicSet_;
+                prodsXXs_[iAux]->push_back(prodXX);
+            }
+        }
+        clog << "Initialized base's, auxs', prods' XXs via mapAbstractions.\n";
 
         baseU_ = new SymbolicSet(*prodDdmgr_, *base_->dimU_, base_->lbU_, base_->ubU_, base_->etaU_, 0);
         baseU_->addGridPoints();
@@ -329,13 +427,151 @@ public:
         auxU_ = new SymbolicSet(*prodDdmgr_, *aux->dimU_, aux->lbU_, aux->ubU_, aux->etaU_, 0);
         auxU_->addGridPoints();
 
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                SymbolicSet* prodC = new SymbolicSet(*((*prodsXs_[iAux])[iAbs]), *baseU_);
+                prodsCs_[iAux]->push_back(prodC);
+            }
+        }
+        clog << "Initialized prods' Cs to empty.\n";
+
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                SymbolicSet* prodT = new SymbolicSet(*((*prodsCs_[iAux])[iAbs]), *((*prodsX2s_[iAux])[iAbs]));
+                prodsTs_[iAux]->push_back(prodT);
+            }
+        }
+        clog << "Initialized prods' Ts to empty.\n";
+
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            BDD* baseCubeX = new BDD;
+            BDD* baseCubeX2 = new BDD;
+            *baseCubeX = baseXs_[iAbs]->getCube();
+            *baseCubeX2 = baseX2s_[iAbs]->getCube();
+            baseCubesX_.push_back(baseCubeX);
+            baseCubesX2_.push_back(baseCubeX2);
+
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                BDD* auxCubeX = new BDD;
+                BDD* auxCubeX2 = new BDD;
+                BDD* prodCubeX = new BDD;
+                BDD* prodCubeX2 = new BDD;
+
+                *auxCubeX = ((*auxsXs_[iAux])[iAbs])->getCube();
+                *auxCubeX2 = ((*auxsX2s_[iAux])[iAbs])->getCube();
+                *prodCubeX = ((*prodsXs_[iAux])[iAbs])->getCube();
+                *prodCubeX2 = ((*prodsX2s_[iAux])[iAbs])->getCube();
+
+                auxsCubesX_[iAux]->push_back(auxCubeX);
+                auxsCubesX2_[iAux]->push_back(auxCubeX2);
+                prodsCubesX_[iAux]->push_back(prodCubeX);
+                prodsCubesX2_[iAux]->push_back(prodCubeX2);
+            }
+        }
+        clog << "Initialized base's, auxs', prods' cubesX, cubesX2.\n";
+
+        int numBDDVars = 0;
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            numBDDVars += baseXs_[iAbs]->nvars_;
+            numBDDVars += baseX2s_[iAbs]->nvars_;
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                numBDDVars += ((*auxsXs_[iAux])[iAbs])->nvars_;
+                numBDDVars += ((*auxsX2s_[iAux])[iAbs])->nvars_;
+            }
+        }
+        numBDDVars += baseU_->nvars_;
+        numBDDVars += auxU_->nvars_;
+        clog << "Number of BDD variables: " << numBDDVars << '\n';
+
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                int* prodPermuteXtoX2 = new int[numBDDVars];
+                int* prodPermuteX2toX = new int[numBDDVars];
+                for (int i = 0; i < numBDDVars; i++) {
+                    prodPermuteXtoX2[i] = 0;
+                    prodPermuteX2toX[i] = 0;
+                }
+                for (size_t iVar = 0; iVar < ((*prodsXs_[iAux])[iAbs])->nvars_; iVar++) {
+                    prodPermuteXtoX2[((*prodsXs_[iAux])[iAbs])->idBddVars_[iVar]] = ((*prodsX2s_[iAux])[iAbs])->idBddVars_[iVar];
+                    prodPermuteX2toX[((*prodsX2s_[iAux])[iAbs])->idBddVars_[iVar]] = ((*prodsXs_[iAux])[iAbs])->idBddVars_[iVar];
+                }
+                prodsPermutesXtoX2_[iAux]->push_back(prodPermuteXtoX2);
+                prodsPermutesX2toX_[iAux]->push_back(prodPermuteX2toX);
+            }
+        }
+        clog << "Initialized prods' permutes.\n";
+
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                BDD* prodNotXUVar = new BDD;
+                BDD* prodNotXVar = new BDD;
+                *prodNotXUVar = prodDdmgr_->bddOne();
+
+                for (int jAbs = 0; jAbs < *base_->numAbs_; jAbs++) {
+                    *prodNotXUVar &= *baseCubesX2_[jAbs];
+                    if (!(iAbs == jAbs)) {
+                        *prodNotXUVar &= *baseCubesX_[jAbs];
+                    }
+                    for (size_t jAux = 0; jAux < auxs_.size(); jAux++) {
+                        *prodNotXUVar &= *((*auxsCubesX2_[jAux])[jAbs]);
+                        if (!((iAbs == jAbs) && (iAux == jAux))) {
+                            *prodNotXUVar &= *((*auxsCubesX_[jAux])[jAbs]);
+                        }
+                    }
+                }
+
+                *prodNotXUVar &= auxU_->getCube();
+                *prodNotXVar = *prodNotXUVar & baseU_->getCube();
+                prodsNotXUVars_[iAux]->push_back(prodNotXUVar);
+                prodsNotXVars_[iAux]->push_back(prodNotXVar);
+            }
+
+            BDD* baseNotXUVar = new BDD;
+            BDD* baseNotXVar = new BDD;
+            *baseNotXUVar = prodDdmgr_->bddOne();
+
+            *baseNotXUVar &= *((*prodsNotXUVars_[0])[iAbs]);
+            *baseNotXUVar &= *((*auxsCubesX_[0])[iAbs]);
+            *baseNotXVar = *baseNotXUVar & baseU_->getCube();
+            baseNotXUVars_.push_back(baseNotXUVar);
+            baseNotXVars_.push_back(baseNotXVar);
+        }
+
         printVec(baseXs_, "baseXs");
-        printVecVec(auxsXs_, "auxsXs");
+//        printVec(baseXXs_, "baseXXs");
+
+//        printVecVec(auxsXs_, "auxsXs");
+//        printVecVec(auxsXXs_, "auxsXXs");
+
         printVecVec(prodsXs_, "prodsXs");
+//        printVecVec(prodsXXs_, "prodsXXs");
+
+//        printVecVec(prodsTs_, "prodsTs");
 
 
-        clog << "Initialized base's, auxs' Xs, X2s, U.\n";
-        clog << "Initialized prods' Xs, X2s.\n";
+        checkNotVars();
+
+
+
+
+    }
+
+    void checkNotVars() {
+        // for 2A1P
+        SymbolicSet d1(*((*prodsXs_[0])[0]), *((*prodsXs_[0])[1]));
+        SymbolicSet d2(d1, *((*prodsX2s_[0])[0]));
+        SymbolicSet d3(d2, *((*prodsX2s_[0])[1]));
+        SymbolicSet d4(d3, *baseU_);
+        SymbolicSet all(d4, *auxU_);
+//        all.symbolicSet_ = *((*auxsCubesX_[0])[0]);
+//        all.printInfo(2);
+
+//        all.symbolicSet_ = *((*prodsNotXVars_[0])[0]);
+//        all.printInfo(2);
+
+        all.symbolicSet_ = *baseNotXVars_[1];
+        cout << "baseNotXVars_[1]:\n";
+        all.printInfo(2);
     }
 
 };

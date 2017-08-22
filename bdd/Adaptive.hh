@@ -718,46 +718,47 @@ public:
      *  \param[in]      c           0-index of the coarser abstraction (currently unnecessary/unused).
      */
     void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX, int c) {
-        if (alignment_ == 1) {
-            int* XfMinterm;
-            double* xPoint = new double[*system_->dimX_];
-            vector<double> XcPoint (*system_->dimX_, 0);
-            double* XXPoint = new double[*system_->dimX_ + *system_->dimX_];
 
-            int totalIter = Xf->symbolicSet_.CountMinterm(Xf->nvars_);
-            int iter = 0;
-//            int progress = 0;
 
-            cout << "XXs totalIter: " << totalIter << '\n';
+        int* XfMinterm;
+        double* xPoint = new double[Xc->dim_];
+        vector<double> XcPoint (Xc->dim_, 0);
+        double* XXPoint = new double[XX->dim_];
 
-            for (Xf->begin(); !Xf->done(); Xf->next()) {
-                iter++;
-//                cout << iter << '\n';
-                if (iter % 50000 == 0) {
-                    cout << iter << "\n";
-//                    progress++;
-                }
+        int totalIter = Xf->symbolicSet_.CountMinterm(Xf->nvars_);
+        int iter = 0;
+        //            int progress = 0;
 
-                XfMinterm = (int*)Xf->currentMinterm();
-                Xf->mintermToElement(XfMinterm, xPoint);
-                for (int i = 0; i < *system_->dimX_; i++) {
-                    XcPoint[i] = xPoint[i];
-                }
-                if (!(Xc->isElement(XcPoint))) {
-                    continue;
-                }
-                for (int i = 0; i < *system_->dimX_+*system_->dimX_; i++) {
-                    XXPoint[i] = xPoint[i % *system_->dimX_];
-                }
-                XX->addPoint(XXPoint);
+        cout << "XXs totalIter: " << totalIter << '\n';
+
+        for (Xf->begin(); !Xf->done(); Xf->next()) {
+            iter++;
+            //                cout << iter << '\n';
+            if (iter % 50000 == 0) {
+                cout << iter << "\n";
+                //                    progress++;
             }
-            cout << '\n';
-            (void)c;
 
-            delete[] xPoint;
-            delete[] XXPoint;
-
+            XfMinterm = (int*)Xf->currentMinterm();
+            Xf->mintermToElement(XfMinterm, xPoint);
+            for (size_t i = 0; i < Xc->dim_; i++) {
+                XcPoint[i] = xPoint[i];
+            }
+            if (!(Xc->isElement(XcPoint))) {
+                continue;
+            }
+            for (size_t i = 0; i < XX->dim_; i++) {
+                XXPoint[i] = xPoint[i % Xc->dim_];
+            }
+            XX->addPoint(XXPoint);
         }
+        cout << '\n';
+        (void)c;
+
+        delete[] xPoint;
+        delete[] XXPoint;
+
+
 //        else if (alignment_ == 2) {
 //            int* XfMinterm;
 //            double xPoint[*system_->dimX_] = {0};
