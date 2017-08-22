@@ -16,6 +16,10 @@ namespace scots {
  */
 class GBuchi: public Composition {
 public:
+    int minToGoCoarser_;
+    int minToBeValid_;
+    int verbose_ = 1;
+
 
 
     /*! Constructor for a GBuchi object. */
@@ -34,6 +38,138 @@ public:
     }
 
 
+    void mu(int curAux, int* curAbs, int* iter, int* justCoarsed, int* iterCurAbs, int* reached, int* stop) {
+        clog << "current abstraction: " << *curAbs << '\n';
+        clog << "mu iteration: " << *iter << '\n';
+        clog << "justCoarsed: " << *justCoarsed << '\n';
+        clog << "iterCurAbs: " << *iterCurAbs << '\n';
+        clog << "reached: " << *reached << '\n';
+        clog << "controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
+
+        BDD C = Cpre(((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_,
+                ((*this->prodsTs_[curAux])[*curAbs])->symbolicSet_,
+                ((*this->prodsTTs_[curAux])[*curAbs])->symbolicSet_,
+                ((*this->prodsPermutesXtoX2_[curAux])[*curAbs]),
+                *((*this->prodsNotXUVars_[curAux])[*curAbs]));
+        C = ((*this->prodsGs_[curAux])[*curAbs])->symbolicSet_;
+        BDD N = C & (!((*this->prodsCs_[curAux])[*curAbs])->symbolicSet_.ExistAbstract(*((*this->prodsNotXVars_[curAux])[*curAbs])));
+        ((*this->prodsCs_[curAux])[*curAbs])->symbolicSet_ |= N;
+        ((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_ = C.ExistAbstract(*((*this->prodsNotXVars_[curAux])[*curAbs]));
+
+        if (*iter != 1) {
+            if (N == this->ddmgr_->bddZero()) {
+                if (*curAbs == *this->base_->numAbs_ - 1) {
+                    if (*reached == 1) {
+                        saveCZ(curAux, *curAbs);
+                    }
+                    *stop = 1;
+                    clog << "\nTotal number of controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
+                }
+                else {
+                    if (verbose_) {
+                        clog << "No new winning states; going finer.\n";
+                    }
+                    if (*justCoarsed == 1) {
+                        if (verbose_) {
+                            clog << "Current controller has not been declared valid.\n";
+                            clog << "Removing last elements of prodsFinalCs_[" << curAux << "] and prodsFinalZs_[" << curAux << "].\n";
+                            clog << "Resetting prodsZs_[" << curAux << "][" << *curAbs << "] and prodsCs_[" << curAux << "][" << *curAbs << "] from valids.\n";
+                        }
+
+                        SymbolicSet* prodC = prodsFinalCs_[curAux]->back();
+                        SymbolicSet* prodZ = prodsFinalZs_[curAux]->back();
+                        prodsFinalCs_[curAux]->pop_back();
+                        prodsFinalZs_[curAux]->pop_back();
+                        delete(prodC);
+                        delete(prodZ);
+
+                        ((*this->prodsCs_[curAux])[*curAbs])->symbolicSet_ = ((*this->prodsValidCs_[curAux])[*curAbs])->symbolicSet_;
+                        ((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_ = ((*this->prodsValidZs_[curAux])[*curAbs])->symbolicSet_;
+                        *justCoarsed = 0;
+                    }
+                    else {
+                        if (verbose_) {
+                            clog << "Current controller has been declared valid.\n";
+                            clog << "Saving prodsZs_[" << curAux << "][" << *curAbs << "] and prodsCs_[" << curAux << "][" << *curAbs << "] into prodValids, prodFinals.\n";
+                            clog << "Finding inner approximation of prodsZs_[" << curAux << "][" << *curAbs << "] and copying into prodsZs_[" << curAux << "][" << *curAbs+1 << "].\n";
+                        }
+                        ((*this->prodsValidCs_[curAux])[*curAbs])->symbolicSet_ = ((*this->prodsCs_[curAux])[*curAbs])->symbolicSet_;
+                        ((*this->prodsValidZs_[curAux])[*curAbs])->symbolicSet_ = ((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_;
+
+                        saveCZ(curAux, *curAbs);
+
+                        innerFiner((*this->prodsZs_[curAux])[*curAbs],
+                                (*this->prodsZs_[curAux])[*curAbs+1],
+                                (*this->prodsXXs_[curAux])[*curAbs],
+                                (*this->prodsNotXVars_[curAux])[*curAbs+1],
+                                (*this->prodsXs_[curAux])[*curAbs+1]);
+                        ((*this->prodsValidZs_[curAux])[*curAbs+1])->symbolicSet_ = ((*this->prodsZs_[curAux])[*curAbs+1])->symbolicSet_;
+                    }
+                    *curAbs += 1;
+                    *iterCurAbs = 1;
+                }
+            }
+            else {
+                if ((*justCoarsed == 1) && (*iterCurAbs >= minToBeValid_)) {
+                    if (verbose_) {
+                        clog << "Current controller now valid.\n";
+                    }
+                    *justCoarsed = 0;
+                }
+                if (*curAbs == 0) {
+                    if (verbose_) {
+                        clog << "More new states, already at coarsest gridding, continuing.\n";
+                    }
+                    *iterCurAbs += 1;
+                }
+                else {
+                    if (*iterCurAbs >= minToGoCoarser_) {
+                        if (verbose_) {
+                            clog << "More new states, minToGoCoarser achieved; try going coarser.\n";
+                        }
+                        int more = innerCoarser((*this->prodsZs_[curAux])[*curAbs],
+                                (*this->prodsZs_[curAux])[*curAbs+1],
+                                (*this->prodsXXs_[curAux])[*curAbs],
+                                (*this->prodsNotXVars_[curAux])[*curAbs],
+                                (*this->prodsXs_[curAux])[*curAbs],
+                                this->prodsNumFiner_[curAux]);
+                        if (more == 0) {
+                            if (verbose_) {
+                                clog << "Projecting to coarser gives no more states in coarser; not changing abstraction.\n";
+                            }
+                            *iterCurAbs += 1;
+                        }
+                        else {
+                            if (verbose_) {
+                                clog << "Projecting to coarser gives more states in coarser.\n";
+                                clog << "Saving prodsZs_[" << curAux << "][" << *curAbs << "] and prodsCs_[" << curAux << "][" << *curAbs << "] into prodValids, prodFinals.\n";
+                                clog << "Saving prodsZs_[" << curAux << "][" << *curAbs-1 << "] and prodsCs_[" << curAux << "][" << *curAbs-1 << "] into prodValids.\n";
+                            }
+                            saveCZ(curAux, *curAbs);
+                            ((*this->prodsValidCs_[curAux])[*curAbs])->symbolicSet_ = ((*this->prodsCs_[curAux])[*curAbs])->symbolicSet_;
+                            ((*this->prodsValidZs_[curAux])[*curAbs])->symbolicSet_ = ((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_;
+
+                            ((*this->prodsValidCs_[curAux])[*curAbs-1])->symbolicSet_ = ((*this->prodsCs_[curAux])[*curAbs-1])->symbolicSet_;
+                            ((*this->prodsValidZs_[curAux])[*curAbs-1])->symbolicSet_ = ((*this->prodsZs_[curAux])[*curAbs-1])->symbolicSet_;
+
+                            *justCoarsed = 1;
+                            *iterCurAbs = 1;
+                        }
+                    }
+                    else {
+                        *iterCurAbs += 1;
+                    }
+                }
+            }
+        }
+        else {
+            if (verbose_) {
+                clog << "First iteration, nothing happens.\n";
+            }
+        }
+        clog << "\n";
+        *iter += 1;
+    }
 
     BDD Cpre (BDD Z, BDD T, BDD TT, int* permuteXtoX2, BDD notXUVar) {
         // swap to post-state variables
@@ -41,12 +177,12 @@ public:
         // non-winning post-states
         BDD nZ2 = !Z2;
         // {(x,u)} with non-winning post-state
-        BDD nN = T.AndAbstract(nZ2, notXUVar);
+        BDD nC = T.AndAbstract(nZ2, notXUVar);
         // {(x,u)} with no non-winning post-states
-        BDD N = !nN;
+        BDD C = !nC;
         // get rid of non-domain information
-        N = TT.AndAbstract(N, notXUVar);
-        return N;
+        C = TT.AndAbstract(C, notXUVar);
+        return C;
     }
 
     void innerFiner(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarf, SymbolicSet* Xf) {
@@ -90,10 +226,14 @@ public:
         return 1;
     }
 
-
-
-
-
+    void saveCZ(int curAux, int curAbs) {
+        SymbolicSet* prodFinalC = new SymbolicSet(*((*this->prodsCs_[curAux])[curAbs]));
+        SymbolicSet* prodFinalZ = new SymbolicSet(*((*this->prodsZs_[curAux])[curAbs]));
+        prodFinalC->symbolicSet_ = ((*this->prodsCs_[curAux])[curAbs])->symbolicSet_;
+        prodFinalZ->symbolicSet_ = ((*this->prodsZs_[curAux])[curAbs])->symbolicSet_;
+        prodsFinalCs_[curAux]->push_back(prodFinalC);
+        prodsFinalZs_[curAux]->push_back(prodFinalZ);
+    }
 
 
 };
