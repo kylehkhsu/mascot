@@ -21,7 +21,7 @@ using namespace helper;
 #define dimB 3
 #define dimY 1
 
-const int numAbs = 2;
+const int numAbs = 1;
 const double tau = 0.9;
 const int nint = 5;
 
@@ -99,9 +99,7 @@ void product() {
     double lbB[dimB] = {   0,   2, -1.5};
     double ubB[dimB] = { 0.2,   5,  1.5};
     double etaB[dimB] = {0.2, 0.2,  0.2};
-    double lbY[1] = { 0};
-    double ubY[1] = { 1};
-    double etaY[1] = {1};
+
     B_type b;
     Y_type y;
 
@@ -113,7 +111,6 @@ void product() {
                dynEtaRatio, dynTauRatio, nint, numAbs);
 
     System ball(dimB, lbB, ubB, etaB, tau,
-                dimY, lbY, ubY, etaY,
                 ballEtaRatio, ballTauRatio, nint, numAbs);
     vector<System*> balls;
     balls.push_back(&ball);
@@ -131,7 +128,7 @@ void product() {
     abs.initializeReach(whirlpoolAddG, whirlpoolAddI);
     abs.computeAbstractions(dynSysNext, dynRadNext, x, u);
 
-    int startAbs = 1;
+    int startAbs = 0;
     int minToGoCoarser = 2;
     int minToBeValid = 5;
     int earlyBreak = 1;

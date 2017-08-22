@@ -11,29 +11,27 @@ U_ initialized with full domain.
 Os_ initialized according to specification.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 78.2086 seconds.
-Number of BDD variables: 85
+------------------------------------------------initializeXXs: Elapsed time is 0.00159979 seconds.
+Number of BDD variables: 43
 Initialized permutes.
 Initialized cubes.
 Initialized notVars.
 etaXs_:
 abstraction 0: 0.6 0.6 0.2 0.2 0.2 
-abstraction 1: 0.2 0.2 0.2 0.2 0.2 
 tau_:
 abstraction 0: 0.9
-abstraction 1: 0.9
 Gs_ initialized.
 Is_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 1.66364 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.283103 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
 Ts_ initialized with empty domain.
 Ts_ read from file.
-------------------------------------------------computeAbstractions: Elapsed time is 25.0613 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 1.762 seconds.
 TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
-current abstraction: 1
+current abstraction: 0
 mu iteration: 1
 justCoarsed: 0
 iterCurAbs: 1
@@ -41,72 +39,77 @@ reached: 0
 controllers: 0
 First iteration, nothing happens.
 
-current abstraction: 1
+current abstraction: 0
 mu iteration: 2
 justCoarsed: 0
 iterCurAbs: 1
 reached: 0
 controllers: 0
+More new states, already at coarsest gridding, continuing.
 
-current abstraction: 1
+current abstraction: 0
 mu iteration: 3
 justCoarsed: 0
 iterCurAbs: 2
 reached: 0
 controllers: 0
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
+More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 4
-justCoarsed: 1
-iterCurAbs: 1
+justCoarsed: 0
+iterCurAbs: 3
 reached: 0
-controllers: 1
+controllers: 0
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 5
-justCoarsed: 1
-iterCurAbs: 2
+justCoarsed: 0
+iterCurAbs: 4
 reached: 0
-controllers: 1
+controllers: 0
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 6
-justCoarsed: 1
-iterCurAbs: 3
+justCoarsed: 0
+iterCurAbs: 5
 reached: 0
-controllers: 1
+controllers: 0
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 7
-justCoarsed: 1
-iterCurAbs: 4
+justCoarsed: 0
+iterCurAbs: 6
 reached: 0
-controllers: 1
+controllers: 0
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 8
-justCoarsed: 1
-iterCurAbs: 5
+justCoarsed: 0
+iterCurAbs: 7
 reached: 0
-controllers: 1
-Current controller now valid.
+controllers: 0
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 9
 justCoarsed: 0
-iterCurAbs: 6
+iterCurAbs: 8
 reached: 0
-controllers: 1
+controllers: 0
+More new states, already at coarsest gridding, continuing.
 
-Total number of controllers: 2
+current abstraction: 0
+mu iteration: 10
+justCoarsed: 0
+iterCurAbs: 9
+reached: 0
+controllers: 0
+
+Total number of controllers: 1
 Won.
-----------------------------------------reach: Elapsed time is 29.6322 seconds.
+----------------------------------------reach: Elapsed time is 4.68742 seconds.
