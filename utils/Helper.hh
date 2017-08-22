@@ -93,6 +93,14 @@ namespace helper {
         }
     }
 
+    template<class vec_t, class prefix_t>
+    void printVecArray(vec_t vec, prefix_t prefix, int arrayElems) {
+        for (size_t i = 0; i < vec.size(); i++) {
+            clog << prefix << "[" << i << "]: ";
+            printArray(vec[i], arrayElems);
+        }
+    }
+
     template <class vecVec_type, class prefix_type>
     void printVecVec(vecVec_type vecVec, prefix_type vecPrefix) {
         for (size_t i = 0; i < vecVec.size(); i++) {
