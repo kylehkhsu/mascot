@@ -78,7 +78,7 @@ public:
         *numAbs_ = numAbs;
     }
     System(int dimX, double* lbX, double* ubX, double* etaX, double tau,
-           double* etaRatio, double tauRatio, int nSubInt, int numAbs) {
+           double* etaRatio) {
         dimX_ = new int;
         lbX_ = new double[dimX];
         ubX_ = new double[dimX];
@@ -105,9 +105,9 @@ public:
         *lbU_ = 0;
         *ubU_ = 1;
         *etaU_ = 1;
-        *tauRatio_ = tauRatio;
-        *nSubInt_ = nSubInt;
-        *numAbs_ = numAbs;
+        *tauRatio_ = -1;
+        *nSubInt_ = -1;
+        *numAbs_ = -1;
     }
 
     /*! Destructor for a System object. */

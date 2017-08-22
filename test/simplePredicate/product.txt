@@ -1,6 +1,7 @@
 product.txt
 Initialized base's, auxs' etaXs, taus.
 Initialized base's, auxs' Xs, X2s, U.
+Initialized prods' Xs, X2s.
 Wrote prodTs_ to file.
 Initialized alignment.
 Initialized etaXs_, tau_.
@@ -11,27 +12,29 @@ U_ initialized with full domain.
 Os_ initialized according to specification.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 0.00162352 seconds.
-Number of BDD variables: 43
+------------------------------------------------initializeXXs: Elapsed time is 3.91558 seconds.
+Number of BDD variables: 73
 Initialized permutes.
 Initialized cubes.
 Initialized notVars.
 etaXs_:
-abstraction 0: 0.6 0.6 0.2 0.2 0.2 
+abstraction 0: 1.2 1.2 0.2 0.4 0.4 
+abstraction 1: 0.6 0.6 0.2 0.2 0.2 
 tau_:
-abstraction 0: 0.9
+abstraction 0: 1.8
+abstraction 1: 0.9
 Gs_ initialized.
 Is_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.277938 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.324462 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
 Ts_ initialized with empty domain.
 Ts_ read from file.
-------------------------------------------------computeAbstractions: Elapsed time is 2.00602 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 2.08848 seconds.
 TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
-current abstraction: 0
+current abstraction: 1
 mu iteration: 1
 justCoarsed: 0
 iterCurAbs: 1
@@ -39,77 +42,149 @@ reached: 0
 controllers: 0
 First iteration, nothing happens.
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 2
 justCoarsed: 0
 iterCurAbs: 1
 reached: 0
 controllers: 0
-More new states, already at coarsest gridding, continuing.
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 3
 justCoarsed: 0
 iterCurAbs: 2
 reached: 0
 controllers: 0
-More new states, already at coarsest gridding, continuing.
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
+Saving Z and C of abstraction 0 into validZs_, validCs.
 
 current abstraction: 0
 mu iteration: 4
-justCoarsed: 0
-iterCurAbs: 3
+justCoarsed: 1
+iterCurAbs: 1
 reached: 0
-controllers: 0
+controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 5
-justCoarsed: 0
-iterCurAbs: 4
+justCoarsed: 1
+iterCurAbs: 2
 reached: 0
-controllers: 0
-More new states, already at coarsest gridding, continuing.
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of finalCs_ and finalZs_.
+Resetting Zs_[0] and Cs_[0] from valids.
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 6
 justCoarsed: 0
-iterCurAbs: 5
+iterCurAbs: 1
 reached: 0
 controllers: 0
-More new states, already at coarsest gridding, continuing.
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 7
 justCoarsed: 0
-iterCurAbs: 6
+iterCurAbs: 2
 reached: 0
 controllers: 0
-More new states, already at coarsest gridding, continuing.
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
+Saving Z and C of abstraction 0 into validZs_, validCs.
 
 current abstraction: 0
 mu iteration: 8
-justCoarsed: 0
-iterCurAbs: 7
+justCoarsed: 1
+iterCurAbs: 1
 reached: 0
-controllers: 0
+controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 9
-justCoarsed: 0
-iterCurAbs: 8
+justCoarsed: 1
+iterCurAbs: 2
 reached: 0
-controllers: 0
+controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 10
+justCoarsed: 1
+iterCurAbs: 3
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 11
+justCoarsed: 1
+iterCurAbs: 4
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 12
+justCoarsed: 1
+iterCurAbs: 5
+reached: 0
+controllers: 1
+Current controller now valid.
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 13
+justCoarsed: 0
+iterCurAbs: 6
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 14
+justCoarsed: 0
+iterCurAbs: 7
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 15
+justCoarsed: 0
+iterCurAbs: 8
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 16
 justCoarsed: 0
 iterCurAbs: 9
 reached: 0
-controllers: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
 
-Total number of controllers: 1
+current abstraction: 0
+mu iteration: 17
+justCoarsed: 0
+iterCurAbs: 10
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 18
+justCoarsed: 0
+iterCurAbs: 11
+reached: 0
+controllers: 1
+
+Total number of controllers: 2
 Won.
-----------------------------------------reach: Elapsed time is 4.69855 seconds.
+----------------------------------------reach: Elapsed time is 2.19579 seconds.

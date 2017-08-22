@@ -21,9 +21,10 @@ using namespace helper;
 #define dimB 3
 #define dimY 1
 
-const int numAbs = 1;
-const double tau = 0.9;
-const int nint = 5;
+const int numAbs = 2;
+const double tau = 0.9*2;
+const double tauRatio = 2;
+const int nSubInt = 5;
 
 const double w[dimX + dimB] = {0, 0, 0, 0, 0};
 
@@ -86,32 +87,31 @@ auto whirlpoolAddI = [](SymbolicSet* I) -> void {
 void product() {
     double lbX[dimX]={-6, -6};
     double ubX[dimX]={ 6,  6 };
-    double etaX[dimX]= {0.6, 0.6};
+    double etaX[dimX]= {0.6*2, 0.6*2};
     double lbU[dimU]= {-2, 0.5};
     double ubU[dimU]= { 2,   1};
     double etaU[dimU]= {0.5, 0.2};
     X_type x;
     U_type u;
 
-    double baseEtaRatio[dimX] = {3, 3};
-    double baseTauRatio = 1;
+    double baseEtaRatio[dimX] = {2, 2};
 
     double lbB[dimB] = {   0,   2, -1.5};
     double ubB[dimB] = { 0.2,   5,  1.5};
-    double etaB[dimB] = {0.2, 0.2,  0.2};
+    double etaB[dimB] = {0.2, 0.4,  0.4};
 
     B_type b;
     Y_type y;
 
-    double ballEtaRatio[dimB] = {1, 1, 1};
-    double ballTauRatio = 1;
+    double ballEtaRatio[dimB] = {1, 2, 2};
+
 
     System base(dimX, lbX, ubX, etaX, tau,
                dimU, lbU, ubU, etaU,
-               baseEtaRatio, baseTauRatio, nint, numAbs);
+               baseEtaRatio, tauRatio, nSubInt, numAbs);
 
     System ball(dimB, lbB, ubB, etaB, tau,
-                ballEtaRatio, ballTauRatio, nint, numAbs);
+                ballEtaRatio);
     vector<System*> balls;
     balls.push_back(&ball);
 
@@ -128,7 +128,7 @@ void product() {
     abs.initializeReach(whirlpoolAddG, whirlpoolAddI);
     abs.computeAbstractions(baseSysNext, baseRadNext, x, u);
 
-    int startAbs = 0;
+    int startAbs = 1;
     int minToGoCoarser = 2;
     int minToBeValid = 5;
     int earlyBreak = 1;

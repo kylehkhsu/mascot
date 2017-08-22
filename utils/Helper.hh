@@ -93,6 +93,16 @@ namespace helper {
         }
     }
 
+    template <class vecVec_type, class prefix_type>
+    void printVecVec(vecVec_type vecVec, prefix_type vecPrefix) {
+        for (size_t i = 0; i < vecVec.size(); i++) {
+            for (size_t j = 0; j < vecVec[i]->size(); j++) {
+                cout << vecPrefix << '[' << i << "][" << j << "]:\n";
+                (*vecVec[i])[j]->printInfo(1);
+            }
+        }
+    }
+
     /*! Frees a vector's arrays from heap memory.
      *  \param[in]  vec     Vector of arrays.
      */

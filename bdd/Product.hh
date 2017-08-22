@@ -39,6 +39,9 @@ public:
     vector<SymbolicSet*> baseX2s_;
     vector<vector<SymbolicSet*>*> auxsX2s_;
 
+    vector<vector<SymbolicSet*>*> prodsXs_;
+    vector<vector<SymbolicSet*>*> prodsX2s_;
+
     SymbolicSet* baseU_;
     SymbolicSet* auxU_;
 
@@ -62,6 +65,9 @@ public:
         deleteVecVec(auxsXs_);
         deleteVec(baseX2s_);
         deleteVecVec(auxsX2s_);
+        deleteVecVec(prodsXs_);
+        deleteVecVec(prodsX2s_);
+
         delete baseU_;
         delete auxU_;
         deleteVec(baseTs_);
@@ -75,13 +81,13 @@ public:
         vector<SymbolicSet*> curTs;
 
 
-        for (int i = 0; i < *base_->numAbs_; i++) {
-            SymbolicSet* T = new SymbolicSet(*baseTs_[i]);
-            T->symbolicSet_ = baseTs_[i]->symbolicSet_;
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            SymbolicSet* T = new SymbolicSet(*baseTs_[iAbs]);
+            T->symbolicSet_ = baseTs_[iAbs]->symbolicSet_;
             curTs.push_back(T);
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
-                SymbolicSet* curT = new SymbolicSet(*(curTs.back()), *((*auxsTs_[iAux])[i]));
-                curT->symbolicSet_ = (curTs.back())->symbolicSet_ & ((*auxsTs_[iAux])[i])->symbolicSet_;
+                SymbolicSet* curT = new SymbolicSet(*(curTs.back()), *((*auxsTs_[iAux])[iAbs]));
+                curT->symbolicSet_ = (curTs.back())->symbolicSet_ & ((*auxsTs_[iAux])[iAbs])->symbolicSet_;
                 curTs.push_back(curT);
                 curT->printInfo(1);
             }
@@ -129,9 +135,9 @@ public:
 
     template<class sys_type, class rad_type, class x_type, class u_type>
     void computeBaseAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u) {
-        for (int i = 0; i < *base_->numAbs_; i++) {
-            SymbolicModelGrowthBound<x_type, u_type> baseAb(baseXs_[i], baseU_, baseX2s_[i]);
-            baseAb.computeTransitionRelation(sysNext, radNext, *baseSolvers_[i]);
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            SymbolicModelGrowthBound<x_type, u_type> baseAb(baseXs_[iAbs], baseU_, baseX2s_[iAbs]);
+            baseAb.computeTransitionRelation(sysNext, radNext, *baseSolvers_[iAbs]);
 
             SymbolicSet T = baseAb.getTransitionRelation();
             SymbolicSet* baseT = new SymbolicSet(T);
@@ -145,12 +151,12 @@ public:
 
     template<class sys_type, class rad_type, class x_type, class u_type>
     void computeAuxAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u, int iAux) {
-        for (int i = 0; i < *base_->numAbs_; i++) {
-            SymbolicModelGrowthBound<x_type, u_type> auxAb((*auxsXs_[iAux])[i], auxU_, (*auxsX2s_[iAux])[i]);
-            auxAb.computeTransitionRelation(sysNext, radNext, *(*auxsSolvers_[iAux])[i]);
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            SymbolicModelGrowthBound<x_type, u_type> auxAb((*auxsXs_[iAux])[iAbs], auxU_, (*auxsX2s_[iAux])[iAbs]);
+            auxAb.computeTransitionRelation(sysNext, radNext, *(*auxsSolvers_[iAux])[iAbs]);
 
             SymbolicSet T = auxAb.getTransitionRelation();
-            SymbolicSet* auxT = new SymbolicSet(*(*auxsXs_[iAux])[i], *(*auxsX2s_[iAux])[i]);
+            SymbolicSet* auxT = new SymbolicSet(*(*auxsXs_[iAux])[iAbs], *(*auxsX2s_[iAux])[iAbs]);
             auxT->symbolicSet_ = T.symbolicSet_.ExistAbstract(auxU_->getCube());
 
             auxsTs_[iAux]->push_back(auxT);
@@ -205,13 +211,13 @@ public:
             auxsSolvers_.push_back(auxSolvers);
         }
 
-        for (int i = 0; i < *base_->numAbs_; i++) {
-            OdeSolver* baseSolver = new OdeSolver(*base_->dimX_, *base_->nSubInt_, allTau_[i][0]);
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            OdeSolver* baseSolver = new OdeSolver(*base_->dimX_, *base_->nSubInt_, allTau_[iAbs][0]);
             baseSolvers_.push_back(baseSolver);
 
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 System* aux = auxs_[iAux];
-                OdeSolver* auxSolver = new OdeSolver(*aux->dimX_, *aux->nSubInt_, allTau_[i][0]);
+                OdeSolver* auxSolver = new OdeSolver(*aux->dimX_, *base_->nSubInt_, allTau_[iAbs][0]);
                 auxsSolvers_[iAux]->push_back(auxSolver);
             }
         }
@@ -225,7 +231,7 @@ public:
         for (int i = 0; i < *base_->dimX_; i++) {
             baseEtaCur[i] = base_->etaX_[i];
         }
-        for (int i = 0; i < *base_->numAbs_; i++) {
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             double* baseEtaX = new double[*base_->dimX_];
             for (int j = 0; j < *base_->dimX_; j++) {
                 baseEtaX[j] = baseEtaCur[j];
@@ -280,28 +286,39 @@ public:
             auxsXs_.push_back(auxXs);
             vector<SymbolicSet*>* auxX2s = new vector<SymbolicSet*>;
             auxsX2s_.push_back(auxX2s);
+            vector<SymbolicSet*>* prodXs = new vector<SymbolicSet*>;
+            prodsXs_.push_back(prodXs);
+            vector<SymbolicSet*>* prodX2s = new vector<SymbolicSet*>;
+            prodsX2s_.push_back(prodX2s);
         }
 
-        for (int i = 0; i < *base_->numAbs_; i++) {
-            SymbolicSet* baseX = new SymbolicSet(*prodDdmgr_, *base_->dimX_, base_->lbX_, base_->ubX_, baseEtaXs_[i], allTau_[i][0]);
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            SymbolicSet* baseX = new SymbolicSet(*prodDdmgr_, *base_->dimX_, base_->lbX_, base_->ubX_, baseEtaXs_[iAbs], allTau_[iAbs][0]);
             baseX->addGridPoints();
             baseXs_.push_back(baseX);
 
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 System* aux = auxs_[iAux];
-                SymbolicSet* auxX = new SymbolicSet(*prodDdmgr_, *aux->dimX_, aux->lbX_, aux->ubX_, (*auxsEtaXs_[iAux])[i], allTau_[i][0]);
+                SymbolicSet* auxX = new SymbolicSet(*prodDdmgr_, *aux->dimX_, aux->lbX_, aux->ubX_, (*auxsEtaXs_[iAux])[iAbs], allTau_[iAbs][0]);
                 auxX->addGridPoints();
                 auxsXs_[iAux]->push_back(auxX);
+
+                SymbolicSet* prodX = new SymbolicSet(*baseXs_[iAbs], *auxX);
+                prodX->addGridPoints();
+                prodsXs_[iAux]->push_back(prodX);
             }
         }
 
-        for (int i = 0; i < *base_->numAbs_; i++) {
-            SymbolicSet* baseX2 = new SymbolicSet(*baseXs_[i], 1);
+        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+            SymbolicSet* baseX2 = new SymbolicSet(*baseXs_[iAbs], 1);
             baseX2s_.push_back(baseX2);
 
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
-                SymbolicSet* auxX2 = new SymbolicSet(*((*auxsXs_[iAux])[i]), 1);
+                SymbolicSet* auxX2 = new SymbolicSet(*((*auxsXs_[iAux])[iAbs]), 1);
                 auxsX2s_[iAux]->push_back(auxX2);
+
+                SymbolicSet* prodX2 = new SymbolicSet(*baseX2s_[iAbs]);
+                prodsX2s_[iAux]->push_back(prodX2);
             }
         }
 
@@ -312,7 +329,13 @@ public:
         auxU_ = new SymbolicSet(*prodDdmgr_, *aux->dimU_, aux->lbU_, aux->ubU_, aux->etaU_, 0);
         auxU_->addGridPoints();
 
+        printVec(baseXs_, "baseXs");
+        printVecVec(auxsXs_, "auxsXs");
+        printVecVec(prodsXs_, "prodsXs");
+
+
         clog << "Initialized base's, auxs' Xs, X2s, U.\n";
+        clog << "Initialized prods' Xs, X2s.\n";
     }
 
 };
