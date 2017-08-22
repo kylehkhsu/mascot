@@ -5,12 +5,10 @@
 
 #include "cuddObj.hh"
 
-#include "Reach.hh"
-
 #include "TicToc.hh"
 #include "RungeKutta4.hh"
 #include "FixedPoint.hh"
-#include "Product.hh"
+#include "Composition.hh"
 
 using namespace std;
 using namespace scots;
@@ -84,7 +82,7 @@ auto whirlpoolAddI = [](SymbolicSet* I) -> void {
 };
 
 
-void product() {
+void composition() {
     double lbX[dimX]={-6, -6};
     double ubX[dimX]={ 6,  6 };
     double etaX[dimX]= {0.6*2, 0.6*2};
@@ -115,32 +113,18 @@ void product() {
     vector<System*> balls;
     balls.push_back(&ball);
 
-    Reach abs("product.txt");
+    Composition abs("composition.txt");
 
-    abs.initializeProduct(&base, balls);
+    abs.initialize(&base, balls);
     abs.computeBaseAbstractions(baseSysNext, baseRadNext, x, u);
     abs.computeAuxAbstractions(ballSysNext, ballRadNext, b, y, 0);
-    abs.constructAbstractions();
-    abs.computeProducts();
-
-    int readXX = 0;
-    int readAbs = 1; // don't change
-    abs.initializeAdaptive(readXX, readAbs, dummyAddO);
-    abs.initializeReach(whirlpoolAddG, whirlpoolAddI);
-    abs.computeAbstractions(baseSysNext, baseRadNext, x, u);
-
-    int startAbs = 1;
-    int minToGoCoarser = 2;
-    int minToBeValid = 5;
-    int earlyBreak = 1;
-
-    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+    abs.composeAbstractions();
 
 }
 
 
 int main() {
-    product();
+    composition();
 //    separate();
 
 

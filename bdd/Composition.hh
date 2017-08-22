@@ -1,29 +1,28 @@
-/*! \file Product.hh
- *  Contains the Product class. */
+/*! \file Composition.hh
+ *  Contains the Composition class. */
 
-#ifndef PRODUCT_HH_
-#define PRODUCT_HH_
+#ifndef Composition_HH_
+#define Composition_HH_
 
 #include <vector>
 
-#include "Adaptive.hh"
+#include "Helper.hh"
 #include "System.hh"
 #include "SymbolicModelGrowthBound.hh"
 #include "RungeKutta4.hh"
 
-using namespace helper;
 using std::vector;
 using std::cout;
 
 namespace scots {
 
-/*! \class Product
- *  \brief A class (derived from base Adaptive) that synthesizes multi-layer abstractions by taking products of a base system transition relation and auxicate transition relations.
+/*! \class Composition
+ *  \brief A class that synthesizes multi-layer abstractions of compositional systems.
  */
 
-class Product: public Adaptive {
+class Composition {
 public:
-    Cudd* prodDdmgr_;
+    Cudd* ddmgr_;
     System* base_;
     vector<System*> auxs_;
 
@@ -70,12 +69,12 @@ public:
     vector<vector<int*>*> prodsPermutesXtoX2_;
     vector<vector<int*>*> prodsPermutesX2toX_;
 
-    System* system_;
+    Composition(char* logFile) {
+        freopen(logFile, "w", stderr);
+        clog << logFile << '\n';
+    }
 
-    Product(char* logFile)
-        : Adaptive(logFile) {}
-
-    ~Product() {
+    ~Composition() {
         deleteVecArray(baseEtaXs_);
         deleteVecVecArray(auxsEtaXs_);
         deleteVec(allTau_);        
@@ -116,11 +115,11 @@ public:
         deleteVecVecArray(prodsPermutesXtoX2_);
         deleteVecVecArray(prodsPermutesX2toX_);
 
-        delete system_;
-        delete prodDdmgr_;
+        fclose(stderr);
+        delete ddmgr_;
     }
 
-    void constructAbstractions() {
+    void composeAbstractions() {
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 ((*prodsTs_[iAux])[iAbs])->symbolicSet_ = baseTs_[iAbs]->symbolicSet_ & ((*auxsTs_[iAux])[iAbs])->symbolicSet_;
@@ -130,35 +129,11 @@ public:
         printVecVec(prodsTs_, "prodsTs");
     }
 
-    void computeProducts() {
-        vector<SymbolicSet*> curTs;
 
 
-        for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
-            SymbolicSet* T = new SymbolicSet(*baseTs_[iAbs]);
-            T->symbolicSet_ = baseTs_[iAbs]->symbolicSet_;
-            curTs.push_back(T);
-            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
-                SymbolicSet* curT = new SymbolicSet(*(curTs.back()), *((*auxsTs_[iAux])[iAbs]));
-                curT->symbolicSet_ = (curTs.back())->symbolicSet_ & ((*auxsTs_[iAux])[iAbs])->symbolicSet_;
-                curTs.push_back(curT);
-                curT->printInfo(1);
-            }
 
-            SymbolicSet* prodT = new SymbolicSet(*(curTs.back()));
-            prodT->symbolicSet_ = (curTs.back())->symbolicSet_;
-            prodTs_.push_back(prodT);
-        }
-        deleteVec(curTs);
-
-        checkMakeDir("T");
-        saveVec(prodTs_, "T/T");
-        clog << "Wrote prodTs_ to file.\n";
-    }
-
-
-    void initializeProduct(System* base, vector<System*> auxs) {
-        prodDdmgr_ = new Cudd;
+    void initialize(System* base, vector<System*> auxs) {
+        ddmgr_ = new Cudd;
         base_ = base;
         auxs_ = auxs;
 
@@ -166,9 +141,9 @@ public:
             error("Product currently supports only one auxicate.\n");
         }
 
-        initializeProductEtaTau();
-        initializeProductSolvers();
-        initializeProductBDDs();
+        initializeEtaTau();
+        initializeSolvers();
+        initializeBDDs();
 
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
             vector<SymbolicSet*>* auxTs = new vector<SymbolicSet*>;
@@ -178,12 +153,6 @@ public:
 //        baseXs_[0]->printInfo(1);
 //        (*auxsXs_[0])[0]->printInfo(1);
 
-    }
-
-    template<class O_type>
-    void initializeAdaptive(int readXX, int readAbs, O_type addO) {
-        initializeProductSystem();
-        this->initialize(system_, readXX, readAbs, addO);
     }
 
     template<class sys_type, class rad_type, class x_type, class u_type>
@@ -219,46 +188,7 @@ public:
         }
     }
 
-    void initializeProductSystem() {
-        int dimX = 0;
-        dimX = dimX + *base_->dimX_;
-        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
-            System* aux = auxs_[iAux];
-            dimX = dimX + *aux->dimX_;
-        }
-        double lbX[dimX] = {0};
-        double ubX[dimX] = {0};
-        double etaX[dimX] = {0};
-        double etaRatio[dimX] = {0};
-
-        for (int i = 0; i < *base_->dimX_; i++) {
-            lbX[i] = base_->lbX_[i];
-            ubX[i] = base_->ubX_[i];
-            etaX[i] = base_->etaX_[i];
-            etaRatio[i] = base_->etaRatio_[i];
-        }
-
-        int ind = *base_->dimX_;
-
-        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
-            System* aux = auxs_[iAux];
-            for (int i = 0; i < *aux->dimX_; i++) {
-                lbX[ind] = aux->lbX_[i];
-                ubX[ind] = aux->ubX_[i];
-                etaX[ind] = aux->etaX_[i];
-                etaRatio[ind] = aux->etaRatio_[i];
-                ind++;
-            }
-        }
-
-        cout << "ind: " << ind << '\n';
-
-        system_ = new System(dimX, lbX, ubX, etaX, *base_->tau_,
-                                    *base_->dimU_, base_->lbU_, base_->ubU_, base_->etaU_,
-                                    etaRatio, *base_->tauRatio_, *base_->nSubInt_, *base_->numAbs_);
-    }
-
-    void initializeProductSolvers() {
+    void initializeSolvers() {
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
             vector<OdeSolver*>* auxSolvers = new vector<OdeSolver*>;
             auxsSolvers_.push_back(auxSolvers);
@@ -278,7 +208,7 @@ public:
         cout << "Initialized base's, auxs' ODE solvers.\n";
     }
 
-    void initializeProductEtaTau() {
+    void initializeEtaTau() {
 
         double* baseEtaCur = new double[*base_->dimX_];
         for (int i = 0; i < *base_->dimX_; i++) {
@@ -333,7 +263,7 @@ public:
 
     }
 
-    void initializeProductBDDs() {
+    void initializeBDDs() {
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
             vector<SymbolicSet*>* auxXs = new vector<SymbolicSet*>;
             auxsXs_.push_back(auxXs);
@@ -373,13 +303,13 @@ public:
         }
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
-            SymbolicSet* baseX = new SymbolicSet(*prodDdmgr_, *base_->dimX_, base_->lbX_, base_->ubX_, baseEtaXs_[iAbs], allTau_[iAbs][0]);
+            SymbolicSet* baseX = new SymbolicSet(*ddmgr_, *base_->dimX_, base_->lbX_, base_->ubX_, baseEtaXs_[iAbs], allTau_[iAbs][0]);
             baseX->addGridPoints();
             baseXs_.push_back(baseX);
 
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 System* aux = auxs_[iAux];
-                SymbolicSet* auxX = new SymbolicSet(*prodDdmgr_, *aux->dimX_, aux->lbX_, aux->ubX_, (*auxsEtaXs_[iAux])[iAbs], allTau_[iAbs][0]);
+                SymbolicSet* auxX = new SymbolicSet(*ddmgr_, *aux->dimX_, aux->lbX_, aux->ubX_, (*auxsEtaXs_[iAux])[iAbs], allTau_[iAbs][0]);
                 auxX->addGridPoints();
                 auxsXs_[iAux]->push_back(auxX);
 
@@ -405,12 +335,12 @@ public:
 
         for (int iAbs = 0; iAbs < *base_->numAbs_ - 1; iAbs++) {
             SymbolicSet* baseXX = new SymbolicSet(*baseXs_[iAbs], *baseXs_[iAbs+1]);
-            this->mapAbstractions(baseXs_[iAbs], baseXs_[iAbs+1], baseXX, iAbs);
+            mapAbstractions(baseXs_[iAbs], baseXs_[iAbs+1], baseXX);
             baseXXs_.push_back(baseXX);
 
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 SymbolicSet* auxXX = new SymbolicSet(*((*auxsXs_[iAux])[iAbs]), *((*auxsXs_[iAux])[iAbs+1]));
-                this->mapAbstractions((*auxsXs_[iAux])[iAbs], (*auxsXs_[iAux])[iAbs+1], auxXX, iAbs);
+                mapAbstractions((*auxsXs_[iAux])[iAbs], (*auxsXs_[iAux])[iAbs+1], auxXX);
                 auxsXXs_[iAux]->push_back(auxXX);
 
                 SymbolicSet* prodXX = new SymbolicSet(*((*prodsXs_[iAux])[iAbs]), *((*prodsXs_[iAux])[iAbs+1]));
@@ -420,11 +350,11 @@ public:
         }
         clog << "Initialized base's, auxs', prods' XXs via mapAbstractions.\n";
 
-        baseU_ = new SymbolicSet(*prodDdmgr_, *base_->dimU_, base_->lbU_, base_->ubU_, base_->etaU_, 0);
+        baseU_ = new SymbolicSet(*ddmgr_, *base_->dimU_, base_->lbU_, base_->ubU_, base_->etaU_, 0);
         baseU_->addGridPoints();
 
         System* aux = auxs_[0];
-        auxU_ = new SymbolicSet(*prodDdmgr_, *aux->dimU_, aux->lbU_, aux->ubU_, aux->etaU_, 0);
+        auxU_ = new SymbolicSet(*ddmgr_, *aux->dimU_, aux->lbU_, aux->ubU_, aux->etaU_, 0);
         auxU_->addGridPoints();
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
@@ -505,7 +435,7 @@ public:
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 BDD* prodNotXUVar = new BDD;
                 BDD* prodNotXVar = new BDD;
-                *prodNotXUVar = prodDdmgr_->bddOne();
+                *prodNotXUVar = ddmgr_->bddOne();
 
                 for (int jAbs = 0; jAbs < *base_->numAbs_; jAbs++) {
                     *prodNotXUVar &= *baseCubesX2_[jAbs];
@@ -528,7 +458,7 @@ public:
 
             BDD* baseNotXUVar = new BDD;
             BDD* baseNotXVar = new BDD;
-            *baseNotXUVar = prodDdmgr_->bddOne();
+            *baseNotXUVar = ddmgr_->bddOne();
 
             *baseNotXUVar &= *((*prodsNotXUVars_[0])[iAbs]);
             *baseNotXUVar &= *((*auxsCubesX_[0])[iAbs]);
@@ -550,10 +480,52 @@ public:
 
 
         checkNotVars();
+    }
+
+    /*! Generates a mapping between two consecutive state space abstractions.
+     *  \param[in]      Xc          Coarser state space abstraction.
+     *  \param[in]      Xf          Finer state space abstraction.
+     *  \param[in,out]  XX    Mapping for a finer cell to the coarser cell that is its superset.
+     */
+    void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX) {
 
 
+        int* XfMinterm;
+        double* xPoint = new double[Xc->dim_];
+        vector<double> XcPoint (Xc->dim_, 0);
+        double* XXPoint = new double[XX->dim_];
 
+        int totalIter = Xf->symbolicSet_.CountMinterm(Xf->nvars_);
+        int iter = 0;
+        //            int progress = 0;
 
+        cout << "XXs totalIter: " << totalIter << '\n';
+
+        for (Xf->begin(); !Xf->done(); Xf->next()) {
+            iter++;
+            //                cout << iter << '\n';
+            if (iter % 50000 == 0) {
+                cout << iter << "\n";
+                //                    progress++;
+            }
+
+            XfMinterm = (int*)Xf->currentMinterm();
+            Xf->mintermToElement(XfMinterm, xPoint);
+            for (size_t i = 0; i < Xc->dim_; i++) {
+                XcPoint[i] = xPoint[i];
+            }
+            if (!(Xc->isElement(XcPoint))) {
+                continue;
+            }
+            for (size_t i = 0; i < XX->dim_; i++) {
+                XXPoint[i] = xPoint[i % Xc->dim_];
+            }
+            XX->addPoint(XXPoint);
+        }
+        cout << '\n';
+
+        delete[] xPoint;
+        delete[] XXPoint;
     }
 
     void checkNotVars() {
@@ -573,9 +545,7 @@ public:
         cout << "baseNotXVars_[1]:\n";
         all.printInfo(2);
     }
-
 };
-
 
 }
 

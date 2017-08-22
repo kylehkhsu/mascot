@@ -715,9 +715,8 @@ public:
      *  \param[in]      Xc          Coarser state space abstraction.
      *  \param[in]      Xf          Finer state space abstraction.
      *  \param[in,out]  XX    Mapping for a finer cell to the coarser cell that is its superset.
-     *  \param[in]      c           0-index of the coarser abstraction (currently unnecessary/unused).
      */
-    void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX, int c) {
+    void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX) {
 
 
         int* XfMinterm;
@@ -753,30 +752,10 @@ public:
             XX->addPoint(XXPoint);
         }
         cout << '\n';
-        (void)c;
 
         delete[] xPoint;
         delete[] XXPoint;
-
-
-//        else if (alignment_ == 2) {
-//            int* XfMinterm;
-//            double xPoint[*system_->dimX_] = {0};
-//            double xPointPlus[*system_->dimX_] = {0};
-//            double xPointMinus[*system_->dimX_] = {0};
-//            for (Xf->begin(); !Xf->done(); Xf->next()) {
-//                XfMinterm = (int*)Xf->currentMinterm();
-//                Xf->mintermToElement(XfMinterm, xPoint);
-//                for (int i = 0; i < *system_->dimX_; i++) {
-//                    xPointPlus[i] = xPoint[i] + etaXs_[c][i];
-//                    xPointMinus[i] = xPoint[i] - etaXs_[c][i];
-//                }
-
-
-//            }
-//        }
     }
-
 
 
     /*! Prints information regarding the abstractions' grid parameters to the log file. */
