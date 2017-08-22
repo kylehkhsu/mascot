@@ -18,32 +18,32 @@ using std::cout;
 namespace scots {
 
 /*! \class Product
- *  \brief A class (derived from base Adaptive) that synthesizes multi-layer abstractions by taking products of a base system transition relation and predicate transition relations.
+ *  \brief A class (derived from base Adaptive) that synthesizes multi-layer abstractions by taking products of a base system transition relation and auxicate transition relations.
  */
 
 class Product: public Adaptive {
 public:
     Cudd* prodDdmgr_;
-    System* dyn_;
-    vector<System*> preds_;
+    System* base_;
+    vector<System*> auxs_;
 
-    vector<double*> dynEtaXs_;
-    vector<vector<double*>*> predsEtaXs_;
+    vector<double*> baseEtaXs_;
+    vector<vector<double*>*> auxsEtaXs_;
     vector<double*> allTau_;
 
-    vector<OdeSolver*> dynSolvers_;
-    vector<vector<OdeSolver*>*> predsSolvers_;
+    vector<OdeSolver*> baseSolvers_;
+    vector<vector<OdeSolver*>*> auxsSolvers_;
 
-    vector<SymbolicSet*> dynXs_;
-    vector<vector<SymbolicSet*>*> predsXs_;
-    vector<SymbolicSet*> dynX2s_;
-    vector<vector<SymbolicSet*>*> predsX2s_;
+    vector<SymbolicSet*> baseXs_;
+    vector<vector<SymbolicSet*>*> auxsXs_;
+    vector<SymbolicSet*> baseX2s_;
+    vector<vector<SymbolicSet*>*> auxsX2s_;
 
-    SymbolicSet* dynU_;
-    SymbolicSet* predU_;
+    SymbolicSet* baseU_;
+    SymbolicSet* auxU_;
 
-    vector<SymbolicSet*> dynTs_;
-    vector<vector<SymbolicSet*>*> predsTs_;
+    vector<SymbolicSet*> baseTs_;
+    vector<vector<SymbolicSet*>*> auxsTs_;
 
     vector<SymbolicSet*> prodTs_;
 
@@ -53,19 +53,19 @@ public:
         : Adaptive(logFile) {}
 
     ~Product() {
-        deleteVecArray(dynEtaXs_);
-        deleteVecVecArray(predsEtaXs_);
+        deleteVecArray(baseEtaXs_);
+        deleteVecVecArray(auxsEtaXs_);
         deleteVec(allTau_);
-        deleteVec(dynSolvers_);
-        deleteVecVec(predsSolvers_);
-        deleteVec(dynXs_);
-        deleteVecVec(predsXs_);
-        deleteVec(dynX2s_);
-        deleteVecVec(predsX2s_);
-        delete dynU_;
-        delete predU_;
-        deleteVec(dynTs_);
-        deleteVecVec(predsTs_);
+        deleteVec(baseSolvers_);
+        deleteVecVec(auxsSolvers_);
+        deleteVec(baseXs_);
+        deleteVecVec(auxsXs_);
+        deleteVec(baseX2s_);
+        deleteVecVec(auxsX2s_);
+        delete baseU_;
+        delete auxU_;
+        deleteVec(baseTs_);
+        deleteVecVec(auxsTs_);
         deleteVec(prodTs_);
         delete system_;
         delete prodDdmgr_;
@@ -75,13 +75,13 @@ public:
         vector<SymbolicSet*> curTs;
 
 
-        for (int i = 0; i < *dyn_->numAbs_; i++) {
-            SymbolicSet* T = new SymbolicSet(*dynTs_[i]);
-            T->symbolicSet_ = dynTs_[i]->symbolicSet_;
+        for (int i = 0; i < *base_->numAbs_; i++) {
+            SymbolicSet* T = new SymbolicSet(*baseTs_[i]);
+            T->symbolicSet_ = baseTs_[i]->symbolicSet_;
             curTs.push_back(T);
-            for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
-                SymbolicSet* curT = new SymbolicSet(*(curTs.back()), *((*predsTs_[iPred])[i]));
-                curT->symbolicSet_ = (curTs.back())->symbolicSet_ & ((*predsTs_[iPred])[i])->symbolicSet_;
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                SymbolicSet* curT = new SymbolicSet(*(curTs.back()), *((*auxsTs_[iAux])[i]));
+                curT->symbolicSet_ = (curTs.back())->symbolicSet_ & ((*auxsTs_[iAux])[i])->symbolicSet_;
                 curTs.push_back(curT);
                 curT->printInfo(1);
             }
@@ -98,26 +98,26 @@ public:
     }
 
 
-    void initializeProduct(System* dyn, vector<System*> preds) {
+    void initializeProduct(System* base, vector<System*> auxs) {
         prodDdmgr_ = new Cudd;
-        dyn_ = dyn;
-        preds_ = preds;
+        base_ = base;
+        auxs_ = auxs;
 
-        if (preds_.size() > 1) {
-            error("Product currently supports only one predicate.\n");
+        if (auxs_.size() > 1) {
+            error("Product currently supports only one auxicate.\n");
         }
 
         initializeProductEtaTau();
         initializeProductSolvers();
         initializeProductBDDs();
 
-        for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
-            vector<SymbolicSet*>* predTs = new vector<SymbolicSet*>;
-            predsTs_.push_back(predTs);
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            vector<SymbolicSet*>* auxTs = new vector<SymbolicSet*>;
+            auxsTs_.push_back(auxTs);
         }
 
-//        dynXs_[0]->printInfo(1);
-//        (*predsXs_[0])[0]->printInfo(1);
+//        baseXs_[0]->printInfo(1);
+//        (*auxsXs_[0])[0]->printInfo(1);
 
     }
 
@@ -128,196 +128,194 @@ public:
     }
 
     template<class sys_type, class rad_type, class x_type, class u_type>
-    void computeDynAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u) {
-        for (int i = 0; i < *dyn_->numAbs_; i++) {
-            SymbolicModelGrowthBound<x_type, u_type> dynAb(dynXs_[i], dynU_, dynX2s_[i]);
-            dynAb.computeTransitionRelation(sysNext, radNext, *dynSolvers_[i]);
+    void computeBaseAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u) {
+        for (int i = 0; i < *base_->numAbs_; i++) {
+            SymbolicModelGrowthBound<x_type, u_type> baseAb(baseXs_[i], baseU_, baseX2s_[i]);
+            baseAb.computeTransitionRelation(sysNext, radNext, *baseSolvers_[i]);
 
-            SymbolicSet T = dynAb.getTransitionRelation();
-            SymbolicSet* dynT = new SymbolicSet(T);
-            dynT->symbolicSet_ = T.symbolicSet_;
+            SymbolicSet T = baseAb.getTransitionRelation();
+            SymbolicSet* baseT = new SymbolicSet(T);
+            baseT->symbolicSet_ = T.symbolicSet_;
 
-            dynTs_.push_back(dynT);
+            baseTs_.push_back(baseT);
 
 //            T.printInfo(1);
         }
     }
 
     template<class sys_type, class rad_type, class x_type, class u_type>
-    void computePredAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u, int iPred) {
-        for (int i = 0; i < *dyn_->numAbs_; i++) {
-            SymbolicModelGrowthBound<x_type, u_type> predAb((*predsXs_[iPred])[i], predU_, (*predsX2s_[iPred])[i]);
-            predAb.computeTransitionRelation(sysNext, radNext, *(*predsSolvers_[iPred])[i]);
+    void computeAuxAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u, int iAux) {
+        for (int i = 0; i < *base_->numAbs_; i++) {
+            SymbolicModelGrowthBound<x_type, u_type> auxAb((*auxsXs_[iAux])[i], auxU_, (*auxsX2s_[iAux])[i]);
+            auxAb.computeTransitionRelation(sysNext, radNext, *(*auxsSolvers_[iAux])[i]);
 
-            SymbolicSet T = predAb.getTransitionRelation();
-            SymbolicSet* predT = new SymbolicSet(*(*predsXs_[iPred])[i], *(*predsX2s_[iPred])[i]);
-            predT->symbolicSet_ = T.symbolicSet_.ExistAbstract(predU_->getCube());
+            SymbolicSet T = auxAb.getTransitionRelation();
+            SymbolicSet* auxT = new SymbolicSet(*(*auxsXs_[iAux])[i], *(*auxsX2s_[iAux])[i]);
+            auxT->symbolicSet_ = T.symbolicSet_.ExistAbstract(auxU_->getCube());
 
-            predsTs_[iPred]->push_back(predT);
+            auxsTs_[iAux]->push_back(auxT);
 
 //            T.printInfo(1);
-//            predT->printInfo(1);
+//            auxT->printInfo(1);
         }
     }
 
     void initializeProductSystem() {
         int dimX = 0;
-        dimX = dimX + *dyn_->dimX_;
-        for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
-            System* pred = preds_[iPred];
-            dimX = dimX + *pred->dimX_;
+        dimX = dimX + *base_->dimX_;
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            System* aux = auxs_[iAux];
+            dimX = dimX + *aux->dimX_;
         }
         double lbX[dimX] = {0};
         double ubX[dimX] = {0};
         double etaX[dimX] = {0};
         double etaRatio[dimX] = {0};
 
-        for (int i = 0; i < *dyn_->dimX_; i++) {
-            lbX[i] = dyn_->lbX_[i];
-            ubX[i] = dyn_->ubX_[i];
-            etaX[i] = dyn_->etaX_[i];
-            etaRatio[i] = dyn_->etaRatio_[i];
+        for (int i = 0; i < *base_->dimX_; i++) {
+            lbX[i] = base_->lbX_[i];
+            ubX[i] = base_->ubX_[i];
+            etaX[i] = base_->etaX_[i];
+            etaRatio[i] = base_->etaRatio_[i];
         }
 
-        int ind = *dyn_->dimX_;
+        int ind = *base_->dimX_;
 
-        for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
-            System* pred = preds_[iPred];
-            for (int i = 0; i < *pred->dimX_; i++) {
-                lbX[ind] = pred->lbX_[i];
-                ubX[ind] = pred->ubX_[i];
-                etaX[ind] = pred->etaX_[i];
-                etaRatio[ind] = pred->etaRatio_[i];
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            System* aux = auxs_[iAux];
+            for (int i = 0; i < *aux->dimX_; i++) {
+                lbX[ind] = aux->lbX_[i];
+                ubX[ind] = aux->ubX_[i];
+                etaX[ind] = aux->etaX_[i];
+                etaRatio[ind] = aux->etaRatio_[i];
                 ind++;
             }
         }
 
         cout << "ind: " << ind << '\n';
 
-        system_ = new System(dimX, lbX, ubX, etaX, *dyn_->tau_,
-                                    *dyn_->dimU_, dyn_->lbU_, dyn_->ubU_, dyn_->etaU_,
-                                    etaRatio, *dyn_->tauRatio_, *dyn_->nSubInt_, *dyn_->numAbs_);
+        system_ = new System(dimX, lbX, ubX, etaX, *base_->tau_,
+                                    *base_->dimU_, base_->lbU_, base_->ubU_, base_->etaU_,
+                                    etaRatio, *base_->tauRatio_, *base_->nSubInt_, *base_->numAbs_);
     }
 
     void initializeProductSolvers() {
-        for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
-            vector<OdeSolver*>* predSolvers = new vector<OdeSolver*>;
-            predsSolvers_.push_back(predSolvers);
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            vector<OdeSolver*>* auxSolvers = new vector<OdeSolver*>;
+            auxsSolvers_.push_back(auxSolvers);
         }
 
-        for (int i = 0; i < *dyn_->numAbs_; i++) {
-            OdeSolver* dynSolver = new OdeSolver(*dyn_->dimX_, *dyn_->nSubInt_, allTau_[i][0]);
-            dynSolvers_.push_back(dynSolver);
+        for (int i = 0; i < *base_->numAbs_; i++) {
+            OdeSolver* baseSolver = new OdeSolver(*base_->dimX_, *base_->nSubInt_, allTau_[i][0]);
+            baseSolvers_.push_back(baseSolver);
 
-            for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
-                System* pred = preds_[iPred];
-                OdeSolver* predSolver = new OdeSolver(*pred->dimX_, *pred->nSubInt_, allTau_[i][0]);
-                predsSolvers_[iPred]->push_back(predSolver);
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                System* aux = auxs_[iAux];
+                OdeSolver* auxSolver = new OdeSolver(*aux->dimX_, *aux->nSubInt_, allTau_[i][0]);
+                auxsSolvers_[iAux]->push_back(auxSolver);
             }
         }
 
-        cout << "Initialized dyn's, preds' ODE solvers.\n";
+        cout << "Initialized base's, auxs' ODE solvers.\n";
     }
 
     void initializeProductEtaTau() {
 
-        double* dynEtaCur = new double[*dyn_->dimX_];
-        for (int i = 0; i < *dyn_->dimX_; i++) {
-            dynEtaCur[i] = dyn_->etaX_[i];
+        double* baseEtaCur = new double[*base_->dimX_];
+        for (int i = 0; i < *base_->dimX_; i++) {
+            baseEtaCur[i] = base_->etaX_[i];
         }
-        for (int i = 0; i < *dyn_->numAbs_; i++) {
-            double* dynEtaX = new double[*dyn_->dimX_];
-            for (int j = 0; j < *dyn_->dimX_; j++) {
-                dynEtaX[j] = dynEtaCur[j];
+        for (int i = 0; i < *base_->numAbs_; i++) {
+            double* baseEtaX = new double[*base_->dimX_];
+            for (int j = 0; j < *base_->dimX_; j++) {
+                baseEtaX[j] = baseEtaCur[j];
             }
-            dynEtaXs_.push_back(dynEtaX);
-            for (int j = 0; j < *dyn_->dimX_; j++) {
-                dynEtaCur[j] /= dyn_->etaRatio_[j];
+            baseEtaXs_.push_back(baseEtaX);
+            for (int j = 0; j < *base_->dimX_; j++) {
+                baseEtaCur[j] /= base_->etaRatio_[j];
             }
         }
-        delete[] dynEtaCur;
+        delete[] baseEtaCur;
 
-        for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
-            System* pred = preds_[iPred];
-            vector<double*>* predEtaX = new vector<double*>;
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            System* aux = auxs_[iAux];
+            vector<double*>* auxEtaX = new vector<double*>;
 
-            double* predEtaCur = new double[*pred->dimX_];
-            for (int i = 0; i < *pred->dimX_; i++) {
-                predEtaCur[i] = pred->etaX_[i];
+            double* auxEtaCur = new double[*aux->dimX_];
+            for (int i = 0; i < *aux->dimX_; i++) {
+                auxEtaCur[i] = aux->etaX_[i];
             }
-            for (int i = 0; i < *pred->dimX_; i++) {
-                double* predEtai = new double[*pred->dimX_];
-                for (int j = 0; j < *pred->dimX_; j++) {
-                    predEtai[j] = predEtaCur[j];
+            for (int i = 0; i < *aux->dimX_; i++) {
+                double* auxEtai = new double[*aux->dimX_];
+                for (int j = 0; j < *aux->dimX_; j++) {
+                    auxEtai[j] = auxEtaCur[j];
                 }
-                predEtaX->push_back(predEtai);
-                for (int j = 0; j < *pred->dimX_; j++) {
-                    predEtaCur[j] /= pred->etaRatio_[j];
+                auxEtaX->push_back(auxEtai);
+                for (int j = 0; j < *aux->dimX_; j++) {
+                    auxEtaCur[j] /= aux->etaRatio_[j];
                 }
             }
-            delete[] predEtaCur;
-            predsEtaXs_.push_back(predEtaX);
+            delete[] auxEtaCur;
+            auxsEtaXs_.push_back(auxEtaX);
         }
 
         double* allTauCur = new double;
-        *allTauCur = *dyn_->tau_;
+        *allTauCur = *base_->tau_;
 
-        for (int i = 0; i < *dyn_->numAbs_; i++) {
+        for (int i = 0; i < *base_->numAbs_; i++) {
             double* allTaui = new double;
             *allTaui = *allTauCur;
             allTau_.push_back(allTaui);
-            *allTauCur /= *dyn_->tauRatio_;
+            *allTauCur /= *base_->tauRatio_;
         }
         delete allTauCur;
 
-        clog << "Initialized dyn's, preds' etaXs, taus.\n";
+        clog << "Initialized base's, auxs' etaXs, taus.\n";
 
     }
 
     void initializeProductBDDs() {
-        for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
-            vector<SymbolicSet*>* predXs = new vector<SymbolicSet*>;
-            predsXs_.push_back(predXs);
-            vector<SymbolicSet*>* predX2s = new vector<SymbolicSet*>;
-            predsX2s_.push_back(predX2s);
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            vector<SymbolicSet*>* auxXs = new vector<SymbolicSet*>;
+            auxsXs_.push_back(auxXs);
+            vector<SymbolicSet*>* auxX2s = new vector<SymbolicSet*>;
+            auxsX2s_.push_back(auxX2s);
         }
 
-        for (int i = 0; i < *dyn_->numAbs_; i++) {
-            SymbolicSet* dynX = new SymbolicSet(*prodDdmgr_, *dyn_->dimX_, dyn_->lbX_, dyn_->ubX_, dynEtaXs_[i], allTau_[i][0]);
-            dynX->addGridPoints();
-            dynXs_.push_back(dynX);
+        for (int i = 0; i < *base_->numAbs_; i++) {
+            SymbolicSet* baseX = new SymbolicSet(*prodDdmgr_, *base_->dimX_, base_->lbX_, base_->ubX_, baseEtaXs_[i], allTau_[i][0]);
+            baseX->addGridPoints();
+            baseXs_.push_back(baseX);
 
-            for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
-                System* pred = preds_[iPred];
-                SymbolicSet* predX = new SymbolicSet(*prodDdmgr_, *pred->dimX_, pred->lbX_, pred->ubX_, (*predsEtaXs_[iPred])[i], allTau_[i][0]);
-                predX->addGridPoints();
-                predsXs_[iPred]->push_back(predX);
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                System* aux = auxs_[iAux];
+                SymbolicSet* auxX = new SymbolicSet(*prodDdmgr_, *aux->dimX_, aux->lbX_, aux->ubX_, (*auxsEtaXs_[iAux])[i], allTau_[i][0]);
+                auxX->addGridPoints();
+                auxsXs_[iAux]->push_back(auxX);
             }
         }
 
-        for (int i = 0; i < *dyn_->numAbs_; i++) {
-            SymbolicSet* dynX2 = new SymbolicSet(*dynXs_[i], 1);
-            dynX2s_.push_back(dynX2);
+        for (int i = 0; i < *base_->numAbs_; i++) {
+            SymbolicSet* baseX2 = new SymbolicSet(*baseXs_[i], 1);
+            baseX2s_.push_back(baseX2);
 
-            for (size_t iPred = 0; iPred < preds_.size(); iPred++) {
-                SymbolicSet* predX2 = new SymbolicSet(*((*predsXs_[iPred])[i]), 1);
-                predsX2s_[iPred]->push_back(predX2);
+            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+                SymbolicSet* auxX2 = new SymbolicSet(*((*auxsXs_[iAux])[i]), 1);
+                auxsX2s_[iAux]->push_back(auxX2);
             }
         }
 
-        dynU_ = new SymbolicSet(*prodDdmgr_, *dyn_->dimU_, dyn_->lbU_, dyn_->ubU_, dyn_->etaU_, 0);
-        dynU_->addGridPoints();
+        baseU_ = new SymbolicSet(*prodDdmgr_, *base_->dimU_, base_->lbU_, base_->ubU_, base_->etaU_, 0);
+        baseU_->addGridPoints();
 
-        System* pred = preds_[0];
-        predU_ = new SymbolicSet(*prodDdmgr_, *pred->dimU_, pred->lbU_, pred->ubU_, pred->etaU_, 0);
-        predU_->addGridPoints();
+        System* aux = auxs_[0];
+        auxU_ = new SymbolicSet(*prodDdmgr_, *aux->dimU_, aux->lbU_, aux->ubU_, aux->etaU_, 0);
+        auxU_->addGridPoints();
 
-        clog << "Initialized dyn's, preds' Xs, X2s, U.\n";
+        clog << "Initialized base's, auxs' Xs, X2s, U.\n";
     }
 
 };
-
-
 
 
 }

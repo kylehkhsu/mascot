@@ -35,7 +35,7 @@ typedef std::array<double, dimX + dimB> XB_type;
 typedef std::array<double, 1> Y_type;
 
 
-auto dynSysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
+auto baseSysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
     auto ODE = [](X_type &xx, const X_type &x, U_type &u) -> void {
         xx[0] = (-0.5 * x[0] + 1 * x[1]) * u[1];
         xx[1] = (-0.5 * x[0] + 0.5 * x[1] + u[0]) * u[1];
@@ -43,7 +43,7 @@ auto dynSysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void
     solver(ODE, x, u);
 };
 
-auto dynRadNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
+auto baseRadNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
     auto radODE = [](X_type &drdt, const X_type &r, const U_type &u) -> void {
         drdt[0] = -0.25*r[0] + 1*r[1] + w[0];
         drdt[1] = -0.25*r[0] + 0.5*r[1] + w[1];
@@ -93,8 +93,8 @@ void product() {
     X_type x;
     U_type u;
 
-    double dynEtaRatio[dimX] = {3, 3};
-    double dynTauRatio = 1;
+    double baseEtaRatio[dimX] = {3, 3};
+    double baseTauRatio = 1;
 
     double lbB[dimB] = {   0,   2, -1.5};
     double ubB[dimB] = { 0.2,   5,  1.5};
@@ -106,9 +106,9 @@ void product() {
     double ballEtaRatio[dimB] = {1, 1, 1};
     double ballTauRatio = 1;
 
-    System dyn(dimX, lbX, ubX, etaX, tau,
+    System base(dimX, lbX, ubX, etaX, tau,
                dimU, lbU, ubU, etaU,
-               dynEtaRatio, dynTauRatio, nint, numAbs);
+               baseEtaRatio, baseTauRatio, nint, numAbs);
 
     System ball(dimB, lbB, ubB, etaB, tau,
                 ballEtaRatio, ballTauRatio, nint, numAbs);
@@ -117,16 +117,16 @@ void product() {
 
     Reach abs("product.txt");
 
-    abs.initializeProduct(&dyn, balls);
-    abs.computeDynAbstractions(dynSysNext, dynRadNext, x, u);
-    abs.computePredAbstractions(ballSysNext, ballRadNext, b, y, 0);
+    abs.initializeProduct(&base, balls);
+    abs.computeBaseAbstractions(baseSysNext, baseRadNext, x, u);
+    abs.computeAuxAbstractions(ballSysNext, ballRadNext, b, y, 0);
     abs.computeProducts();
 
     int readXX = 0;
     int readAbs = 1; // don't change
     abs.initializeAdaptive(readXX, readAbs, dummyAddO);
     abs.initializeReach(whirlpoolAddG, whirlpoolAddI);
-    abs.computeAbstractions(dynSysNext, dynRadNext, x, u);
+    abs.computeAbstractions(baseSysNext, baseRadNext, x, u);
 
     int startAbs = 0;
     int minToGoCoarser = 2;
