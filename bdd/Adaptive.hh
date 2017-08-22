@@ -148,6 +148,7 @@ public:
         printVec(XXs_, "XX");
         cout << "U:\n";
         U_->printInfo(1);
+        checkMakeDir("plotting");
         Xs_[0]->writeToFile("plotting/X.bdd");
         Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
         checkMakeDir("O");
