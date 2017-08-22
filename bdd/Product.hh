@@ -20,8 +20,8 @@ namespace scots {
 /*! \class Product
  *  \brief A class (derived from base Adaptive) that synthesizes multi-layer abstractions by taking products of a base system transition relation and predicate transition relations.
  */
-template<class X_type, class U_type>
-class Product: public Adaptive<X_type, U_type> {
+
+class Product: public Adaptive {
 public:
     Cudd* prodDdmgr_;
     System* dyn_;
@@ -50,7 +50,7 @@ public:
     System* system_;
 
     Product(char* logFile)
-        : Adaptive<X_type, U_type>(logFile) {}
+        : Adaptive(logFile) {}
 
     ~Product() {
         deleteVecArray(dynEtaXs_);

@@ -118,7 +118,7 @@ void product() {
     vector<System*> balls;
     balls.push_back(&ball);
 
-    Reach<X_type, U_type> abs("product.txt");
+    Reach abs("product.txt");
 
     abs.initializeProduct(&dyn, balls);
     abs.computeDynAbstractions(dynSysNext, dynRadNext, x, u);
@@ -129,7 +129,7 @@ void product() {
     int readAbs = 1; // don't change
     abs.initializeAdaptive(readXX, readAbs, dummyAddO);
     abs.initializeReach(whirlpoolAddG, whirlpoolAddI);
-    abs.computeAbstractions(dynSysNext, dynRadNext);
+    abs.computeAbstractions(dynSysNext, dynRadNext, x, u);
 
     int startAbs = 1;
     int minToGoCoarser = 2;

@@ -25,7 +25,6 @@ namespace scots {
 /*! \class Adaptive
     \brief A class that does abstraction-based synthesis with adaptive time- and state space-gridding.
 */
-template<class X_type, class U_type>
 class Adaptive {
 public:
 
@@ -61,7 +60,6 @@ public:
     vector<int*> permutesX2toX_; /*!< To transform a BDD over X2 variables to an equivalent one over X variables. */
 
     vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
-    vector<SymbolicModelGrowthBound<X_type, U_type>*> Abs_; /*!< Abstractions containing the transition relation \subseteq *Xs_[i] x *U_ x *X2s_[i]. */
 
     /*!	Constructor for an Adaptive object.
      *  \param[in]  logFile     Filename of program log.
@@ -92,7 +90,6 @@ public:
         deleteVecArray(permutesXtoX2_);
         deleteVecArray(permutesX2toX_);
         deleteVec(solvers_);
-        deleteVec(Abs_);
         fclose(stderr);
         delete ddmgr_;        
     }
@@ -430,8 +427,8 @@ public:
         \param[in]	sysNext		Function pointer to equation that evolves system state.
         \param[in]	radNext		Function pointer to equation that computes growth bound.
     */
-    template<class sys_type, class rad_type>
-    void computeAbstractions(sys_type sysNext, rad_type radNext) {
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void computeAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
 
         for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
@@ -443,11 +440,10 @@ public:
         tt.tic();
         if (readAbs_ == 0) {
             for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicModelGrowthBound<X_type, U_type>* Ab = new SymbolicModelGrowthBound<X_type, U_type>(Xs_[i], U_, X2s_[i]);
-                Ab->computeTransitionRelation(sysNext, radNext, *solvers_[i]);
-                Abs_.push_back(Ab);
+                SymbolicModelGrowthBound<X_type, U_type> Ab(Xs_[i], U_, X2s_[i]);
+                Ab.computeTransitionRelation(sysNext, radNext, *solvers_[i]);
 
-                Ts_[i]->symbolicSet_ = Ab->transitionRelation_;
+                Ts_[i]->symbolicSet_ = Ab.transitionRelation_;
             }
             clog << "Ts_ computed by sampling system behavior.\n";
         }
