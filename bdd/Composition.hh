@@ -78,6 +78,9 @@ public:
     vector<vector<int*>*> prodsPermutesXtoX2_;
     vector<vector<int*>*> prodsPermutesX2toX_;
 
+    int* baseNumFiner_;
+    int* prodsNumFiner_;
+
     Composition(char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
@@ -136,6 +139,9 @@ public:
         deleteVecVecArray(prodsPermutesX2toX_);
 
         fclose(stderr);
+
+        delete baseNumFiner_;
+        delete[] prodsNumFiner_;
         delete ddmgr_;
     }
 
@@ -206,9 +212,9 @@ public:
             error("Product currently supports only one auxicate.\n");
         }
 
-        initializeEtaTau();
-        initializeSolvers();
         initializeVecVecs();
+        initializeEtaTauNumFiner();
+        initializeSolvers();
         initializeBDDs();
 
         //        baseXs_[0]->printInfo(1);
@@ -271,7 +277,7 @@ public:
         cout << "Initialized base's, auxs' ODE solvers.\n";
     }
 
-    void initializeEtaTau() {
+    void initializeEtaTauNumFiner() {
 
         double* baseEtaCur = new double[*base_->dimX_];
         for (int i = 0; i < *base_->dimX_; i++) {
@@ -324,6 +330,33 @@ public:
 
         clog << "Initialized base's, auxs' etaXs, taus.\n";
 
+        printVecArray(baseEtaXs_, "baseEtaXs_", *base_->dimX_);
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            string prefix = "auxsEtaXs_[";
+            prefix += std::to_string(iAux);
+            prefix += "]";
+            printVecArray(*auxsEtaXs_[iAux], prefix, *auxs_[iAux]->dimX_);
+        }
+
+        baseNumFiner_ = new int;
+        *baseNumFiner_ = 1;
+        for (int i = 0; i < *base_->dimX_; i++) {
+            *baseNumFiner_ *= base_->etaRatio_[i];
+        }
+
+        prodsNumFiner_ = new int[auxs_.size()];
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            prodsNumFiner_[iAux] = 1;
+            for (int i = 0; i < *auxs_[iAux]->dimX_; i++) {
+                prodsNumFiner_[iAux] *= auxs_[iAux]->etaRatio_[i];
+            }
+            prodsNumFiner_[iAux] *= *baseNumFiner_;
+        }
+
+        clog << "Initialized base's, prods' numFiners.\n";
+        clog << "baseNumFiner_: " << *baseNumFiner_ << '\n';
+        clog << "prodsNumFiner_: ";
+        printArray(prodsNumFiner_, auxs_.size());
     }
 
     void initializeVecVecs() {
