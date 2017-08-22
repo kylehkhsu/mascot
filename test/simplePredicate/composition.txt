@@ -1,5 +1,13 @@
 composition.txt
 Initialized base's, auxs' etaXs, taus.
+baseEtaXs_[0]: 1.2 1.2 
+baseEtaXs_[1]: 0.6 0.6 
+auxsEtaXs_[0][0]: 0.2 0.4 0.4 
+auxsEtaXs_[0][1]: 0.2 0.2 0.2 
+auxsEtaXs_[0][2]: 0.2 0.1 0.1 
+Initialized base's, prods' numFiners.
+baseNumFiner_: 4
+prodsNumFiner_: 16 
 Initialized base's Xs to full, Zs to empty.
 Initialized auxs' Xs to full.
 Initialized prods' Xs to full, Is to empty, Zs to empty, validZs to empty.
