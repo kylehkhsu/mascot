@@ -20,6 +20,8 @@ Initialized prods' Ts, TTs to empty.
 Initialized base's, auxs', prods' cubesX, cubesX2.
 Number of BDD variables: 74
 Initialized prods' permutes.
+prodsPermutesXtoX2_[0][0]: 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+prodsPermutesXtoX2_[0][1]: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 Initialized prodsGs[0].
 Initialized baseIs.
 Initialized auxsIs[0].
@@ -29,3 +31,157 @@ Computed aux0's transition relations.
 Composed initial conditions, stored in prods' Is.
 Composed transition relations, stored in prods' Ts.
 Composed reduced transition relations, stored in prods' TTs.
+current abstraction: 1
+mu iteration: 1
+justCoarsed: 0
+iterCurAbs: 1
+reached: 0
+controllers: 0
+First iteration, nothing happens.
+
+current abstraction: 1
+mu iteration: 2
+justCoarsed: 0
+iterCurAbs: 1
+reached: 0
+controllers: 0
+
+current abstraction: 1
+mu iteration: 3
+justCoarsed: 0
+iterCurAbs: 2
+reached: 0
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 4
+justCoarsed: 1
+iterCurAbs: 1
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 5
+justCoarsed: 1
+iterCurAbs: 2
+reached: 0
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 6
+justCoarsed: 0
+iterCurAbs: 1
+reached: 0
+controllers: 0
+
+current abstraction: 1
+mu iteration: 7
+justCoarsed: 0
+iterCurAbs: 2
+reached: 0
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 8
+justCoarsed: 1
+iterCurAbs: 1
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 9
+justCoarsed: 1
+iterCurAbs: 2
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 10
+justCoarsed: 1
+iterCurAbs: 3
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 11
+justCoarsed: 1
+iterCurAbs: 4
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 12
+justCoarsed: 1
+iterCurAbs: 5
+reached: 0
+controllers: 1
+Current controller now valid.
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 13
+justCoarsed: 0
+iterCurAbs: 6
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 14
+justCoarsed: 0
+iterCurAbs: 7
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 15
+justCoarsed: 0
+iterCurAbs: 8
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 16
+justCoarsed: 0
+iterCurAbs: 9
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 17
+justCoarsed: 0
+iterCurAbs: 10
+reached: 0
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 18
+justCoarsed: 0
+iterCurAbs: 11
+reached: 0
+controllers: 1
+
+Total number of controllers: 2
+Won.
+----------------------------------------reach: Elapsed time is 2.08776 seconds.

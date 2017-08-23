@@ -175,6 +175,7 @@ public:
             prodsGs_[iAux]->push_back(prodG);
         }
         clog << "Initialized prodsGs[" << iAux << "].\n";
+        printVecVec(prodsGs_, "prodsGs");
     }
 
     template<class O_t>
@@ -564,6 +565,13 @@ public:
             }
         }
         clog << "Initialized prods' permutes.\n";
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            string prefix = "prodsPermutesXtoX2_[";
+            prefix += std::to_string(iAux);
+            prefix += "]";
+            printVecArray(*prodsPermutesXtoX2_[iAux], prefix, numBDDVars);
+        }
+
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
@@ -608,7 +616,7 @@ public:
         //        printVecVec(auxsXXs_, "auxsXXs");
 
         printVecVec(prodsXs_, "prodsXs");
-        //        printVecVec(prodsXXs_, "prodsXXs");
+        printVecVec(prodsXXs_, "prodsXXs");
 
         //        printVecVec(prodsTs_, "prodsTs");
 

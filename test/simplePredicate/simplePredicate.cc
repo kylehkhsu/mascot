@@ -131,6 +131,13 @@ void composition() {
     abs.computeAuxAbstractions(aux0SysNext, aux0RadNext, b, y, 0);
     abs.composeAbstractions();
 
+    int startAbs = 1;
+    int minToGoCoarser = 2;
+    int minToBeValid = 5;
+    int earlyBreak = 1;
+
+    abs.reachOne(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+
 }
 
 
