@@ -121,7 +121,7 @@ public:
                 goalZ->symbolicSet_ = Q;
                 this->finalZs_.push_back(goalZ);
 
-                clog << this->finalCs_.size()<< '\n';
+                clog << "Total final number of controllers: " << this->finalCs_.size()<< '\n';
 
                 checkMakeDir("C");
                 saveVec(this->finalCs_, "C/C");
