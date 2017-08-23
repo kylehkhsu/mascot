@@ -13,14 +13,14 @@ namespace scots {
 /*! \class AlwaysEventually
  *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for an always-eventually specification.
  */
-template<class X_type, class U_type>
-class AlwaysEventually: public virtual Reach<X_type, U_type> {
+
+class AlwaysEventually: public virtual Reach {
 public:
 
     /*! Constructor for an AlwaysEventually object. */
     AlwaysEventually(char* logFile)
-                     : Reach<X_type, U_type>(logFile),
-                       Adaptive<X_type, U_type>(logFile)
+                     : Reach(logFile),
+                       Adaptive(logFile)
     {
     }
 
@@ -78,7 +78,8 @@ public:
             for (int i = curAbs; i < *this->system_->numAbs_ - 1; i++) {
                 this->innerFinerAligned(this->Zs_[i], this->Zs_[i+1], i);
             }
-            this->Zs_[*this->system_->numAbs_ - 1]->symbolicSet_ &= this->Xs_[*this->system_->numAbs_ - 1]->symbolicSet_;
+            // unnecessary; already done in innerFinerAligned
+//            this->Zs_[*this->system_->numAbs_ - 1]->symbolicSet_ &= this->Xs_[*this->system_->numAbs_ - 1]->symbolicSet_;
             curAbs = *this->system_->numAbs_ - 1;
 
 
@@ -138,13 +139,16 @@ public:
                 clog << "Updating Gs.\n";
                 this->Gs_[curAbs]->symbolicSet_ = Q;
                 for (int i = curAbs; i > 0; i--) {
+                    this->Gs_[i-1]->symbolicSet_ = this->ddmgr_->bddZero();
                     this->innerCoarserAligned(this->Gs_[i-1], this->Gs_[i], i-1);
                 }
 
                 clog << "Resetting Zs, Cs.\n";
                 for (int i = 0; i < *this->system_->numAbs_; i++) {
-                    this->Zs_[i]->symbolicSet_ = this->ddmgr_->bddZero();
+                    this->Zs_[i]->symbolicSet_ = this->ddmgr_->bddZero();                    
                     this->Cs_[i]->symbolicSet_ = this->ddmgr_->bddZero();
+                    this->validZs_[i]->symbolicSet_ = this->ddmgr_->bddZero();
+                    this->validCs_[i]->symbolicSet_ = this->ddmgr_->bddZero();
                 }
 
                 size_t j = this->finalCs_.size();
