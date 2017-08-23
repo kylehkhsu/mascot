@@ -4,7 +4,7 @@
 #ifndef REACH_HH_
 #define REACH_HH_
 
-#include "Product.hh"
+#include "Adaptive.hh"
 
 using namespace helper;
 
@@ -13,7 +13,7 @@ namespace scots {
 /*! \class Reach
  *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for a reach specification.
  */
-class Reach: public virtual Product {
+class Reach: public virtual Adaptive {
 public:
 
     vector<SymbolicSet*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
@@ -24,7 +24,7 @@ public:
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
 
     /*! Constructor for a Reach object. */
-    Reach(char* logFile)
+    Adaptive(char* logFile)
         : Product(logFile)
     {
     }
@@ -75,7 +75,7 @@ public:
             if (earlyBreak == 1) {
                 saveCZ(*curAbs);
                 *stop = 1;
-                clog << "\nTotal number of controllers: " << finalCs_.size() << '\n';
+                clog << "\nmu number of controllers: " << finalCs_.size() << '\n';
                 return;
             }
         }
@@ -89,7 +89,7 @@ public:
                     else {
                     }
                     *stop = 1;
-                    clog << "\nTotal number of controllers: " << finalCs_.size() << '\n';
+                    clog << "\nmu number of controllers: " << finalCs_.size() << '\n';
                 }
                 else {
                     if (verbose) {
