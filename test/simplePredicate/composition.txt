@@ -10,7 +10,7 @@ baseNumFiner_: 4
 prodsNumFiner_: 16 
 Initialized base's Xs to full, Zs to empty.
 Initialized auxs' Xs to full.
-Initialized prods' Xs to full, Is to empty, Zs to empty, validZs to empty.
+Initialized prods' Xs to full, Is to empty, Ys to full, Zs to empty, validZs to empty.
 Initialized base's X2s to empty.
 Initialized auxs' X2s to empty.
 Initialized prods' X2s to empty.
@@ -182,6 +182,6 @@ iterCurAbs: 11
 reached: 0
 controllers: 1
 
-Total number of controllers: 2
+mu number of controllers: 2
 Won.
-----------------------------------------reach: Elapsed time is 2.08776 seconds.
+----------------------------------------reach: Elapsed time is 2.52316 seconds.

@@ -39,6 +39,68 @@ public:
 
     }
 
+    void alwaysEventuallyOne(int startAbs, int minToGoCoarser, int minToBeValid, int verbose = 1) {
+        startAbs_ = startAbs;
+        minToGoCoarser_ = minToGoCoarser;
+        minToBeValid_ = minToBeValid;
+        earlyBreak_ = 0;
+        verbose_ = verbose;
+
+        if ( (startAbs_ < 0) || (startAbs_ >= *this->base_->numAbs_) ) {
+            error("Error: startAbs out of range.\n");
+        }
+        if (this->auxs_.size() != 1) {
+            error("Error: this debugging function only works with one auxiliary system.");
+        }
+
+        TicToc tt;
+        tt.tic();
+
+        int curAux = 0;
+        int nuIter = 1;
+        int nuStop = 0;
+
+        while (1) {
+            nuMu(curAux, &nuIter, &nuStop);
+            if (nuStop) {
+                break;
+            }
+        }
+
+        int fAbs = *this->base_->numAbs_ - 1;
+
+        SymbolicSet* lastZ = (this->prodsFinalZs_[curAux])->back();
+        // E is the sub-target after the goal is hit.
+        SymbolicSet* E = new SymbolicSet(*((*this->prodsXs_[curAux])[fAbs]));
+        E->symbolicSet_ = lastZ->symbolicSet_ & !(((*this->prodsGs_[curAux])[fAbs])->symbolicSet_);
+        prodsFinalEs_[curAux]->push_back(E);
+
+        checkMakeDir("C");
+        string prefix = "C/C";
+        prefix += std::to_string(curAux+1);
+        saveVec(*prodsFinalCs_[curAux], prefix);
+        checkMakeDir("Z");
+        prefix = "Z/Z";
+        prefix += std::to_string(curAux+1);
+        saveVec(*prodsFinalZs_[curAux], prefix);
+        checkMakeDir("E");
+        prefix = "E/E";
+        prefix += std::to_string(curAux+1);
+        saveVec(*prodsFinalEs_[curAux], prefix);
+        checkMakeDir("plotting");
+        this->baseXs_[curAux]->writeToFile("plotting/X.bdd");
+        this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
+        ((*this->prodsIs_[curAux])[fAbs])->writeToFile("plotting/I.bdd");
+        checkMakeDir("G");
+        ((*this->prodsGs_[curAux])[fAbs])->writeToFile("G/G.bdd");
+
+
+        clog << "----------------------------------------alwaysEventually: ";
+        tt.toc();
+    }
+
+
+
     int reachOne(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
         startAbs_ = startAbs;
         minToGoCoarser_ = minToGoCoarser;
@@ -48,6 +110,9 @@ public:
 
         if ( (startAbs_ < 0) || (startAbs_ >= *this->base_->numAbs_) ) {
             error("Error: startAbs out of range.\n");
+        }
+        if (this->auxs_.size() != 1) {
+            error("Error: this debugging function only works with one auxiliary system.");
         }
 
         TicToc tt;
@@ -77,6 +142,16 @@ public:
             prefix = "Z/Z";
             prefix += std::to_string(curAux+1);
             saveVec(*prodsFinalZs_[curAux], prefix);
+            checkMakeDir("G");
+            prefix = "G/G";
+            prefix += std::to_string(curAux+1);
+            saveVec(*prodsGs_[curAux], prefix);
+
+            int fAbs = *this->base_->numAbs_ - 1;
+            this->baseXs_[curAux]->writeToFile("plotting/X.bdd");
+            this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
+            ((*this->prodsIs_[curAux])[fAbs])->writeToFile("plotting/I.bdd");
+
             clog << "----------------------------------------reach: ";
             tt.toc();
             return 1;
@@ -89,6 +164,96 @@ public:
         }
     }
 
+    void nuMu(int curAux, int* nuIter, int* nuStop) {
+        clog << "------------------------------nuMu iteration: " << *nuIter << "------------------------------\n";
+        cout << "------------------------------nuMu iteration: " << *nuIter << "------------------------------\n";
+
+        int curAbs = startAbs_;
+        int muIter = 1;
+        int justCoarsed = 0;
+        int iterCurAbs = 1;
+        int reached = 0;
+        int muStop = 0;
+        while (1) { // eventually
+            this->mu(curAux, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &reached, &muStop);
+            if (muStop) {
+                break;
+            }
+        }
+
+        // always
+        // project to the finest abstraction
+        for (int iAbs = curAbs; iAbs < *this->base_->numAbs_ - 1; iAbs++) {
+            innerFiner((*this->prodsZs_[curAux])[iAbs],
+                    (*this->prodsZs_[curAux])[iAbs+1],
+                    (*this->prodsXXs_[curAux])[iAbs],
+                    (*this->prodsNotXVars_[curAux])[iAbs+1],
+                    (*this->prodsXs_[curAux])[iAbs+1]);
+        }
+        //            this->Zs_[*this->system_->numAbs_ - 1]->symbolicSet_ &= this->Xs_[*this->system_->numAbs_ - 1]->symbolicSet_;
+        curAbs = *this->base_->numAbs_ - 1;
+
+        BDD preQ = Cpre(((*this->prodsZs_[curAux])[curAbs])->symbolicSet_,
+                ((*this->prodsTs_[curAux])[curAbs])->symbolicSet_,
+                ((*this->prodsTTs_[curAux])[curAbs])->symbolicSet_,
+                ((*this->prodsPermutesXtoX2_[curAux])[curAbs]),
+                *((*this->prodsNotXUVars_[curAux])[curAbs]));
+
+        BDD thing = preQ & ((*this->prodsGs_[curAux])[curAbs])->symbolicSet_; // R \cap preC(X2); converges to controller for goal states
+        BDD Q = thing.ExistAbstract(*((*this->prodsNotXVars_[curAux])[curAbs])); // converges to goal states that are valid for the AE spec (i.e. can continue infinitely)
+
+        if (!(((*this->prodsGs_[curAux])[curAbs])->symbolicSet_ != Q)) {
+            clog << "nuMu has converged.\n";
+            *nuStop = 1;
+
+            int fAbs = *this->base_->numAbs_ - 1;
+
+            SymbolicSet* goalC = new SymbolicSet(*((*this->prodsCs_[curAux])[fAbs]));
+            goalC->symbolicSet_ = thing;
+            prodsFinalCs_[curAux]->push_back(goalC);
+
+            SymbolicSet* goalZ = new SymbolicSet(*((*this->prodsZs_[curAux])[fAbs]));
+            goalZ->symbolicSet_ = Q;
+            prodsFinalZs_[curAux]->push_back(goalZ);
+
+        }
+        else {
+            clog << "Continuing.\n";
+
+            clog << "Updating prodGs.\n";
+            ((*this->prodsGs_[curAux])[curAbs])->symbolicSet_ = Q;
+            for (int iAbs = curAbs; iAbs > 0; iAbs--) {
+                // reset to 0 since innerCoarser only adds states
+                ((*this->prodsGs_[curAux])[iAbs-1])->symbolicSet_ = this->ddmgr_->bddZero();
+                innerCoarser((*this->prodsGs_[curAux])[iAbs-1],
+                        (*this->prodsGs_[curAux])[iAbs],
+                        (*this->prodsXXs_[curAux])[iAbs-1],
+                        (*this->prodsNotXVars_[curAux])[iAbs-1],
+                        (*this->prodsXs_[curAux])[iAbs-1],
+                        this->prodsNumFiner_[curAux]);
+            }
+
+            clog << "Resetting prodCs, prodZs, prodValidCs, prodValidZs to empty.\n";
+            for (int iAbs = 0; iAbs < *this->base_->numAbs_; iAbs++) {
+                ((*this->prodsZs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+                ((*this->prodsCs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+                ((*this->prodsValidZs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+                ((*this->prodsValidCs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+            }
+            clog << "Emptying prodFinalCs, prodFinalZs.\n";
+            size_t j = prodsFinalCs_[curAux]->size();
+            for (size_t i = 0; i < j; i++) {
+                delete prodsFinalCs_[curAux]->back();
+                prodsFinalCs_[curAux]->pop_back();
+                delete prodsFinalZs_[curAux]->back();
+                prodsFinalZs_[curAux]->pop_back();
+            }
+        }
+
+        clog << '\n';
+        *nuIter += 1;
+    }
+
 
     void mu(int curAux, int* curAbs, int* iter, int* justCoarsed, int* iterCurAbs, int* reached, int* stop) {
         clog << "current abstraction: " << *curAbs << '\n';
@@ -97,13 +262,20 @@ public:
         clog << "iterCurAbs: " << *iterCurAbs << '\n';
         clog << "reached: " << *reached << '\n';
         clog << "controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
+        cout << "current abstraction: " << *curAbs << '\n';
+        cout << "mu iteration: " << *iter << '\n';
+        cout << "justCoarsed: " << *justCoarsed << '\n';
+        cout << "iterCurAbs: " << *iterCurAbs << '\n';
+        cout << "reached: " << *reached << '\n';
+        cout << "controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
+
 
         BDD C = Cpre(((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_,
                 ((*this->prodsTs_[curAux])[*curAbs])->symbolicSet_,
                 ((*this->prodsTTs_[curAux])[*curAbs])->symbolicSet_,
                 ((*this->prodsPermutesXtoX2_[curAux])[*curAbs]),
-                *((*this->prodsNotXUVars_[curAux])[*curAbs]), curAux, *curAbs);
-        C |= ((*this->prodsGs_[curAux])[*curAbs])->symbolicSet_;
+                *((*this->prodsNotXUVars_[curAux])[*curAbs]));
+        C |= ( (((*this->prodsGs_[curAux])[*curAbs])->symbolicSet_) & (((*this->prodsYs_[curAux])[*curAbs])->symbolicSet_) );
         BDD N = C & (!((*this->prodsCs_[curAux])[*curAbs])->symbolicSet_.ExistAbstract(*((*this->prodsNotXVars_[curAux])[*curAbs])));
         ((*this->prodsCs_[curAux])[*curAbs])->symbolicSet_ |= N;
         ((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_ = C.ExistAbstract(*((*this->prodsNotXVars_[curAux])[*curAbs]));
@@ -113,7 +285,7 @@ public:
             if (earlyBreak_ == 1) {
                 saveCZ(curAux, *curAbs);
                 *stop = 1;
-                clog << "\nTotal number of controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
+                clog << "\nmu number of controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
                 return;
             }
         }
@@ -125,7 +297,7 @@ public:
                         saveCZ(curAux, *curAbs);
                     }
                     *stop = 1;
-                    clog << "\nTotal number of controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
+                    clog << "\nmu number of controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
                 }
                 else {
                     if (verbose_) {
@@ -234,7 +406,7 @@ public:
         *iter += 1;
     }
 
-    BDD Cpre (BDD Z, BDD T, BDD TT, int* permuteXtoX2, BDD notXUVar, int curAux, int curAbs) {
+    BDD Cpre (BDD Z, BDD T, BDD TT, int* permuteXtoX2, BDD notXUVar) {
         // swap to post-state variables
         BDD Z2 = Z.Permute(permuteXtoX2);
         // non-winning post-states
@@ -279,15 +451,12 @@ public:
     }
 
     int innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarc, SymbolicSet* Xc, int numFiner) {
-        cout << "0\n";
         // debug
 //        XXc->printInfo(1);
-
 
         SymbolicSet Qcf(*XXc);
         Qcf.symbolicSet_ = XXc->symbolicSet_ & Zf->symbolicSet_;
 
-        cout << "1\n";
         SymbolicSet Qc(*Zc);
         Qc.symbolicSet_ = Qcf.symbolicSet_.ExistAbstract(*notXVarc); // & S1
         Qc.symbolicSet_ &= !(Zc->symbolicSet_); /* don't check states that are already in Zc */
@@ -297,7 +466,6 @@ public:
         BDD result = ddmgr_->bddZero();
         int* QcMinterm = new int[Qc.nvars_];
 
-        cout << "2\n";
         for (Qc.begin(); !Qc.done(); Qc.next()) { // iterate over all coarse cells with any corresponding finer cells in Zf
             QcMintermWhole = (int*) Qc.currentMinterm();
             std::copy(QcMintermWhole + Qc.idBddVars_[0], QcMintermWhole + Qc.idBddVars_[0] + Qc.nvars_, QcMinterm);
@@ -310,7 +478,7 @@ public:
                 result |= coarseCell;
             }
         }
-        cout << "3\n";
+
         delete[] QcMinterm;
 
         if (result == ddmgr_->bddZero()) {

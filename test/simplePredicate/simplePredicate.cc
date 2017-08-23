@@ -101,7 +101,7 @@ void composition() {
 
     double lbB[dimB] = {   0,   2, -1.5};
     double ubB[dimB] = { 0.2,   5,  1.5};
-    double etaB[dimB] = {0.2, 0.4,  0.4};
+    double etaB[dimB] = {0.2, 0.2*2,  0.2*2};
 
     B_type b;
     Y_type y;
@@ -137,7 +137,7 @@ void composition() {
     int earlyBreak = 1;
 
     abs.reachOne(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
-
+//    abs.alwaysEventuallyOne(startAbs, minToGoCoarser, minToBeValid);
 }
 
 
