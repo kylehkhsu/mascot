@@ -20,7 +20,7 @@ using namespace helper;
 #define dimY 1
 
 const int numAbs = 2;
-const double tau = 0.9*2;
+const double tau = 0.9;
 const double tauRatio = 2;
 const int nSubInt = 5;
 
@@ -71,7 +71,7 @@ auto baseAddO = [](SymbolicSet* O) -> void {
 
 auto prod0AddG = [](SymbolicSet* G) -> void {
     auto f = [](double* x)->bool {
-        return sqrt(pow(x[0]-x[2], 2) + pow(x[1]-x[3], 2)) <= 1;
+        return sqrt(pow(x[0]-x[2], 2) + pow(x[1]-x[3], 2)) <= 0.5;
     };
     G->addByFunction(f);
 };
@@ -82,7 +82,7 @@ auto baseAddI = [](SymbolicSet* I) -> void {
 };
 
 auto aux0AddI = [](SymbolicSet* I) -> void {
-    double q[dimB] = {0.1, 4.6, 0};
+    double q[dimB] = {0.1, 4, 0};
     I->addPoint(q);
 };
 
@@ -90,7 +90,7 @@ auto aux0AddI = [](SymbolicSet* I) -> void {
 void composition() {
     double lbX[dimX]={-6, -6};
     double ubX[dimX]={ 6,  6 };
-    double etaX[dimX]= {0.6*2, 0.6*2};
+    double etaX[dimX]= {0.6, 0.6};
     double lbU[dimU]= {-2, 0.5};
     double ubU[dimU]= { 2,   1};
     double etaU[dimU]= {0.5, 0.2};
@@ -101,12 +101,12 @@ void composition() {
 
     double lbB[dimB] = {   0,   2, -1.5};
     double ubB[dimB] = { 0.2,   5,  1.5};
-    double etaB[dimB] = {0.2, 0.2*2,  0.2*2};
+    double etaB[dimB] = {0.2, 0.2,  0.2};
 
     B_type b;
     Y_type y;
 
-    double ballEtaRatio[dimB] = {1, 2, 2};
+    double ballEtaRatio[dimB] = {1, 1, 1};
 
 
     System base(dimX, lbX, ubX, etaX, tau,
@@ -134,10 +134,10 @@ void composition() {
     int startAbs = 1;
     int minToGoCoarser = 2;
     int minToBeValid = 5;
-    int earlyBreak = 1;
+//    int earlyBreak = 1;
 
-    abs.reachOne(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
-//    abs.alwaysEventuallyOne(startAbs, minToGoCoarser, minToBeValid);
+//    abs.reachOne(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+    abs.alwaysEventuallyOne(startAbs, minToGoCoarser, minToBeValid);
 }
 
 

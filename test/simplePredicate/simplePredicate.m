@@ -61,23 +61,19 @@ function simplePredicate (mode, numAbs, controllers)
       disp('loop')
       disp(k)
 
-      for i = controllers-1:-1:0
-	if (i == 0)
-	  i = controllers;
-	  if (k == loops)
-	    break;
-	  end
-	end      
+      for i = controllers:-1:1 
       
 	disp(['controller: ' int2str(i)])
 	
 	C = SymbolicSet(['C/C1' int2str(i) '.bdd'], 'projection', [1 2 3 4 5]);
 	if (i == 1)
-	  G = SymbolicSet(['Z/Z1' int2str(numAbs) '.bdd']);
-	elseif (i == controllers)
 	  G = SymbolicSet(['G/G.bdd']);
 	else
 	  G = SymbolicSet(['Z/Z1' int2str(i-1) '.bdd']);
+	end
+	
+	if (i == controllers)
+	  N = SymbolicSet(['G/G.bdd']);
 	end
 	
 	p = G.points();
@@ -106,10 +102,19 @@ function simplePredicate (mode, numAbs, controllers)
 	  end
 	
 	  if (G.isElement(x(end,:)))
-	    plot(x(:,1),x(:,2),'k.-')
-	    plot(x(end,3),x(end,4), 'o', 'Color', colors(mod(j,7)+1,:), 'MarkerSize', 20, 'LineWidth', 3);
-	    drawnow
-	    break
+	    if (i == controllers)
+	      if (~(N.isElement(x(end,:))))
+	      	plot(x(:,1),x(:,2),'k.-')
+		plot(x(end,3),x(end,4), 'o', 'Color', colors(mod(j,7)+1,:), 'MarkerSize', 20, 'LineWidth', 3);
+		drawnow
+		break
+	      end
+	    else
+	      plot(x(:,1),x(:,2),'k.-')
+	      plot(x(end,3),x(end,4), 'o', 'Color', colors(mod(j,7)+1,:), 'MarkerSize', 20, 'LineWidth', 3);
+	      drawnow
+	      break
+	    end
 	  end
 	  
 	  u = C.getInputs(x(end,:));
@@ -128,7 +133,7 @@ function simplePredicate (mode, numAbs, controllers)
 	  j = j + 1;
 	end
 	if (i == 1)
-	  B = SymbolicSet(['Z/Z1' int2str(numAbs) '.bdd'], 'projection',[1 2]);
+	  B = SymbolicSet(['G/G.bdd'], 'projection',[1 2]);
 	  b = B.getInputs(x(end,1:2));
 	  plot(b(:,1),b(:,2), 'kx', 'MarkerSize', 10);
 	  drawnow

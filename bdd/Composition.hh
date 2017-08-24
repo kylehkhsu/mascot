@@ -52,15 +52,17 @@ public:
     vector<SymbolicSet*> baseZs_;
     vector<vector<SymbolicSet*>*> prodsZs_;
     vector<vector<SymbolicSet*>*> prodsYs_;
+    vector<vector<SymbolicSet*>*> prodsPreYs_;
     vector<vector<SymbolicSet*>*> prodsValidZs_;
     vector<vector<SymbolicSet*>*> prodsValidCs_;
     vector<vector<SymbolicSet*>*> prodsFinalZs_;
     vector<vector<SymbolicSet*>*> prodsFinalCs_;
-    vector<vector<SymbolicSet*>*> prodsFinalEs_;
 
     vector<vector<SymbolicSet*>*> prodsCs_;
     vector<vector<SymbolicSet*>*> prodsTs_;
     vector<vector<SymbolicSet*>*> prodsTTs_;
+
+    vector<vector<SymbolicSet*>*> prodsPrevYs_;
 
     SymbolicSet* baseU_;
     SymbolicSet* auxU_;
@@ -114,12 +116,14 @@ public:
         deleteVec(baseZs_);
         deleteVecVec(prodsZs_);
         deleteVecVec(prodsYs_);
+
+        deleteVecVec(prodsPreYs_);
         deleteVecVec(prodsValidZs_);
         deleteVecVec(prodsValidCs_);
         deleteVecVec(prodsFinalZs_);
         deleteVecVec(prodsFinalCs_);
-        deleteVecVec(prodsFinalEs_);
 
+        deleteVecVec(prodsPrevYs_);
 
         deleteVecVec(prodsCs_);
         deleteVecVec(prodsTs_);
@@ -375,6 +379,8 @@ public:
             vector<SymbolicSet*>* prodXXs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodZs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodYs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* prodPreYs = new vector<SymbolicSet*>;
+            vector<SymbolicSet*>* prodPrevYs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodCs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodTs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodTTs = new vector<SymbolicSet*>;
@@ -386,7 +392,6 @@ public:
             vector<SymbolicSet*>* prodValidCs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodFinalZs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodFinalCs = new vector<SymbolicSet*>;
-            vector<SymbolicSet*>* prodFinalEs = new vector<SymbolicSet*>;
             auxsXs_.push_back(auxXs);
             auxsX2s_.push_back(auxX2s);
             auxsXXs_.push_back(auxXXs);
@@ -395,6 +400,8 @@ public:
             prodsXXs_.push_back(prodXXs);
             prodsZs_.push_back(prodZs);
             prodsYs_.push_back(prodYs);
+            prodsPreYs_.push_back(prodPreYs);
+            prodsPrevYs_.push_back(prodPrevYs);
             prodsCs_.push_back(prodCs);
             prodsTs_.push_back(prodTs);
             prodsTTs_.push_back(prodTTs);
@@ -406,7 +413,6 @@ public:
             prodsValidCs_.push_back(prodValidCs);
             prodsFinalZs_.push_back(prodFinalZs);
             prodsFinalCs_.push_back(prodFinalCs);
-            prodsFinalEs_.push_back(prodFinalEs);
 
             vector<BDD*>* auxCubesX = new vector<BDD*>;
             vector<BDD*>* auxCubesX2 = new vector<BDD*>;
@@ -443,15 +449,22 @@ public:
                 prodX->addGridPoints();
                 prodsXs_[iAux]->push_back(prodX);
 
-                SymbolicSet* prodY = new SymbolicSet(*prodX);
-                prodY->addGridPoints();
-                prodsYs_[iAux]->push_back(prodY);
-
                 SymbolicSet* prodI = new SymbolicSet(*prodX);
                 prodsIs_[iAux]->push_back(prodI);
 
                 SymbolicSet* prodZ = new SymbolicSet(*prodX);
                 prodsZs_[iAux]->push_back(prodZ);
+
+                SymbolicSet* prodY = new SymbolicSet(*prodX);
+                prodY->addGridPoints();
+                prodsYs_[iAux]->push_back(prodY);
+
+                SymbolicSet* prodPreY = new SymbolicSet(*prodX);
+                prodPreY->addGridPoints();
+                prodsPreYs_[iAux]->push_back(prodPreY);
+
+                SymbolicSet* prodPrevY = new SymbolicSet(*prodX);
+                prodsPrevYs_[iAux]->push_back(prodPrevY);
 
                 SymbolicSet* prodValidZ = new SymbolicSet(*prodX);
                 prodsValidZs_[iAux]->push_back(prodValidZ);
@@ -459,7 +472,7 @@ public:
         }
         clog << "Initialized base's Xs to full, Zs to empty.\n";
         clog << "Initialized auxs' Xs to full.\n";
-        clog << "Initialized prods' Xs to full, Is to empty, Ys to full, Zs to empty, validZs to empty.\n";
+        clog << "Initialized prods' Xs to full, Is to empty, Ys to full, Zs to empty, preYs to full, prevYs to empty, validZs to empty.\n";
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             SymbolicSet* baseX2 = new SymbolicSet(*baseXs_[iAbs], 1);
