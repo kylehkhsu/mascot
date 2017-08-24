@@ -152,7 +152,6 @@ public:
         checkMakeDir("plotting");
         this->baseXs_[0]->writeToFile("plotting/X.bdd");
         this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
-        ((*this->prodsIs_[curAux])[fAbs])->writeToFile("plotting/I.bdd");
         checkMakeDir("G");
         ((*this->prodsGs_[curAux])[fAbs])->writeToFile("G/G.bdd");
 
@@ -166,7 +165,12 @@ public:
 
     void nuMu(size_t* prevAux, size_t* curAux, size_t* numConv, int* nuIter, int* nuStop) {
         clog << "------------------------------nuMu iteration: " << *nuIter << "------------------------------\n";
+        clog << "current nu: " << curAux << '\n';
+        clog << "number of converged Ys: " << numConv << '\n';
+
         cout << "------------------------------nuMu iteration: " << *nuIter << "------------------------------\n";
+        cout << "current nu: " << curAux << '\n';
+        cout << "number of converged Ys: " << numConv << '\n';
 
         // find pre(Y) of product system prevAux at finest abstraction
         int fAbs = *this->base_->numAbs_ - 1;
@@ -200,7 +204,6 @@ public:
         int muIter = 1;
         int justCoarsed = 0;
         int iterCurAbs = 1;
-        int reached = 0;
         int muStop = 0;
 
         for (int iAbs = 0; iAbs < *this->base_->numAbs_; iAbs++) {
@@ -221,7 +224,7 @@ public:
         }
 
         while (1) { // eventually
-            this->mu(*curAux, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &reached, &muStop);
+            this->mu(*curAux, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &muStop);
             if (muStop) {
                 break;
             }
@@ -263,19 +266,17 @@ public:
 
 
 
-    void mu(int curAux, int* curAbs, int* iter, int* justCoarsed, int* iterCurAbs, int* reached, int* stop) {
+    void mu(int curAux, int* curAbs, int* iter, int* justCoarsed, int* iterCurAbs, int* stop) {
         clog << "current abstraction: " << *curAbs << '\n';
         clog << "mu iteration: " << *iter << '\n';
         clog << "justCoarsed: " << *justCoarsed << '\n';
         clog << "iterCurAbs: " << *iterCurAbs << '\n';
-        clog << "reached: " << *reached << '\n';
         clog << "controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
-        cout << "current abstraction: " << *curAbs << '\n';
+//        cout << "current abstraction: " << *curAbs << '\n';
         cout << "mu iteration: " << *iter << '\n';
-        cout << "justCoarsed: " << *justCoarsed << '\n';
-        cout << "iterCurAbs: " << *iterCurAbs << '\n';
-        cout << "reached: " << *reached << '\n';
-        cout << "controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
+//        cout << "justCoarsed: " << *justCoarsed << '\n';
+//        cout << "iterCurAbs: " << *iterCurAbs << '\n';
+//        cout << "controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
 
         // pre(Z)
         BDD C = Cpre(((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_,
@@ -292,26 +293,11 @@ public:
         // project C onto Z
         ((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_ = C.ExistAbstract(*((*this->prodsNotXVars_[curAux])[*curAbs]));
 
-        if ( (((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_ & ((*this->prodsIs_[curAux])[*curAbs])->symbolicSet_) != this->ddmgr_->bddZero() ) {
-            *reached = 1;
-            if (earlyBreak_ == 1) {
-                saveCZ(curAux, *curAbs);
-                *stop = 1;
-                clog << "\nmu number of controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
-                return;
-            }
-        }
-
         if (*iter != 1) {
             if (N == this->ddmgr_->bddZero()) {
                 if (*curAbs == *this->base_->numAbs_ - 1) {
                     saveCZ(curAux, *curAbs);
-                    if (*reached == 1) {
-                        clog << "Reached.\n";
-                    }
-                    else {
-                        clog << "Did not reach.\n";
-                    }
+
                     *stop = 1;
                     clog << "\nmu number of controllers: " << this->prodsFinalCs_[curAux]->size() << '\n';
                 }
@@ -537,7 +523,7 @@ public:
         int iter = 1;
         int justCoarsed = 0;
         int iterCurAbs = 1;
-        int reached = 0;
+
         int stop = 0;
 
         // initialization
@@ -550,41 +536,34 @@ public:
         }
 
         while (1) {
-            mu(curAux, &curAbs, &iter, &justCoarsed, &iterCurAbs, &reached, &stop);
+            mu(curAux, &curAbs, &iter, &justCoarsed, &iterCurAbs, &stop);
             if (stop) {
                 break;
             }
         }
-        if (reached) {
-            clog << "Won.\n";
-            checkMakeDir("C");
-            string prefix = "C/C";
-            prefix += std::to_string(curAux+1);
-            saveVec(*prodsFinalCs_[curAux], prefix);
-            checkMakeDir("Z");
-            prefix = "Z/Z";
-            prefix += std::to_string(curAux+1);
-            saveVec(*prodsFinalZs_[curAux], prefix);
-            checkMakeDir("G");
-            prefix = "G/G";
-            prefix += std::to_string(curAux+1);
-            saveVec(*prodsGs_[curAux], prefix);
 
-            int fAbs = *this->base_->numAbs_ - 1;
-            this->baseXs_[curAux]->writeToFile("plotting/X.bdd");
-            this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
-            ((*this->prodsIs_[curAux])[fAbs])->writeToFile("plotting/I.bdd");
+        checkMakeDir("C");
+        string prefix = "C/C";
+        prefix += std::to_string(curAux+1);
+        saveVec(*prodsFinalCs_[curAux], prefix);
+        checkMakeDir("Z");
+        prefix = "Z/Z";
+        prefix += std::to_string(curAux+1);
+        saveVec(*prodsFinalZs_[curAux], prefix);
+        checkMakeDir("G");
+        prefix = "G/G";
+        prefix += std::to_string(curAux+1);
+        saveVec(*prodsGs_[curAux], prefix);
 
-            clog << "----------------------------------------reach: ";
-            tt.toc();
-            return 1;
-        }
-        else {
-            clog << "Lost.\n";
-            clog << "----------------------------------------reach: ";
-            tt.toc();
-            return 0;
-        }
+        int fAbs = *this->base_->numAbs_ - 1;
+        this->baseXs_[curAux]->writeToFile("plotting/X.bdd");
+        this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
+
+        clog << "----------------------------------------reach: ";
+        tt.toc();
+        return 1;
+
+
     }
 
 
