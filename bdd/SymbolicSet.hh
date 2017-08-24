@@ -701,10 +701,12 @@ public:
         size_t k=0;
         for(size_t i=0; i<dim_; i++) {
             for(size_t j=0; j<nofBddVars_[i]; j++) {
+                std::cout << indBddVars_[i][j] << ' ';
                 ivars_.push_back(indBddVars_[i][j]);
                 bddVars[k++]=ddmgr_->bddVar(indBddVars_[i][j]);
             }
         }
+        std::cout << '\n';
 
         /* set up iterator */
         CuddMintermIterator it(grid,ivars_,nvars_);
@@ -712,7 +714,8 @@ public:
         double *x = new double[dim_];
         /* get pointer to minterm */
         const int* minterm=it.currentMinterm();
-        int* cube = (int*) minterm;
+//        int* cube = (int*) minterm;
+        int* cube = new int[nvars_];
 
 
         /* loop over all elements */
@@ -722,28 +725,41 @@ public:
             /* convert current minterm to element (=grid point) */
             mintermToElement(minterm, x);
 
+//            if (iter == 100) {
+//                for (int i = 0; i < 120; i++) {
+//                    std::cout << *cube << ' ';
+//                }
+//                std::cout << '\n';
+//            }
+
             /* cube is inside set */
-            if(function(x))
+            if(function(x)) {
+                for (size_t i = 0; i < nvars_; i++) {
+                    cube[i] = minterm[idBddVars_[i]];
+                }
 //                std::cout << "x: ";
 //                for (int i = 0; i < dim_; i++) {
 //                    std::cout << x[i] << ' ';
 //                }
 //                std::cout << '\n';
 //                /* this is a bottelneck! */
-                set|=ddmgr_->bddComputeCube(bddVars,&cube[idBddVars_[0]],nvars_);
+                set|=ddmgr_->bddComputeCube(bddVars,cube,nvars_);
 //                for (size_t i = 0; i < 20; i++) {
 //                    std::cout << cube[i] << ' ';
 //                }
 //                std::cout << '\n';
-            ++it; ++k;
+            }
+            ++it; ++k;            
         }
-
+        delete[] cube;
         delete[] x;
         delete[] bddVars;
 
         symbolicSet_|=set;
+        printInfo(1);
         //kyle
         std::cout << '\n';
+        std::cout << "addByFunction Iterations: " << iter << '\n';
         symbolicSet_ &= computeGridPoints();
         //end
 
