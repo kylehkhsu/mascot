@@ -46,6 +46,9 @@ public:
         earlyBreak_ = 0;
         verbose_ = verbose;
 
+        clog << "minToGoCoarser: " << minToGoCoarser << '\n';
+        clog << "minToBeValid: " << minToBeValid << '\n';
+
         int fAbs = *this->base_->numAbs_ - 1;
 
         if ( (startAbs_ < 0) || (startAbs_ >= *this->base_->numAbs_) ) {
@@ -165,12 +168,14 @@ public:
 
     void nuMu(size_t* prevAux, size_t* curAux, size_t* numConv, int* nuIter, int* nuStop) {
         clog << "------------------------------nuMu iteration: " << *nuIter << "------------------------------\n";
-        clog << "current nu: " << curAux << '\n';
-        clog << "number of converged Ys: " << numConv << '\n';
+        clog << "previous nu: " << *prevAux << '\n';
+        clog << "current nu: " << *curAux << '\n';
+        clog << "number of converged Ys: " << *numConv << '\n';
 
         cout << "------------------------------nuMu iteration: " << *nuIter << "------------------------------\n";
-        cout << "current nu: " << curAux << '\n';
-        cout << "number of converged Ys: " << numConv << '\n';
+        cout << "previous nu: " << *prevAux << '\n';
+        cout << "current nu: " << *curAux << '\n';
+        cout << "number of converged Ys: " << *numConv << '\n';
 
         // find pre(Y) of product system prevAux at finest abstraction
         int fAbs = *this->base_->numAbs_ - 1;
@@ -195,8 +200,8 @@ public:
                     (*this->prodsPreYs_[*curAux])[iAbs],
                     (*this->prodsXXs_[*curAux])[iAbs-1],
                     (*this->prodsNotXVars_[*curAux])[iAbs-1],
-                    (*this->prodsXs_[*curAux])[iAbs-1],
-                    this->prodsNumFiner_[*curAux]);
+                    (*this->prodsXs_[*curAux])[iAbs-1]);
+//                    this->prodsNumFiner_[*curAux]);
         }
 
         // initialization for mu
@@ -363,12 +368,13 @@ public:
                         if (verbose_) {
                             clog << "More new states, minToGoCoarser achieved; try going coarser.\n";
                         }
-                        int more = innerCoarser((*this->prodsZs_[curAux])[*curAbs-1],
+                        int more = 1;
+                        innerCoarser((*this->prodsZs_[curAux])[*curAbs-1],
                                 (*this->prodsZs_[curAux])[*curAbs],
                                 (*this->prodsXXs_[curAux])[*curAbs-1],
                                 (*this->prodsNotXVars_[curAux])[*curAbs-1],
-                                (*this->prodsXs_[curAux])[*curAbs-1],
-                                this->prodsNumFiner_[curAux]);
+                                (*this->prodsXs_[curAux])[*curAbs-1]);
+//                                this->prodsNumFiner_[curAux]);
                         if (more == 0) {
                             if (verbose_) {
                                 clog << "Projecting to coarser gives no more states in coarser; not changing abstraction.\n";
@@ -452,44 +458,59 @@ public:
         Zf->symbolicSet_ = Q.ExistAbstract(*notXVarf) & Xf->symbolicSet_;
     }
 
-    int innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarc, SymbolicSet* Xc, int numFiner) {
-        // debug
-//        XXc->printInfo(1);
+    void innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarc, SymbolicSet* Xc) {
+        BDD nQ = !((!(XXc->symbolicSet_)) | Zf->symbolicSet_);
+        Zc->symbolicSet_ = (!(nQ.ExistAbstract(*notXVarc))) & Xc->symbolicSet_;
 
-        SymbolicSet Qcf(*XXc);
-        Qcf.symbolicSet_ = XXc->symbolicSet_ & Zf->symbolicSet_;
+//        BDD Zcandidate = (!(nQ.ExistAbstract(*notXvars_[c]))) & Xs_[c]->symbolicSet_;
 
-        SymbolicSet Qc(*Zc);
-        Qc.symbolicSet_ = Qcf.symbolicSet_.ExistAbstract(*notXVarc); // & S1
-        Qc.symbolicSet_ &= !(Zc->symbolicSet_); /* don't check states that are already in Zc */
-
-        int* QcMintermWhole;
-        SymbolicSet Ccf(Qcf);
-        BDD result = ddmgr_->bddZero();
-        int* QcMinterm = new int[Qc.nvars_];
-
-        for (Qc.begin(); !Qc.done(); Qc.next()) { // iterate over all coarse cells with any corresponding finer cells in Zf
-            QcMintermWhole = (int*) Qc.currentMinterm();
-            std::copy(QcMintermWhole + Qc.idBddVars_[0], QcMintermWhole + Qc.idBddVars_[0] + Qc.nvars_, QcMinterm);
-
-            BDD coarseCell = Qc.mintermToBDD(QcMinterm) & Xc->symbolicSet_; // a particular coarse cell
-
-            Ccf.symbolicSet_ = Qcf.symbolicSet_ & coarseCell; // corresponding finer cells to the coarse cell
-
-            if ((Ccf.symbolicSet_.CountMinterm(Ccf.nvars_)) == (numFiner)) { // if there's a full set of finer cells
-                result |= coarseCell;
-            }
-        }
-
-        delete[] QcMinterm;
-
-        if (result == ddmgr_->bddZero()) {
-            return 0;
-        }
-
-        Zc->symbolicSet_ |= result;
-        return 1;
+//        if (Zcandidate <= Zc->symbolicSet_) {
+//            return 0;
+//        }
+//        else {
+//            Zc->symbolicSet_ = Zcandidate;
+//            return 1;
+//        }
     }
+
+//    int innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarc, SymbolicSet* Xc, int numFiner) {
+//        // debug
+////        XXc->printInfo(1);
+
+//        SymbolicSet Qcf(*XXc);
+//        Qcf.symbolicSet_ = XXc->symbolicSet_ & Zf->symbolicSet_;
+
+//        SymbolicSet Qc(*Zc);
+//        Qc.symbolicSet_ = Qcf.symbolicSet_.ExistAbstract(*notXVarc); // & S1
+//        Qc.symbolicSet_ &= !(Zc->symbolicSet_); /* don't check states that are already in Zc */
+
+//        int* QcMintermWhole;
+//        SymbolicSet Ccf(Qcf);
+//        BDD result = ddmgr_->bddZero();
+//        int* QcMinterm = new int[Qc.nvars_];
+
+//        for (Qc.begin(); !Qc.done(); Qc.next()) { // iterate over all coarse cells with any corresponding finer cells in Zf
+//            QcMintermWhole = (int*) Qc.currentMinterm();
+//            std::copy(QcMintermWhole + Qc.idBddVars_[0], QcMintermWhole + Qc.idBddVars_[0] + Qc.nvars_, QcMinterm);
+
+//            BDD coarseCell = Qc.mintermToBDD(QcMinterm) & Xc->symbolicSet_; // a particular coarse cell
+
+//            Ccf.symbolicSet_ = Qcf.symbolicSet_ & coarseCell; // corresponding finer cells to the coarse cell
+
+//            if ((Ccf.symbolicSet_.CountMinterm(Ccf.nvars_)) == (numFiner)) { // if there's a full set of finer cells
+//                result |= coarseCell;
+//            }
+//        }
+
+//        delete[] QcMinterm;
+
+//        if (result == ddmgr_->bddZero()) {
+//            return 0;
+//        }
+
+//        Zc->symbolicSet_ |= result;
+//        return 1;
+//    }
 
     void saveCZ(int curAux, int curAbs) {
         SymbolicSet* prodFinalC = new SymbolicSet(*((*this->prodsCs_[curAux])[curAbs]));

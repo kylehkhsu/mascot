@@ -184,18 +184,10 @@ public:
         base_ = base;
         auxs_ = auxs;
 
-        if (auxs_.size() > 1) {
-            error("Product currently supports only one auxicate.\n");
-        }
-
         initializeVecVecs();
         initializeEtaTauNumFiner();
         initializeSolvers();
         initializeBDDs();
-
-        //        baseXs_[0]->printInfo(1);
-        //        (*auxsXs_[0])[0]->printInfo(1);
-
     }
 
     template<class sys_type, class rad_type, class x_type, class u_type>
