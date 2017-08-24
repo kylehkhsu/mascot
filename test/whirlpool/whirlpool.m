@@ -162,7 +162,7 @@ function whirlpool (mode, numAbs, controllers)
 	
 	C = SymbolicSet(['C/C' int2str(i) '.bdd'], 'projection', [1 2 3 4 5]);
 	if (i == 1)
-	  G = SymbolicSet(['G/G' int2str(numAbs) '.bdd']);
+	  G = SymbolicSet(['Z/Z' int2str(controllers) '.bdd']);
 	elseif (i == controllers)
 	  G = SymbolicSet(['G/E.bdd']);
 	else
@@ -217,7 +217,7 @@ function whirlpool (mode, numAbs, controllers)
 	  j = j + 1;
 	end
 	if (i == 1)
-	  B = SymbolicSet(['G/G' int2str(numAbs) '.bdd'], 'projection',[1 2]);
+	  B = SymbolicSet(['Z/Z' int2str(controllers) '.bdd'], 'projection',[1 2]);
 	  b = B.getInputs(x(end,1:2));
 	  plot(b(:,1),b(:,2), 'kx', 'MarkerSize', 10);
 	  drawnow
