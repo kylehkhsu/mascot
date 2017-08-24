@@ -50,9 +50,9 @@ auto baseRadNext = [](bX_t &br, bU_t &bu, double tau, OdeSolver solver) -> void 
 
 auto aux0SysNext = [](a0X_t &a0x, aU_t &au, double tau, OdeSolver solver) -> void {
     auto ODE = [](a0X_t &da0xdt, const a0X_t &a0x, aU_t &au) -> void {
-        da0xdt[0] = 0;
-        da0xdt[1] = a0x[2];
-        da0xdt[2] = -(a0x[1]-3.5);
+        da0xdt[0] = a0x[2];
+        da0xdt[1] = 0;
+        da0xdt[2] = -(a0x[0]-3.5);
     };
     solver(ODE, a0x, au);
 };
@@ -86,9 +86,9 @@ void composition() {
 
     double bEtaRatioX[bDimX] = {2, 2};
 
-    double a0LbX[a0DimX] = {   0,   2, -1.5};
-    double a0UbX[a0DimX] = { 0.2,   5,  1.5};
-    double a0EtaX[a0DimX] = {0.2, 0.2,  0.2};
+    double a0LbX[a0DimX] = {   2, -0.2, -1.5};
+    double a0UbX[a0DimX] = {   5,    0,  1.5};
+    double a0EtaX[a0DimX] = {0.2,  0.2,  0.2};
 
     a0X_t a0x;
     aU_t au;

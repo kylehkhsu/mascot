@@ -1,8 +1,8 @@
 
-function simplePredicate (mode, numGoals, numAbs, controllers)
+function whirlpool1 (mode, numGoals, numAbs, controllers)
   w = [0 0];
   bx = [1 1];
-  a1x = [0.1 4.7 -0.1];
+  a1x = [4.3 -0.1 0.9];
   bInd = [1 2];
   aInd = [3 4 5];
   x = [bx a1x];
@@ -47,7 +47,7 @@ function simplePredicate (mode, numGoals, numAbs, controllers)
   end
  
   if (strcmp(mode, 'GB')) % generalized Buchi
-    numLoops = 2;
+    numLoops = 10;
   
     openfig('problem');
     hold on
@@ -184,6 +184,6 @@ end
 
 function da1xdt = a1ODE(t,a1x)
   da1xdt = zeros(size(a1x));
-  da1xdt(2) = a1x(3);
-  da1xdt(3) = -(a1x(2)-3.5);
+  da1xdt(1) = a1x(3);
+  da1xdt(3) = -(a1x(1)-3.5);
 end
