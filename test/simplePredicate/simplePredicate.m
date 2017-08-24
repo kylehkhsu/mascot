@@ -1,5 +1,5 @@
 
-function simplePredicate (mode, numAbs, controllers)
+function simplePredicate (mode, numAux, numAbs, controllers)
   w = [0 0 0 0 0];
   addpath(genpath('../..'));
   
@@ -39,10 +39,19 @@ function simplePredicate (mode, numAbs, controllers)
       warning('No obstacles');
     end
     savefig('problem');
-  end    
+  end
+  
+  if (strcmp(mode, 'GB'))
+  
+  
+  
+  
+  end
+  
+  
   
   if (strcmp(mode, 'A')) % always eventually
-    loops = 5;
+    loops = 10;
   
     openfig('problem');
     hold on
@@ -67,13 +76,13 @@ function simplePredicate (mode, numAbs, controllers)
 	
 	C = SymbolicSet(['C/C1' int2str(i) '.bdd'], 'projection', [1 2 3 4 5]);
 	if (i == 1)
-	  G = SymbolicSet(['G/G.bdd']);
+	  G = SymbolicSet(['G/G1' int2str(numAbs) '.bdd']);
 	else
 	  G = SymbolicSet(['Z/Z1' int2str(i-1) '.bdd']);
 	end
 	
 	if (i == controllers)
-	  N = SymbolicSet(['G/G.bdd']);
+	  N = SymbolicSet(['G/G1' int2str(numAbs) '.bdd']);
 	end
 	
 	p = G.points();
@@ -98,7 +107,7 @@ function simplePredicate (mode, numAbs, controllers)
 	    plot(x(:,1),x(:,2),'k.-')
 	    plot(x(end,3),x(end,4), 'o', 'Color', colors(mod(j,7)+1,:), 'MarkerSize', 20, 'LineWidth', 3);
 	    drawnow
-	    pause
+%  	    pause
 	  end
 	
 	  if (G.isElement(x(end,:)))
@@ -133,11 +142,11 @@ function simplePredicate (mode, numAbs, controllers)
 	  j = j + 1;
 	end
 	if (i == 1)
-	  B = SymbolicSet(['G/G.bdd'], 'projection',[1 2]);
+	  B = SymbolicSet(['G/G1' int2str(numAbs) '.bdd'], 'projection',[1 2]);
 	  b = B.getInputs(x(end,1:2));
 	  plot(b(:,1),b(:,2), 'kx', 'MarkerSize', 10);
 	  drawnow
-	  pause
+%  	  pause
 	end	
       end
       if (k == loops)

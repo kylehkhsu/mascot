@@ -137,7 +137,7 @@ void composition() {
 //    int earlyBreak = 1;
 
 //    abs.reachOne(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
-    abs.alwaysEventuallyOne(startAbs, minToGoCoarser, minToBeValid);
+    abs.gBuchi(startAbs, minToGoCoarser, minToBeValid);
 }
 
 

@@ -39,6 +39,66 @@ public:
 
     }
 
+    void gBuchi(int startAbs, int minToGoCoarser, int minToBeValid, int verbose = 1) {
+        startAbs_ = startAbs;
+        minToGoCoarser_ = minToGoCoarser;
+        minToBeValid_ = minToBeValid;
+        earlyBreak_ = 0;
+        verbose_ = verbose;
+
+        int fAbs = *this->base_->numAbs_ - 1;
+
+        if ( (startAbs_ < 0) || (startAbs_ >= *this->base_->numAbs_) ) {
+            error("Error: startAbs out of range.\n");
+        }
+
+        TicToc tt;
+        tt.tic();
+
+        // initialization
+        size_t prevAux = this->auxs_.size() - 1;
+        size_t curAux = 0;
+        size_t numConv = 0;
+        int nuIter = 1;
+        int nuStop = 0;
+
+        for (size_t iAux = 0; iAux < this->auxs_.size(); iAux++) {
+            ((*this->prodsYs_[iAux])[fAbs])->addGridPoints(); // Y = Q
+            ((*this->prodsPrevYs_[iAux])[fAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+        }
+
+        while (1) {
+            nuMu(&prevAux, &curAux, &numConv, &nuIter, &nuStop);
+            if (nuStop) {
+                break;
+            }
+        }
+
+        clog << "----------------------------------------generalizedBuchi: ";
+        tt.toc();
+
+        checkMakeDir("C");
+        checkMakeDir("Z");
+        checkMakeDir("G");
+        string prefix = "";
+        for (size_t iAux = 0; iAux < this->auxs_.size(); iAux++) {
+            prefix = "C/C";
+            prefix += std::to_string(iAux+1);
+            saveVec(*prodsFinalCs_[iAux], prefix);
+            prefix = "Z/Z";
+            prefix += std::to_string(iAux+1);
+            saveVec(*prodsFinalZs_[iAux], prefix);
+            prefix = "G/G";
+            prefix += std::to_string(iAux+1);
+            saveVec(*prodsGs_[iAux], prefix);
+        }
+
+        checkMakeDir("plotting");
+        this->baseXs_[0]->writeToFile("plotting/X.bdd");
+        this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
+
+    }
+
     void alwaysEventuallyOne(int startAbs, int minToGoCoarser, int minToBeValid, int verbose = 1) {
         startAbs_ = startAbs;
         minToGoCoarser_ = minToGoCoarser;
@@ -56,17 +116,19 @@ public:
         TicToc tt;
         tt.tic();
 
-        int curAux = 0;
+        size_t prevAux = 0;
+        size_t curAux = 0;
+        size_t numConv = 0;
         int nuIter = 1;
         int nuStop = 0;
 
         // initialization for nuMu
-        for (int iAbs = 0; iAbs < *this->base_->numAbs_; iAbs++) {
-            ((*this->prodsYs_[curAux])[iAbs])->addGridPoints(); // Y = Q
-        }
+        ((*this->prodsYs_[curAux])[*this->base_->numAbs_ - 1])->addGridPoints(); // Y = Q
+        ((*this->prodsPrevYs_[curAux])[*this->base_->numAbs_ - 1])->symbolicSet_ = this->ddmgr_->bddZero();
+
 
         while (1) {
-            nuMu(curAux, &nuIter, &nuStop);
+            nuMu(&prevAux, &curAux, &numConv, &nuIter, &nuStop);
             if (nuStop) {
                 break;
             }
@@ -88,7 +150,7 @@ public:
         prefix += std::to_string(curAux+1);
         saveVec(*prodsFinalZs_[curAux], prefix);
         checkMakeDir("plotting");
-        this->baseXs_[curAux]->writeToFile("plotting/X.bdd");
+        this->baseXs_[0]->writeToFile("plotting/X.bdd");
         this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
         ((*this->prodsIs_[curAux])[fAbs])->writeToFile("plotting/I.bdd");
         checkMakeDir("G");
@@ -101,82 +163,39 @@ public:
 
 
 
-    int reachOne(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
-        startAbs_ = startAbs;
-        minToGoCoarser_ = minToGoCoarser;
-        minToBeValid_ = minToBeValid;
-        earlyBreak_ = earlyBreak;
-        verbose_ = verbose;
 
-        if ( (startAbs_ < 0) || (startAbs_ >= *this->base_->numAbs_) ) {
-            error("Error: startAbs out of range.\n");
-        }
-        if (this->auxs_.size() != 1) {
-            error("Error: this debugging function only works with one auxiliary system.");
-        }
-
-        TicToc tt;
-        tt.tic();
-
-        int curAux = 0;
-        int curAbs = startAbs_;
-        int iter = 1;
-        int justCoarsed = 0;
-        int iterCurAbs = 1;
-        int reached = 0;
-        int stop = 0;
-
-        // initialization
-        for (int iAbs = 0; iAbs < *this->base_->numAbs_; iAbs++) {
-            ((*this->prodsPreYs_[curAux])[iAbs])->addGridPoints();
-            ((*this->prodsZs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-            ((*this->prodsValidZs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-            ((*this->prodsCs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-            ((*this->prodsValidCs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-        }
-
-        while (1) {
-            mu(curAux, &curAbs, &iter, &justCoarsed, &iterCurAbs, &reached, &stop);
-            if (stop) {
-                break;
-            }
-        }
-        if (reached) {
-            clog << "Won.\n";
-            checkMakeDir("C");
-            string prefix = "C/C";
-            prefix += std::to_string(curAux+1);
-            saveVec(*prodsFinalCs_[curAux], prefix);
-            checkMakeDir("Z");
-            prefix = "Z/Z";
-            prefix += std::to_string(curAux+1);
-            saveVec(*prodsFinalZs_[curAux], prefix);
-            checkMakeDir("G");
-            prefix = "G/G";
-            prefix += std::to_string(curAux+1);
-            saveVec(*prodsGs_[curAux], prefix);
-
-            int fAbs = *this->base_->numAbs_ - 1;
-            this->baseXs_[curAux]->writeToFile("plotting/X.bdd");
-            this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
-            ((*this->prodsIs_[curAux])[fAbs])->writeToFile("plotting/I.bdd");
-
-            clog << "----------------------------------------reach: ";
-            tt.toc();
-            return 1;
-        }
-        else {
-            clog << "Lost.\n";
-            clog << "----------------------------------------reach: ";
-            tt.toc();
-            return 0;
-        }
-    }
-
-    void nuMu(int curAux, int* nuIter, int* nuStop) {
+    void nuMu(size_t* prevAux, size_t* curAux, size_t* numConv, int* nuIter, int* nuStop) {
         clog << "------------------------------nuMu iteration: " << *nuIter << "------------------------------\n";
         cout << "------------------------------nuMu iteration: " << *nuIter << "------------------------------\n";
 
+        // find pre(Y) of product system prevAux at finest abstraction
+        int fAbs = *this->base_->numAbs_ - 1;
+        BDD preYC = Cpre(((*this->prodsYs_[*prevAux])[fAbs])->symbolicSet_,
+                         ((*this->prodsTs_[*prevAux])[fAbs])->symbolicSet_,
+                         ((*this->prodsTTs_[*prevAux])[fAbs])->symbolicSet_,
+                         ((*this->prodsPermutesXtoX2_[*prevAux])[fAbs]),
+                         *((*this->prodsNotXUVars_[*prevAux])[fAbs]));
+        BDD basePreY = preYC.ExistAbstract(*this->baseNotXVars_[fAbs]);
+
+        // obtain pre(Y) to use in this mu.
+        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->auxsXs_[*curAux])[fAbs])->symbolicSet_;
+
+        cout << "prodPreY finest:\n";
+        ((*this->prodsPreYs_[*curAux])[fAbs])->printInfo(1);
+
+        // construct pre(Y) for all other abstractions
+        for (int iAbs = fAbs; iAbs > 0; iAbs--) {
+            // reset to 0 since innerCoarser only adds states
+            ((*this->prodsPreYs_[*curAux])[iAbs-1])->symbolicSet_ = this->ddmgr_->bddZero();
+            innerCoarser((*this->prodsPreYs_[*curAux])[iAbs-1],
+                    (*this->prodsPreYs_[*curAux])[iAbs],
+                    (*this->prodsXXs_[*curAux])[iAbs-1],
+                    (*this->prodsNotXVars_[*curAux])[iAbs-1],
+                    (*this->prodsXs_[*curAux])[iAbs-1],
+                    this->prodsNumFiner_[*curAux]);
+        }
+
+        // initialization for mu
         int curAbs = startAbs_;
         int muIter = 1;
         int justCoarsed = 0;
@@ -184,75 +203,62 @@ public:
         int reached = 0;
         int muStop = 0;
 
-        // find pre(Y) at finest abstraction
-        int fAbs = *this->base_->numAbs_ - 1;
-        BDD preYC = Cpre(((*this->prodsYs_[curAux])[fAbs])->symbolicSet_,
-                         ((*this->prodsTs_[curAux])[fAbs])->symbolicSet_,
-                         ((*this->prodsTTs_[curAux])[fAbs])->symbolicSet_,
-                         ((*this->prodsPermutesXtoX2_[curAux])[fAbs]),
-                         *((*this->prodsNotXUVars_[curAux])[fAbs]));
-        ((*this->prodsPreYs_[curAux])[fAbs])->symbolicSet_ = preYC.ExistAbstract(*((*this->prodsNotXVars_[curAux])[fAbs]));
-
-        cout << "prodPreY finest:\n";
-        ((*this->prodsPreYs_[curAux])[fAbs])->printInfo(1);
-
-        // construct pre(Y) for all other abstractions
-        for (int iAbs = fAbs; iAbs > 0; iAbs--) {
-            // reset to 0 since innerCoarser only adds states
-            ((*this->prodsPreYs_[curAux])[iAbs-1])->symbolicSet_ = this->ddmgr_->bddZero();
-            innerCoarser((*this->prodsPreYs_[curAux])[iAbs-1],
-                    (*this->prodsPreYs_[curAux])[iAbs],
-                    (*this->prodsXXs_[curAux])[iAbs-1],
-                    (*this->prodsNotXVars_[curAux])[iAbs-1],
-                    (*this->prodsXs_[curAux])[iAbs-1],
-                    this->prodsNumFiner_[curAux]);
-        }
-
-        // initialization for mu
         for (int iAbs = 0; iAbs < *this->base_->numAbs_; iAbs++) {
-            ((*this->prodsZs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-            ((*this->prodsValidZs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-            ((*this->prodsCs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-            ((*this->prodsValidCs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+            ((*this->prodsZs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+            ((*this->prodsValidZs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+            ((*this->prodsCs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+            ((*this->prodsValidCs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
         }
 
         clog << "Resetting prodCs, prodZs, prodValidCs, prodValidZs to empty.\n";
         clog << "Emptying prodFinalCs, prodFinalZs.\n";
-        size_t j = prodsFinalCs_[curAux]->size();
+        size_t j = prodsFinalCs_[*curAux]->size();
         for (size_t i = 0; i < j; i++) {
-            delete prodsFinalCs_[curAux]->back();
-            prodsFinalCs_[curAux]->pop_back();
-            delete prodsFinalZs_[curAux]->back();
-            prodsFinalZs_[curAux]->pop_back();
+            delete prodsFinalCs_[*curAux]->back();
+            prodsFinalCs_[*curAux]->pop_back();
+            delete prodsFinalZs_[*curAux]->back();
+            prodsFinalZs_[*curAux]->pop_back();
         }
 
         while (1) { // eventually
-            this->mu(curAux, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &reached, &muStop);
+            this->mu(*curAux, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &reached, &muStop);
             if (muStop) {
                 break;
             }
         }
 
         // projecting all winning states onto finest abstraction
-        ((*this->prodsYs_[curAux])[0])->symbolicSet_ = ((*this->prodsZs_[curAux])[0])->symbolicSet_;
+        ((*this->prodsYs_[*curAux])[0])->symbolicSet_ = ((*this->prodsZs_[*curAux])[0])->symbolicSet_;
         for (int iAbs = 0; iAbs < *this->base_->numAbs_ - 1; iAbs++) {
-            innerFiner((*this->prodsYs_[curAux])[iAbs],
-                    (*this->prodsYs_[curAux])[iAbs+1],
-                    (*this->prodsXXs_[curAux])[iAbs],
-                    (*this->prodsNotXVars_[curAux])[iAbs+1],
-                    (*this->prodsXs_[curAux])[iAbs+1]);
-            ((*this->prodsYs_[curAux])[iAbs+1])->symbolicSet_ |= ((*this->prodsZs_[curAux])[iAbs+1])->symbolicSet_;
+            innerFiner((*this->prodsYs_[*curAux])[iAbs],
+                    (*this->prodsYs_[*curAux])[iAbs+1],
+                    (*this->prodsXXs_[*curAux])[iAbs],
+                    (*this->prodsNotXVars_[*curAux])[iAbs+1],
+                    (*this->prodsXs_[*curAux])[iAbs+1]);
+            ((*this->prodsYs_[*curAux])[iAbs+1])->symbolicSet_ |= ((*this->prodsZs_[*curAux])[iAbs+1])->symbolicSet_;
         }
 
-        if (((*this->prodsYs_[curAux])[fAbs])->symbolicSet_ == ((*this->prodsPrevYs_[curAux])[fAbs])->symbolicSet_) {
+        if ( ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_ == ((*this->prodsPrevYs_[*curAux])[fAbs])->symbolicSet_ ) {
+            *numConv += 1;
+        }
+        else {
+            *numConv = 0;
+            ((*this->prodsPrevYs_[*curAux])[fAbs])->symbolicSet_ = ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_;
+        }
+        if (*numConv == this->auxs_.size()) {
             *nuStop = 1;
             return;
         }
-        else {
-            ((*this->prodsPrevYs_[curAux])[fAbs])->symbolicSet_ = ((*this->prodsYs_[curAux])[fAbs])->symbolicSet_;
-        }
 
         *nuIter += 1;
+
+        *prevAux = *curAux;
+        if (*curAux == this->auxs_.size() - 1) {
+            *curAux = 0;
+        }
+        else {
+            *curAux += 1;
+        }
     }
 
 
@@ -506,6 +512,79 @@ public:
         prodFinalZ->symbolicSet_ = ((*this->prodsZs_[curAux])[curAbs])->symbolicSet_;
         prodsFinalCs_[curAux]->push_back(prodFinalC);
         prodsFinalZs_[curAux]->push_back(prodFinalZ);
+    }
+
+
+    int reachOne(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
+        startAbs_ = startAbs;
+        minToGoCoarser_ = minToGoCoarser;
+        minToBeValid_ = minToBeValid;
+        earlyBreak_ = earlyBreak;
+        verbose_ = verbose;
+
+        if ( (startAbs_ < 0) || (startAbs_ >= *this->base_->numAbs_) ) {
+            error("Error: startAbs out of range.\n");
+        }
+        if (this->auxs_.size() != 1) {
+            error("Error: this debugging function only works with one auxiliary system.");
+        }
+
+        TicToc tt;
+        tt.tic();
+
+        int curAux = 0;
+        int curAbs = startAbs_;
+        int iter = 1;
+        int justCoarsed = 0;
+        int iterCurAbs = 1;
+        int reached = 0;
+        int stop = 0;
+
+        // initialization
+        for (int iAbs = 0; iAbs < *this->base_->numAbs_; iAbs++) {
+            ((*this->prodsPreYs_[curAux])[iAbs])->addGridPoints();
+            ((*this->prodsZs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+            ((*this->prodsValidZs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+            ((*this->prodsCs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+            ((*this->prodsValidCs_[curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+        }
+
+        while (1) {
+            mu(curAux, &curAbs, &iter, &justCoarsed, &iterCurAbs, &reached, &stop);
+            if (stop) {
+                break;
+            }
+        }
+        if (reached) {
+            clog << "Won.\n";
+            checkMakeDir("C");
+            string prefix = "C/C";
+            prefix += std::to_string(curAux+1);
+            saveVec(*prodsFinalCs_[curAux], prefix);
+            checkMakeDir("Z");
+            prefix = "Z/Z";
+            prefix += std::to_string(curAux+1);
+            saveVec(*prodsFinalZs_[curAux], prefix);
+            checkMakeDir("G");
+            prefix = "G/G";
+            prefix += std::to_string(curAux+1);
+            saveVec(*prodsGs_[curAux], prefix);
+
+            int fAbs = *this->base_->numAbs_ - 1;
+            this->baseXs_[curAux]->writeToFile("plotting/X.bdd");
+            this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
+            ((*this->prodsIs_[curAux])[fAbs])->writeToFile("plotting/I.bdd");
+
+            clog << "----------------------------------------reach: ";
+            tt.toc();
+            return 1;
+        }
+        else {
+            clog << "Lost.\n";
+            clog << "----------------------------------------reach: ";
+            tt.toc();
+            return 0;
+        }
     }
 
 
