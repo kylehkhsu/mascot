@@ -271,7 +271,7 @@ public:
             for (int i = 0; i < *aux->dimX_; i++) {
                 auxEtaCur[i] = aux->etaX_[i];
             }
-            for (int i = 0; i < *aux->dimX_; i++) {
+            for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
                 double* auxEtai = new double[*aux->dimX_];
                 for (int j = 0; j < *aux->dimX_; j++) {
                     auxEtai[j] = auxEtaCur[j];
