@@ -22,8 +22,8 @@ using namespace helper;
 #define aDimU 1
 
 
-const int numAbs = 2;
-const double tau = 0.9;
+const int numAbs = 1;
+const double tau = 0.9/3;
 const double tauRatio = 3;
 const int nSubInt = 5;
 
@@ -126,7 +126,7 @@ auto prod2AddG = [](SymbolicSet* G) -> void {
 void composition() {
     double bLbX[bDimX]={-6, -6};
     double bUbX[bDimX]={ 6,  6 };
-    double bEtaX[bDimX]= {0.6, 0.6};
+    double bEtaX[bDimX]= {0.6/3, 0.6/3};
     double bLbU[bDimU]= {-2, 0.5};
     double bUbU[bDimU]= { 2,   1};
     double bEtaU[bDimU]= {0.5, 0.2};
@@ -139,19 +139,19 @@ void composition() {
 
     double a0LbX[a0DimX] = {   0,   2, -1.5};
     double a0UbX[a0DimX] = { 0.2,   5,  1.5};
-    double a0EtaX[a0DimX] = {0.2, 0.4,  0.4};
+    double a0EtaX[a0DimX] = {0.2, 0.4/2,  0.4/2};
     a0X_t a0x;
     double a0EtaRatioX[a0DimX] = {1, 2, 2};
 
     double a1LbX[a1DimX] = {-0.2,  -5, -1.5};
     double a1UbX[a1DimX] = {   0,  -2,  1.5};
-    double a1EtaX[a1DimX] = {0.2, 0.4,  0.4};
+    double a1EtaX[a1DimX] = {0.2, 0.4/2,  0.4/2};
     a1X_t a1x;
     double a1EtaRatioX[a1DimX] = {1, 2, 2};
 
     double a2LbX[a2DimX] = {   2, -0.2, -1.5};
     double a2UbX[a2DimX] = {   5,    0,  1.5};
-    double a2EtaX[a2DimX] = {0.4,  0.2,  0.4};
+    double a2EtaX[a2DimX] = {0.4/2,  0.2,  0.4/2};
     a2X_t a2x;
     double a2EtaRatioX[a2DimX] = {2, 1, 2};
 
@@ -186,7 +186,7 @@ void composition() {
     abs.computeAuxAbstractions(aux2SysNext, aux2RadNext, a2x, au, 2);
     abs.composeAbstractions();
 
-    int startAbs = 1;
+    int startAbs = 0;
     int minToGoCoarser = 2;
     int minToBeValid = 5;
 

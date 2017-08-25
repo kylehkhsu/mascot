@@ -67,6 +67,7 @@ public:
 
         for (size_t iAux = 0; iAux < this->auxs_.size(); iAux++) {
             ((*this->prodsYs_[iAux])[fAbs])->addGridPoints(); // Y = Q
+            ((*this->prodsPreYs_[iAux])[fAbs])->addGridPoints();
             ((*this->prodsPrevYs_[iAux])[fAbs])->symbolicSet_ = this->ddmgr_->bddZero();
         }
 
@@ -187,9 +188,9 @@ public:
         BDD basePreY = preYC.ExistAbstract(*this->baseNotXVars_[fAbs]);
 
         // obtain pre(Y) to use in this mu.
-//        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->auxsXs_[*curAux])[fAbs])->symbolicSet_;
-        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_;
-
+//        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->auxsXs_[*curAux])[fAbs])->symbolicSet_; most likely wrong since it throws away information about A_curAux states
+//        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_; most likely wrong since prodY is the result of mu from the last time
+        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ &= basePreY;
 
         // DO CONVERGENCE CHECKING HERE INSTEAD OF AT END?!?!
 

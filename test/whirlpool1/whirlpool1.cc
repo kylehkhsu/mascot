@@ -16,11 +16,11 @@ using namespace helper;
 
 #define bDimX 2
 #define bDimU 2
-#define a0DimX 3
+#define a0DimX 2
 #define aDimU 1
 
 const int numAbs = 2;
-const double tau = 0.9;
+const double tau = 0.5;
 const double tauRatio = 2;
 const int nSubInt = 5;
 
@@ -50,26 +50,28 @@ auto baseRadNext = [](bX_t &br, bU_t &bu, double tau, OdeSolver solver) -> void 
 
 auto aux0SysNext = [](a0X_t &a0x, aU_t &au, double tau, OdeSolver solver) -> void {
     auto ODE = [](a0X_t &da0xdt, const a0X_t &a0x, aU_t &au) -> void {
-        da0xdt[0] = a0x[2];
-        da0xdt[1] = 0;
-        da0xdt[2] = -(a0x[0]-3.5);
+        da0xdt[0] = a0x[1];
+        da0xdt[1] = -(a0x[0]-3.5);
     };
     solver(ODE, a0x, au);
 };
 
 auto aux0RadNext= [](a0X_t &a0r, aU_t &au, double tau, OdeSolver solver) -> void {
+//    auto ODE = [](a0X_t &da0rdt, const a0X_t &a0r, aU_t &au) -> void {
+//        da0rdt[0] = a0r[1];
+//        da0rdt[1] = a0r[0];
+//    };
+//    solver(ODE, a0r, au);
     a0r[0] = 0;
     a0r[1] = 0;
-    a0r[2] = 0;
 };
-
 auto baseAddO = [](SymbolicSet* O) -> void {
     ;
 };
 
 auto prod0AddG = [](SymbolicSet* G) -> void {
     auto f = [](double* ba0x)->bool {
-        return sqrt(pow(ba0x[0]-ba0x[2], 2) + pow(ba0x[1]-ba0x[3], 2)) <= 0.5;
+        return sqrt(pow(ba0x[0]-0, 2) + pow(ba0x[1]-ba0x[2], 2)) <= 0.5;
     };
     G->addByFunction(f);
 };
@@ -86,14 +88,14 @@ void composition() {
 
     double bEtaRatioX[bDimX] = {2, 2};
 
-    double a0LbX[a0DimX] = {   2, -0.2, -1.5};
-    double a0UbX[a0DimX] = {   5,    0,  1.5};
-    double a0EtaX[a0DimX] = {0.2,  0.2,  0.2};
+    double a0LbX[a0DimX] = {   0, -1.5};
+    double a0UbX[a0DimX] = {   7,  1.5};
+    double a0EtaX[a0DimX] = {0.4,  0.4};
 
     a0X_t a0x;
     aU_t au;
 
-    double a0EtaRatioX[a0DimX] = {1, 1, 1};
+    double a0EtaRatioX[a0DimX] = {2, 2};
 
     System base(bDimX, bLbX, bUbX, bEtaX, tau,
                bDimU, bLbU, bUbU, bEtaU,

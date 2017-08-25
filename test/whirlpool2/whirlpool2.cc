@@ -16,8 +16,8 @@ using namespace helper;
 
 #define bDimX 2
 #define bDimU 2
-#define a0DimX 3
-#define a1DimX 3
+#define a0DimX 2
+#define a1DimX 2
 #define aDimU 1
 
 
@@ -53,32 +53,34 @@ auto baseRadNext = [](bX_t &br, bU_t &bu, double tau, OdeSolver solver) -> void 
 
 auto aux0SysNext = [](a0X_t &a0x, aU_t &au, double tau, OdeSolver solver) -> void {
     auto ODE = [](a0X_t &da0xdt, const a0X_t &a0x, aU_t &au) -> void {
-        da0xdt[0] = 0;
-        da0xdt[1] = a0x[2];
-        da0xdt[2] = -(a0x[1]-3.5);
+        da0xdt[0] = a0x[1];
+        da0xdt[1] = -(a0x[0]-3.5);
     };
     solver(ODE, a0x, au);
 };
 
 auto aux0RadNext= [](a0X_t &a0r, aU_t &au, double tau, OdeSolver solver) -> void {
-    a0r[0] = 0;
-    a0r[1] = 0;
-    a0r[2] = 0;
+    auto ODE = [](a0X_t &da0rdt, const a0X_t &a0r, aU_t &au) -> void {
+        da0rdt[0] = a0r[1];
+        da0rdt[1] = a0r[0];
+    };
+    solver(ODE, a0r, au);
 };
 
 auto aux1SysNext = [](a1X_t &a1x, aU_t &au, double tau, OdeSolver solver) -> void {
     auto ODE = [](a1X_t &da1xdt, const a1X_t &a1x, aU_t &au) -> void {
-        da1xdt[0] = 0;
-        da1xdt[1] = a1x[2];
-        da1xdt[2] = -(a1x[1]-(-3.5));
+        da1xdt[0] = a1x[1];
+        da1xdt[1] = -(a1x[0]-(-3.5));
     };
     solver(ODE, a1x, au);
 };
 
 auto aux1RadNext= [](a1X_t &a1r, aU_t &au, double tau, OdeSolver solver) -> void {
-    a1r[0] = 0;
-    a1r[1] = 0;
-    a1r[2] = 0;
+    auto ODE = [](a1X_t &da1rdt, const a1X_t &a1r, aU_t &au) -> void {
+        da1rdt[0] = a1r[1];
+        da1rdt[1] = a1r[0];
+    };
+    solver(ODE, a1r, au);
 };
 
 auto baseAddO = [](SymbolicSet* O) -> void {
@@ -87,14 +89,14 @@ auto baseAddO = [](SymbolicSet* O) -> void {
 
 auto prod0AddG = [](SymbolicSet* G) -> void {
     auto f = [](double* ba0x)->bool {
-        return sqrt(pow(ba0x[0]-ba0x[2], 2) + pow(ba0x[1]-ba0x[3], 2)) <= 0.5;
+        return sqrt(pow(ba0x[0], 2) + pow(ba0x[1]-ba0x[2], 2)) <= 0.5;
     };
     G->addByFunction(f);
 };
 
 auto prod1AddG = [](SymbolicSet* G) -> void {
     auto f = [](double* ba1x)->bool {
-        return sqrt(pow(ba1x[0]-ba1x[2], 2) + pow(ba1x[1]-ba1x[3], 2)) <= 0.5;
+        return sqrt(pow(ba1x[0], 2) + pow(ba1x[1]-ba1x[2], 2)) <= 0.5;
     };
     G->addByFunction(f);
 };
@@ -113,17 +115,17 @@ void composition() {
 
     aU_t au;
 
-    double a0LbX[a0DimX] = {   0,   2, -1.5};
-    double a0UbX[a0DimX] = { 0.2,   5,  1.5};
-    double a0EtaX[a0DimX] = {0.2, 0.2,  0.2};
+    double a0LbX[a0DimX] = {    0, -1.5};
+    double a0UbX[a0DimX] = {    7,  1.5};
+    double a0EtaX[a0DimX] = { 0.4,  0.4};
     a0X_t a0x;
-    double a0EtaRatioX[a0DimX] = {1, 1, 1};
+    double a0EtaRatioX[a0DimX] = {2, 2};
 
-    double a1LbX[a1DimX] = {-0.2,  -5, -1.5};
-    double a1UbX[a1DimX] = {   0,  -2,  1.5};
-    double a1EtaX[a1DimX] = {0.2, 0.2,  0.2};
+    double a1LbX[a1DimX] = {  -7, -1.5};
+    double a1UbX[a1DimX] = {   0,  1.5};
+    double a1EtaX[a1DimX] = {0.4,  0.4};
     a1X_t a1x;
-    double a1EtaRatioX[a1DimX] = {1, 1, 1};
+    double a1EtaRatioX[a1DimX] = {2, 2};
 
     System base(bDimX, bLbX, bUbX, bEtaX, tau,
                bDimU, bLbU, bUbU, bEtaU,

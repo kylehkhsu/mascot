@@ -1,9 +1,9 @@
 
 function whirlpool2 (mode, numGoals, numAbs, controllers)
   w = [0 0];
-  bx = [4 0];
-  a1x = [0.1 3.5 -1.1];
-  a2x = [-0.1 -3.5 1.1];
+  bx = [0 0];
+  a1x = [0.1 4.3 0.3];
+  a2x = [-0.1 -2.7 -0.5];
   bInd = [1 2];
   aInd = [3 4 5; 6 7 8];
   x = [bx a1x a2x];
@@ -79,7 +79,8 @@ function whirlpool2 (mode, numGoals, numAbs, controllers)
 	    G = SymbolicSet(['Z/Z' int2str(iGoal) int2str(iController-1) '.bdd']);	   
 	  end
 	  p = G.points();
-	  plot(p(:,1), p(:,2), 'x', 'MarkerFaceColor', colors(mod(iStep,7)+1,:), 'MarkerSize', 1.5);
+	  D = gobjects(1,1);
+	  D(1) = plot(p(:,1), p(:,2), 'x', 'MarkerFaceColor', colors(mod(iStep,7)+1,:), 'MarkerSize', 1.5);
 	  eta = Z.eta();
 	  eta = eta';
 	  tau = eta(1) * 3 / 2;
@@ -155,7 +156,8 @@ function whirlpool2 (mode, numGoals, numAbs, controllers)
 
 	    iStep = iStep + 1;
 	  
-	  end   
+	  end
+	  delete(D(1));
 	end
       end
     end

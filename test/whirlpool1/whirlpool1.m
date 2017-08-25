@@ -1,8 +1,8 @@
 
 function whirlpool1 (mode, numGoals, numAbs, controllers)
   w = [0 0];
-  bx = [1 1];
-  a1x = [4.3 -0.1 0.9];
+  bx = [0 -3];
+  a1x = [4.3 -0.1 -0.5];
   bInd = [1 2];
   aInd = [3 4 5];
   x = [bx a1x];
@@ -47,7 +47,7 @@ function whirlpool1 (mode, numGoals, numAbs, controllers)
   end
  
   if (strcmp(mode, 'GB')) % generalized Buchi
-    numLoops = 10;
+    numLoops = 100;
   
     openfig('problem');
     hold on

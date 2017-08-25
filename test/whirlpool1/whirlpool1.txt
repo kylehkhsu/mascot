@@ -2,12 +2,11 @@ whirlpool1.txt
 Initialized base's, auxs' etaXs, taus.
 baseEtaXs_[0]: 0.6 0.6 
 baseEtaXs_[1]: 0.3 0.3 
-auxsEtaXs_[0][0]: 0.2 0.2 0.2 
-auxsEtaXs_[0][1]: 0.2 0.2 0.2 
-auxsEtaXs_[0][2]: 0.2 0.2 0.2 
+auxsEtaXs_[0][0]: 0.4 0.4 
+auxsEtaXs_[0][1]: 0.2 0.2 
 Initialized base's, prods' numFiners.
 baseNumFiner_: 4
-prodsNumFiner_: 4 
+prodsNumFiner_: 16 
 Initialized base's, auxs' ODE solvers.
 Initialized base's Xs to full, Zs to empty.
 Initialized auxs' Xs to full.
@@ -21,8 +20,8 @@ Initialized prods' Ts, TTs to empty.
 Initialized base's, auxs', prods' cubesX, cubesX2.
 Number of BDD variables: 86
 Initialized prods' permutes.
-prodsPermutesXtoX2_[0][0]: 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-prodsPermutesXtoX2_[0][1]: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+prodsPermutesXtoX2_[0][0]: 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+prodsPermutesXtoX2_[0][1]: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 Initialized prodsGs[0].
 Initialized baseOs.
 Computed base's transition relations.
@@ -122,1139 +121,101 @@ mu iteration: 12
 justCoarsed: 0
 iterCurAbs: 9
 controllers: 1
-More new states, already at coarsest gridding, continuing.
+No new winning states; going finer.
+Current controller has been declared valid.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
+Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 13
 justCoarsed: 0
-iterCurAbs: 10
-controllers: 1
-More new states, already at coarsest gridding, continuing.
+iterCurAbs: 1
+controllers: 2
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 14
 justCoarsed: 0
-iterCurAbs: 11
-controllers: 1
-More new states, already at coarsest gridding, continuing.
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
 mu iteration: 15
-justCoarsed: 0
-iterCurAbs: 12
-controllers: 1
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 16
-justCoarsed: 0
-iterCurAbs: 13
-controllers: 1
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 17
-justCoarsed: 0
-iterCurAbs: 14
-controllers: 1
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 18
-justCoarsed: 0
-iterCurAbs: 15
-controllers: 1
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 19
-justCoarsed: 0
-iterCurAbs: 16
-controllers: 1
+justCoarsed: 1
+iterCurAbs: 5
+controllers: 3
+Current controller now valid.
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 20
 justCoarsed: 0
-iterCurAbs: 17
-controllers: 1
+iterCurAbs: 6
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 21
 justCoarsed: 0
-iterCurAbs: 18
-controllers: 1
+iterCurAbs: 7
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 22
 justCoarsed: 0
-iterCurAbs: 19
-controllers: 1
+iterCurAbs: 8
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 23
 justCoarsed: 0
-iterCurAbs: 20
-controllers: 1
-More new states, already at coarsest gridding, continuing.
+iterCurAbs: 9
+controllers: 3
+No new winning states; going finer.
+Current controller has been declared valid.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
+Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 24
 justCoarsed: 0
-iterCurAbs: 21
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 25
-justCoarsed: 0
-iterCurAbs: 22
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 26
-justCoarsed: 0
-iterCurAbs: 23
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 27
-justCoarsed: 0
-iterCurAbs: 24
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 28
-justCoarsed: 0
-iterCurAbs: 25
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 29
-justCoarsed: 0
-iterCurAbs: 26
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 30
-justCoarsed: 0
-iterCurAbs: 27
-controllers: 1
-No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
-
-current abstraction: 1
-mu iteration: 31
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 2
-
-current abstraction: 1
-mu iteration: 32
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 2
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 33
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 34
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 35
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 36
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 37
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 3
-Current controller now valid.
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 38
-justCoarsed: 0
-iterCurAbs: 6
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 39
-justCoarsed: 0
-iterCurAbs: 7
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 40
-justCoarsed: 0
-iterCurAbs: 8
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 41
-justCoarsed: 0
-iterCurAbs: 9
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 42
-justCoarsed: 0
-iterCurAbs: 10
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 43
-justCoarsed: 0
-iterCurAbs: 11
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 44
-justCoarsed: 0
-iterCurAbs: 12
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 45
-justCoarsed: 0
-iterCurAbs: 13
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 46
-justCoarsed: 0
-iterCurAbs: 14
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 47
-justCoarsed: 0
-iterCurAbs: 15
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 48
-justCoarsed: 0
-iterCurAbs: 16
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 49
-justCoarsed: 0
-iterCurAbs: 17
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 50
-justCoarsed: 0
-iterCurAbs: 18
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 51
-justCoarsed: 0
-iterCurAbs: 19
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 52
-justCoarsed: 0
-iterCurAbs: 20
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 53
-justCoarsed: 0
-iterCurAbs: 21
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 54
-justCoarsed: 0
-iterCurAbs: 22
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 55
-justCoarsed: 0
-iterCurAbs: 23
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 56
-justCoarsed: 0
-iterCurAbs: 24
-controllers: 3
-No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
-
-current abstraction: 1
-mu iteration: 57
-justCoarsed: 0
 iterCurAbs: 1
 controllers: 4
 
-current abstraction: 1
-mu iteration: 58
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 4
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 59
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 5
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 60
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 4
-
-current abstraction: 1
-mu iteration: 61
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 4
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 62
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 63
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 64
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 65
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 66
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 5
-Current controller now valid.
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 67
-justCoarsed: 0
-iterCurAbs: 6
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 68
-justCoarsed: 0
-iterCurAbs: 7
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 69
-justCoarsed: 0
-iterCurAbs: 8
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 70
-justCoarsed: 0
-iterCurAbs: 9
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 71
-justCoarsed: 0
-iterCurAbs: 10
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 72
-justCoarsed: 0
-iterCurAbs: 11
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 73
-justCoarsed: 0
-iterCurAbs: 12
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 74
-justCoarsed: 0
-iterCurAbs: 13
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 75
-justCoarsed: 0
-iterCurAbs: 14
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 76
-justCoarsed: 0
-iterCurAbs: 15
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 77
-justCoarsed: 0
-iterCurAbs: 16
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 78
-justCoarsed: 0
-iterCurAbs: 17
-controllers: 5
-No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
-
-current abstraction: 1
-mu iteration: 79
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 6
-
-current abstraction: 1
-mu iteration: 80
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 6
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 81
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 7
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 82
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 6
-
-current abstraction: 1
-mu iteration: 83
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 6
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 84
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 7
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 85
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 7
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 86
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 7
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 87
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 7
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 88
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 7
-Current controller now valid.
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 89
-justCoarsed: 0
-iterCurAbs: 6
-controllers: 7
-No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
-
-current abstraction: 1
-mu iteration: 90
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 8
-
-current abstraction: 1
-mu iteration: 91
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 8
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 92
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 9
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 93
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 9
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 94
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 9
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 95
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 9
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 96
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 9
-Current controller now valid.
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 97
-justCoarsed: 0
-iterCurAbs: 6
-controllers: 9
-No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
-
-current abstraction: 1
-mu iteration: 98
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 10
-
-current abstraction: 1
-mu iteration: 99
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 10
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 100
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 101
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 102
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 103
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 11
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 104
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 10
-
-current abstraction: 1
-mu iteration: 105
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 10
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 106
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 107
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 108
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 11
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 109
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 10
-
-current abstraction: 1
-mu iteration: 110
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 10
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 111
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 112
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 113
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 114
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 115
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 11
-Current controller now valid.
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 116
-justCoarsed: 0
-iterCurAbs: 6
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 117
-justCoarsed: 0
-iterCurAbs: 7
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 118
-justCoarsed: 0
-iterCurAbs: 8
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 119
-justCoarsed: 0
-iterCurAbs: 9
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 120
-justCoarsed: 0
-iterCurAbs: 10
-controllers: 11
-No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
-
-current abstraction: 1
-mu iteration: 121
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 12
-
-current abstraction: 1
-mu iteration: 122
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 12
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 123
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 124
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 125
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 126
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 127
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 13
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 128
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 12
-
-current abstraction: 1
-mu iteration: 129
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 12
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 130
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 131
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 132
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 133
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 13
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 134
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 12
-
-current abstraction: 1
-mu iteration: 135
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 12
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 136
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 137
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 138
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 139
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 13
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 140
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 12
-
-current abstraction: 1
-mu iteration: 141
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 12
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 142
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 143
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 144
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 145
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 12
-
-current abstraction: 1
-mu iteration: 146
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 12
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 147
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 148
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 149
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 150
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 12
-
-current abstraction: 1
-mu iteration: 151
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 12
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 152
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 153
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 154
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 155
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 12
-
-current abstraction: 1
-mu iteration: 156
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 12
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 157
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 158
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 159
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 160
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 13
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 161
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 12
-
-mu number of controllers: 13
+mu number of controllers: 5
 
 ------------------------------nuMu iteration: 2------------------------------
 previous nu: 0
@@ -1297,24 +258,285 @@ mu iteration: 5
 justCoarsed: 1
 iterCurAbs: 2
 controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 6
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 7
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 8
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 6
+mu iteration: 9
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 10
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 11
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 12
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 13
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 14
 justCoarsed: 1
 iterCurAbs: 3
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 7
+mu iteration: 15
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 16
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 17
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 18
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 19
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 20
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 21
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 22
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 23
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 24
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 25
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 26
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 27
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 28
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 29
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 30
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 31
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 32
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 33
 justCoarsed: 1
 iterCurAbs: 4
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 8
+mu iteration: 34
+justCoarsed: 1
+iterCurAbs: 5
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 35
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 36
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 37
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 38
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 39
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 40
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 41
 justCoarsed: 1
 iterCurAbs: 5
 controllers: 1
@@ -1322,156 +544,387 @@ Current controller now valid.
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 9
+mu iteration: 42
 justCoarsed: 0
 iterCurAbs: 6
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 10
+mu iteration: 43
 justCoarsed: 0
 iterCurAbs: 7
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 11
+mu iteration: 44
 justCoarsed: 0
 iterCurAbs: 8
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 12
+mu iteration: 45
 justCoarsed: 0
 iterCurAbs: 9
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 13
+mu iteration: 46
 justCoarsed: 0
 iterCurAbs: 10
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 14
+mu iteration: 47
 justCoarsed: 0
 iterCurAbs: 11
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 15
+mu iteration: 48
 justCoarsed: 0
 iterCurAbs: 12
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 16
+mu iteration: 49
 justCoarsed: 0
 iterCurAbs: 13
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 17
+mu iteration: 50
 justCoarsed: 0
 iterCurAbs: 14
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 18
+mu iteration: 51
 justCoarsed: 0
 iterCurAbs: 15
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 19
+mu iteration: 52
 justCoarsed: 0
 iterCurAbs: 16
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 20
+mu iteration: 53
 justCoarsed: 0
 iterCurAbs: 17
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 21
+mu iteration: 54
 justCoarsed: 0
 iterCurAbs: 18
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 22
+mu iteration: 55
 justCoarsed: 0
 iterCurAbs: 19
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 23
+mu iteration: 56
 justCoarsed: 0
 iterCurAbs: 20
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 24
+mu iteration: 57
 justCoarsed: 0
 iterCurAbs: 21
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 25
+mu iteration: 58
 justCoarsed: 0
 iterCurAbs: 22
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 26
+mu iteration: 59
 justCoarsed: 0
 iterCurAbs: 23
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 27
+mu iteration: 60
 justCoarsed: 0
 iterCurAbs: 24
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 28
+mu iteration: 61
 justCoarsed: 0
 iterCurAbs: 25
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 29
+mu iteration: 62
 justCoarsed: 0
 iterCurAbs: 26
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 30
+mu iteration: 63
 justCoarsed: 0
 iterCurAbs: 27
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 64
+justCoarsed: 0
+iterCurAbs: 28
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 65
+justCoarsed: 0
+iterCurAbs: 29
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 66
+justCoarsed: 0
+iterCurAbs: 30
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 67
+justCoarsed: 0
+iterCurAbs: 31
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 68
+justCoarsed: 0
+iterCurAbs: 32
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 69
+justCoarsed: 0
+iterCurAbs: 33
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 70
+justCoarsed: 0
+iterCurAbs: 34
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 71
+justCoarsed: 0
+iterCurAbs: 35
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 72
+justCoarsed: 0
+iterCurAbs: 36
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 73
+justCoarsed: 0
+iterCurAbs: 37
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 74
+justCoarsed: 0
+iterCurAbs: 38
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 75
+justCoarsed: 0
+iterCurAbs: 39
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 76
+justCoarsed: 0
+iterCurAbs: 40
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 77
+justCoarsed: 0
+iterCurAbs: 41
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 78
+justCoarsed: 0
+iterCurAbs: 42
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 79
+justCoarsed: 0
+iterCurAbs: 43
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 80
+justCoarsed: 0
+iterCurAbs: 44
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 81
+justCoarsed: 0
+iterCurAbs: 45
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 82
+justCoarsed: 0
+iterCurAbs: 46
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 83
+justCoarsed: 0
+iterCurAbs: 47
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 84
+justCoarsed: 0
+iterCurAbs: 48
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 85
+justCoarsed: 0
+iterCurAbs: 49
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 86
+justCoarsed: 0
+iterCurAbs: 50
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 87
+justCoarsed: 0
+iterCurAbs: 51
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 88
+justCoarsed: 0
+iterCurAbs: 52
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 89
+justCoarsed: 0
+iterCurAbs: 53
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 90
+justCoarsed: 0
+iterCurAbs: 54
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 91
+justCoarsed: 0
+iterCurAbs: 55
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 92
+justCoarsed: 0
+iterCurAbs: 56
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 93
+justCoarsed: 0
+iterCurAbs: 57
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 94
+justCoarsed: 0
+iterCurAbs: 58
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 95
+justCoarsed: 0
+iterCurAbs: 59
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 96
+justCoarsed: 0
+iterCurAbs: 60
 controllers: 1
 No new winning states; going finer.
 Current controller has been declared valid.
@@ -1479,696 +932,209 @@ Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
 Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
 
 current abstraction: 1
-mu iteration: 31
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 2
-
-current abstraction: 1
-mu iteration: 32
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 2
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 33
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 34
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 35
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 36
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 37
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 3
-Current controller now valid.
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 38
-justCoarsed: 0
-iterCurAbs: 6
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 39
-justCoarsed: 0
-iterCurAbs: 7
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 40
-justCoarsed: 0
-iterCurAbs: 8
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 41
-justCoarsed: 0
-iterCurAbs: 9
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 42
-justCoarsed: 0
-iterCurAbs: 10
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 43
-justCoarsed: 0
-iterCurAbs: 11
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 44
-justCoarsed: 0
-iterCurAbs: 12
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 45
-justCoarsed: 0
-iterCurAbs: 13
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 46
-justCoarsed: 0
-iterCurAbs: 14
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 47
-justCoarsed: 0
-iterCurAbs: 15
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 48
-justCoarsed: 0
-iterCurAbs: 16
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 49
-justCoarsed: 0
-iterCurAbs: 17
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 50
-justCoarsed: 0
-iterCurAbs: 18
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 51
-justCoarsed: 0
-iterCurAbs: 19
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 52
-justCoarsed: 0
-iterCurAbs: 20
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 53
-justCoarsed: 0
-iterCurAbs: 21
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 54
-justCoarsed: 0
-iterCurAbs: 22
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 55
-justCoarsed: 0
-iterCurAbs: 23
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 56
-justCoarsed: 0
-iterCurAbs: 24
-controllers: 3
-No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
-
-current abstraction: 1
-mu iteration: 57
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 4
-
-current abstraction: 1
-mu iteration: 58
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 4
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 59
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 5
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 60
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 4
-
-current abstraction: 1
-mu iteration: 61
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 4
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 62
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 63
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 64
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 65
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 66
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 5
-Current controller now valid.
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 67
-justCoarsed: 0
-iterCurAbs: 6
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 68
-justCoarsed: 0
-iterCurAbs: 7
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 69
-justCoarsed: 0
-iterCurAbs: 8
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 70
-justCoarsed: 0
-iterCurAbs: 9
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 71
-justCoarsed: 0
-iterCurAbs: 10
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 72
-justCoarsed: 0
-iterCurAbs: 11
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 73
-justCoarsed: 0
-iterCurAbs: 12
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 74
-justCoarsed: 0
-iterCurAbs: 13
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 75
-justCoarsed: 0
-iterCurAbs: 14
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 76
-justCoarsed: 0
-iterCurAbs: 15
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 77
-justCoarsed: 0
-iterCurAbs: 16
-controllers: 5
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 78
-justCoarsed: 0
-iterCurAbs: 17
-controllers: 5
-No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
-
-current abstraction: 1
-mu iteration: 79
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 6
-
-current abstraction: 1
-mu iteration: 80
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 6
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 81
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 7
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 82
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 6
-
-current abstraction: 1
-mu iteration: 83
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 6
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 84
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 7
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 85
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 7
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 86
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 7
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 87
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 7
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 88
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 7
-Current controller now valid.
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 89
-justCoarsed: 0
-iterCurAbs: 6
-controllers: 7
-No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
-
-current abstraction: 1
-mu iteration: 90
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 8
-
-current abstraction: 1
-mu iteration: 91
-justCoarsed: 0
-iterCurAbs: 2
-controllers: 8
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 92
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 9
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 93
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 9
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 94
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 9
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 95
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 9
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 96
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 9
-Current controller now valid.
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
 mu iteration: 97
 justCoarsed: 0
-iterCurAbs: 6
-controllers: 9
-No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
+iterCurAbs: 1
+controllers: 2
 
 current abstraction: 1
 mu iteration: 98
 justCoarsed: 0
-iterCurAbs: 1
-controllers: 10
-
-current abstraction: 1
-mu iteration: 99
-justCoarsed: 0
 iterCurAbs: 2
-controllers: 10
+controllers: 2
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
 Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
-mu iteration: 100
+mu iteration: 99
 justCoarsed: 1
 iterCurAbs: 1
-controllers: 11
-More new states, already at coarsest gridding, continuing.
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
-current abstraction: 0
+current abstraction: 1
+mu iteration: 100
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
 mu iteration: 101
-justCoarsed: 1
+justCoarsed: 0
 iterCurAbs: 2
-controllers: 11
-More new states, already at coarsest gridding, continuing.
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
 mu iteration: 102
 justCoarsed: 1
-iterCurAbs: 3
-controllers: 11
+iterCurAbs: 1
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 103
 justCoarsed: 1
-iterCurAbs: 4
-controllers: 11
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
-Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
-
-current abstraction: 1
-mu iteration: 104
-justCoarsed: 0
-iterCurAbs: 1
-controllers: 10
-
-current abstraction: 1
-mu iteration: 105
-justCoarsed: 0
 iterCurAbs: 2
-controllers: 10
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 104
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 105
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 3
+More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 106
 justCoarsed: 1
-iterCurAbs: 1
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 107
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 108
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 11
+iterCurAbs: 5
+controllers: 3
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
 Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
 current abstraction: 1
-mu iteration: 109
+mu iteration: 107
 justCoarsed: 0
 iterCurAbs: 1
-controllers: 10
+controllers: 2
 
 current abstraction: 1
-mu iteration: 110
+mu iteration: 108
 justCoarsed: 0
 iterCurAbs: 2
-controllers: 10
+controllers: 2
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
 Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
-mu iteration: 111
+mu iteration: 109
 justCoarsed: 1
 iterCurAbs: 1
-controllers: 11
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 110
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 111
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 112
 justCoarsed: 1
-iterCurAbs: 2
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 113
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 11
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 114
-justCoarsed: 1
 iterCurAbs: 4
-controllers: 11
-More new states, already at coarsest gridding, continuing.
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 113
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 114
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
 mu iteration: 115
 justCoarsed: 1
-iterCurAbs: 5
-controllers: 11
-Current controller now valid.
+iterCurAbs: 1
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 116
-justCoarsed: 0
-iterCurAbs: 6
-controllers: 11
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 117
-justCoarsed: 0
-iterCurAbs: 7
-controllers: 11
-More new states, already at coarsest gridding, continuing.
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 118
 justCoarsed: 0
-iterCurAbs: 8
-controllers: 11
-More new states, already at coarsest gridding, continuing.
+iterCurAbs: 1
+controllers: 2
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 119
 justCoarsed: 0
-iterCurAbs: 9
-controllers: 11
-More new states, already at coarsest gridding, continuing.
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
 mu iteration: 120
-justCoarsed: 0
-iterCurAbs: 10
-controllers: 11
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
 No new winning states; going finer.
-Current controller has been declared valid.
-Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
-Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
 current abstraction: 1
 mu iteration: 121
 justCoarsed: 0
 iterCurAbs: 1
-controllers: 12
+controllers: 2
 
 current abstraction: 1
 mu iteration: 122
 justCoarsed: 0
 iterCurAbs: 2
-controllers: 12
+controllers: 2
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
@@ -2178,169 +1144,189 @@ current abstraction: 0
 mu iteration: 123
 justCoarsed: 1
 iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 124
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 125
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-More new states, already at coarsest gridding, continuing.
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
 mu iteration: 126
 justCoarsed: 1
-iterCurAbs: 4
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 127
-justCoarsed: 1
-iterCurAbs: 5
-controllers: 13
+iterCurAbs: 1
+controllers: 3
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
 Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 127
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
 
 current abstraction: 1
 mu iteration: 128
 justCoarsed: 0
-iterCurAbs: 1
-controllers: 12
-
-current abstraction: 1
-mu iteration: 129
-justCoarsed: 0
 iterCurAbs: 2
-controllers: 12
+controllers: 2
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
 Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
-mu iteration: 130
+mu iteration: 129
 justCoarsed: 1
 iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
-current abstraction: 0
+current abstraction: 1
+mu iteration: 130
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
 mu iteration: 131
-justCoarsed: 1
+justCoarsed: 0
 iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
 mu iteration: 132
 justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 133
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 13
+iterCurAbs: 1
+controllers: 3
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
 Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 133
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
 
 current abstraction: 1
 mu iteration: 134
 justCoarsed: 0
-iterCurAbs: 1
-controllers: 12
-
-current abstraction: 1
-mu iteration: 135
-justCoarsed: 0
 iterCurAbs: 2
-controllers: 12
+controllers: 2
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
 Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
-mu iteration: 136
+mu iteration: 135
 justCoarsed: 1
 iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 137
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 138
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 139
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 13
+controllers: 3
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
 Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
 current abstraction: 1
-mu iteration: 140
+mu iteration: 136
 justCoarsed: 0
 iterCurAbs: 1
-controllers: 12
+controllers: 2
 
 current abstraction: 1
-mu iteration: 141
+mu iteration: 137
 justCoarsed: 0
 iterCurAbs: 2
-controllers: 12
+controllers: 2
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
 Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
-mu iteration: 142
+mu iteration: 138
 justCoarsed: 1
 iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 139
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 140
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
-mu iteration: 143
+mu iteration: 141
 justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 142
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 143
+justCoarsed: 0
 iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
 mu iteration: 144
 justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
+iterCurAbs: 1
+controllers: 3
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
@@ -2350,13 +1336,13 @@ current abstraction: 1
 mu iteration: 145
 justCoarsed: 0
 iterCurAbs: 1
-controllers: 12
+controllers: 2
 
 current abstraction: 1
 mu iteration: 146
 justCoarsed: 0
 iterCurAbs: 2
-controllers: 12
+controllers: 2
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
@@ -2366,119 +1352,3720 @@ current abstraction: 0
 mu iteration: 147
 justCoarsed: 1
 iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 148
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 149
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
+controllers: 3
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
 Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
 current abstraction: 1
-mu iteration: 150
+mu iteration: 148
 justCoarsed: 0
 iterCurAbs: 1
-controllers: 12
+controllers: 2
+
+current abstraction: 1
+mu iteration: 149
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 150
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
 current abstraction: 1
 mu iteration: 151
 justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 152
+justCoarsed: 0
 iterCurAbs: 2
-controllers: 12
+controllers: 2
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
 Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
-
-current abstraction: 0
-mu iteration: 152
-justCoarsed: 1
-iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 153
 justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 154
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
+iterCurAbs: 1
+controllers: 3
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
 Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
 current abstraction: 1
-mu iteration: 155
+mu iteration: 154
 justCoarsed: 0
 iterCurAbs: 1
-controllers: 12
+controllers: 2
 
 current abstraction: 1
-mu iteration: 156
+mu iteration: 155
 justCoarsed: 0
 iterCurAbs: 2
-controllers: 12
+controllers: 2
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
 Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
 current abstraction: 0
-mu iteration: 157
+mu iteration: 156
 justCoarsed: 1
 iterCurAbs: 1
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 158
-justCoarsed: 1
-iterCurAbs: 2
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 159
-justCoarsed: 1
-iterCurAbs: 3
-controllers: 13
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 160
-justCoarsed: 1
-iterCurAbs: 4
-controllers: 13
+controllers: 3
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
 Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
 
 current abstraction: 1
-mu iteration: 161
+mu iteration: 157
 justCoarsed: 0
 iterCurAbs: 1
-controllers: 12
+controllers: 2
 
-mu number of controllers: 13
+current abstraction: 1
+mu iteration: 158
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
 
-----------------------------------------generalizedBuchi: Elapsed time is 414.118 seconds.
+current abstraction: 0
+mu iteration: 159
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 160
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 161
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 162
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 163
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 164
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 165
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 166
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 167
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 168
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 169
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 170
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 171
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 172
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 173
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 174
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 175
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 176
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 177
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 178
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 179
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 180
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 181
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 182
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 183
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 184
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 185
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 186
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 187
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 188
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 189
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 190
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 191
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 192
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 193
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 194
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 195
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 196
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 197
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 198
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 199
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 200
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 201
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 202
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+mu number of controllers: 3
+
+------------------------------nuMu iteration: 3------------------------------
+previous nu: 0
+current nu: 0
+number of converged Ys: 0
+Resetting prodCs, prodZs, prodValidCs, prodValidZs to empty.
+Emptying prodFinalCs, prodFinalZs.
+current abstraction: 1
+mu iteration: 1
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+First iteration, nothing happens.
+
+current abstraction: 1
+mu iteration: 2
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 3
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 4
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 5
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 6
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 7
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 8
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 9
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 10
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 11
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 12
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 13
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 14
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 15
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 16
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 17
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 18
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 19
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 20
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 21
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 22
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 23
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 24
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 25
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 26
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 27
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 28
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 29
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 30
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 31
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 32
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 33
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 34
+justCoarsed: 1
+iterCurAbs: 5
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 35
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 36
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 37
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 38
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 39
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 40
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 41
+justCoarsed: 1
+iterCurAbs: 5
+controllers: 1
+Current controller now valid.
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 42
+justCoarsed: 0
+iterCurAbs: 6
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 43
+justCoarsed: 0
+iterCurAbs: 7
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 44
+justCoarsed: 0
+iterCurAbs: 8
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 45
+justCoarsed: 0
+iterCurAbs: 9
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 46
+justCoarsed: 0
+iterCurAbs: 10
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 47
+justCoarsed: 0
+iterCurAbs: 11
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 48
+justCoarsed: 0
+iterCurAbs: 12
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 49
+justCoarsed: 0
+iterCurAbs: 13
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 50
+justCoarsed: 0
+iterCurAbs: 14
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 51
+justCoarsed: 0
+iterCurAbs: 15
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 52
+justCoarsed: 0
+iterCurAbs: 16
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 53
+justCoarsed: 0
+iterCurAbs: 17
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 54
+justCoarsed: 0
+iterCurAbs: 18
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 55
+justCoarsed: 0
+iterCurAbs: 19
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 56
+justCoarsed: 0
+iterCurAbs: 20
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 57
+justCoarsed: 0
+iterCurAbs: 21
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 58
+justCoarsed: 0
+iterCurAbs: 22
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 59
+justCoarsed: 0
+iterCurAbs: 23
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 60
+justCoarsed: 0
+iterCurAbs: 24
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 61
+justCoarsed: 0
+iterCurAbs: 25
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 62
+justCoarsed: 0
+iterCurAbs: 26
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 63
+justCoarsed: 0
+iterCurAbs: 27
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 64
+justCoarsed: 0
+iterCurAbs: 28
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 65
+justCoarsed: 0
+iterCurAbs: 29
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 66
+justCoarsed: 0
+iterCurAbs: 30
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 67
+justCoarsed: 0
+iterCurAbs: 31
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 68
+justCoarsed: 0
+iterCurAbs: 32
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 69
+justCoarsed: 0
+iterCurAbs: 33
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 70
+justCoarsed: 0
+iterCurAbs: 34
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 71
+justCoarsed: 0
+iterCurAbs: 35
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 72
+justCoarsed: 0
+iterCurAbs: 36
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 73
+justCoarsed: 0
+iterCurAbs: 37
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 74
+justCoarsed: 0
+iterCurAbs: 38
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 75
+justCoarsed: 0
+iterCurAbs: 39
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 76
+justCoarsed: 0
+iterCurAbs: 40
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 77
+justCoarsed: 0
+iterCurAbs: 41
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 78
+justCoarsed: 0
+iterCurAbs: 42
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 79
+justCoarsed: 0
+iterCurAbs: 43
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 80
+justCoarsed: 0
+iterCurAbs: 44
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 81
+justCoarsed: 0
+iterCurAbs: 45
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 82
+justCoarsed: 0
+iterCurAbs: 46
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 83
+justCoarsed: 0
+iterCurAbs: 47
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 84
+justCoarsed: 0
+iterCurAbs: 48
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 85
+justCoarsed: 0
+iterCurAbs: 49
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 86
+justCoarsed: 0
+iterCurAbs: 50
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 87
+justCoarsed: 0
+iterCurAbs: 51
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 88
+justCoarsed: 0
+iterCurAbs: 52
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 89
+justCoarsed: 0
+iterCurAbs: 53
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 90
+justCoarsed: 0
+iterCurAbs: 54
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 91
+justCoarsed: 0
+iterCurAbs: 55
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 92
+justCoarsed: 0
+iterCurAbs: 56
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 93
+justCoarsed: 0
+iterCurAbs: 57
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 94
+justCoarsed: 0
+iterCurAbs: 58
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 95
+justCoarsed: 0
+iterCurAbs: 59
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 96
+justCoarsed: 0
+iterCurAbs: 60
+controllers: 1
+No new winning states; going finer.
+Current controller has been declared valid.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
+Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
+
+current abstraction: 1
+mu iteration: 97
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 98
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 99
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 100
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 101
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 102
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 103
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 104
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 105
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 106
+justCoarsed: 1
+iterCurAbs: 5
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 107
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 108
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 109
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 110
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 111
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 112
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 113
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 114
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 115
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 116
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 117
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 118
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 119
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 120
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 121
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 122
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 123
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 124
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 125
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 126
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 127
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 128
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 129
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 130
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 131
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 132
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 133
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 134
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 135
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 136
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 137
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 138
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 139
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 140
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 141
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 142
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 143
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 144
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 145
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 146
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 147
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 148
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 149
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 150
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 151
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 152
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 153
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 154
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 155
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 156
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 157
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 158
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 159
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 160
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 161
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 162
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 163
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 164
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 165
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 166
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 167
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 168
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 169
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 170
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 171
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 172
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 173
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 174
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 175
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 176
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 177
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 178
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 179
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 180
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 181
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 182
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 183
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 184
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 185
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 186
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 187
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 188
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 189
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 190
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 191
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 192
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 193
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 194
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 195
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 196
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 197
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 198
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 199
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 200
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 201
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 202
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+mu number of controllers: 3
+
+------------------------------nuMu iteration: 4------------------------------
+previous nu: 0
+current nu: 0
+number of converged Ys: 0
+Resetting prodCs, prodZs, prodValidCs, prodValidZs to empty.
+Emptying prodFinalCs, prodFinalZs.
+current abstraction: 1
+mu iteration: 1
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+First iteration, nothing happens.
+
+current abstraction: 1
+mu iteration: 2
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 3
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 4
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 5
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 6
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 7
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 8
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 9
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 10
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 11
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 12
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 13
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 14
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 15
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 16
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 17
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 18
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 19
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 20
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 21
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 22
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 23
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 24
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 25
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 26
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 27
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 28
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 29
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 30
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 31
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 32
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 33
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 34
+justCoarsed: 1
+iterCurAbs: 5
+controllers: 1
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 35
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 0
+
+current abstraction: 1
+mu iteration: 36
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 0
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 37
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 38
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 39
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 40
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 41
+justCoarsed: 1
+iterCurAbs: 5
+controllers: 1
+Current controller now valid.
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 42
+justCoarsed: 0
+iterCurAbs: 6
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 43
+justCoarsed: 0
+iterCurAbs: 7
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 44
+justCoarsed: 0
+iterCurAbs: 8
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 45
+justCoarsed: 0
+iterCurAbs: 9
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 46
+justCoarsed: 0
+iterCurAbs: 10
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 47
+justCoarsed: 0
+iterCurAbs: 11
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 48
+justCoarsed: 0
+iterCurAbs: 12
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 49
+justCoarsed: 0
+iterCurAbs: 13
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 50
+justCoarsed: 0
+iterCurAbs: 14
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 51
+justCoarsed: 0
+iterCurAbs: 15
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 52
+justCoarsed: 0
+iterCurAbs: 16
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 53
+justCoarsed: 0
+iterCurAbs: 17
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 54
+justCoarsed: 0
+iterCurAbs: 18
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 55
+justCoarsed: 0
+iterCurAbs: 19
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 56
+justCoarsed: 0
+iterCurAbs: 20
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 57
+justCoarsed: 0
+iterCurAbs: 21
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 58
+justCoarsed: 0
+iterCurAbs: 22
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 59
+justCoarsed: 0
+iterCurAbs: 23
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 60
+justCoarsed: 0
+iterCurAbs: 24
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 61
+justCoarsed: 0
+iterCurAbs: 25
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 62
+justCoarsed: 0
+iterCurAbs: 26
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 63
+justCoarsed: 0
+iterCurAbs: 27
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 64
+justCoarsed: 0
+iterCurAbs: 28
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 65
+justCoarsed: 0
+iterCurAbs: 29
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 66
+justCoarsed: 0
+iterCurAbs: 30
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 67
+justCoarsed: 0
+iterCurAbs: 31
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 68
+justCoarsed: 0
+iterCurAbs: 32
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 69
+justCoarsed: 0
+iterCurAbs: 33
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 70
+justCoarsed: 0
+iterCurAbs: 34
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 71
+justCoarsed: 0
+iterCurAbs: 35
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 72
+justCoarsed: 0
+iterCurAbs: 36
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 73
+justCoarsed: 0
+iterCurAbs: 37
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 74
+justCoarsed: 0
+iterCurAbs: 38
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 75
+justCoarsed: 0
+iterCurAbs: 39
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 76
+justCoarsed: 0
+iterCurAbs: 40
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 77
+justCoarsed: 0
+iterCurAbs: 41
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 78
+justCoarsed: 0
+iterCurAbs: 42
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 79
+justCoarsed: 0
+iterCurAbs: 43
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 80
+justCoarsed: 0
+iterCurAbs: 44
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 81
+justCoarsed: 0
+iterCurAbs: 45
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 82
+justCoarsed: 0
+iterCurAbs: 46
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 83
+justCoarsed: 0
+iterCurAbs: 47
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 84
+justCoarsed: 0
+iterCurAbs: 48
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 85
+justCoarsed: 0
+iterCurAbs: 49
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 86
+justCoarsed: 0
+iterCurAbs: 50
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 87
+justCoarsed: 0
+iterCurAbs: 51
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 88
+justCoarsed: 0
+iterCurAbs: 52
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 89
+justCoarsed: 0
+iterCurAbs: 53
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 90
+justCoarsed: 0
+iterCurAbs: 54
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 91
+justCoarsed: 0
+iterCurAbs: 55
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 92
+justCoarsed: 0
+iterCurAbs: 56
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 93
+justCoarsed: 0
+iterCurAbs: 57
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 94
+justCoarsed: 0
+iterCurAbs: 58
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 95
+justCoarsed: 0
+iterCurAbs: 59
+controllers: 1
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 96
+justCoarsed: 0
+iterCurAbs: 60
+controllers: 1
+No new winning states; going finer.
+Current controller has been declared valid.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids, prodFinals.
+Finding inner approximation of prodsZs_[0][0] and copying into prodsZs_[0][1].
+
+current abstraction: 1
+mu iteration: 97
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 98
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 99
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 100
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 101
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 102
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 103
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 104
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 105
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 106
+justCoarsed: 1
+iterCurAbs: 5
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 107
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 108
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 109
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 110
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 111
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 112
+justCoarsed: 1
+iterCurAbs: 4
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 113
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 114
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 115
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 116
+justCoarsed: 1
+iterCurAbs: 2
+controllers: 3
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 117
+justCoarsed: 1
+iterCurAbs: 3
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 118
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 119
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 120
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 121
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 122
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 123
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 124
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 125
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 126
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 127
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 128
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 129
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 130
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 131
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 132
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 133
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 134
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 135
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 136
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 137
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 138
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 139
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 140
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 141
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 142
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 143
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 144
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 145
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 146
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 147
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 148
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 149
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 150
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 151
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 152
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 153
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 154
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 155
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 156
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 157
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 158
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 159
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 160
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 161
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 162
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 163
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 164
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 165
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 166
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 167
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 168
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 169
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 170
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 171
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 172
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 173
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 174
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 175
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 176
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 177
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 178
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 179
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 180
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 181
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 182
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 183
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 184
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 185
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 186
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 187
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 188
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 189
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 190
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 191
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 192
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 193
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 194
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 195
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 196
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 197
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 198
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 199
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+current abstraction: 1
+mu iteration: 200
+justCoarsed: 0
+iterCurAbs: 2
+controllers: 2
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving prodsZs_[0][1] and prodsCs_[0][1] into prodValids, prodFinals.
+Saving prodsZs_[0][0] and prodsCs_[0][0] into prodValids.
+
+current abstraction: 0
+mu iteration: 201
+justCoarsed: 1
+iterCurAbs: 1
+controllers: 3
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of prodsFinalCs_[0] and prodsFinalZs_[0].
+Resetting prodsZs_[0][0] and prodsCs_[0][0] from valids.
+
+current abstraction: 1
+mu iteration: 202
+justCoarsed: 0
+iterCurAbs: 1
+controllers: 2
+
+mu number of controllers: 3
+
+----------------------------------------generalizedBuchi: Elapsed time is 1562.77 seconds.

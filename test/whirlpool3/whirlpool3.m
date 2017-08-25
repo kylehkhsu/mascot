@@ -1,10 +1,10 @@
 
 function whirlpool3 (mode, numGoals, numAbs, controllers)
   w = [0 0];
-  bx = [-3 0];
-  a1x = [0.1 3.5 -0.7];
-  a2x = [-0.1 -3.5 -0.9];
-  a3x = [3.5 -0.1 -0.9]; 
+  bx = [0 0];
+  a1x = [0.1 3.5 0.5];
+  a2x = [-0.1 -3.5 -0.7];
+  a3x = [4.3 -0.1 -0.9]; 
   bInd = [1 2];
   aInd = [3 4 5; 6 7 8; 9 10 11];
   x = [bx a1x a2x a3x];
@@ -49,7 +49,7 @@ function whirlpool3 (mode, numGoals, numAbs, controllers)
   end
  
   if (strcmp(mode, 'GB')) % generalized Buchi
-    numLoops = 5;
+    numLoops = 100;
   
     openfig('problem');
     hold on
@@ -64,7 +64,6 @@ function whirlpool3 (mode, numGoals, numAbs, controllers)
       disp(['loop: ' int2str(iLoop)])
       for iGoal = 1:numGoals
 	disp(['goal: ' int2str(iGoal)])
-	pause;
 	numControllers = controllers(iGoal);
 	
 	baxdim = size(bx,2) + size(aInd(iGoal,:),2);

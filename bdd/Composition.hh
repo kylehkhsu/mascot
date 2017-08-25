@@ -592,7 +592,7 @@ public:
         //        printVecVec(prodsTs_, "prodsTs");
 
 
-        checkNotVars();
+//        checkNotVars();
     }
 
     /*! Generates a mapping between two consecutive state space abstractions.
