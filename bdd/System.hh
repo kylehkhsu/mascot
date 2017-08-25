@@ -77,6 +77,38 @@ public:
         *nSubInt_ = nSubInt;
         *numAbs_ = numAbs;
     }
+    System(int dimX, double* lbX, double* ubX, double* etaX, double tau,
+           double* etaRatio) {
+        dimX_ = new int;
+        lbX_ = new double[dimX];
+        ubX_ = new double[dimX];
+        etaX_ = new double[dimX];
+        tau_ = new double;
+        dimU_ = new int;
+        *dimU_ = 1;
+        lbU_ = new double[*dimU_];
+        ubU_ = new double[*dimU_];
+        etaU_ = new double[*dimU_];
+        etaRatio_ = new double[dimX];
+        tauRatio_ = new double;
+        nSubInt_ = new int;
+        numAbs_ = new int;
+
+        *dimX_ = dimX;
+        for (int i = 0; i < dimX; i++) {
+            lbX_[i] = lbX[i];
+            ubX_[i] = ubX[i];
+            etaX_[i] = etaX[i];
+            etaRatio_[i] = etaRatio[i];
+        }
+        *tau_ = tau;
+        *lbU_ = 0;
+        *ubU_ = 1;
+        *etaU_ = 1;
+        *tauRatio_ = -1;
+        *nSubInt_ = -1;
+        *numAbs_ = -1;
+    }
 
     /*! Destructor for a System object. */
     ~System() {

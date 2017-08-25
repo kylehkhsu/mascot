@@ -13,8 +13,7 @@ namespace scots {
 /*! \class Reach
  *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for a reach specification.
  */
-template<class X_type, class U_type>
-class Reach: public virtual Adaptive<X_type, U_type> {
+class Reach: public virtual Adaptive {
 public:
 
     vector<SymbolicSet*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
@@ -25,8 +24,8 @@ public:
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
 
     /*! Constructor for a Reach object. */
-    Reach(char* logFile)
-        : Adaptive<X_type, U_type>(logFile)
+    Adaptive(char* logFile)
+        : Product(logFile)
     {
     }
 
@@ -76,7 +75,7 @@ public:
             if (earlyBreak == 1) {
                 saveCZ(*curAbs);
                 *stop = 1;
-                clog << "\nTotal number of controllers: " << finalCs_.size() << '\n';
+                clog << "\nmu number of controllers: " << finalCs_.size() << '\n';
                 return;
             }
         }
@@ -90,7 +89,7 @@ public:
                     else {
                     }
                     *stop = 1;
-                    clog << "\nTotal number of controllers: " << finalCs_.size() << '\n';
+                    clog << "\nmu number of controllers: " << finalCs_.size() << '\n';
                 }
                 else {
                     if (verbose) {

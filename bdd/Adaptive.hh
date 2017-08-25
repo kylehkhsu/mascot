@@ -25,7 +25,6 @@ namespace scots {
 /*! \class Adaptive
     \brief A class that does abstraction-based synthesis with adaptive time- and state space-gridding.
 */
-template<class X_type, class U_type>
 class Adaptive {
 public:
 
@@ -61,7 +60,6 @@ public:
     vector<int*> permutesX2toX_; /*!< To transform a BDD over X2 variables to an equivalent one over X variables. */
 
     vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
-    vector<SymbolicModelGrowthBound<X_type, U_type>*> Abs_; /*!< Abstractions containing the transition relation \subseteq *Xs_[i] x *U_ x *X2s_[i]. */
 
     /*!	Constructor for an Adaptive object.
      *  \param[in]  logFile     Filename of program log.
@@ -92,9 +90,8 @@ public:
         deleteVecArray(permutesXtoX2_);
         deleteVecArray(permutesX2toX_);
         deleteVec(solvers_);
-        deleteVec(Abs_);
         fclose(stderr);
-        delete ddmgr_;
+        delete ddmgr_;        
     }
 
     /*! Initializes data members.
@@ -272,6 +269,8 @@ public:
             notXUvars_.push_back(notXUvars);
             notXvars_.push_back(notXvars);
         }
+
+        clog << "Initialized notVars.\n";
     }
 
     /*!	Inner-approximates a set of states in a coarser abstraction with a finer abstraction.
@@ -428,8 +427,8 @@ public:
         \param[in]	sysNext		Function pointer to equation that evolves system state.
         \param[in]	radNext		Function pointer to equation that computes growth bound.
     */
-    template<class sys_type, class rad_type>
-    void computeAbstractions(sys_type sysNext, rad_type radNext) {
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void computeAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
 
         for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
@@ -441,11 +440,10 @@ public:
         tt.tic();
         if (readAbs_ == 0) {
             for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicModelGrowthBound<X_type, U_type>* Ab = new SymbolicModelGrowthBound<X_type, U_type>(Xs_[i], U_, X2s_[i]);
-                Ab->computeTransitionRelation(sysNext, radNext, *solvers_[i]);
-                Abs_.push_back(Ab);
+                SymbolicModelGrowthBound<X_type, U_type> Ab(Xs_[i], U_, X2s_[i]);
+                Ab.computeTransitionRelation(sysNext, radNext, *solvers_[i]);
 
-                Ts_[i]->symbolicSet_ = Ab->transitionRelation_;
+                Ts_[i]->symbolicSet_ = Ab.transitionRelation_;
             }
             clog << "Ts_ computed by sampling system behavior.\n";
         }
@@ -481,6 +479,8 @@ public:
             Char[Length] = '\0';
             SymbolicSet T(*ddmgr_, Char);
             Ts_[i]->symbolicSet_ = T.symbolicSet_;
+
+            Ts_[i]->printInfo(1);
         }
         clog << "Ts_ read from file.\n";
     }
@@ -684,6 +684,8 @@ public:
 //        U.symbolicSet_ = *cubeU_;
 //        clog << "cubeU: " << '\n';
 //        U.printInfo(2);
+
+        clog << "Initialized cubes.\n";
     }
 
     /*! Initializes the arrays of BDD variable IDs that allow a BDD over an X domain to be projected to the identical BDD over the corresponding X2 domain.
@@ -705,73 +707,55 @@ public:
             permutesXtoX2_.push_back(permuteXtoX2);
             permutesX2toX_.push_back(permuteX2toX);
         }
+
+        clog << "Initialized permutes.\n";
     }
 
     /*! Generates a mapping between two consecutive state space abstractions.
      *  \param[in]      Xc          Coarser state space abstraction.
      *  \param[in]      Xf          Finer state space abstraction.
      *  \param[in,out]  XX    Mapping for a finer cell to the coarser cell that is its superset.
-     *  \param[in]      c           0-index of the coarser abstraction (currently unnecessary/unused).
      */
-    void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX, int c) {
-        if (alignment_ == 1) {
-            int* XfMinterm;
-            double* xPoint = new double[*system_->dimX_];
-            vector<double> XcPoint (*system_->dimX_, 0);
-            double* XXPoint = new double[*system_->dimX_ + *system_->dimX_];
+    void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX) {
 
-            int totalIter = Xf->symbolicSet_.CountMinterm(Xf->nvars_);
-            int iter = 0;
-//            int progress = 0;
 
-            cout << "XXs totalIter: " << totalIter << '\n';
+        int* XfMinterm;
+        double* xPoint = new double[Xc->dim_];
+        vector<double> XcPoint (Xc->dim_, 0);
+        double* XXPoint = new double[XX->dim_];
 
-            for (Xf->begin(); !Xf->done(); Xf->next()) {
-                iter++;
-//                cout << iter << '\n';
-                if (iter % 50000 == 0) {
-                    cout << iter << "\n";
-//                    progress++;
-                }
+        int totalIter = Xf->symbolicSet_.CountMinterm(Xf->nvars_);
+        int iter = 0;
+        //            int progress = 0;
 
-                XfMinterm = (int*)Xf->currentMinterm();
-                Xf->mintermToElement(XfMinterm, xPoint);
-                for (int i = 0; i < *system_->dimX_; i++) {
-                    XcPoint[i] = xPoint[i];
-                }
-                if (!(Xc->isElement(XcPoint))) {
-                    continue;
-                }
-                for (int i = 0; i < *system_->dimX_+*system_->dimX_; i++) {
-                    XXPoint[i] = xPoint[i % *system_->dimX_];
-                }
-                XX->addPoint(XXPoint);
+        cout << "XXs totalIter: " << totalIter << '\n';
+
+        for (Xf->begin(); !Xf->done(); Xf->next()) {
+            iter++;
+            //                cout << iter << '\n';
+            if (iter % 50000 == 0) {
+                cout << iter << "\n";
+                //                    progress++;
             }
-            cout << '\n';
-            (void)c;
 
-            delete[] xPoint;
-            delete[] XXPoint;
-
+            XfMinterm = (int*)Xf->currentMinterm();
+            Xf->mintermToElement(XfMinterm, xPoint);
+            for (size_t i = 0; i < Xc->dim_; i++) {
+                XcPoint[i] = xPoint[i];
+            }
+            if (!(Xc->isElement(XcPoint))) {
+                continue;
+            }
+            for (size_t i = 0; i < XX->dim_; i++) {
+                XXPoint[i] = xPoint[i % Xc->dim_];
+            }
+            XX->addPoint(XXPoint);
         }
-//        else if (alignment_ == 2) {
-//            int* XfMinterm;
-//            double xPoint[*system_->dimX_] = {0};
-//            double xPointPlus[*system_->dimX_] = {0};
-//            double xPointMinus[*system_->dimX_] = {0};
-//            for (Xf->begin(); !Xf->done(); Xf->next()) {
-//                XfMinterm = (int*)Xf->currentMinterm();
-//                Xf->mintermToElement(XfMinterm, xPoint);
-//                for (int i = 0; i < *system_->dimX_; i++) {
-//                    xPointPlus[i] = xPoint[i] + etaXs_[c][i];
-//                    xPointMinus[i] = xPoint[i] - etaXs_[c][i];
-//                }
+        cout << '\n';
 
-
-//            }
-//        }
+        delete[] xPoint;
+        delete[] XXPoint;
     }
-
 
 
     /*! Prints information regarding the abstractions' grid parameters to the log file. */
