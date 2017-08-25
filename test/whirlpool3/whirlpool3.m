@@ -130,11 +130,8 @@ function whirlpool3 (mode, numGoals, numAbs, controllers)
 	      break;
 	    end
 	  
-	    try
-	      u = C.getInputs(bax);
-	    catch
-	      break;
-	    end
+	    u = C.getInputs(bax);
+
 	    ran = randi([1 size(u,1)], 1, 1);	
 	    v = [v; u(ran,:)];
 	    d = disturbance(w);

@@ -187,7 +187,11 @@ public:
         BDD basePreY = preYC.ExistAbstract(*this->baseNotXVars_[fAbs]);
 
         // obtain pre(Y) to use in this mu.
-        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->auxsXs_[*curAux])[fAbs])->symbolicSet_;
+//        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->auxsXs_[*curAux])[fAbs])->symbolicSet_;
+        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_;
+
+
+        // DO CONVERGENCE CHECKING HERE INSTEAD OF AT END?!?!
 
         cout << "prodPreY finest:\n";
         ((*this->prodsPreYs_[*curAux])[fAbs])->printInfo(1);

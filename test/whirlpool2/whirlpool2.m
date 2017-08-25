@@ -1,9 +1,9 @@
 
 function whirlpool2 (mode, numGoals, numAbs, controllers)
   w = [0 0];
-  bx = [1 1];
-  a1x = [0.1 4.7 -0.1];
-  a2x = [-0.1 -4.7 0.1];
+  bx = [4 0];
+  a1x = [0.1 3.5 -1.1];
+  a2x = [-0.1 -3.5 1.1];
   bInd = [1 2];
   aInd = [3 4 5; 6 7 8];
   x = [bx a1x a2x];
@@ -48,7 +48,7 @@ function whirlpool2 (mode, numGoals, numAbs, controllers)
   end
  
   if (strcmp(mode, 'GB')) % generalized Buchi
-    numLoops = 5;
+    numLoops = 50000;
   
     openfig('problem');
     hold on
@@ -64,7 +64,6 @@ function whirlpool2 (mode, numGoals, numAbs, controllers)
       disp(['loop: ' int2str(iLoop)])
       for iGoal = 1:numGoals
 	disp(['goal: ' int2str(iGoal)])
-	pause;
 	numControllers = controllers(iGoal);
 	
 	baxdim = size(bx,2) + size(aInd(iGoal,:),2);
@@ -88,6 +87,11 @@ function whirlpool2 (mode, numGoals, numAbs, controllers)
 	  disp(['tau: ' num2str(tau)]) 
 	 
 	  while(1)
+	    disp('loop')
+	    disp(iLoop)
+	    disp('goal')
+	    disp(iGoal)
+	  
 	    boolplot = 0;
 	    boolbreak = 0;
 	  
@@ -129,11 +133,8 @@ function whirlpool2 (mode, numGoals, numAbs, controllers)
 	      break;
 	    end
 	  
-	    try
-	      u = C.getInputs(bax);
-	    catch
-	      break;
-	    end
+	    u = C.getInputs(bax);
+
 	    ran = randi([1 size(u,1)], 1, 1);	
 	    v = [v; u(ran,:)];
 	    d = disturbance(w);
