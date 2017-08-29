@@ -1,3 +1,5 @@
+// unicyle comparison
+
 #include <array>
 #include <iostream>
 #include <cmath>
@@ -107,14 +109,14 @@ int main() {
 
     int nSubInt = 5;
 
-    double etaX[dimX] = {0.6, 0.6, 0.3};
-    double tau = 0.9;
+    double etaX[dimX] = {0.6/3, 0.6/3, 0.3/3};
+    double tau = 0.9/3;
 
     double etaRatio[dimX] = {3, 3, 3};
     double tauRatio = 3;
 
-    int numAbs = 2;
-    int startAbs = 1;
+    int numAbs = 1;
+    int startAbs = 0;
     int readXX = 1;
     int readAbs = 1;
 
@@ -125,7 +127,7 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    Reach abs("unicycle2AinnerCoarserSymbolic.txt");
+    Reach abs("unicycle1A.txt");
     abs.initialize(&unicycle, readXX, readAbs, unicycleAddO);
     abs.initializeReach(unicycleAddG, unicycleAddI);
     abs.computeAbstractions(sysNext, radNext, x, u);

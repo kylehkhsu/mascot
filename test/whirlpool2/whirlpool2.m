@@ -2,10 +2,10 @@
 function whirlpool2 (mode, numGoals, numAbs, controllers)
   w = [0 0];
   bx = [0 0];
-  a1x = [0.1 4.3 0.3];
-  a2x = [-0.1 -2.7 -0.5];
+  a1x = [4.7 -0.9];
+  a2x = [-4.3 0.3];
   bInd = [1 2];
-  aInd = [3 4 5; 6 7 8];
+  aInd = [3 4; 5 6];
   x = [bx a1x a2x];
   addpath(genpath('../..'));
   
@@ -83,7 +83,7 @@ function whirlpool2 (mode, numGoals, numAbs, controllers)
 	  D(1) = plot(p(:,1), p(:,2), 'x', 'MarkerFaceColor', colors(mod(iStep,7)+1,:), 'MarkerSize', 1.5);
 	  eta = Z.eta();
 	  eta = eta';
-	  tau = eta(1) * 3 / 2;
+	  tau = getTau(eta);
 	  disp(['eta: ' num2str(eta)])
 	  disp(['tau: ' num2str(tau)]) 
 	 
@@ -118,7 +118,7 @@ function whirlpool2 (mode, numGoals, numAbs, controllers)
 	      plot(x(:,bInd(1)),x(:,bInd(2)),'k.-')
 	      H = gobjects(numGoals, 1);
 	      for jGoal = 1:numGoals
-		H(jGoal) = plot(x(end,aInd(jGoal,1)), x(end,aInd(jGoal,2)), 'o', 'Color', colors(mod(iStep,7)+1,:), 'MarkerSize', 20, 'LineWidth', 3);
+		H(jGoal) = plot(0, x(end,aInd(jGoal,1)), 'o', 'Color', colors(mod(iStep,7)+1,:), 'MarkerSize', 20, 'LineWidth', 3);
 	      end
 	      drawnow
 	      pause(tau/2);
@@ -177,14 +177,27 @@ function dbxdt = bODE(t,bx,u,d)
   dbxdt = dbxdt + d';
 end
 
+%  function da1xdt = a1ODE(t,a1x)
+%    da1xdt = zeros(size(a1x));
+%    da1xdt(1) = a1x(2);
+%    da1xdt(2) = -(a1x(1)-3.5);
+%  end
+%  
+%  function da2xdt = a2ODE(t, a2x)
+%    da2xdt = zeros(size(a2x));
+%    da2xdt(1) = a2x(2);
+%    da2xdt(2) = -(a2x(1)+3.5);
+%  end
+
 function da1xdt = a1ODE(t,a1x)
   da1xdt = zeros(size(a1x));
-  da1xdt(2) = a1x(3);
-  da1xdt(3) = -(a1x(2)-3.5);
 end
 
 function da2xdt = a2ODE(t, a2x)
   da2xdt = zeros(size(a2x));
-  da2xdt(2) = a2x(3);
-  da2xdt(3) = -(a2x(2)+3.5);
+end
+
+function tau = getTau(eta)
+%    tau = eta(1)*3/2;
+  tau = eta(1);
 end

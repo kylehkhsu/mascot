@@ -110,23 +110,26 @@ int main() {
 
     int nint = 5;
 
-    double etaX[dimX]= {2/4e3*3*3, 2/4e3*3*3};
+    double etaX[dimX]= {2/4e3*3*3/3, 2/4e3*3*3/3};
     double tau = 0.5;
 
     double etaRatio[dimX] = {3, 3};
     double tauRatio = 1;
 
-    int numAbs = 2;
-    int readXX = 1; // if X, U have changed, needs to be 0.
+    X_type x;
+    U_type u;
+
+    int numAbs = 2-1;
+    int readXX = 0; // if X, U have changed, needs to be 0.
     int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
-    System system(dimX, lbX, ubX, etaX, tau,
-                  dimU, lbU, ubU, etaU);
-    Safe<X_type, U_type> abs("adaptive.txt");
-    abs.initialize(&system, etaRatio, tauRatio, nint,
-                   numAbs, readXX, readAbs, dcdcAddO);
+    System dcdc(dimX, lbX, ubX, etaX, tau,
+                dimU, lbU, ubU, etaU,
+                etaRatio, tauRatio, nint, numAbs);
+    Safe abs("dcdc1A.txt");
+    abs.initialize(&dcdc, readXX, readAbs, dcdcAddO);
     abs.initializeSafe(dcdcAddS);
-    abs.computeAbstractions(sysNext, radNext);
+    abs.computeAbstractions(sysNext, radNext, x, u);
     abs.safe();
 
 //    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs);

@@ -1,10 +1,10 @@
 
 function whirlpool1 (mode, numGoals, numAbs, controllers)
   w = [0 0];
-  bx = [0 -3];
-  a1x = [4.3 -0.1 -0.5];
+  bx = [3.45 3.45];
+  a1x = [3.5 -0.9];
   bInd = [1 2];
-  aInd = [3 4 5];
+  aInd = [3 4];
   x = [bx a1x];
   addpath(genpath('../..'));
   
@@ -83,7 +83,7 @@ function whirlpool1 (mode, numGoals, numAbs, controllers)
 	  plot(p(:,1), p(:,2), 'x', 'MarkerFaceColor', colors(mod(iStep,7)+1,:), 'MarkerSize', 1.5);
 	  eta = Z.eta();
 	  eta = eta';
-	  tau = eta(1) * 3 / 2;
+	  tau = getTau(eta);
 	  disp(['eta: ' num2str(eta)])
 	  disp(['tau: ' num2str(tau)]) 
 	 
@@ -121,7 +121,7 @@ function whirlpool1 (mode, numGoals, numAbs, controllers)
 	      plot(x(:,bInd(1)),x(:,bInd(2)),'k.-')
 	      H = gobjects(numGoals, 1);
 	      for jGoal = 1:numGoals
-		H(jGoal) = plot(x(end,aInd(jGoal,1)), x(end,aInd(jGoal,2)), 'o', 'Color', colors(mod(iStep,7)+1,:), 'MarkerSize', 20, 'LineWidth', 3);
+		H(jGoal) = plot(0, x(end,aInd(jGoal,1)), 'o', 'Color', colors(mod(iStep,7)+1,:), 'MarkerSize', 20, 'LineWidth', 3);
 	      end
 	      drawnow
 	      pause(tau/3)
@@ -167,6 +167,10 @@ function whirlpool1 (mode, numGoals, numAbs, controllers)
   end
 end
 
+function tau = getTau(eta)
+  tau = eta(1) * 3 / 2;
+end
+
 function d = disturbance(w)
   d = -w + (2 * w .* rand(size(w)));
 end
@@ -180,6 +184,4 @@ end
 
 function da1xdt = a1ODE(t,a1x)
   da1xdt = zeros(size(a1x));
-  da1xdt(1) = a1x(3);
-  da1xdt(3) = -(a1x(1)-3.5);
 end
