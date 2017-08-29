@@ -22,10 +22,12 @@ public:
     vector<SymbolicSet*> validCs_; /*!< Controllers that act as savepoints. */
     vector<SymbolicSet*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
+    vector<SymbolicSet*> preYs_;
+
 
     /*! Constructor for a Reach object. */
-    Adaptive(char* logFile)
-        : Product(logFile)
+    Reach(char* logFile)
+        : Adaptive(logFile)
     {
     }
 
@@ -37,6 +39,7 @@ public:
         deleteVec(validCs_);
         deleteVec(finalCs_);
         deleteVec(finalZs_);
+        deleteVec(preYs_);
     }
 
     /*! One iteration in an adaptive minimal fixed point.
@@ -51,7 +54,7 @@ public:
         \param[in,out]	reached				Whether the initial state has been declared winning.
         \param[in,out]	stop				Whether the fixed point should end.
     */
-    void mu(int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose, int* curAbs, int* iter, int* justCoarsed, int* iterCurAbs, int* reached, int* stop) {
+    void mu(int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose, int* curAbs, int* iter, int* justCoarsed, int* iterCurAbs, int* reached, int* stop, int alwaysEventually = 0) {
         clog << "current abstraction: " << *curAbs << '\n';
         clog << "mu iteration: " << *iter << '\n';
         clog << "justCoarsed: " << *justCoarsed << '\n';
@@ -62,7 +65,12 @@ public:
         // get pre(Z)
         BDD preF = this->preC(this->Zs_[*curAbs]->symbolicSet_, this->Ts_[*curAbs]->symbolicSet_, *this->TTs_[*curAbs], *curAbs);
         // disjunct with goal (minimal fixed point)
-        preF |= Gs_[*curAbs]->symbolicSet_;
+        if (alwaysEventually) {
+            preF |= (Gs_[*curAbs]->symbolicSet_ & preYs_[*curAbs]->symbolicSet_);
+        }
+        else {
+            preF |= Gs_[*curAbs]->symbolicSet_;
+        }
         // find new {(x,u)}
         BDD N = preF & (!(this->Cs_[*curAbs]->symbolicSet_.ExistAbstract(*this->cubeU_)));
         // add new {(x,u)} to C
@@ -285,6 +293,13 @@ public:
             validCs_.push_back(validC);
         }
         clog << "validCs_ initialized with empty domain.\n";
+
+        for (int i = 0; i < *this->system_->numAbs_; i++) {
+            SymbolicSet* preY = new SymbolicSet(*this->Xs_[i]);
+            preY->addGridPoints();
+            preYs_.push_back(preY);
+        }
+        clog << "preYs_ initialized with full domain.\n";
 
         saveVerify();
     }
