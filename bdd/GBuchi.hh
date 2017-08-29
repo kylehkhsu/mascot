@@ -30,11 +30,6 @@ public:
     {
     }
 
-//    template<class I_type>
-//    void auxAddInitial(I_type addI) {
-
-//    }
-
     ~GBuchi() {
 
     }
@@ -67,8 +62,12 @@ public:
 
         for (size_t iAux = 0; iAux < this->auxs_.size(); iAux++) {
             ((*this->prodsYs_[iAux])[fAbs])->addGridPoints(); // Y = Q
-            ((*this->prodsPreYs_[iAux])[fAbs])->addGridPoints();
-            ((*this->prodsPrevYs_[iAux])[fAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+            ((*this->prodsPreYs_[iAux])[fAbs])->addGridPoints(); // preY = Q
+            ((*this->prodsPrevYs_[iAux])[fAbs])->symbolicSet_ = this->ddmgr_->bddZero(); // prevY = \0
+            for (int iAbs = 0; iAbs < *this->base_->numAbs_; iAbs++) {
+                ((*this->prodsTs_[iAux])[iAbs])->symbolicSet_ &= !(this->baseOs_[iAbs]->symbolicSet_); // remove Os from Ts
+                ((*this->prodsTTs_[iAux])[iAbs])->symbolicSet_ &= !(this->baseOs_[iAbs]->symbolicSet_); // remove Os from TTs
+            }
         }
 
         while (1) {
@@ -128,8 +127,7 @@ public:
 
         // initialization for nuMu
         ((*this->prodsYs_[curAux])[*this->base_->numAbs_ - 1])->addGridPoints(); // Y = Q
-        ((*this->prodsPrevYs_[curAux])[*this->base_->numAbs_ - 1])->symbolicSet_ = this->ddmgr_->bddZero();
-
+        ((*this->prodsPrevYs_[curAux])[*this->base_->numAbs_ - 1])->symbolicSet_ = this->ddmgr_->bddZero(); //prevY = \0
 
         while (1) {
             nuMu(&prevAux, &curAux, &numConv, &nuIter, &nuStop);
@@ -192,71 +190,75 @@ public:
 //        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_; most likely wrong since prodY is the result of mu from the last time
         ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ &= basePreY;
 
-        // DO CONVERGENCE CHECKING HERE INSTEAD OF AT END?!?!
-
-        cout << "prodPreY finest:\n";
-        ((*this->prodsPreYs_[*curAux])[fAbs])->printInfo(1);
-
-        // construct pre(Y) for all other abstractions
-        for (int iAbs = fAbs; iAbs > 0; iAbs--) {
-            // reset to 0 since innerCoarser only adds states
-            ((*this->prodsPreYs_[*curAux])[iAbs-1])->symbolicSet_ = this->ddmgr_->bddZero();
-            innerCoarser((*this->prodsPreYs_[*curAux])[iAbs-1],
-                    (*this->prodsPreYs_[*curAux])[iAbs],
-                    (*this->prodsXXs_[*curAux])[iAbs-1],
-                    (*this->prodsNotXVars_[*curAux])[iAbs-1],
-                    (*this->prodsXs_[*curAux])[iAbs-1]);
-//                    this->prodsNumFiner_[*curAux]);
-        }
-
-        // initialization for mu
-        int curAbs = startAbs_;
-        int muIter = 1;
-        int justCoarsed = 0;
-        int iterCurAbs = 1;
-        int muStop = 0;
-
-        for (int iAbs = 0; iAbs < *this->base_->numAbs_; iAbs++) {
-            ((*this->prodsZs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-            ((*this->prodsValidZs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-            ((*this->prodsCs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-            ((*this->prodsValidCs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
-        }
-
-        clog << "Resetting prodCs, prodZs, prodValidCs, prodValidZs to empty.\n";
-        clog << "Emptying prodFinalCs, prodFinalZs.\n";
-        size_t j = prodsFinalCs_[*curAux]->size();
-        for (size_t i = 0; i < j; i++) {
-            delete prodsFinalCs_[*curAux]->back();
-            prodsFinalCs_[*curAux]->pop_back();
-            delete prodsFinalZs_[*curAux]->back();
-            prodsFinalZs_[*curAux]->pop_back();
-        }
-
-        while (1) { // eventually
-            this->mu(*curAux, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &muStop);
-            if (muStop) {
-                break;
-            }
-        }
-
-        // projecting all winning states onto finest abstraction
-        ((*this->prodsYs_[*curAux])[0])->symbolicSet_ = ((*this->prodsZs_[*curAux])[0])->symbolicSet_;
-        for (int iAbs = 0; iAbs < *this->base_->numAbs_ - 1; iAbs++) {
-            innerFiner((*this->prodsYs_[*curAux])[iAbs],
-                    (*this->prodsYs_[*curAux])[iAbs+1],
-                    (*this->prodsXXs_[*curAux])[iAbs],
-                    (*this->prodsNotXVars_[*curAux])[iAbs+1],
-                    (*this->prodsXs_[*curAux])[iAbs+1]);
-            ((*this->prodsYs_[*curAux])[iAbs+1])->symbolicSet_ |= ((*this->prodsZs_[*curAux])[iAbs+1])->symbolicSet_;
-        }
-
-        if ( ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_ == ((*this->prodsPrevYs_[*curAux])[fAbs])->symbolicSet_ ) {
+        if (((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ == ((*this->prodsPrevPreYs_[*curAux])[fAbs])->symbolicSet_) {
             *numConv += 1;
         }
         else {
-            *numConv = 0;
-            ((*this->prodsPrevYs_[*curAux])[fAbs])->symbolicSet_ = ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_;
+            ((*this->prodsPrevPreYs_[*curAux])[fAbs])->symbolicSet_ = ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_;
+
+            cout << "prodPreY finest:\n";
+            ((*this->prodsPreYs_[*curAux])[fAbs])->printInfo(1);
+
+            // construct pre(Y) for all other abstractions
+            for (int iAbs = fAbs; iAbs > 0; iAbs--) {
+                // reset to 0 since innerCoarser only adds states
+                ((*this->prodsPreYs_[*curAux])[iAbs-1])->symbolicSet_ = this->ddmgr_->bddZero();
+                innerCoarser((*this->prodsPreYs_[*curAux])[iAbs-1],
+                        (*this->prodsPreYs_[*curAux])[iAbs],
+                        (*this->prodsXXs_[*curAux])[iAbs-1],
+                        (*this->prodsNotXVars_[*curAux])[iAbs-1],
+                        (*this->prodsXs_[*curAux])[iAbs-1]);
+            }
+
+            // initialization for mu
+            int curAbs = startAbs_;
+            int muIter = 1;
+            int justCoarsed = 0;
+            int iterCurAbs = 1;
+            int muStop = 0;
+
+            for (int iAbs = 0; iAbs < *this->base_->numAbs_; iAbs++) {
+                ((*this->prodsZs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+                ((*this->prodsValidZs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+                ((*this->prodsCs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+                ((*this->prodsValidCs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
+            }
+
+            clog << "Resetting prodCs, prodZs, prodValidCs, prodValidZs to empty.\n";
+            clog << "Emptying prodFinalCs, prodFinalZs.\n";
+            size_t j = prodsFinalCs_[*curAux]->size();
+            for (size_t i = 0; i < j; i++) {
+                delete prodsFinalCs_[*curAux]->back();
+                prodsFinalCs_[*curAux]->pop_back();
+                delete prodsFinalZs_[*curAux]->back();
+                prodsFinalZs_[*curAux]->pop_back();
+            }
+
+            while (1) { // eventually
+                this->mu(*curAux, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &muStop);
+                if (muStop) {
+                    break;
+                }
+            }
+
+            // projecting all winning states onto finest abstraction
+            ((*this->prodsYs_[*curAux])[0])->symbolicSet_ = ((*this->prodsZs_[*curAux])[0])->symbolicSet_;
+            for (int iAbs = 0; iAbs < *this->base_->numAbs_ - 1; iAbs++) {
+                innerFiner((*this->prodsYs_[*curAux])[iAbs],
+                        (*this->prodsYs_[*curAux])[iAbs+1],
+                        (*this->prodsXXs_[*curAux])[iAbs],
+                        (*this->prodsNotXVars_[*curAux])[iAbs+1],
+                        (*this->prodsXs_[*curAux])[iAbs+1]);
+                ((*this->prodsYs_[*curAux])[iAbs+1])->symbolicSet_ |= ((*this->prodsZs_[*curAux])[iAbs+1])->symbolicSet_;
+            }
+
+            if ( ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_ == ((*this->prodsPrevYs_[*curAux])[fAbs])->symbolicSet_ ) {
+                *numConv += 1;
+            }
+            else {
+                *numConv = 0;
+                ((*this->prodsPrevYs_[*curAux])[fAbs])->symbolicSet_ = ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_;
+            }
         }
         if (*numConv == this->auxs_.size()) {
             *nuStop = 1;
@@ -431,30 +433,6 @@ public:
         // get rid of non-domain information
         C = TT.AndAbstract(C, notXUVar);
 
-        // debug
-//        cout << "Z2: ";
-//        SymbolicSet Z2ss(*((*this->prodsX2s_[curAux])[curAbs]));
-//        Z2ss.symbolicSet_ = Z2;
-//        Z2ss.printInfo(1);
-
-//        cout << "nZ2: ";
-//        SymbolicSet nZ2ss(Z2ss);
-//        nZ2ss.addGridPoints();
-//        nZ2ss.symbolicSet_ &= nZ2;
-//        nZ2ss.printInfo(1);
-
-//        cout << "nC: ";
-//        SymbolicSet nCss(*((*this->prodsCs_[curAux])[curAbs]));
-//        nCss.addGridPoints();
-//        nCss.symbolicSet_ &= nC;
-//        nCss.printInfo(1);
-
-//        cout << "C: ";
-//        SymbolicSet Css(*((*this->prodsCs_[curAux])[curAbs]));
-////        Css.addGridPoints();
-//        Css.symbolicSet_ = C;
-//        Css.printInfo(1);
-
         return C;
     }
 
@@ -466,16 +444,6 @@ public:
     void innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarc, SymbolicSet* Xc) {
         BDD nQ = !((!(XXc->symbolicSet_)) | Zf->symbolicSet_);
         Zc->symbolicSet_ = (!(nQ.ExistAbstract(*notXVarc))) & Xc->symbolicSet_;
-
-//        BDD Zcandidate = (!(nQ.ExistAbstract(*notXvars_[c]))) & Xs_[c]->symbolicSet_;
-
-//        if (Zcandidate <= Zc->symbolicSet_) {
-//            return 0;
-//        }
-//        else {
-//            Zc->symbolicSet_ = Zcandidate;
-//            return 1;
-//        }
     }
 
 //    int innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarc, SymbolicSet* Xc, int numFiner) {
