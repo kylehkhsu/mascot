@@ -15,80 +15,83 @@ using std::vector;
 using std::cout;
 
 namespace scots {
-
 /*! \class Composition
- *  \brief A class that synthesizes multi-layer abstractions of compositional systems.
+ *  \brief A class that constructs multi-layer abstractions of compositional systems.
  */
 class Composition {
 public:
-    Cudd* ddmgr_;
-    System* base_;
-    vector<System*> auxs_;
+    Cudd* ddmgr_; /*!< Decision diagram manager. */
+    System* base_; /*!< Base system. */
+    vector<System*> auxs_; /*!< Auxiliary systems.*/
 
-    vector<double*> baseEtaXs_;
-    vector<vector<double*>*> auxsEtaXs_;
-    vector<double*> allTau_;
-    vector<OdeSolver*> baseSolvers_;
-    vector<vector<OdeSolver*>*> auxsSolvers_;
+    vector<double*> baseEtaXs_; /*!< Grid parameters for base system abstractions. */
+    vector<vector<double*>*> auxsEtaXs_; /*!< Grid parameters for auxiliary system abstractions. */
+    vector<double*> taus_; /*!< Time sampling parameters. */
+    vector<OdeSolver*> baseSolvers_; /*!< Runge-Kutta solvers for base system abstractions. */
+    vector<vector<OdeSolver*>*> auxsSolvers_; /*!< Runge-Kutta solvers for auxiliary system abstractions. */
 
-    vector<SymbolicSet*> baseXs_;
-    vector<SymbolicSet*> baseX2s_;
-    vector<SymbolicSet*> baseXXs_;
-    vector<vector<SymbolicSet*>*> auxsXs_;
-    vector<vector<SymbolicSet*>*> auxsX2s_;
-    vector<vector<SymbolicSet*>*> auxsXXs_;
-    vector<vector<SymbolicSet*>*> prodsXs_;
-    vector<vector<SymbolicSet*>*> prodsX2s_;
-    vector<vector<SymbolicSet*>*> prodsXXs_;
+    vector<SymbolicSet*> baseXs_; /*!< State spaces of base system abstractions. */
+    vector<SymbolicSet*> baseX2s_; /*!< Post-state spaces of base system abstractions. */
+    vector<SymbolicSet*> baseXXs_; /*!< Projection mappings between consecutive base system abstractions. */
+    vector<vector<SymbolicSet*>*> auxsXs_; /*!< State spaces of auxiliary system abstractions. */
+    vector<vector<SymbolicSet*>*> auxsX2s_; /*!< Post-state spaces of auxiliary system abstractions. */
+    vector<vector<SymbolicSet*>*> auxsXXs_; /*!< Projection mappings between consecutive auxiliary system abstractions. */
 
-    vector<SymbolicSet*> baseOs_;
-    vector<vector<SymbolicSet*>*> prodsGs_;
+    vector<vector<SymbolicSet*>*> prodsXs_; /*!< State spaces of product abstractions. */
+    vector<vector<SymbolicSet*>*> prodsX2s_; /*!< Post-state spaces of product abstractions. */
+    vector<vector<SymbolicSet*>*> prodsXXs_; /*!< Projection mappings between consecutive product abstractions. */
 
-    vector<SymbolicSet*> baseZs_;
-    vector<vector<SymbolicSet*>*> prodsZs_;
-    vector<vector<SymbolicSet*>*> prodsValidZs_;
-    vector<vector<SymbolicSet*>*> prodsFinalZs_;
+    vector<SymbolicSet*> baseOs_; /*!< Instance of baseXs_ containing obstacle states. */
+    vector<vector<SymbolicSet*>*> prodsGs_; /*!< Instance of prodsXs_ containing goal states. */
 
-    vector<vector<SymbolicSet*>*> prodsYs_;
-    vector<vector<SymbolicSet*>*> prodsPreYs_;
-    vector<vector<SymbolicSet*>*> prodsPrevYs_;
-    vector<vector<SymbolicSet*>*> prodsPrevPreYs_;
+    vector<vector<SymbolicSet*>*> prodsZs_; /*!< Instance of prodsXs_ containing controller domain states. */
+    vector<vector<SymbolicSet*>*> prodsValidZs_; /*!< Instance of prodsXs_ containing controller domain states declared valid. */
+    vector<vector<SymbolicSet*>*> prodsFinalZs_; /*!< Contains saved controller domain states. */
 
-    vector<vector<SymbolicSet*>*> prodsCs_;
-    vector<vector<SymbolicSet*>*> prodsValidCs_;
-    vector<vector<SymbolicSet*>*> prodsFinalCs_;
+    vector<vector<SymbolicSet*>*> prodsYs_; /*!< Instance of prodsXs_ containing converged unified controller domain states. */
+    vector<vector<SymbolicSet*>*> prodsPreYs_; /*!< Instance of prodsXs_ containing controllable predecessors of converged unified controller domain states. */
+    vector<vector<SymbolicSet*>*> prodsPrevYs_; /*!< Instance of prodsXs_ containing previous iteration's prodsYs_. */
+    vector<vector<SymbolicSet*>*> prodsPrevPreYs_; /*!< Instance of prodsXs_ containing previous iterations' prodsPreYs_. */
 
-    vector<SymbolicSet*> baseTs_;
-    vector<vector<SymbolicSet*>*> auxsTs_;
-    vector<vector<SymbolicSet*>*> prodsTs_;
-    vector<vector<SymbolicSet*>*> prodsTTs_;
+    vector<vector<SymbolicSet*>*> prodsCs_; /*!< Controllers of product abstractions. */
+    vector<vector<SymbolicSet*>*> prodsValidCs_; /*!< Controllers of product declared valid. */
+    vector<vector<SymbolicSet*>*> prodsFinalCs_; /*!< Contains saved controllers. Each vector is the sequence of controllers that brings the state to a particular target. Written to child directory 'C'. */
 
-    SymbolicSet* baseU_;
-    SymbolicSet* auxU_;
+    vector<SymbolicSet*> baseTs_; /*!< Transition systems of base system. */
+    vector<vector<SymbolicSet*>*> auxsTs_; /*!< Transition systems of auxiliary systems. */
+    vector<vector<SymbolicSet*>*> prodsTs_; /*!< Transition systems of product systems. */
+    vector<vector<SymbolicSet*>*> prodsTTs_; /*!< Transition systems of product systems with post-states existentially abstracted */
 
-    vector<BDD*> baseCubesX_;
-    vector<BDD*> baseCubesX2_;
-    vector<vector<BDD*>*> auxsCubesX_;
-    vector<vector<BDD*>*> auxsCubesX2_;
-    vector<BDD*> baseNotXUVars_;
-    vector<BDD*> baseNotXVars_;
-    vector<vector<BDD*>*> prodsNotXUVars_;
-    vector<vector<BDD*>*> prodsNotXVars_;
-    vector<vector<int*>*> prodsPermutesXtoX2_;
-    vector<vector<int*>*> prodsPermutesX2toX_;
+    SymbolicSet* baseU_; /*!< Input space of base system. */
+    SymbolicSet* auxU_; /*!< Input space (dummy) of auxiliary systems. */
 
-    int* baseNumFiner_;
-    int* prodsNumFiner_;
+    vector<BDD*> baseCubesX_; /*!< Cubes for state spaces of base system abstractions. */
+    vector<BDD*> baseCubesX2_; /*!< Cubes for post-state spaces of base system abstractions. */
+    vector<vector<BDD*>*> auxsCubesX_; /*!< Cubes for state spaces of auxiliary systems' abstractions. */
+    vector<vector<BDD*>*> auxsCubesX2_; /*!< Cubes for post-state spaces of auxiliary systems' abstractions. */
+    vector<BDD*> baseNotXUVars_; /*!< Used for existential quantification for which result's domain is base system controller space. */
+    vector<BDD*> baseNotXVars_; /*!< Used for existential quantification for which result's domain is base system state space. */
+    vector<vector<BDD*>*> prodsNotXUVars_; /*!< Used for existential quantification for which result's domain is product system controller space. */
+    vector<vector<BDD*>*> prodsNotXVars_; /*!< Used for existential quantification for which result's domain is product system state space. */
+    vector<vector<int*>*> prodsPermutesXtoX2_; /*!< Used for projecting from state space to post-state space of product system abstractions. */
+    vector<vector<int*>*> prodsPermutesX2toX_; /*!< Used for projecting from post-state space to state space of product system abstractions. */
 
+    int* baseNumFiner_; /*!< Number of finer cells that compose a coarser cell for consecutive base system abstractions. */
+    int* prodsNumFiner_; /*!< Number of finer cells that compose a coarser cell for consecutive product system abstractions. */
+
+    /*! Constructor for a Composition object.
+     *  \param[in]  logFile     Filename of program log.
+     */
     Composition(char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
     }
 
+    /*! Destructor for a Composition object. */
     ~Composition() {
         deleteVecArray(baseEtaXs_);
         deleteVecVecArray(auxsEtaXs_);
-        deleteVec(allTau_);
+        deleteVec(taus_);
         deleteVec(baseSolvers_);
         deleteVecVec(auxsSolvers_);
 
@@ -105,7 +108,6 @@ public:
         deleteVec(baseOs_);
         deleteVecVec(prodsGs_);
 
-        deleteVec(baseZs_);
         deleteVecVec(prodsZs_);
         deleteVecVec(prodsValidZs_);
         deleteVecVec(prodsFinalZs_);
@@ -146,6 +148,10 @@ public:
         delete ddmgr_;
     }
 
+    /*! Initializes goal set specification for a single product system for all layers in prodsG_[iAux].
+     *  \param[in] addG     Pointer to function that adds goal states to a SymbolicSet.
+     *  \param[in] iAux     0-index of product system.
+     */
     template<class G_t>
     void initializeProdGs(G_t addG, int iAux) {
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
@@ -157,6 +163,9 @@ public:
         printVecVec(prodsGs_, "prodsGs");
     }
 
+    /*! Initializes obstacle set for all layers of the base system in baseOs_.
+     *  \param[in] addO     Pointer to function that adds obstacle states to a SymbolicSet.
+     */
     template<class O_t>
     void initializeBaseOs(O_t addO) {
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
@@ -167,6 +176,7 @@ public:
         clog << "Initialized baseOs.\n";
     }
 
+    /*! Takes base system and auxiliary systems' transition systems and yields product transition systems for each layer. */
     void composeAbstractions() {
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
@@ -181,6 +191,7 @@ public:
         printVecVec(prodsTTs_, "prodsTTs");
     }
 
+    /*! Initializes data members. */
     void initialize(System* base, vector<System*> auxs) {
         ddmgr_ = new Cudd;
         base_ = base;
@@ -192,6 +203,12 @@ public:
         initializeBDDs();
     }
 
+    /*! Computes transition systems for the base system in each layer by iteratively sampling over all state-input pairs.
+     *  \param[in]  sysNext     Function pointer that, given a state and an input, modifies that state according to system dynamics.
+     *  \param[in]  radNext     Function pointer that, given the initial growth bound (eta/2), modifies it according to the growth bound equation.
+     *  \param[in]  x           Only used for passing type of a state.
+     *  \param[in]  u           Only used for passing type of an input.
+     */
     template<class sys_type, class rad_type, class x_type, class u_type>
     void computeBaseAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u) {
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
@@ -209,6 +226,12 @@ public:
         clog << "Computed base's transition relations.\n";
     }
 
+    /*! Computes transition systems for auxiliary systems in each layer by iteratively sampling over all states. A dummy input space containing one element is used for the computation, then abstracted out.
+     *  \param[in]  sysNext     Function pointer that, given a state (and a dummy input), modifies that state according to system dynamics.
+     *  \param[in]  radNext     Function pointer that, given the initial growth bound (eta/2), modifies it according to the growth bound equation.
+     *  \param[in]  x           Only used for passing type of a state.
+     *  \param[in]  u           Only used for passing type of a dummy input.
+     */
     template<class sys_type, class rad_type, class x_type, class u_type>
     void computeAuxAbstractions(sys_type sysNext, rad_type radNext, x_type x, u_type u, size_t iAux) {
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
@@ -227,6 +250,7 @@ public:
         clog << "Computed aux" << iAux << "'s transition relations.\n";
     }
 
+    /*! Initializes Runge-Kutta numerical approximators for use in computing the abstract transition systems. */
     void initializeSolvers() {
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
             vector<OdeSolver*>* auxSolvers = new vector<OdeSolver*>;
@@ -234,12 +258,12 @@ public:
         }
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
-            OdeSolver* baseSolver = new OdeSolver(*base_->dimX_, *base_->nSubInt_, allTau_[iAbs][0]);
+            OdeSolver* baseSolver = new OdeSolver(*base_->dimX_, *base_->nSubInt_, taus_[iAbs][0]);
             baseSolvers_.push_back(baseSolver);
 
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 System* aux = auxs_[iAux];
-                OdeSolver* auxSolver = new OdeSolver(*aux->dimX_, *base_->nSubInt_, allTau_[iAbs][0]);
+                OdeSolver* auxSolver = new OdeSolver(*aux->dimX_, *base_->nSubInt_, taus_[iAbs][0]);
                 auxsSolvers_[iAux]->push_back(auxSolver);
             }
         }
@@ -247,6 +271,7 @@ public:
         clog << "Initialized base's, auxs' ODE solvers.\n";
     }
 
+    /*! Initializes grid parameters and time sampling parameters for each layer. */
     void initializeEtaTauNumFiner() {
 
         double* baseEtaCur = new double[*base_->dimX_];
@@ -293,7 +318,7 @@ public:
         for (int i = 0; i < *base_->numAbs_; i++) {
             double* allTaui = new double;
             *allTaui = *allTauCur;
-            allTau_.push_back(allTaui);
+            taus_.push_back(allTaui);
             *allTauCur /= *base_->tauRatio_;
         }
         delete allTauCur;
@@ -329,6 +354,9 @@ public:
         printArray(prodsNumFiner_, auxs_.size());
     }
 
+    /*! Initializes vectors of vectors of SymbolicSets, BDDs, and others. Each vector of a SymbolicSet or BDD is always for a particular product system.
+     *  For all such vectors excluding vectors of prodsFinalZs_ and prodsFinalCs_, each element is for a particular abstraction layer, from coarsest to finest.
+     */
     void initializeVecVecs() {
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
             vector<SymbolicSet*>* auxXs = new vector<SymbolicSet*>;
@@ -387,19 +415,17 @@ public:
         }
     }
 
+    /*! Initializes SymbolicSets, BDDs, and others related to symbolic representation of abstractions. */
     void initializeBDDs() {
 
         for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
-            SymbolicSet* baseX = new SymbolicSet(*ddmgr_, *base_->dimX_, base_->lbX_, base_->ubX_, baseEtaXs_[iAbs], allTau_[iAbs][0]);
+            SymbolicSet* baseX = new SymbolicSet(*ddmgr_, *base_->dimX_, base_->lbX_, base_->ubX_, baseEtaXs_[iAbs], taus_[iAbs][0]);
             baseX->addGridPoints();
             baseXs_.push_back(baseX);
 
-            SymbolicSet* baseZ = new SymbolicSet(*baseX);
-            baseZs_.push_back(baseZ);
-
             for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
                 System* aux = auxs_[iAux];
-                SymbolicSet* auxX = new SymbolicSet(*ddmgr_, *aux->dimX_, aux->lbX_, aux->ubX_, (*auxsEtaXs_[iAux])[iAbs], allTau_[iAbs][0]);
+                SymbolicSet* auxX = new SymbolicSet(*ddmgr_, *aux->dimX_, aux->lbX_, aux->ubX_, (*auxsEtaXs_[iAux])[iAbs], taus_[iAbs][0]);
                 auxX->addGridPoints();
                 auxsXs_[iAux]->push_back(auxX);
 
@@ -426,7 +452,7 @@ public:
                 prodsValidZs_[iAux]->push_back(prodValidZ);
             }
         }
-        clog << "Initialized base's Xs to full, Zs to empty.\n";
+        clog << "Initialized base's Xs to full.\n";
         clog << "Initialized auxs' Xs to full.\n";
         clog << "Initialized prods' Xs to full, Ys to empty, preYs to empty, prevYs to empty, prevPreYs to empty, Zs to empty, validZs to empty.\n";
 
@@ -617,16 +643,13 @@ public:
 
         int totalIter = Xf->symbolicSet_.CountMinterm(Xf->nvars_);
         int iter = 0;
-        //            int progress = 0;
 
         cout << "XXs totalIter: " << totalIter << '\n';
 
         for (Xf->begin(); !Xf->done(); Xf->next()) {
             iter++;
-            //                cout << iter << '\n';
             if (iter % 50000 == 0) {
                 cout << iter << "\n";
-                //                    progress++;
             }
 
             XfMinterm = (int*)Xf->currentMinterm();
@@ -648,6 +671,7 @@ public:
         delete[] XXPoint;
     }
 
+    /*! Debugging function. */
     void checkNotVars() {
         // for 2A1P
         SymbolicSet d1(*((*prodsXs_[0])[0]), *((*prodsXs_[0])[1]));

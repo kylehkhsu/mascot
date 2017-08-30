@@ -13,15 +13,14 @@ namespace scots {
 /*! \class Safe
  *  \brief A class (derived from base Adaptive) that does adaptive multiscale abstraction-based synthesis for a safe specification.
  */
-template<class X_type, class U_type>
-class Safe: public virtual Adaptive<X_type, U_type> {
+class Safe: public virtual Adaptive {
 public:
     vector<SymbolicSet*> Ss_; /*!< Instance of *Xs_[i] containing safe states. */
     vector<SymbolicSet*> infZs_; /*!< Instance of *Xs_[i] containing projection of convergence of previous maximal fixed points. */
 
     /*! Constructor for a Safe object. */
     Safe(char* logFile)
-        : Adaptive<X_type, U_type>(logFile)
+        : Adaptive(logFile)
     {
     }
 

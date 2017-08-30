@@ -14,13 +14,14 @@ using namespace std;
 using namespace scots;
 using namespace helper;
 
+
+// b means base, a means auxiliary
 #define bDimX 2
 #define bDimU 2
 #define a0DimX 3
 #define a1DimX 3
 #define a2DimX 3
 #define aDimU 1
-
 
 const int numAbs = 1;
 const double tau = 0.9/3;

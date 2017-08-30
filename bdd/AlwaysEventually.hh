@@ -17,6 +17,9 @@ namespace scots {
 class AlwaysEventually: public virtual Reach {
 public:
 
+    vector<SymbolicSet* Y_;
+    SymbolicSet* prevY_;
+
     /*! Constructor for an AlwaysEventually object. */
     AlwaysEventually(char* logFile)
                      : Reach(logFile),
@@ -26,7 +29,8 @@ public:
 
     /*! Deconstructor for an AlwaysEventually object. */
     ~AlwaysEventually() {
-
+        delete Y_;
+        delete prevY_;
     }
 
     /*!	Writes, should they exist, a sequence of controller and controller domain BDDs to directories 'C' and 'Z' respectively that satisfy the Buchi box-diamond (aka always-eventually) specification.
@@ -64,8 +68,11 @@ public:
             int iterCurAbs = 1;
             int reached = 0;
             int muStop = 0;
+
+            BDD preYC = this->preC()
+
             while (1) { // eventually
-                this->mu(minToGoCoarser, minToBeValid, earlyBreak, verbose, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &reached, &muStop);
+                this->mu(minToGoCoarser, minToBeValid, earlyBreak, verbose, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &reached, &muStop, 1);
                 if (muStop) {
                     break;
                 }
@@ -165,6 +172,13 @@ public:
             clog << '\n';
             nuIter += 1;
         }
+    }
+
+    template<class G_type, class I_type>
+    void initializeAlwaysEventually(G_type addG, I_type addI) {
+        initializeReach(addG, addI);
+        Y_ = new SymbolicSet(*Xs_[*this->system_->numAbs_ - 1]);
+        prevY_ = new SymbolicSet(*Y_);
     }
 };
 

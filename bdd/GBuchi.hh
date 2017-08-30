@@ -22,18 +22,25 @@ public:
     int earlyBreak_;
     int verbose_;
 
-
-
     /*! Constructor for a GBuchi object. */
     GBuchi(char* logFile)
         : Composition(logFile)
     {
     }
 
+    /*! Destructor for a GBuchi object. */
     ~GBuchi() {
 
     }
 
+    /*! Writes controllers Cij and controller domains Zij to folders 'C' and 'Z' respectively, where i indexes the target to reach and j indexes the sub-problem controllers for target i.
+     *  Also writes some plotting sets (X: coarsest state space; O: finest obstacle set) to folder 'plotting' and goal sets Gij to folder 'G', where i indexes the target and j indexes the abstraction level.
+     *  These indexes are all 1-indexed, since their primary use is in MATLAB.
+     *  \param[in]  startAbs            0-index of abstraction layer for which each minimal fixed point should start at.
+     *  \param[in]  minToGoCoarser      Number of minimal fixed point iterations that consecutively grow the controller in a single abstraction layer before an attempt to switch to the next-coarser layer is made.
+     *  \param[in]  minToBeValid        Number of minimal fixed point iterations that consecutively grow the controller in a single non-finest abstraction layer before the controller is declared valid and used as a save-point.
+     *  \param[in]  verbose             Verbosity of statements saved to the log file.
+     */
     void gBuchi(int startAbs, int minToGoCoarser, int minToBeValid, int verbose = 1) {
         startAbs_ = startAbs;
         minToGoCoarser_ = minToGoCoarser;
@@ -53,10 +60,10 @@ public:
         TicToc tt;
         tt.tic();
 
-        // initialization
+        // initialization for the vector nested fixed point
         size_t prevAux = this->auxs_.size() - 1;
         size_t curAux = 0;
-        size_t numConv = 0;
+        size_t numConv = 0; // consecutive num
         int nuIter = 1;
         int nuStop = 0;
 
@@ -102,69 +109,14 @@ public:
 
     }
 
-    void alwaysEventuallyOne(int startAbs, int minToGoCoarser, int minToBeValid, int verbose = 1) {
-        startAbs_ = startAbs;
-        minToGoCoarser_ = minToGoCoarser;
-        minToBeValid_ = minToBeValid;
-        earlyBreak_ = 0;
-        verbose_ = verbose;
 
-        if ( (startAbs_ < 0) || (startAbs_ >= *this->base_->numAbs_) ) {
-            error("Error: startAbs out of range.\n");
-        }
-        if (this->auxs_.size() != 1) {
-            error("Error: this debugging function only works with one auxiliary system.");
-        }
-
-        TicToc tt;
-        tt.tic();
-
-        size_t prevAux = 0;
-        size_t curAux = 0;
-        size_t numConv = 0;
-        int nuIter = 1;
-        int nuStop = 0;
-
-        // initialization for nuMu
-        ((*this->prodsYs_[curAux])[*this->base_->numAbs_ - 1])->addGridPoints(); // Y = Q
-        ((*this->prodsPrevYs_[curAux])[*this->base_->numAbs_ - 1])->symbolicSet_ = this->ddmgr_->bddZero(); //prevY = \0
-
-        while (1) {
-            nuMu(&prevAux, &curAux, &numConv, &nuIter, &nuStop);
-            if (nuStop) {
-                break;
-            }
-        }
-
-        int fAbs = *this->base_->numAbs_ - 1;
-
-        SymbolicSet* lastZ = (this->prodsFinalZs_[curAux])->back();
-
-        // part of goal that we can reach infinitely often
-        ((*this->prodsGs_[curAux])[fAbs])->symbolicSet_ &= lastZ->symbolicSet_;
-
-        checkMakeDir("C");
-        string prefix = "C/C";
-        prefix += std::to_string(curAux+1);
-        saveVec(*prodsFinalCs_[curAux], prefix);
-        checkMakeDir("Z");
-        prefix = "Z/Z";
-        prefix += std::to_string(curAux+1);
-        saveVec(*prodsFinalZs_[curAux], prefix);
-        checkMakeDir("plotting");
-        this->baseXs_[0]->writeToFile("plotting/X.bdd");
-        this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
-        checkMakeDir("G");
-        ((*this->prodsGs_[curAux])[fAbs])->writeToFile("G/G.bdd");
-
-
-        clog << "----------------------------------------alwaysEventually: ";
-        tt.toc();
-    }
-
-
-
-
+    /*! One iteration of the vector nested fixed point (one 'row').
+     *  \param[in]  prevAux     0-index of the previous product system for which the iteration was done.
+     *  \param[in]  curAux      0-index of the current product system for which the iteration is being done.
+     *  \param[in]  numConv     Consecutive number of iterations (product systems) for which the unified controller domain has converged.
+     *  \param[in]  nuIter      Counter for number of iterations of the vector nested fixed point.
+     *  \param[in]  nuStop      Flag for stopping the vector nested fixed point.
+     */
     void nuMu(size_t* prevAux, size_t* curAux, size_t* numConv, int* nuIter, int* nuStop) {
         clog << "------------------------------nuMu iteration: " << *nuIter << "------------------------------\n";
         clog << "previous nu: " << *prevAux << '\n';
@@ -183,14 +135,18 @@ public:
                          ((*this->prodsTTs_[*prevAux])[fAbs])->symbolicSet_,
                          ((*this->prodsPermutesXtoX2_[*prevAux])[fAbs]),
                          *((*this->prodsNotXUVars_[*prevAux])[fAbs]));
+
+        // existentially project onto base system at finest abstraction
         BDD basePreY = preYC.ExistAbstract(*this->baseNotXVars_[fAbs]);
 
-        // obtain pre(Y) to use in this mu.
+        // unused, previous trials
 //        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->auxsXs_[*curAux])[fAbs])->symbolicSet_; most likely wrong since it throws away information about A_curAux states
 //        ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ = basePreY & ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_; most likely wrong since prodY is the result of mu from the last time
+
+        // obtain set to intersect with G in this minimal fixed point for the finest abstraction
         ((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ &= basePreY;
 
-        if (((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ == ((*this->prodsPrevPreYs_[*curAux])[fAbs])->symbolicSet_) {
+        if (((*this->prodsPreYs_[*curAux])[fAbs])->symbolicSet_ == ((*this->prodsPrevPreYs_[*curAux])[fAbs])->symbolicSet_) { // convergence checking
             *numConv += 1;
         }
         else {
@@ -199,10 +155,8 @@ public:
             cout << "prodPreY finest:\n";
             ((*this->prodsPreYs_[*curAux])[fAbs])->printInfo(1);
 
-            // construct pre(Y) for all other abstractions
+            // construct set to intersect with G for all other abstractions
             for (int iAbs = fAbs; iAbs > 0; iAbs--) {
-                // reset to 0 since innerCoarser only adds states
-                ((*this->prodsPreYs_[*curAux])[iAbs-1])->symbolicSet_ = this->ddmgr_->bddZero();
                 innerCoarser((*this->prodsPreYs_[*curAux])[iAbs-1],
                         (*this->prodsPreYs_[*curAux])[iAbs],
                         (*this->prodsXXs_[*curAux])[iAbs-1],
@@ -210,13 +164,14 @@ public:
                         (*this->prodsXs_[*curAux])[iAbs-1]);
             }
 
-            // initialization for mu
+            // initialization for minimal fixed point
             int curAbs = startAbs_;
             int muIter = 1;
             int justCoarsed = 0;
             int iterCurAbs = 1;
             int muStop = 0;
 
+            clog << "Resetting prodCs, prodZs, prodValidCs, prodValidZs to empty.\n";
             for (int iAbs = 0; iAbs < *this->base_->numAbs_; iAbs++) {
                 ((*this->prodsZs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
                 ((*this->prodsValidZs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
@@ -224,8 +179,7 @@ public:
                 ((*this->prodsValidCs_[*curAux])[iAbs])->symbolicSet_ = this->ddmgr_->bddZero();
             }
 
-            clog << "Resetting prodCs, prodZs, prodValidCs, prodValidZs to empty.\n";
-            clog << "Emptying prodFinalCs, prodFinalZs.\n";
+            clog << "Deleting all SymbolicSets in prodFinalCs, prodFinalZs.\n";
             size_t j = prodsFinalCs_[*curAux]->size();
             for (size_t i = 0; i < j; i++) {
                 delete prodsFinalCs_[*curAux]->back();
@@ -234,14 +188,14 @@ public:
                 prodsFinalZs_[*curAux]->pop_back();
             }
 
-            while (1) { // eventually
+            while (1) { // minimal fixed point
                 this->mu(*curAux, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &muStop);
                 if (muStop) {
                     break;
                 }
             }
 
-            // projecting all winning states onto finest abstraction
+            // obtain all winning states from all controllers in the finest abstraction
             ((*this->prodsYs_[*curAux])[0])->symbolicSet_ = ((*this->prodsZs_[*curAux])[0])->symbolicSet_;
             for (int iAbs = 0; iAbs < *this->base_->numAbs_ - 1; iAbs++) {
                 innerFiner((*this->prodsYs_[*curAux])[iAbs],
@@ -252,7 +206,7 @@ public:
                 ((*this->prodsYs_[*curAux])[iAbs+1])->symbolicSet_ |= ((*this->prodsZs_[*curAux])[iAbs+1])->symbolicSet_;
             }
 
-            if ( ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_ == ((*this->prodsPrevYs_[*curAux])[fAbs])->symbolicSet_ ) {
+            if ( ((*this->prodsYs_[*curAux])[fAbs])->symbolicSet_ == ((*this->prodsPrevYs_[*curAux])[fAbs])->symbolicSet_ ) { // convergence checking
                 *numConv += 1;
             }
             else {
@@ -261,13 +215,13 @@ public:
             }
         }
         if (*numConv == this->auxs_.size()) {
-            *nuStop = 1;
+            *nuStop = 1; // vector nested fixed point has converged
             return;
         }
 
         *nuIter += 1;
 
-        *prevAux = *curAux;
+        *prevAux = *curAux; // update the indexes of the vector
         if (*curAux == this->auxs_.size() - 1) {
             *curAux = 0;
         }
@@ -485,6 +439,10 @@ public:
 //        return 1;
 //    }
 
+    /*! Saves a controller C and its domain Z into the appropriate vectors of SymbolicSets.
+     *  \param[in]  curAux      0-index of product system.
+     *  \param[in]  curAbs      0-index of layer of abstraction.
+     */
     void saveCZ(int curAux, int curAbs) {
         SymbolicSet* prodFinalC = new SymbolicSet(*((*this->prodsCs_[curAux])[curAbs]));
         SymbolicSet* prodFinalZ = new SymbolicSet(*((*this->prodsZs_[curAux])[curAbs]));
@@ -495,6 +453,7 @@ public:
     }
 
 
+    /*! Debugging function. */
     int reachOne(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
         startAbs_ = startAbs;
         minToGoCoarser_ = minToGoCoarser;
@@ -556,9 +515,69 @@ public:
         clog << "----------------------------------------reach: ";
         tt.toc();
         return 1;
-
-
     }
+
+    /*! Debugging function. */
+    void alwaysEventuallyOne(int startAbs, int minToGoCoarser, int minToBeValid, int verbose = 1) {
+        startAbs_ = startAbs;
+        minToGoCoarser_ = minToGoCoarser;
+        minToBeValid_ = minToBeValid;
+        earlyBreak_ = 0;
+        verbose_ = verbose;
+
+        if ( (startAbs_ < 0) || (startAbs_ >= *this->base_->numAbs_) ) {
+            error("Error: startAbs out of range.\n");
+        }
+        if (this->auxs_.size() != 1) {
+            error("Error: this debugging function only works with one auxiliary system.");
+        }
+
+        TicToc tt;
+        tt.tic();
+
+        size_t prevAux = 0;
+        size_t curAux = 0;
+        size_t numConv = 0;
+        int nuIter = 1;
+        int nuStop = 0;
+
+        // initialization for nuMu
+        ((*this->prodsYs_[curAux])[*this->base_->numAbs_ - 1])->addGridPoints(); // Y = Q
+        ((*this->prodsPrevYs_[curAux])[*this->base_->numAbs_ - 1])->symbolicSet_ = this->ddmgr_->bddZero(); //prevY = \0
+
+        while (1) {
+            nuMu(&prevAux, &curAux, &numConv, &nuIter, &nuStop);
+            if (nuStop) {
+                break;
+            }
+        }
+
+        int fAbs = *this->base_->numAbs_ - 1;
+
+        SymbolicSet* lastZ = (this->prodsFinalZs_[curAux])->back();
+
+        // part of goal that we can reach infinitely often
+        ((*this->prodsGs_[curAux])[fAbs])->symbolicSet_ &= lastZ->symbolicSet_;
+
+        checkMakeDir("C");
+        string prefix = "C/C";
+        prefix += std::to_string(curAux+1);
+        saveVec(*prodsFinalCs_[curAux], prefix);
+        checkMakeDir("Z");
+        prefix = "Z/Z";
+        prefix += std::to_string(curAux+1);
+        saveVec(*prodsFinalZs_[curAux], prefix);
+        checkMakeDir("plotting");
+        this->baseXs_[0]->writeToFile("plotting/X.bdd");
+        this->baseOs_[fAbs]->writeToFile("plotting/O.bdd");
+        checkMakeDir("G");
+        ((*this->prodsGs_[curAux])[fAbs])->writeToFile("G/G.bdd");
+
+
+        clog << "----------------------------------------alwaysEventually: ";
+        tt.toc();
+    }
+
 
 
 };

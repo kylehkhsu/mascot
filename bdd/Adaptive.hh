@@ -325,60 +325,54 @@ public:
         \param[in]      c       0-index of the coarser abstraction.
         \return         1 if Zc grows; 0 otherwise
     */
-//    int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
-//        BDD nQ = !((!(XXs_[c]->symbolicSet_)) | Zf->symbolicSet_);
-//        BDD Zcandidate = (!(nQ.ExistAbstract(*notXvars_[c]))) & Xs_[c]->symbolicSet_;
-
-//        if (Zcandidate <= Zc->symbolicSet_) {
-//            return 0;
-//        }
-//        else {
-//            Zc->symbolicSet_ = Zcandidate;
-//            return 1;
-//        }
-//    }
     int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+        BDD nQ = !((!(XXs_[c]->symbolicSet_)) | Zf->symbolicSet_);
+        Zc->symbolicSet_ = (!(nQ.ExistAbstract(*notXvars_[c]))) & Xs_[c]->symbolicSet_;
 
-        /* Use numFiner to check if the right number of finer cells are in Zf for a particular corresponding cell in Zc. */
-        int numFiner = 1;
-        for (int i = 0; i < *system_->dimX_; i++) {
-            numFiner *= system_->etaRatio_[i];
-        }
-
-        SymbolicSet Qcf(*XXs_[c]);
-        Qcf.symbolicSet_ = XXs_[c]->symbolicSet_ & Zf->symbolicSet_;
-
-        SymbolicSet Qc(*Zc);
-        Qc.symbolicSet_ = Qcf.symbolicSet_.ExistAbstract(*notXvars_[c]); // & S1
-        Qc.symbolicSet_ &= !(Zc->symbolicSet_); /* don't check states that are already in Zc */
-
-        int* QcMintermWhole;
-        SymbolicSet Ccf(Qcf);
-        BDD result = ddmgr_->bddZero();
-        int* QcMinterm = new int[Qc.nvars_];
-
-        for (Qc.begin(); !Qc.done(); Qc.next()) { // iterate over all coarse cells with any corresponding finer cells in Zf
-            QcMintermWhole = (int*) Qc.currentMinterm();
-            std::copy(QcMintermWhole + Qc.idBddVars_[0], QcMintermWhole + Qc.idBddVars_[0] + Qc.nvars_, QcMinterm);
-
-            BDD coarseCell = Qc.mintermToBDD(QcMinterm) & Xs_[c]->symbolicSet_; // a particular coarse cell
-
-            Ccf.symbolicSet_ = Qcf.symbolicSet_ & coarseCell; // corresponding finer cells to the coarse cell
-
-            if ((Ccf.symbolicSet_.CountMinterm(Ccf.nvars_)) == (numFiner)) { // if there's a full set of finer cells
-                result |= coarseCell;
-            }
-        }
-
-        delete[] QcMinterm;
-
-        if (result == ddmgr_->bddZero()) {
-            return 0;
-        }
-
-        Zc->symbolicSet_ |= result;
         return 1;
     }
+//    int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+
+//        /* Use numFiner to check if the right number of finer cells are in Zf for a particular corresponding cell in Zc. */
+//        int numFiner = 1;
+//        for (int i = 0; i < *system_->dimX_; i++) {
+//            numFiner *= system_->etaRatio_[i];
+//        }
+
+//        SymbolicSet Qcf(*XXs_[c]);
+//        Qcf.symbolicSet_ = XXs_[c]->symbolicSet_ & Zf->symbolicSet_;
+
+//        SymbolicSet Qc(*Zc);
+//        Qc.symbolicSet_ = Qcf.symbolicSet_.ExistAbstract(*notXvars_[c]); // & S1
+//        Qc.symbolicSet_ &= !(Zc->symbolicSet_); /* don't check states that are already in Zc */
+
+//        int* QcMintermWhole;
+//        SymbolicSet Ccf(Qcf);
+//        BDD result = ddmgr_->bddZero();
+//        int* QcMinterm = new int[Qc.nvars_];
+
+//        for (Qc.begin(); !Qc.done(); Qc.next()) { // iterate over all coarse cells with any corresponding finer cells in Zf
+//            QcMintermWhole = (int*) Qc.currentMinterm();
+//            std::copy(QcMintermWhole + Qc.idBddVars_[0], QcMintermWhole + Qc.idBddVars_[0] + Qc.nvars_, QcMinterm);
+
+//            BDD coarseCell = Qc.mintermToBDD(QcMinterm) & Xs_[c]->symbolicSet_; // a particular coarse cell
+
+//            Ccf.symbolicSet_ = Qcf.symbolicSet_ & coarseCell; // corresponding finer cells to the coarse cell
+
+//            if ((Ccf.symbolicSet_.CountMinterm(Ccf.nvars_)) == (numFiner)) { // if there's a full set of finer cells
+//                result |= coarseCell;
+//            }
+//        }
+
+//        delete[] QcMinterm;
+
+//        if (result == ddmgr_->bddZero()) {
+//            return 0;
+//        }
+
+//        Zc->symbolicSet_ |= result;
+//        return 1;
+//    }
 
     /*! Debugging function. Tests the functions for projecting a set from one state space abtraction to another. */
     template<class G_type>
@@ -617,7 +611,7 @@ public:
             SymbolicSet* XX = new SymbolicSet(*Xs_[i], *Xs_[i+1]);
 
             if (readXX_ == 0) {
-                mapAbstractions(Xs_[i], Xs_[i+1], XX, i);
+                mapAbstractions(Xs_[i], Xs_[i+1], XX);
             }
             else {
                 string Str = "XX/XX";

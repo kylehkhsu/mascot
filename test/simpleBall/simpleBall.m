@@ -1,15 +1,13 @@
 
 function simpleBall (mode, numGoals, numAbs, controllers)
-  w = [0 0];
+  w = [0.05 0.05];
   bx = [-5 -5];
-  a1x = [1.5];
-  a2x = [-0.5];
+  a1x = [-2.75 4];
+  a2x = [0.5 -4];
   bInd = [1 2];
-  aInd = [3; 4];
+  aInd = [3 4; 5 6];
   x = [bx a1x a2x];
-  
-  aFixed = [4; -4];
-  
+   
   addpath(genpath('../..'));
   
   % colors
@@ -121,7 +119,7 @@ function simpleBall (mode, numGoals, numAbs, controllers)
 	      P = plot(x(end,bInd(1)),x(end,bInd(2)), 'ko', 'MarkerSize', 5, 'LineWidth', 2);
 	      H = gobjects(numGoals, 1);
 	      for jGoal = 1:numGoals
-		H(jGoal) = plot(x(end,aInd(jGoal,1)), aFixed(jGoal), 'o', 'Color', colors(mod(iStep,7)+1,:), 'MarkerSize', 20, 'LineWidth', 3);
+		H(jGoal) = plot(x(end,aInd(jGoal,1)), x(end,aInd(jGoal,2)), 'o', 'Color', colors(mod(iStep,7)+1,:), 'MarkerSize', 20, 'LineWidth', 3);
 	      end
 	      drawnow
 	      pause(tau/2);
@@ -188,30 +186,16 @@ function dbxdt = bODE(t,bx,u,d)
 end
 
 function a1x = a1next(a1x)
-  if (a1x == 0.5)
-    a1x = 1.5;
-  elseif (a1x == 1.5)
-    a1x = 2.5;
-  elseif (a1x == 2.5)
-    a1x = -2.5;
-  elseif (a1x == -2.5)
-    a1x = -1.5;
-  elseif (a1x == -1.5)
-    a1x = -0.5;
-  elseif (a1x == -0.5)
-    a1x = 0.5;  
+  a1x(1) = a1x(1) + 0.5;
+  if (a1x(1) == 3.25)
+    a1x(1) = -2.75;
   end
 end
 
 function a2x = a2next(a2x)
-  if (a2x == 0.5)
-    a2x = 1.5;
-  elseif (a2x == 1.5)
-    a2x = -1.5;
-  elseif (a2x == -1.5)
-    a2x = -0.5;
-  elseif (a2x == -0.5)
-    a2x = 0.5;  
+  a2x(1) = a2x(1) + 1;
+  if (a2x(1) == 3.5)
+    a2x(1) = -2.5;
   end
 end
 

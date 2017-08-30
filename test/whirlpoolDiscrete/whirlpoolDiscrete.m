@@ -1,18 +1,13 @@
-function whirlpool4 (mode, numGoals, numAbs, controllers)
 
-  % change these between examples
-  
+function whirlpoolDiscrete (mode, numGoals, numAbs, controllers)
   w = [0.05 0.05];
   bx = [0 0];
   a1x = [0.75 4];
   a2x = [4 -0.75];
   a3x = [-2.75 -4];
-  a4x = [-4 1.75];
-  bInd = [1 2]; % indices of base state dimensions
-  aInd = [3 4; 5 6; 7 8; 9 10];
-  x = [bx a1x a2x a3x a4x];
-  
-  % end
+  bInd = [1 2];
+  aInd = [3 4; 5 6; 7 8];
+  x = [bx a1x a2x a3x];
    
   addpath(genpath('../..'));
   
@@ -65,7 +60,7 @@ function whirlpool4 (mode, numGoals, numAbs, controllers)
     
     iStep = 1;
     
-    % N = SymbolicSet(['G/G1' int2str(numAbs) '.bdd']);
+    N = SymbolicSet(['G/G1' int2str(numAbs) '.bdd']);
     
     for iLoop = 1:numLoops
       disp(['loop: ' int2str(iLoop)])
@@ -73,7 +68,8 @@ function whirlpool4 (mode, numGoals, numAbs, controllers)
 	disp(['goal: ' int2str(iGoal)])
 	numControllers = controllers(iGoal);
 	
-	baxdim = size(bx,2) + size(aInd(iGoal,:),2);	
+	baxdim = size(bx,2) + size(aInd(iGoal,:),2);
+	
 	
 	for iController = numControllers:-1:1
 	  disp(['controller: ' int2str(iController)])
@@ -89,7 +85,7 @@ function whirlpool4 (mode, numGoals, numAbs, controllers)
 	  D(1) = plot(p(:,1), p(:,2), 'x', 'MarkerFaceColor', colors(mod(iStep,7)+1,:), 'MarkerSize', 1.5);
 	  eta = Z.eta();
 	  eta = eta';
-	  tau = getTau(eta); % hacky
+	  tau = getTau(eta);
 	  disp(['eta: ' num2str(eta)])
 	  disp(['tau: ' num2str(tau)])
 	 
@@ -120,7 +116,6 @@ function whirlpool4 (mode, numGoals, numAbs, controllers)
 
 	    end
 	    
-	    % plotting
 	    if (boolplot)
 	      P = plot(x(end,bInd(1)),x(end,bInd(2)), 'ko', 'MarkerSize', 5, 'LineWidth', 2);
 	      H = gobjects(numGoals, 1);
@@ -147,7 +142,6 @@ function whirlpool4 (mode, numGoals, numAbs, controllers)
 	      break;
 	    end
 	  
-	    % simulation
 	    u = C.getInputs(bax);
 
 	    ran = randi([1 size(u,1)], 1, 1);	
@@ -157,11 +151,10 @@ function whirlpool4 (mode, numGoals, numAbs, controllers)
 	    disp(['u: ' num2str(u(ran,:))])
 	    disp(['d: ' num2str(d)])
 	    
-	    % base next state
+	    
 	    [t bphi] = ode45(@bODE, [0 tau], bx, [], u(ran,:), d);
 	    phi = bphi;	    
 	    
-	    % all aux systems next state
 	    for jGoal = 1:numGoals
 %  	      [t aphi] = ode45(str2func(['a' int2str(jGoal) 'ODE']), [0 tau], x(end,aInd(jGoal,:)), []);
 	      
@@ -171,17 +164,15 @@ function whirlpool4 (mode, numGoals, numAbs, controllers)
 		aphi = a2next(x(end,aInd(jGoal,:)), tau);
 	      elseif (jGoal == 3)
 		aphi = a3next(x(end,aInd(jGoal,:)), tau);
-	      elseif (jGoal == 4)
-		aphi = a4next(x(end,aInd(jGoal,:)), tau);
 	      end	      
-	      phi = [phi repmat(aphi,size(phi,1),1)]; % to match dimensions of base
+	      phi = [phi repmat(aphi,size(phi,1),1)];
 	    end 
 	    x = [x; phi];
 
 	    iStep = iStep + 1;
 	  
 	  end
-	  delete(D(1))+;
+	  delete(D(1));
 	end
       end
     end
@@ -219,13 +210,6 @@ function a3x = a3next(a3x, tau)
   a3x(1) = a3x(1) - 1 * tau/0.6;
   if (a3x(1) < -2.75)
     a3x(1) = 2.75;
-  end
-end
-
-function a4x = a4next(a4x, tau)
-  a4x(2) = a4x(2) + 1 * tau/0.6;
-  if (a4x(2) > 2.75)
-    a4x(2) = -2.75;
   end
 end
 
