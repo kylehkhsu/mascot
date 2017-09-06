@@ -115,8 +115,8 @@ int main() {
 
     int numAbs = 2;
     int startAbs = 1;
-    int readXX = 1;
-    int readAbs = 1;
+    int readXX = 0;
+    int readAbs = 0;
 
     X_type x;
     U_type u;

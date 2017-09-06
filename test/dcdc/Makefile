@@ -4,17 +4,18 @@
 CC        = g++
 #CC       	  = clang++
 CXXFLAGS 		= -Wall -Wextra -std=c++11 -O3 -DNDEBUG
+CXXFLAGS 		= -Wall -Wextra -std=c++11 
 
 #
 # scots 
 #
 SCOTSROOT		= ../..
-SCOTSINC		= -I$(SCOTSROOT)/bdd -I$(SCOTSROOT)/utils 
+SCOTSINC		= -I$(SCOTSROOT)/utils -I$(SCOTSROOT)/bdd 
 
 #
 # cudd 
 #
-CUDDPATH		=  /home/kylehsu/local
+CUDDPATH		=  /opt/local
 CUDDINC 		= -I$(CUDDPATH)/include
 CUDDLIBS		= -lcudd 
 CUDDLPATH   = -L$(CUDDPATH)/lib

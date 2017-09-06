@@ -88,17 +88,6 @@ auto dcdcAddS = [](SymbolicSet* S) -> void {
     S->addPolytope(4, H, h, INNER);
 };
 
-void sub(double* lbX, double* ubX, double* etaX, double tau, double* lbU, double* ubU, double* etaU,
-         double* etaRatio, double tauRatio, int numAbs, int nint, int readAb) {
-    Compare<X_type, U_type> comp(dimX, lbX, ubX, etaX, tau,
-                                 dimU, lbU, ubU, etaU,
-                                 etaRatio, tauRatio, nint,
-                                 numAbs, readAb, "scots.txt");
-    comp.initializeSafe(dcdcAddS);
-    comp.computeAbstractions(sysNext, radNext);
-    comp.safeSCOTS();
-}
-
 int main() {
 
     double lbX[dimX]  = {1.15, 5.45};
@@ -110,27 +99,25 @@ int main() {
 
     int nint = 5;
 
-    double etaX[dimX]= {2/4e3*3*3/3, 2/4e3*3*3/3};
+    double etaX[dimX]= {2/4e3*3*4, 2/4e3*3*4};
     double tau = 0.5;
 
-    double etaRatio[dimX] = {3, 3};
+    double etaRatio[dimX] = {4, 4};
     double tauRatio = 1;
 
     X_type x;
     U_type u;
 
-    int numAbs = 2-1;
+    int numAbs = 2;
     int readXX = 0; // if X, U have changed, needs to be 0.
     int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
     System dcdc(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
-    Safe abs("dcdc1A.txt");
+    Safe abs("dcdc2A.txt");
     abs.initialize(&dcdc, readXX, readAbs, dcdcAddO);
     abs.initializeSafe(dcdcAddS);
     abs.computeAbstractions(sysNext, radNext, x, u);
     abs.safe();
-
-//    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs);
 }

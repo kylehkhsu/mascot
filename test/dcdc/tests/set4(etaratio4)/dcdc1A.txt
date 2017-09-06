@@ -1,4 +1,4 @@
-dcdc2A.txt
+dcdc3A.txt
 Initialized alignment.
 Initialized etaXs_, tau_.
 Initialized solvers.
@@ -8,26 +8,23 @@ U_ initialized with full domain.
 Os_ initialized according to specification.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 26.3797 seconds.
-Number of BDD variables: 65
+------------------------------------------------initializeXXs: Elapsed time is 2.016e-05 seconds.
+Number of BDD variables: 37
 Initialized permutes.
 Initialized cubes.
 Initialized notVars.
 etaXs_:
-abstraction 0: 0.006 0.006 
-abstraction 1: 0.0015 0.0015 
+abstraction 0: 0.0015 0.0015 
 tau_:
 abstraction 0: 0.5
-abstraction 1: 0.5
 Ss_ initialized
-------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.014313 seconds.
+------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.00319881 seconds.
 Zs_ modified to BDD-1.
 infZs_ initialized to empty.
 Ts_ initialized with empty domain.
 Ts_ computed by sampling system behavior.
-------------------------------------------------computeAbstractions: Elapsed time is 3.47891 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 3.04877 seconds.
 Wrote Ts_ to file.
 TTs_ initialized by ExistAbstracting from Ts_.
-.................................33
 .............................................................61
-----------------------------------------safe: Elapsed time is 1.8542 seconds.
+----------------------------------------safe: Elapsed time is 8.20874 seconds.

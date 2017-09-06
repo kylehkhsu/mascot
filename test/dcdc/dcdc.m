@@ -13,11 +13,10 @@ function dcdc (mode, numAbs)
     X = SymbolicSet('plotting/X.bdd');
     lb = X.first();
     ub = X.last();
-    (ub(1)-lb(1))/10
     axis([lb(1)-(ub(1)-lb(1))/10 ub(1)+(ub(1)-lb(1))/10 lb(2)-(ub(2)-lb(2))/10 ub(2)+(ub(2)-lb(2))/10])
 %      plotCells(X, 'facecolor', 'none', 'edgec', [0.8 0.8 0.8], 'linew', 0.1);
-    x = X.points;
-    plot(x(:,1),x(:,2),'.','color',[0.8 0.8 0.8]);
+%    x = X.points;
+%    plot(x(:,1),x(:,2),'.','color',[0.8 0.8 0.8]);
     drawnow
     disp('Done plotting state space')
     savefig('system');
@@ -28,12 +27,8 @@ function dcdc (mode, numAbs)
     hold on
     drawnow
     
-    % load and draw possible safe zone
-%      S = SymbolicSet('S.bdd');
-%      plotCells(S, 'facecolor', colors(2,:)*0.5+0.5, 'edgec', colors(2,:), 'linew', 0.1)
-
-    v = [1.15125 5.45025; 1.54875 5.45025; 1.15125 5.84925; 1.54875 5.84925 ];
-    patch('vertices',v,'faces',[1 2 4 3],'facecolor','none','edgec',colors(2,:),'linew',1)
+    v = [1.15125-0.002 5.45025-0.002; 1.54875+0.002 5.45025-0.002; 1.15125-0.002 5.84925+0.002; 1.54875+0.002 5.84925+0.002 ];
+    patch('vertices',v,'faces',[1 2 4 3],'facecolor','none','edgec',colors(5,:),'linew',3)
     hold on
     drawnow
     disp('Done plotting possible safe zone')
@@ -48,13 +43,13 @@ function dcdc (mode, numAbs)
     
     D = SymbolicSet('plotting/D.bdd');
     d = D.points;
-    plot(d(:,1),d(:,2),'.','color', [0.75 0.85 0.95], 'MarkerSize', 5);
+    plot(d(:,1),d(:,2),'.','color', [0.75 0.85 0.95], 'MarkerSize', 20);
     
     for i = numAbs:-1:1
       try
 	Z = SymbolicSet(['Z/Z' int2str(i) '.bdd']);
 	z = Z.points;
-	plot(z(:,1),z(:,2),'.','color', colors(i,:), 'MarkerSize', 5);
+	plot(z(:,1),z(:,2),'.','color', colors(i,:)*0.5+0.5, 'MarkerSize', 20);
 	drawnow
 	pause
       end
@@ -80,13 +75,13 @@ function dcdc (mode, numAbs)
     tau = 0.5;
     x = [1.2 5.52];
     v = [];
-    T = 100;        
+    T = 80;        
     
     for j = 1:T/tau
       disp(j)
       disp(x(end,:))
       
-      if (mod(j,5) == 0)
+      if (mod(j,10) == 0)
 	plot(x(:,1),x(:,2),'k.-')
 	drawnow
 	pause
@@ -122,54 +117,12 @@ function dcdc (mode, numAbs)
      disp(d)
 
     end
+    v = [1.15125-0.002 5.45025-0.002; 1.54875+0.002 5.45025-0.002; 1.15125-0.002 5.84925+0.002; 1.54875+0.002 5.84925+0.002 ];
+    patch('vertices',v,'faces',[1 2 4 3],'facecolor','none','edgec',colors(5,:),'linew',3)
     savefig('safe');
  
   end
-  
-  if (strcmp(mode,'scots')) % scots safe
-    openfig('problem');
-    hold on
-    drawnow
-    
-    C = SymbolicSet('scots/C.bdd', 'projection', [1 2]);
-    c = C.points;
-    plot(c(:,1),c(:,2),'.', 'color', [0.75 0.85 0.95], 'MarkerSize', 5);
-    
-    
-    S = SymbolicSet('scots/S.bdd');
-    eta = S.eta();
-    eta = eta';
-    tau = 0.5;
-    x = [1.2 5.52];
-    v = [];
-    
-    T = 100;
-    
-    for j = 1:T/tau
-      disp(j)
-      disp(x(end,:))
-      
-      if (mod(j,5) == 0)
-	plot(x(:,1),x(:,2),'k.-')
-	drawnow
-	pause
-      end    
-    
-      u = C.getInputs(x(end,:));
-      ran = randi([1 size(u,1)], 1, 1);
-      v = [v; u(ran,:)];
-      d = disturbance(w);
-      [t phi] = ode45(@sysODE, [0 tau], x(end,:), [], u(ran,:), d);
-      x = [x; phi];
-      
-     disp('u')
-     disp(u(ran,:))
-     disp('d')
-     disp(d)
-    end
-    savefig('scots/safe');
-  end  
-end 
+end
 
 function dxdt = sysODE(t, x, u, d)
   r0 = 1;
