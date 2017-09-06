@@ -20,7 +20,6 @@
 #include "dddmp.h"
 #include "cuddObj.hh"
 #include "CuddMintermIterator.hh"
-#include "Helper.hh"
 
 /* class: SymbolicSet
         *
@@ -41,7 +40,6 @@
         * - http://arxiv.org/abs/1503.03715 for theoretical background
         *
     */
-using namespace helper;
 
 namespace scots {
 

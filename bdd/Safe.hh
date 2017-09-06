@@ -36,7 +36,9 @@ public:
             clog << ".";
             // get pre of current abtraction's Z disjuncted with projection of converged Z from previous abstraction
             this->Cs_[curAbs]->symbolicSet_ = this->preC(this->Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs);
+//            this->Cs_[curAbs]->symbolicSet_ = this->preC(this->Zs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs);
             // conjunct with safe set (maximal fixed point)
+//            this->Cs_[curAbs]->symbolicSet_ &= (Ss_[curAbs]->symbolicSet_ & !infZs_[curAbs]->symbolicSet_);
             this->Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
             // project onto Xs_[curAbs]
             BDD Z = this->Cs_[curAbs]->symbolicSet_.ExistAbstract(*this->notXvars_[curAbs]);
