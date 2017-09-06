@@ -1,7 +1,7 @@
 #
 # matlab root 
 #
-MATLABROOT	= /usr/lib/matlab-9.1/
+MATLABROOT	= /usr/local/MATLAB/R2017a/
 
 #
 # compiler
@@ -19,7 +19,7 @@ SCOTSINC		= -I$(SCOTSROOT)/bdd
 #
 # cudd 
 #
-CUDDPATH		=  /home/kylehsu/local
+CUDDPATH		=  /opt/local
 CUDDINC 		= -I$(CUDDPATH)/include
 CUDDLIBS		= -lcudd 
 CUDDLPATH   = -L$(CUDDPATH)/lib
