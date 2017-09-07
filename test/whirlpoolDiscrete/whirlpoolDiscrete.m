@@ -1,4 +1,11 @@
-
+% Mode can be either 'S', 'P' or 'GB'
+% 'S' = load and draw state space
+% 'P' = load and draw obstacles
+% 'GB' = Generalized Buchi
+% numGoals = number of goals
+% numAbs = number of abstraction layers
+% controllers = array of length=numGoals, where controllers[i] = number of
+% controllers for i-th goal
 function whirlpoolDiscrete (mode, numGoals, numAbs, controllers)
   w = [0.05 0.05];
   bx = [0 0];
@@ -127,7 +134,7 @@ function whirlpoolDiscrete (mode, numGoals, numAbs, controllers)
 		end
 		H(jGoal) = plot(x(end,aInd(jGoal,1)), x(end,aInd(jGoal,2)), 'o', 'Color', color, 'MarkerSize', 30, 'LineWidth', 3);
 	      end
-	      drawnow
+	      % drawnow
 	      pause(tau/2);
 	      
 	      if (~(iLoop == numLoops && iGoal == numGoals && iController == 1 && boolbreak))

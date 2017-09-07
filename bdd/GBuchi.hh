@@ -168,6 +168,9 @@ public:
             int curAbs = startAbs_;
             int muIter = 1;
             int justCoarsed = 0;
+            if (curAbs != fAbs) {
+                justCoarsed = 1;
+            }
             int iterCurAbs = 1;
             int muStop = 0;
 
@@ -278,12 +281,14 @@ public:
                             clog << "Resetting prodsZs_[" << curAux << "][" << *curAbs << "] and prodsCs_[" << curAux << "][" << *curAbs << "] from valids.\n";
                         }
 
-                        SymbolicSet* prodC = prodsFinalCs_[curAux]->back();
-                        SymbolicSet* prodZ = prodsFinalZs_[curAux]->back();
-                        prodsFinalCs_[curAux]->pop_back();
-                        prodsFinalZs_[curAux]->pop_back();
-                        delete(prodC);
-                        delete(prodZ);
+                        if (prodsFinalCs_[curAux]->size() > 0) {
+                            SymbolicSet* prodC = prodsFinalCs_[curAux]->back();
+                            SymbolicSet* prodZ = prodsFinalZs_[curAux]->back();
+                            prodsFinalCs_[curAux]->pop_back();
+                            prodsFinalZs_[curAux]->pop_back();
+                            delete(prodC);
+                            delete(prodZ);
+                        }
 
                         ((*this->prodsCs_[curAux])[*curAbs])->symbolicSet_ = ((*this->prodsValidCs_[curAux])[*curAbs])->symbolicSet_;
                         ((*this->prodsZs_[curAux])[*curAbs])->symbolicSet_ = ((*this->prodsValidZs_[curAux])[*curAbs])->symbolicSet_;
