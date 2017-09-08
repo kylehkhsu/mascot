@@ -69,8 +69,8 @@ auto unicycleAddO = [](SymbolicSet* O) -> void {
     double c1[3] = {0.9, 6.9, 0};
     O->addEllipsoid(E1, c1, OUTER);
 
-    double E2[9] = {2, 0, 0,
-                    0, 2, 0,
+    double E2[9] = {3, 0, 0,
+                    0, 3, 0,
                     0, 0, 0};
 
     double c2[3] = {5.7, 3, 0};
@@ -114,8 +114,8 @@ int main() {
     double etaX[dimX] = {0.6, 0.6, 0.3};
     double tau = 0.9;
 
-    double etaRatio[dimX] = {3, 3, 3};
-    double tauRatio = 3;
+    double etaRatio[dimX] = {2, 2, 2};
+    double tauRatio = 2;
 
     int numAbs = 3;
     int startAbs = 0;
