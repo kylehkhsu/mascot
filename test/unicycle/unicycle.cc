@@ -69,12 +69,12 @@ auto unicycleAddO = [](SymbolicSet* O) -> void {
     double c1[3] = {0.9, 6.9, 0};
     O->addEllipsoid(E1, c1, OUTER);
 
-    double E2[9] = {3, 0, 0,
-                    0, 3, 0,
-                    0, 0, 0};
+//    double E2[9] = {1.6, 0, 0,
+//                    0, 1.6, 0,
+//                    0, 0, 0};
 
-    double c2[3] = {5.7, 3, 0};
-    O->addEllipsoid(E2, c2, OUTER);
+//    double c2[3] = {5.7, 3, 0};
+//    O->addEllipsoid(E, c2, OUTER);
 
 //    double c3[3] = {3.4, 2, 0};
 //    O->addEllipsoid(E, c3, OUTER);
@@ -114,11 +114,11 @@ int main() {
     double etaX[dimX] = {0.6, 0.6, 0.3};
     double tau = 0.9;
 
-    double etaRatio[dimX] = {2, 2, 2};
-    double tauRatio = 2;
+    double etaRatio[dimX] = {3, 3, 3};
+    double tauRatio = 3;
 
-    int numAbs = 3;
-    int startAbs = 0;
+    int numAbs = 2;
+    int startAbs = 1;
     int readXX = 0;
     int readAbs = 0;
 
@@ -129,7 +129,7 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    Reach abs("unicycle3A.txt");
+    Reach abs("unicycle2AinnerCoarserSymbolic.txt");
     abs.initialize(&unicycle, readXX, readAbs, unicycleAddO);
     abs.initializeReach(unicycleAddG, unicycleAddI);
     abs.computeAbstractions(sysNext, radNext, x, u);
