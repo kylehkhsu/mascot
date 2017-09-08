@@ -44,7 +44,7 @@ auto unicycleAddG = [](SymbolicSet* G) -> void {
     double H[9]={ 1.6,   0,   0,
                     0, 0.8,   0,
                     0,   0, 0.1};
-    double c[3] = {9.3, 9, 0};
+    double c[3] = {8.1, 8.8, 0};
     G->addEllipsoid(H, c, INNER);
 };
 
@@ -63,14 +63,18 @@ auto unicycleAddO = [](SymbolicSet* O) -> void {
     double h3[4] = {-6.7, 7.1, -2, 10};
     O->addPolytope(4, H, h3, OUTER);
 
-    double E[9] = { 4, 0, 0,
-                    0, 4, 0,
+    double E1[9] = { 4, 0, 0,
+                    0, 2, 0,
                     0, 0, 0};
     double c1[3] = {0.9, 6.9, 0};
-    O->addEllipsoid(E, c1, OUTER);
+    O->addEllipsoid(E1, c1, OUTER);
 
-//    double c2[3] = {1, 3, 0};
-//    O->addEllipsoid(E, c2, OUTER);
+    double E2[9] = {1.6, 0, 0,
+                    0, 1.6, 0,
+                    0, 0, 0};
+
+    double c2[3] = {5.7, 3, 0};
+    O->addEllipsoid(E, c2, OUTER);
 
 //    double c3[3] = {3.4, 2, 0};
 //    O->addEllipsoid(E, c3, OUTER);
@@ -99,7 +103,7 @@ auto unicycleAddI = [](SymbolicSet* I) -> void {
 int main() {
 
     double lbX[dimX] = {0, 0, -M_PI-0.4};
-    double ubX[dimX] = {10, 10, M_PI+0.4};
+    double ubX[dimX] = {9.1, 9.1, M_PI+0.4};
 
     double lbU[dimU] = {-1.2, -1.6};
     double ubU[dimU] = {1.2, 1.6};
@@ -113,8 +117,8 @@ int main() {
     double etaRatio[dimX] = {3, 3, 3};
     double tauRatio = 3;
 
-    int numAbs = 2;
-    int startAbs = 1;
+    int numAbs = 3;
+    int startAbs = 0;
     int readXX = 0;
     int readAbs = 0;
 

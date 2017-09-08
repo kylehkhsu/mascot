@@ -243,13 +243,57 @@ public:
         BDD Z2 = Z.Permute(permutesXtoX2_[curAbs]);
         // posts outside of winning set
         BDD nZ2 = !Z2;
-        // {(x,u)} with posts outside of winning set
+        // {(x,u)} with some posts outside of winning set
         BDD Fbdd = T.AndAbstract(nZ2, *notXUvars_[curAbs]);
         // {(x,u)} with no posts outside of winning set
         BDD nF = !Fbdd;
         // get rid of junk
         BDD preF = TT.AndAbstract(nF, *notXUvars_[curAbs]);
+
         return preF;
+    }
+
+    BDD nPreC(BDD Z, BDD T, BDD TT, int curAbs) {
+        // swap to X2s_[curAbs]
+        BDD Z2 = Z.Permute(permutesXtoX2_[curAbs]);
+        // {(x,u)} with some posts in winning set
+        BDD Fbdd = T.AndAbstract(Z2, *notXUvars_[curAbs]);
+        // {(x,u)} with no posts in winning set
+        BDD nF = !Fbdd & Xs_[curAbs]->symbolicSet_ & U_->symbolicSet_;
+//        // get rid of junk
+//        BDD preF = TT.AndAbstract(nF, *notXUvars_[curAbs]);
+        // project to X
+        BDD preZ = nF.ExistAbstract(*notXvars_[curAbs]);
+        // second complement
+        BDD nPreZ = !preZ & Xs_[curAbs]->symbolicSet_;
+
+        SymbolicSet Z2SS(*X2s_[curAbs]);
+        Z2SS.addGridPoints();
+        Z2SS.symbolicSet_ &= Z2;
+        cout << "Z2:\n";
+        Z2SS.printInfo(1);
+
+        SymbolicSet FbddSS(*Cs_[curAbs]);
+        FbddSS.symbolicSet_ = Fbdd;
+        cout << "Fbdd:\n";
+        FbddSS.printInfo(1);
+
+        SymbolicSet nFSS(*Cs_[curAbs]);
+        nFSS.symbolicSet_ = nF;
+        cout << "nF:\n";
+        nFSS.printInfo(1);
+
+        SymbolicSet preZSS(*Xs_[curAbs]);
+        preZSS.symbolicSet_ = preZ;
+        cout << "preZ:\n";
+        preZSS.printInfo(1);
+
+        SymbolicSet nPreZSS(*Xs_[curAbs]);
+        nPreZSS.symbolicSet_ = nPreZ;
+        cout << "nPreZ:\n";
+        nPreZSS.printInfo(1);
+
+        return nPreZ;
     }
 
     /*! Initializes the BDDs useful for existential abstraction. Must be called only after initializing Xs, U, and X2s. */
