@@ -72,7 +72,7 @@ auto unicycleAddO = [](SymbolicSet* O) -> void {
     double h4[4] = {-2.5, 3.2, -3.7, 4.6};
     O->addPolytope(4, H, h4, OUTER);
 
-    double h5[4] = {-5.6, 6.5, -4.9, 6.5};
+    double h5[4] = {-5.39, 6.5, -4.9, 6.5};
     O->addPolytope(4, H, h5, OUTER);
 
 //    double h[4] = {-0.6, 5, -1.81, 2.39};
@@ -106,8 +106,8 @@ int main() {
 
     int numAbs = 3;
     int startAbs = 0;
-    int readXX = 0;
-    int readAbs = 0;
+    int readXX = 1;
+    int readAbs = 1;
 
     X_type x;
     U_type u;
@@ -121,8 +121,8 @@ int main() {
     abs.initializeReach(unicycleAddG, unicycleAddI);
     abs.computeAbstractions(sysNext, radNext, x, u);
 
-    int minToGoCoarser = 5;
-    int minToBeValid = 5;
+    int minToGoCoarser = 7;
+    int minToBeValid = 7;
     int earlyBreak = 1;
 
     abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
