@@ -1,4 +1,4 @@
-unicycle2AinnerCoarserSymbolic.txt
+unicycle3A.txt
 Initialized alignment.
 Initialized etaXs_, tau_.
 Initialized solvers.
@@ -8,71 +8,83 @@ U_ initialized with full domain.
 Os_ initialized according to specification.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 0.0033577 seconds.
-Number of BDD variables: 65
+------------------------------------------------initializeXXs: Elapsed time is 62.8656 seconds.
+Number of BDD variables: 103
 Initialized permutes.
 Initialized cubes.
 Initialized notVars.
 etaXs_:
 abstraction 0: 0.6 0.6 0.3 
 abstraction 1: 0.3 0.3 0.15 
+abstraction 2: 0.15 0.15 0.075 
 tau_:
 abstraction 0: 0.9
 abstraction 1: 0.45
+abstraction 2: 0.225
 Gs_ initialized.
 Is_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.0723231 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.283614 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
 preYs_ initialized with full domain.
 Ts_ initialized with empty domain.
-Ts_ read from file.
-------------------------------------------------computeAbstractions: Elapsed time is 0.310385 seconds.
+Ts_ computed by sampling system behavior.
+------------------------------------------------computeAbstractions: Elapsed time is 1813.61 seconds.
+Wrote Ts_ to file.
 TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
-current abstraction: 1
+current abstraction: 0
 mu iteration: 1
-justCoarsed: 0
+justCoarsed: 1
 iterCurAbs: 1
 reached: 0
 controllers: 0
 First iteration, nothing happens.
 
-current abstraction: 1
+current abstraction: 0
 mu iteration: 2
-justCoarsed: 0
+justCoarsed: 1
 iterCurAbs: 1
 reached: 0
 controllers: 0
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
-
-current abstraction: 0
-mu iteration: 3
-justCoarsed: 1
-iterCurAbs: 1
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 4
-justCoarsed: 1
-iterCurAbs: 2
-reached: 0
-controllers: 1
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of finalCs_ and finalZs_.
 Resetting Zs_[0] and Cs_[0] from valids.
+
+current abstraction: 1
+mu iteration: 3
+justCoarsed: 0
+iterCurAbs: 1
+reached: 0
+controllers: 0
+
+current abstraction: 1
+mu iteration: 4
+justCoarsed: 0
+iterCurAbs: 2
+reached: 0
+controllers: 0
 
 current abstraction: 1
 mu iteration: 5
 justCoarsed: 0
-iterCurAbs: 1
+iterCurAbs: 3
+reached: 0
+controllers: 0
+
+current abstraction: 1
+mu iteration: 6
+justCoarsed: 0
+iterCurAbs: 4
+reached: 0
+controllers: 0
+
+current abstraction: 1
+mu iteration: 7
+justCoarsed: 0
+iterCurAbs: 5
 reached: 0
 controllers: 0
 More new states, minToGoCoarser achieved; try going coarser.
@@ -81,7 +93,7 @@ Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
 Saving Z and C of abstraction 0 into validZs_, validCs.
 
 current abstraction: 0
-mu iteration: 6
+mu iteration: 8
 justCoarsed: 1
 iterCurAbs: 1
 reached: 0
@@ -89,31 +101,9 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 7
-justCoarsed: 1
-iterCurAbs: 2
-reached: 0
-controllers: 1
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
-
-current abstraction: 1
-mu iteration: 8
-justCoarsed: 0
-iterCurAbs: 1
-reached: 0
-controllers: 0
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
-
-current abstraction: 0
 mu iteration: 9
 justCoarsed: 1
-iterCurAbs: 1
+iterCurAbs: 2
 reached: 0
 controllers: 1
 More new states, already at coarsest gridding, continuing.
@@ -121,51 +111,13 @@ More new states, already at coarsest gridding, continuing.
 current abstraction: 0
 mu iteration: 10
 justCoarsed: 1
-iterCurAbs: 2
-reached: 0
-controllers: 1
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
-
-current abstraction: 1
-mu iteration: 11
-justCoarsed: 0
-iterCurAbs: 1
-reached: 0
-controllers: 0
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
-
-current abstraction: 0
-mu iteration: 12
-justCoarsed: 1
-iterCurAbs: 1
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 13
-justCoarsed: 1
-iterCurAbs: 2
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 14
-justCoarsed: 1
 iterCurAbs: 3
 reached: 0
 controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 15
+mu iteration: 11
 justCoarsed: 1
 iterCurAbs: 4
 reached: 0
@@ -173,7 +125,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 16
+mu iteration: 12
 justCoarsed: 1
 iterCurAbs: 5
 reached: 0
@@ -182,7 +134,7 @@ Current controller now valid.
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 17
+mu iteration: 13
 justCoarsed: 0
 iterCurAbs: 6
 reached: 0
@@ -190,7 +142,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 18
+mu iteration: 14
 justCoarsed: 0
 iterCurAbs: 7
 reached: 0
@@ -198,7 +150,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 19
+mu iteration: 15
 justCoarsed: 0
 iterCurAbs: 8
 reached: 0
@@ -206,7 +158,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 20
+mu iteration: 16
 justCoarsed: 0
 iterCurAbs: 9
 reached: 0
@@ -214,7 +166,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 21
+mu iteration: 17
 justCoarsed: 0
 iterCurAbs: 10
 reached: 0
@@ -222,7 +174,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 22
+mu iteration: 18
 justCoarsed: 0
 iterCurAbs: 11
 reached: 0
@@ -230,7 +182,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 23
+mu iteration: 19
 justCoarsed: 0
 iterCurAbs: 12
 reached: 0
@@ -238,7 +190,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 24
+mu iteration: 20
 justCoarsed: 0
 iterCurAbs: 13
 reached: 0
@@ -246,7 +198,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 25
+mu iteration: 21
 justCoarsed: 0
 iterCurAbs: 14
 reached: 0
@@ -254,7 +206,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 26
+mu iteration: 22
 justCoarsed: 0
 iterCurAbs: 15
 reached: 0
@@ -262,7 +214,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 27
+mu iteration: 23
 justCoarsed: 0
 iterCurAbs: 16
 reached: 0
@@ -270,7 +222,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 28
+mu iteration: 24
 justCoarsed: 0
 iterCurAbs: 17
 reached: 0
@@ -278,7 +230,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 29
+mu iteration: 25
 justCoarsed: 0
 iterCurAbs: 18
 reached: 0
@@ -286,7 +238,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 30
+mu iteration: 26
 justCoarsed: 0
 iterCurAbs: 19
 reached: 0
@@ -294,7 +246,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 31
+mu iteration: 27
 justCoarsed: 0
 iterCurAbs: 20
 reached: 0
@@ -302,7 +254,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 32
+mu iteration: 28
 justCoarsed: 0
 iterCurAbs: 21
 reached: 0
@@ -310,7 +262,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 33
+mu iteration: 29
 justCoarsed: 0
 iterCurAbs: 22
 reached: 0
@@ -318,7 +270,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 34
+mu iteration: 30
 justCoarsed: 0
 iterCurAbs: 23
 reached: 0
@@ -326,7 +278,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 35
+mu iteration: 31
 justCoarsed: 0
 iterCurAbs: 24
 reached: 0
@@ -334,7 +286,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 36
+mu iteration: 32
 justCoarsed: 0
 iterCurAbs: 25
 reached: 0
@@ -342,7 +294,7 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 37
+mu iteration: 33
 justCoarsed: 0
 iterCurAbs: 26
 reached: 0
@@ -350,145 +302,9 @@ controllers: 1
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 38
+mu iteration: 34
 justCoarsed: 0
 iterCurAbs: 27
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 39
-justCoarsed: 0
-iterCurAbs: 28
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 40
-justCoarsed: 0
-iterCurAbs: 29
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 41
-justCoarsed: 0
-iterCurAbs: 30
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 42
-justCoarsed: 0
-iterCurAbs: 31
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 43
-justCoarsed: 0
-iterCurAbs: 32
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 44
-justCoarsed: 0
-iterCurAbs: 33
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 45
-justCoarsed: 0
-iterCurAbs: 34
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 46
-justCoarsed: 0
-iterCurAbs: 35
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 47
-justCoarsed: 0
-iterCurAbs: 36
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 48
-justCoarsed: 0
-iterCurAbs: 37
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 49
-justCoarsed: 0
-iterCurAbs: 38
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 50
-justCoarsed: 0
-iterCurAbs: 39
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 51
-justCoarsed: 0
-iterCurAbs: 40
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 52
-justCoarsed: 0
-iterCurAbs: 41
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 53
-justCoarsed: 0
-iterCurAbs: 42
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 54
-justCoarsed: 0
-iterCurAbs: 43
-reached: 0
-controllers: 1
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 55
-justCoarsed: 0
-iterCurAbs: 44
 reached: 0
 controllers: 1
 No new winning states; going finer.
@@ -497,9 +313,37 @@ Saving Z and C of abstraction 0 into valids, finals.
 Finding inner approximation of Zs_[0] and copying into validZs_[1].
 
 current abstraction: 1
-mu iteration: 56
+mu iteration: 35
 justCoarsed: 0
 iterCurAbs: 1
+reached: 0
+controllers: 2
+
+current abstraction: 1
+mu iteration: 36
+justCoarsed: 0
+iterCurAbs: 2
+reached: 0
+controllers: 2
+
+current abstraction: 1
+mu iteration: 37
+justCoarsed: 0
+iterCurAbs: 3
+reached: 0
+controllers: 2
+
+current abstraction: 1
+mu iteration: 38
+justCoarsed: 0
+iterCurAbs: 4
+reached: 0
+controllers: 2
+
+current abstraction: 1
+mu iteration: 39
+justCoarsed: 0
+iterCurAbs: 5
 reached: 0
 controllers: 2
 More new states, minToGoCoarser achieved; try going coarser.
@@ -508,7 +352,7 @@ Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
 Saving Z and C of abstraction 0 into validZs_, validCs.
 
 current abstraction: 0
-mu iteration: 57
+mu iteration: 40
 justCoarsed: 1
 iterCurAbs: 1
 reached: 0
@@ -516,7 +360,7 @@ controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 58
+mu iteration: 41
 justCoarsed: 1
 iterCurAbs: 2
 reached: 0
@@ -524,7 +368,7 @@ controllers: 3
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
-mu iteration: 59
+mu iteration: 42
 justCoarsed: 1
 iterCurAbs: 3
 reached: 0
@@ -533,620 +377,818 @@ No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of finalCs_ and finalZs_.
 Resetting Zs_[0] and Cs_[0] from valids.
+
+current abstraction: 1
+mu iteration: 43
+justCoarsed: 0
+iterCurAbs: 1
+reached: 0
+controllers: 2
+No new winning states; going finer.
+Current controller has been declared valid.
+Saving Z and C of abstraction 1 into valids, finals.
+Finding inner approximation of Zs_[1] and copying into validZs_[2].
+
+current abstraction: 2
+mu iteration: 44
+justCoarsed: 0
+iterCurAbs: 1
+reached: 0
+controllers: 3
+
+current abstraction: 2
+mu iteration: 45
+justCoarsed: 0
+iterCurAbs: 2
+reached: 0
+controllers: 3
+
+current abstraction: 2
+mu iteration: 46
+justCoarsed: 0
+iterCurAbs: 3
+reached: 0
+controllers: 3
+
+current abstraction: 2
+mu iteration: 47
+justCoarsed: 0
+iterCurAbs: 4
+reached: 0
+controllers: 3
+
+current abstraction: 2
+mu iteration: 48
+justCoarsed: 0
+iterCurAbs: 5
+reached: 0
+controllers: 3
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving Z and C of abstraction 2 into validZs, validCs, finalZs, finalCs.
+Saving Z and C of abstraction 1 into validZs_, validCs.
+
+current abstraction: 1
+mu iteration: 49
+justCoarsed: 1
+iterCurAbs: 1
+reached: 0
+controllers: 4
+
+current abstraction: 1
+mu iteration: 50
+justCoarsed: 1
+iterCurAbs: 2
+reached: 0
+controllers: 4
+
+current abstraction: 1
+mu iteration: 51
+justCoarsed: 1
+iterCurAbs: 3
+reached: 0
+controllers: 4
+
+current abstraction: 1
+mu iteration: 52
+justCoarsed: 1
+iterCurAbs: 4
+reached: 0
+controllers: 4
+
+current abstraction: 1
+mu iteration: 53
+justCoarsed: 1
+iterCurAbs: 5
+reached: 0
+controllers: 4
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of finalCs_ and finalZs_.
+Resetting Zs_[1] and Cs_[1] from valids.
+
+current abstraction: 2
+mu iteration: 54
+justCoarsed: 0
+iterCurAbs: 1
+reached: 0
+controllers: 3
+
+current abstraction: 2
+mu iteration: 55
+justCoarsed: 0
+iterCurAbs: 2
+reached: 0
+controllers: 3
+
+current abstraction: 2
+mu iteration: 56
+justCoarsed: 0
+iterCurAbs: 3
+reached: 0
+controllers: 3
+
+current abstraction: 2
+mu iteration: 57
+justCoarsed: 0
+iterCurAbs: 4
+reached: 0
+controllers: 3
+
+current abstraction: 2
+mu iteration: 58
+justCoarsed: 0
+iterCurAbs: 5
+reached: 0
+controllers: 3
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving Z and C of abstraction 2 into validZs, validCs, finalZs, finalCs.
+Saving Z and C of abstraction 1 into validZs_, validCs.
+
+current abstraction: 1
+mu iteration: 59
+justCoarsed: 1
+iterCurAbs: 1
+reached: 0
+controllers: 4
 
 current abstraction: 1
 mu iteration: 60
-justCoarsed: 0
-iterCurAbs: 1
-reached: 0
-controllers: 2
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
-
-current abstraction: 0
-mu iteration: 61
-justCoarsed: 1
-iterCurAbs: 1
-reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 62
 justCoarsed: 1
 iterCurAbs: 2
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 4
 
-current abstraction: 0
-mu iteration: 63
+current abstraction: 1
+mu iteration: 61
 justCoarsed: 1
 iterCurAbs: 3
 reached: 0
-controllers: 3
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
+controllers: 4
 
 current abstraction: 1
-mu iteration: 64
-justCoarsed: 0
-iterCurAbs: 1
+mu iteration: 62
+justCoarsed: 1
+iterCurAbs: 4
 reached: 0
-controllers: 2
+controllers: 4
+
+current abstraction: 1
+mu iteration: 63
+justCoarsed: 1
+iterCurAbs: 5
+reached: 0
+controllers: 4
+Current controller now valid.
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
 Saving Z and C of abstraction 0 into validZs_, validCs.
+
+current abstraction: 0
+mu iteration: 64
+justCoarsed: 1
+iterCurAbs: 1
+reached: 0
+controllers: 5
+More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 65
 justCoarsed: 1
-iterCurAbs: 1
+iterCurAbs: 2
 reached: 0
-controllers: 3
+controllers: 5
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 66
 justCoarsed: 1
-iterCurAbs: 2
-reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 67
-justCoarsed: 1
 iterCurAbs: 3
 reached: 0
-controllers: 3
+controllers: 5
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of finalCs_ and finalZs_.
 Resetting Zs_[0] and Cs_[0] from valids.
 
 current abstraction: 1
+mu iteration: 67
+justCoarsed: 0
+iterCurAbs: 1
+reached: 0
+controllers: 4
+No new winning states; going finer.
+Current controller has been declared valid.
+Saving Z and C of abstraction 1 into valids, finals.
+Finding inner approximation of Zs_[1] and copying into validZs_[2].
+
+current abstraction: 2
 mu iteration: 68
 justCoarsed: 0
 iterCurAbs: 1
 reached: 0
-controllers: 2
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
+controllers: 5
 
-current abstraction: 0
+current abstraction: 2
 mu iteration: 69
-justCoarsed: 1
-iterCurAbs: 1
-reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 70
-justCoarsed: 1
+justCoarsed: 0
 iterCurAbs: 2
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 5
 
-current abstraction: 0
-mu iteration: 71
-justCoarsed: 1
+current abstraction: 2
+mu iteration: 70
+justCoarsed: 0
 iterCurAbs: 3
 reached: 0
-controllers: 3
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
+controllers: 5
 
-current abstraction: 1
+current abstraction: 2
+mu iteration: 71
+justCoarsed: 0
+iterCurAbs: 4
+reached: 0
+controllers: 5
+
+current abstraction: 2
 mu iteration: 72
 justCoarsed: 0
-iterCurAbs: 1
+iterCurAbs: 5
 reached: 0
-controllers: 2
+controllers: 5
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
+Saving Z and C of abstraction 2 into validZs, validCs, finalZs, finalCs.
+Saving Z and C of abstraction 1 into validZs_, validCs.
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 73
 justCoarsed: 1
 iterCurAbs: 1
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 6
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 74
 justCoarsed: 1
 iterCurAbs: 2
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 6
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 75
 justCoarsed: 1
 iterCurAbs: 3
 reached: 0
-controllers: 3
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
+controllers: 6
 
 current abstraction: 1
 mu iteration: 76
-justCoarsed: 0
-iterCurAbs: 1
-reached: 0
-controllers: 2
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
-
-current abstraction: 0
-mu iteration: 77
 justCoarsed: 1
-iterCurAbs: 1
+iterCurAbs: 4
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 78
-justCoarsed: 1
-iterCurAbs: 2
-reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 79
-justCoarsed: 1
-iterCurAbs: 3
-reached: 0
-controllers: 3
+controllers: 6
 No new winning states; going finer.
 Current controller has not been declared valid.
 Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
+Resetting Zs_[1] and Cs_[1] from valids.
 
-current abstraction: 1
+current abstraction: 2
+mu iteration: 77
+justCoarsed: 0
+iterCurAbs: 1
+reached: 0
+controllers: 5
+
+current abstraction: 2
+mu iteration: 78
+justCoarsed: 0
+iterCurAbs: 2
+reached: 0
+controllers: 5
+
+current abstraction: 2
+mu iteration: 79
+justCoarsed: 0
+iterCurAbs: 3
+reached: 0
+controllers: 5
+
+current abstraction: 2
 mu iteration: 80
 justCoarsed: 0
-iterCurAbs: 1
+iterCurAbs: 4
 reached: 0
-controllers: 2
+controllers: 5
+
+current abstraction: 2
+mu iteration: 81
+justCoarsed: 0
+iterCurAbs: 5
+reached: 0
+controllers: 5
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
+Saving Z and C of abstraction 2 into validZs, validCs, finalZs, finalCs.
+Saving Z and C of abstraction 1 into validZs_, validCs.
 
-current abstraction: 0
-mu iteration: 81
+current abstraction: 1
+mu iteration: 82
 justCoarsed: 1
 iterCurAbs: 1
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 6
 
-current abstraction: 0
-mu iteration: 82
+current abstraction: 1
+mu iteration: 83
 justCoarsed: 1
 iterCurAbs: 2
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 83
-justCoarsed: 1
-iterCurAbs: 3
-reached: 0
-controllers: 3
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
+controllers: 6
 
 current abstraction: 1
 mu iteration: 84
-justCoarsed: 0
-iterCurAbs: 1
+justCoarsed: 1
+iterCurAbs: 3
 reached: 0
-controllers: 2
+controllers: 6
+
+current abstraction: 1
+mu iteration: 85
+justCoarsed: 1
+iterCurAbs: 4
+reached: 0
+controllers: 6
+
+current abstraction: 1
+mu iteration: 86
+justCoarsed: 1
+iterCurAbs: 5
+reached: 0
+controllers: 6
+Current controller now valid.
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
 Saving Z and C of abstraction 0 into validZs_, validCs.
-
-current abstraction: 0
-mu iteration: 85
-justCoarsed: 1
-iterCurAbs: 1
-reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 86
-justCoarsed: 1
-iterCurAbs: 2
-reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 87
 justCoarsed: 1
-iterCurAbs: 3
-reached: 0
-controllers: 3
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
-
-current abstraction: 1
-mu iteration: 88
-justCoarsed: 0
 iterCurAbs: 1
 reached: 0
-controllers: 2
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
+controllers: 7
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 88
+justCoarsed: 1
+iterCurAbs: 2
+reached: 0
+controllers: 7
+More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 89
 justCoarsed: 1
-iterCurAbs: 1
+iterCurAbs: 3
 reached: 0
-controllers: 3
+controllers: 7
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 90
 justCoarsed: 1
-iterCurAbs: 2
+iterCurAbs: 4
 reached: 0
-controllers: 3
+controllers: 7
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 91
 justCoarsed: 1
-iterCurAbs: 3
+iterCurAbs: 5
 reached: 0
-controllers: 3
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
+controllers: 7
+Current controller now valid.
+More new states, already at coarsest gridding, continuing.
 
-current abstraction: 1
+current abstraction: 0
 mu iteration: 92
 justCoarsed: 0
-iterCurAbs: 1
+iterCurAbs: 6
 reached: 0
-controllers: 2
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
+controllers: 7
+More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 93
-justCoarsed: 1
-iterCurAbs: 1
+justCoarsed: 0
+iterCurAbs: 7
 reached: 0
-controllers: 3
+controllers: 7
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 94
-justCoarsed: 1
-iterCurAbs: 2
+justCoarsed: 0
+iterCurAbs: 8
 reached: 0
-controllers: 3
+controllers: 7
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 95
-justCoarsed: 1
-iterCurAbs: 3
+justCoarsed: 0
+iterCurAbs: 9
 reached: 0
-controllers: 3
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
+controllers: 7
+More new states, already at coarsest gridding, continuing.
 
-current abstraction: 1
+current abstraction: 0
 mu iteration: 96
 justCoarsed: 0
-iterCurAbs: 1
+iterCurAbs: 10
 reached: 0
-controllers: 2
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
+controllers: 7
+More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 97
-justCoarsed: 1
-iterCurAbs: 1
+justCoarsed: 0
+iterCurAbs: 11
 reached: 0
-controllers: 3
+controllers: 7
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 98
-justCoarsed: 1
-iterCurAbs: 2
+justCoarsed: 0
+iterCurAbs: 12
 reached: 0
-controllers: 3
+controllers: 7
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 99
-justCoarsed: 1
-iterCurAbs: 3
+justCoarsed: 0
+iterCurAbs: 13
 reached: 0
-controllers: 3
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
+controllers: 7
+More new states, already at coarsest gridding, continuing.
 
-current abstraction: 1
+current abstraction: 0
 mu iteration: 100
 justCoarsed: 0
-iterCurAbs: 1
+iterCurAbs: 14
 reached: 0
-controllers: 2
-More new states, minToGoCoarser achieved; try going coarser.
-Projecting to coarser gives more states in coarser.
-Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
-Saving Z and C of abstraction 0 into validZs_, validCs.
+controllers: 7
+More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 101
-justCoarsed: 1
+justCoarsed: 0
+iterCurAbs: 15
+reached: 0
+controllers: 7
+No new winning states; going finer.
+Current controller has been declared valid.
+Saving Z and C of abstraction 0 into valids, finals.
+Finding inner approximation of Zs_[0] and copying into validZs_[1].
+
+current abstraction: 1
+mu iteration: 102
+justCoarsed: 0
 iterCurAbs: 1
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
 
-current abstraction: 0
-mu iteration: 102
-justCoarsed: 1
+current abstraction: 1
+mu iteration: 103
+justCoarsed: 0
 iterCurAbs: 2
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 103
-justCoarsed: 1
-iterCurAbs: 3
-reached: 0
-controllers: 3
-No new winning states; going finer.
-Current controller has not been declared valid.
-Removing last elements of finalCs_ and finalZs_.
-Resetting Zs_[0] and Cs_[0] from valids.
+controllers: 8
 
 current abstraction: 1
 mu iteration: 104
 justCoarsed: 0
-iterCurAbs: 1
+iterCurAbs: 3
 reached: 0
-controllers: 2
+controllers: 8
+
+current abstraction: 1
+mu iteration: 105
+justCoarsed: 0
+iterCurAbs: 4
+reached: 0
+controllers: 8
+
+current abstraction: 1
+mu iteration: 106
+justCoarsed: 0
+iterCurAbs: 5
+reached: 0
+controllers: 8
 More new states, minToGoCoarser achieved; try going coarser.
 Projecting to coarser gives more states in coarser.
 Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
 Saving Z and C of abstraction 0 into validZs_, validCs.
 
 current abstraction: 0
-mu iteration: 105
+mu iteration: 107
 justCoarsed: 1
 iterCurAbs: 1
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 106
-justCoarsed: 1
-iterCurAbs: 2
-reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
-
-current abstraction: 0
-mu iteration: 107
-justCoarsed: 1
-iterCurAbs: 3
-reached: 0
-controllers: 3
+controllers: 9
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 108
 justCoarsed: 1
-iterCurAbs: 4
+iterCurAbs: 2
 reached: 0
-controllers: 3
+controllers: 9
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 109
 justCoarsed: 1
-iterCurAbs: 5
+iterCurAbs: 3
 reached: 0
-controllers: 3
-Current controller now valid.
-More new states, already at coarsest gridding, continuing.
+controllers: 9
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of finalCs_ and finalZs_.
+Resetting Zs_[0] and Cs_[0] from valids.
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 110
 justCoarsed: 0
-iterCurAbs: 6
+iterCurAbs: 1
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 111
 justCoarsed: 0
-iterCurAbs: 7
+iterCurAbs: 2
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 112
 justCoarsed: 0
-iterCurAbs: 8
+iterCurAbs: 3
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 113
 justCoarsed: 0
-iterCurAbs: 9
+iterCurAbs: 4
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 114
 justCoarsed: 0
-iterCurAbs: 10
+iterCurAbs: 5
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
+Saving Z and C of abstraction 0 into validZs_, validCs.
 
 current abstraction: 0
 mu iteration: 115
-justCoarsed: 0
-iterCurAbs: 11
+justCoarsed: 1
+iterCurAbs: 1
 reached: 0
-controllers: 3
+controllers: 9
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 116
-justCoarsed: 0
-iterCurAbs: 12
+justCoarsed: 1
+iterCurAbs: 2
 reached: 0
-controllers: 3
+controllers: 9
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 117
-justCoarsed: 0
-iterCurAbs: 13
+justCoarsed: 1
+iterCurAbs: 3
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 9
+No new winning states; going finer.
+Current controller has not been declared valid.
+Removing last elements of finalCs_ and finalZs_.
+Resetting Zs_[0] and Cs_[0] from valids.
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 118
 justCoarsed: 0
-iterCurAbs: 14
+iterCurAbs: 1
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 119
 justCoarsed: 0
-iterCurAbs: 15
+iterCurAbs: 2
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 120
 justCoarsed: 0
-iterCurAbs: 16
+iterCurAbs: 3
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 121
 justCoarsed: 0
-iterCurAbs: 17
+iterCurAbs: 4
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
 
-current abstraction: 0
+current abstraction: 1
 mu iteration: 122
 justCoarsed: 0
-iterCurAbs: 18
+iterCurAbs: 5
 reached: 0
-controllers: 3
-More new states, already at coarsest gridding, continuing.
+controllers: 8
+More new states, minToGoCoarser achieved; try going coarser.
+Projecting to coarser gives more states in coarser.
+Saving Z and C of abstraction 1 into validZs, validCs, finalZs, finalCs.
+Saving Z and C of abstraction 0 into validZs_, validCs.
 
 current abstraction: 0
 mu iteration: 123
-justCoarsed: 0
-iterCurAbs: 19
+justCoarsed: 1
+iterCurAbs: 1
 reached: 0
-controllers: 3
+controllers: 9
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 124
-justCoarsed: 0
-iterCurAbs: 20
+justCoarsed: 1
+iterCurAbs: 2
 reached: 0
-controllers: 3
+controllers: 9
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 125
-justCoarsed: 0
-iterCurAbs: 21
+justCoarsed: 1
+iterCurAbs: 3
 reached: 0
-controllers: 3
+controllers: 9
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 126
-justCoarsed: 0
-iterCurAbs: 22
+justCoarsed: 1
+iterCurAbs: 4
 reached: 0
-controllers: 3
+controllers: 9
 More new states, already at coarsest gridding, continuing.
 
 current abstraction: 0
 mu iteration: 127
-justCoarsed: 0
-iterCurAbs: 23
+justCoarsed: 1
+iterCurAbs: 5
 reached: 0
-controllers: 3
+controllers: 9
+Current controller now valid.
+More new states, already at coarsest gridding, continuing.
 
-mu number of controllers: 4
+current abstraction: 0
+mu iteration: 128
+justCoarsed: 0
+iterCurAbs: 6
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 129
+justCoarsed: 0
+iterCurAbs: 7
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 130
+justCoarsed: 0
+iterCurAbs: 8
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 131
+justCoarsed: 0
+iterCurAbs: 9
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 132
+justCoarsed: 0
+iterCurAbs: 10
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 133
+justCoarsed: 0
+iterCurAbs: 11
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 134
+justCoarsed: 0
+iterCurAbs: 12
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 135
+justCoarsed: 0
+iterCurAbs: 13
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 136
+justCoarsed: 0
+iterCurAbs: 14
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 137
+justCoarsed: 0
+iterCurAbs: 15
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 138
+justCoarsed: 0
+iterCurAbs: 16
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 139
+justCoarsed: 0
+iterCurAbs: 17
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 140
+justCoarsed: 0
+iterCurAbs: 18
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 141
+justCoarsed: 0
+iterCurAbs: 19
+reached: 0
+controllers: 9
+More new states, already at coarsest gridding, continuing.
+
+current abstraction: 0
+mu iteration: 142
+justCoarsed: 0
+iterCurAbs: 20
+reached: 0
+controllers: 9
+
+mu number of controllers: 10
+----------------------------------------reach: Elapsed time is 32.9352 seconds.
 Won.
-----------------------------------------reach: Elapsed time is 4.65293 seconds.

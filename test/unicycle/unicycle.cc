@@ -44,8 +44,14 @@ auto unicycleAddG = [](SymbolicSet* G) -> void {
     double H[9]={ 1.6,   0,   0,
                     0, 0.8,   0,
                     0,   0, 0.1};
-    double c[3] = {8.1, 8.8, 0};
+    double c[3] = {8.1, 7.8, 0};
     G->addEllipsoid(H, c, INNER);
+
+//    double H[9]={   1.6,  0,   0,
+//                    0,  1.6,   0,
+//                    0,  0, 0.1};
+//    double c[3] = {4.5, 4.5, 0};
+//    G->addEllipsoid(H, c, INNER);
 };
 
 auto unicycleAddO = [](SymbolicSet* O) -> void {
@@ -57,47 +63,28 @@ auto unicycleAddO = [](SymbolicSet* O) -> void {
     double h1[4] = {-1.9, 2.3, -2, 10};
     O->addPolytope(4, H, h1, OUTER);
 
-    double h2[4] = {-4.3, 4.7, -0, 8.2};
+    double h2[4] = {-4.3, 4.7, -0, 7.1};
     O->addPolytope(4, H, h2, OUTER);
 
     double h3[4] = {-6.7, 7.1, -2, 10};
     O->addPolytope(4, H, h3, OUTER);
 
-    double E1[9] = { 4, 0, 0,
-                    0, 2, 0,
-                    0, 0, 0};
-    double c1[3] = {0.9, 6.9, 0};
-    O->addEllipsoid(E1, c1, OUTER);
+    double h4[4] = {-2.5, 3.2, -3.7, 4.6};
+    O->addPolytope(4, H, h4, OUTER);
 
-//    double E2[9] = {1.6, 0, 0,
-//                    0, 1.6, 0,
-//                    0, 0, 0};
+    double h5[4] = {-5.6, 6.5, -4.9, 6.5};
+    O->addPolytope(4, H, h5, OUTER);
 
-//    double c2[3] = {5.7, 3, 0};
-//    O->addEllipsoid(E, c2, OUTER);
-
-//    double c3[3] = {3.4, 2, 0};
-//    O->addEllipsoid(E, c3, OUTER);
-
-//    double c4[3] = {3, 7, 0};
-//    O->addEllipsoid(E, c4, OUTER);
-
-//    double c5[3] = {5.7, 6, 0};
-//    O->addEllipsoid(E, c5, OUTER);
-
-//    double c6[3] = {5.9, 2.5, 0};
-//    O->addEllipsoid(E, c6, OUTER);
-
-//    double c7[3] = {9.4, 1.8, 0};
-//    O->addEllipsoid(E, c7, OUTER);
-
-//    double c8[3] = {8.2, 6.2, 0};
-//    O->addEllipsoid(E, c8, OUTER);
+//    double h[4] = {-0.6, 5, -1.81, 2.39};
+//    O->addPolytope(4, H, h, OUTER);
 };
 
 auto unicycleAddI = [](SymbolicSet* I) -> void {
-    double q[3] = {1, 9, -M_PI/2};
+    double q[3] = {1, 8.7, -M_PI/2};
     I->addPoint(q);
+
+//    double q[3] = {4.5, 0.5, M_PI};
+//    I->addPoint(q);
 };
 
 int main() {
@@ -114,11 +101,11 @@ int main() {
     double etaX[dimX] = {0.6, 0.6, 0.3};
     double tau = 0.9;
 
-    double etaRatio[dimX] = {3, 3, 3};
-    double tauRatio = 3;
+    double etaRatio[dimX] = {2, 2, 2};
+    double tauRatio = 2;
 
-    int numAbs = 2;
-    int startAbs = 1;
+    int numAbs = 3;
+    int startAbs = 0;
     int readXX = 0;
     int readAbs = 0;
 
@@ -129,12 +116,12 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    Reach abs("unicycle2AinnerCoarserSymbolic.txt");
+    Reach abs("unicycle3A.txt");
     abs.initialize(&unicycle, readXX, readAbs, unicycleAddO);
     abs.initializeReach(unicycleAddG, unicycleAddI);
     abs.computeAbstractions(sysNext, radNext, x, u);
 
-    int minToGoCoarser = 1;
+    int minToGoCoarser = 5;
     int minToBeValid = 5;
     int earlyBreak = 1;
 

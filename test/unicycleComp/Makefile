@@ -15,7 +15,7 @@ SCOTSINC		= -I$(SCOTSROOT)/utils -I$(SCOTSROOT)/bdd
 #
 # cudd 
 #
-CUDDPATH		=  /home/kylehsu/local
+CUDDPATH		=  /opt/local
 CUDDINC 		= -I$(CUDDPATH)/include
 CUDDLIBS		= -lcudd 
 CUDDLPATH   = -L$(CUDDPATH)/lib

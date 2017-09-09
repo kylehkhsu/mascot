@@ -371,9 +371,14 @@ public:
     */
     int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
         BDD nQ = !((!(XXs_[c]->symbolicSet_)) | Zf->symbolicSet_);
-        Zc->symbolicSet_ = (!(nQ.ExistAbstract(*notXvars_[c]))) & Xs_[c]->symbolicSet_;
-
-        return 1;
+        BDD cand = (!(nQ.ExistAbstract(*notXvars_[c]))) & Xs_[c]->symbolicSet_;
+        if (cand <= Zc->symbolicSet_) {
+            return 0;
+        }
+        else {
+            Zc->symbolicSet_ = cand;
+            return 1;
+        }
     }
 //    int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
 

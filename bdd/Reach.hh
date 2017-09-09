@@ -91,11 +91,7 @@ public:
         if (*iter != 1) { // first iteration will always fail since we start with an empty Z
             if (N == this->ddmgr_->bddZero()) { // if iteration failed to yield new (x,u)
                 if (*curAbs == *this->system_->numAbs_ - 1) { // if we're in the finest abstraction
-                    if (*reached == 1) {
-                        saveCZ(*curAbs);
-                    }
-                    else {
-                    }
+                    saveCZ(*curAbs);
                     *stop = 1;
                     clog << "\nmu number of controllers: " << finalCs_.size() << '\n';
                 }
@@ -241,21 +237,22 @@ public:
                 break;
             }
         }
-        if (reached) {
-            clog << "Won.\n";
 
-            checkMakeDir("C");
-            saveVec(finalCs_, "C/C");
-            checkMakeDir("Z");
-            saveVec(finalZs_, "Z/Z");
-            clog << "----------------------------------------reach: ";
-            tt.toc();
+        checkMakeDir("C");
+        saveVec(finalCs_, "C/C");
+        checkMakeDir("Z");
+        saveVec(finalZs_, "Z/Z");
+        clog << "----------------------------------------reach: ";
+        tt.toc();
+
+        if (reached) {
+            cout << "Won.\n";
+            clog << "Won.\n";
             return 1;
         }
         else {
+            cout << "Lost.\n";
             clog << "Lost.\n";
-            clog << "----------------------------------------reach: ";
-            tt.toc();
             return 0;
         }
     }
