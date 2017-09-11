@@ -24,6 +24,11 @@ public:
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
     vector<SymbolicSet*> preYs_;
 
+    int minToGoCoarser_;
+    int minToBeValid_;
+    int earlyBreak_;
+    int verbose_;
+
 
     /*! Constructor for a Reach object. */
     Reach(char* logFile)
@@ -54,7 +59,7 @@ public:
         \param[in,out]	reached				Whether the initial state has been declared winning.
         \param[in,out]	stop				Whether the fixed point should end.
     */
-    void mu(int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose, int* curAbs, int* iter, int* justCoarsed, int* iterCurAbs, int* reached, int* stop, int alwaysEventually = 0) {
+    void mu(int* curAbs, int* iter, int* justCoarsed, int* justStarted, int* iterCurAbs, int* reached, int* stop, int alwaysEventually = 0) {
         clog << "current abstraction: " << *curAbs << '\n';
         clog << "mu iteration: " << *iter << '\n';
         clog << "justCoarsed: " << *justCoarsed << '\n';
@@ -80,7 +85,7 @@ public:
 
         if (((this->Zs_[*curAbs]->symbolicSet_ & Is_[*curAbs]->symbolicSet_) != this->ddmgr_->bddZero()) && (*reached == 0)) {
             *reached = 1;
-            if (earlyBreak == 1) {
+            if (earlyBreak_ == 1) {
                 saveCZ(*curAbs);
                 *stop = 1;
                 clog << "\nmu number of controllers: " << finalCs_.size() << '\n';
@@ -96,11 +101,11 @@ public:
                     clog << "\nmu number of controllers: " << finalCs_.size() << '\n';
                 }
                 else {
-                    if (verbose) {
+                    if (verbose_) {
                         clog << "No new winning states; going finer.\n";
                     }
-                    if (*justCoarsed == 1) { // current controller has not been declared valid
-                        if (verbose) {
+                    if (*justCoarsed == 1 || *justStarted == 1) { // current controller has not been declared valid
+                        if (verbose_) {
                             clog << "Current controller has not been declared valid.\n";
                             clog << "Removing last elements of finalCs_ and finalZs_.\n";
                             clog << "Resetting Zs_[" << *curAbs << "] and Cs_[" << *curAbs << "] from valids.\n";
@@ -123,7 +128,7 @@ public:
 
                     }
                     else {
-                        if (verbose) {
+                        if (verbose_) {
                             clog << "Current controller has been declared valid.\n";
                             clog << "Saving Z and C of abstraction " << *curAbs << " into valids, finals.\n";
                             clog << "Finding inner approximation of Zs_[" << *curAbs << "] and copying into validZs_[" << *curAbs+1 << "].\n";
@@ -140,36 +145,48 @@ public:
                 }
             }
             else { // if there were new (x,u)
-                if ((*justCoarsed == 1) && (*iterCurAbs >= minToBeValid)) {
-                    if (verbose) {
+                if ((*justCoarsed == 1) && (*iterCurAbs >= minToBeValid_)) {
+                    if (verbose_) {
                         clog << "Current controller now valid.\n";
                     }
                     *justCoarsed = 0;
+                    if (*justStarted == 1) {
+                        *justStarted = 0;
+                        if (verbose_) {
+                            clog << "First assignment of valid controller, justStarted = 0.\n";
+                        }
+                    }
                 }
                 if (*curAbs == 0) {
-                    if (verbose) {
+                    if (verbose_) {
                         clog << "More new states, already at coarsest gridding, continuing.\n";
                     }
                     *iterCurAbs += 1;
                 }
                 else {
-                    if (*iterCurAbs >= minToGoCoarser) {
-                        if (verbose) {
+                    if (*iterCurAbs >= minToGoCoarser_) {
+                        if (verbose_) {
                             clog << "More new states, minToGoCoarser achieved; try going coarser.\n";
                         }
                         int more = this->innerCoarserAligned(this->Zs_[*curAbs-1], this->Zs_[*curAbs], *curAbs-1);
 
                         if (more == 0) {
-                            if (verbose) {
+                            if (verbose_) {
                                 clog << "Projecting to coarser gives no more states in coarser; not changing abstraction.\n";
                             }
                             *iterCurAbs += 1;
                         }
                         else {
-                            if (verbose) {
+                            if (verbose_) {
                                 clog << "Projecting to coarser gives more states in coarser.\n";
                                 clog << "Saving Z and C of abstraction " << *curAbs << " into validZs, validCs, finalZs, finalCs.\n";
                                 clog << "Saving Z and C of abstraction " << *curAbs-1 << " into validZs_, validCs.\n";
+                            }
+                            if (*justStarted == 1) {
+                                *justStarted = 0;
+                                if (verbose_) {
+                                    clog << "First projection to coarser abstraction, justStarted = 0.\n";
+                                }
                             }
                             saveCZ(*curAbs);
                             validZs_[*curAbs]->symbolicSet_ = this->Zs_[*curAbs]->symbolicSet_;
@@ -188,7 +205,7 @@ public:
             }
         }
         else {
-            if (verbose) {
+            if (verbose_) {
                 clog << "First iteration, nothing happens.\n";
             }
         }
@@ -211,6 +228,11 @@ public:
             error("Error: startAbs out of range.\n");
         }
 
+        minToGoCoarser_ = minToGoCoarser;
+        minToBeValid_ = minToBeValid;
+        earlyBreak_ = earlyBreak;
+        verbose_ = verbose;
+
         TicToc tt;
         tt.tic();
 
@@ -224,15 +246,13 @@ public:
 
         int iter = 1;
         int justCoarsed = 0;
-        if (startAbs != *this->system_->numAbs_ - 1) {
-            justCoarsed = 1;
-        }
+        int justStarted = 1;
         int iterCurAbs = 1;
         int reached = 0;
         int stop = 0;
 
         while (1) {
-            mu(minToGoCoarser, minToBeValid, earlyBreak, verbose, &curAbs, &iter, &justCoarsed, &iterCurAbs, &reached, &stop);
+            mu(&curAbs, &iter, &justCoarsed, &justStarted, &iterCurAbs, &reached, &stop);
             if (stop) {
                 break;
             }

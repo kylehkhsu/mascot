@@ -4,7 +4,6 @@
 #define _USE_MATH_DEFINES
 
 #include "Reach.hh"
-#include "Compare.hh"
 
 using namespace std;
 using namespace scots;
@@ -55,7 +54,7 @@ auto simpleAddG = [](SymbolicSet* G) -> void {
                       1, 0,
                       0,-1,
                       0, 1};
-    double c[4] = {-7.5, 10, -7.5, 10};
+    double c[4] = {-9, 10, -9, 10};
     G->addPolytope(4, H, c, INNER);
 };
 
@@ -63,57 +62,6 @@ auto simpleAddI = [](SymbolicSet* I) -> void {
     double q[2] = {1, 1};
     I->addPoint(q);
 };
-
-void sub(double* lbX, double* ubX, double* etaX, double tau, double* lbU, double* ubU, double* etaU,
-         double* etaRatio, double tauRatio, int numAbs, int nint, int readAb) {
-    Compare<X_type, U_type> comp(dimX, lbX, ubX, etaX, tau,
-                                 dimU, lbU, ubU, etaU,
-                                 etaRatio, tauRatio, nint,
-                                 numAbs, readAb, "scots.txt");
-    comp.initializeReach(simpleAddG, simpleAddI, simpleAddO);
-    comp.computeAbstractions(sysNext, radNext);
-    int earlyBreak = 1;
-    comp.reachSCOTS(earlyBreak);
-}
-
-//void testSynthesis() {
-//    double lbX[dimX]={0, 0};
-//    double ubX[dimX]={10, 10};
-
-//    double lbU[dimU]={-1.3, -1.3};
-//    double ubU[dimU]= {1.3, 1.3};
-//    double etaU[dimU]= {0.5, 0.5};
-
-//    double etaRatio[dimX] = {2, 2};
-//    double tauRatio = 2;
-//    int nint = 5;
-
-//    double etaX[dimX]= {0.8, 0.8};
-//    double tau = 1.2;
-//    int numAbs = 3;
-
-//    int readXX = 0; // if specification has changed, needs to be 0
-//    int readAbs = 0;
-
-//    Adaptive<X_type, U_type> abs(dimX, lbX, ubX, etaX, tau,
-//                                 dimU, lbU, ubU, etaU,
-//                                 etaRatio, tauRatio, nint,
-//                                 numAbs, readXX, readAbs, "adaptive.txt");
-////    abs.testProjections(simpleAddG, 1);
-
-//    abs.initializeReach(simpleAddG, simpleAddI, simpleAddO);
-//    abs.computeAbstractions(sysNext, radNext);
-
-
-//    int startAbs = 2;
-//    int minToGoCoarser = 1;
-//    int minToBeValid = 2;
-//    int earlyBreak = 1;
-
-//    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
-//    sub(lbX, ubX, etaX, tau, lbU, ubU, etaU, etaRatio, tauRatio, numAbs, nint, readAbs);
-
-//}
 
 int main() {
 
@@ -124,13 +72,16 @@ int main() {
     double ubU[dimU]= {1.3, 1.3};
     double etaU[dimU]= {0.5, 0.5};
 
+    X_type x;
+    U_type u;
+
     double etaRatio[dimX] = {2, 2};
     double tauRatio = 2;
     int nint = 5;
 
-    double etaX[dimX]= {0.8, 0.8};
-    double tau = 1.2;
-    int numAbs = 3;
+    double etaX[dimX]= {1.6, 1.6};
+    double tau = 2.4;
+    int numAbs = 4;
 
     int readXX = 0; // if specification has changed, needs to be 0
     int readAbs = 0;
@@ -138,12 +89,12 @@ int main() {
     System system(dimX, lbX, ubX, etaX, tau,
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nint, numAbs);
-    Reach<X_type, U_type> abs("adaptive.txt");
+    Reach abs("simple4A.txt");
     abs.initialize(&system, readXX, readAbs, simpleAddO);
     abs.initializeReach(simpleAddG, simpleAddI);
-    abs.computeAbstractions(sysNext, radNext);
+    abs.computeAbstractions(sysNext, radNext, x, u);
 
-    int startAbs = 2;
+    int startAbs = 0;
     int minToGoCoarser = 1;
     int minToBeValid = 2;
     int earlyBreak = 1;

@@ -338,12 +338,6 @@ public:
                         if (verbose_) {
                             clog << "More new states, minToGoCoarser achieved; try going coarser.\n";
                         }
-                        if (*justStarted == 1) {
-                            *justStarted = 0;
-                            if (verbose_) {
-                                clog << "First projection to coarser abstraction, justStarted = 0.\n";
-                            }
-                        }
                         int more = 1;
                         innerCoarser((*this->prodsZs_[curAux])[*curAbs-1],
                                 (*this->prodsZs_[curAux])[*curAbs],
@@ -358,6 +352,12 @@ public:
                             *iterCurAbs += 1;
                         }
                         else {
+                            if (*justStarted == 1) {
+                                *justStarted = 0;
+                                if (verbose_) {
+                                    clog << "First projection to coarser abstraction, justStarted = 0.\n";
+                                }
+                            }
                             if (verbose_) {
                                 clog << "Projecting to coarser gives more states in coarser.\n";
                                 clog << "Saving prodsZs_[" << curAux << "][" << *curAbs << "] and prodsCs_[" << curAux << "][" << *curAbs << "] into prodValids, prodFinals.\n";
