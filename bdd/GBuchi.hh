@@ -168,9 +168,7 @@ public:
             int curAbs = startAbs_;
             int muIter = 1;
             int justCoarsed = 0;
-            if (curAbs != fAbs) {
-                justCoarsed = 1;
-            }
+            int justStarted = 1;
             int iterCurAbs = 1;
             int muStop = 0;
 
@@ -192,7 +190,7 @@ public:
             }
 
             while (1) { // minimal fixed point
-                this->mu(*curAux, &curAbs, &muIter, &justCoarsed, &iterCurAbs, &muStop);
+                this->mu(*curAux, &curAbs, &muIter, &justCoarsed, &justStarted, &iterCurAbs, &muStop);
                 if (muStop) {
                     break;
                 }
@@ -235,7 +233,7 @@ public:
 
 
 
-    void mu(int curAux, int* curAbs, int* iter, int* justCoarsed, int* iterCurAbs, int* stop) {
+    void mu(int curAux, int* curAbs, int* iter, int* justCoarsed, int* justStarted, int* iterCurAbs, int* stop) {
         clog << "current abstraction: " << *curAbs << '\n';
         clog << "mu iteration: " << *iter << '\n';
         clog << "justCoarsed: " << *justCoarsed << '\n';
@@ -274,7 +272,7 @@ public:
                     if (verbose_) {
                         clog << "No new winning states; going finer.\n";
                     }
-                    if (*justCoarsed == 1) {
+                    if (*justCoarsed == 1 || *justStarted == 1) {
                         if (verbose_) {
                             clog << "Current controller has not been declared valid.\n";
                             clog << "Removing last elements of prodsFinalCs_[" << curAux << "] and prodsFinalZs_[" << curAux << "].\n";
@@ -322,6 +320,12 @@ public:
                         clog << "Current controller now valid.\n";
                     }
                     *justCoarsed = 0;
+                    if (*justStarted == 1) {
+                        *justStarted = 0;
+                        if (verbose_) {
+                            clog << "First assignment of valid controller, justStarted = 0.\n";
+                        }
+                    }
                 }
                 if (*curAbs == 0) {
                     if (verbose_) {
@@ -333,6 +337,12 @@ public:
                     if (*iterCurAbs >= minToGoCoarser_) {
                         if (verbose_) {
                             clog << "More new states, minToGoCoarser achieved; try going coarser.\n";
+                        }
+                        if (*justStarted == 1) {
+                            *justStarted = 0;
+                            if (verbose_) {
+                                clog << "First projection to coarser abstraction, justStarted = 0.\n";
+                            }
                         }
                         int more = 1;
                         innerCoarser((*this->prodsZs_[curAux])[*curAbs-1],
@@ -480,6 +490,7 @@ public:
         int curAbs = startAbs_;
         int iter = 1;
         int justCoarsed = 0;
+        int justStarted = 1;
         int iterCurAbs = 1;
 
         int stop = 0;
@@ -494,7 +505,7 @@ public:
         }
 
         while (1) {
-            mu(curAux, &curAbs, &iter, &justCoarsed, &iterCurAbs, &stop);
+            mu(curAux, &curAbs, &iter, &justCoarsed, &justStarted, &iterCurAbs, &stop);
             if (stop) {
                 break;
             }
