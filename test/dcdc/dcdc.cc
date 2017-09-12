@@ -120,4 +120,9 @@ int main() {
     abs.initializeSafe(dcdcAddS);
     abs.computeAbstractions(sysNext, radNext, x, u);
     abs.safe();
+
+//    int startAbs = 1;
+//    int minToGoCoarser = 3;
+//    int minToBeValid = 5;
+//    abs.safe2(startAbs, minToGoCoarser, minToBeValid);
 }
