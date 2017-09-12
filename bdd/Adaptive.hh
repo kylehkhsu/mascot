@@ -53,11 +53,16 @@ public:
     vector<BDD*> notXUvars_; /*!< notXUvars_[i] is a BDD over all ddmgr_ variables whose 1-term is DC for *Xs_[i] and *U_ and 1 otherwise. */
     vector<BDD*> notXvars_; /*!< notXvars_[i] is a BDD over all ddmgr_ variables whose 1-term is DC for *Xs_[i] and 1 otherwise. */
 
+    vector<BDD*> cubesCoarser_;
+
     vector<SymbolicSet*> Ts_; /*!< Ts_[i] stores the transition relation of abstraction i. */
     vector<BDD*> TTs_; /*!< TTs_[i] is Ts_[i] with X2s_[i] existentially abtracted. */
 
     vector<int*> permutesXtoX2_; /*!< To transform a BDD over X variables to an equivalent one over X2 variables. */
     vector<int*> permutesX2toX_; /*!< To transform a BDD over X2 variables to an equivalent one over X variables. */
+
+    vector<int*> permutesCoarser_;
+    vector<int*> permutesFiner_;
 
     vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
 
@@ -85,10 +90,13 @@ public:
         delete cubeU_;
         deleteVec(notXUvars_);
         deleteVec(notXvars_);
+        deleteVec(cubesCoarser_);
         deleteVec(Ts_);
         deleteVec(TTs_);
         deleteVecArray(permutesXtoX2_);
         deleteVecArray(permutesX2toX_);
+        deleteVecArray(permutesCoarser_);
+        deleteVecArray(permutesFiner_);
         deleteVec(solvers_);
         fclose(stderr);
         delete ddmgr_;        
@@ -110,7 +118,6 @@ public:
         initializeAlignment();
         initializeEtaTau();
         initializeSolvers();
-
         initializeBDDs(addO);
     }
 
@@ -132,6 +139,7 @@ public:
         initializePermutes();
         initializeCubes();
         initializeNotVars();
+        initializeProjs();
 
         saveVerify();
     }
@@ -692,6 +700,72 @@ public:
 
         clog << "Number of BDD variables: " << numBDDVars_ << '\n';
     }
+
+    void finer(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+        Zf->addGridPoints();
+        Zf->symbolicSet_ &= Zc->symbolicSet_.Permute(permutesFiner_[c]);
+    }
+
+    int coarser(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+        BDD Zcand = Zf->symbolicSet_.UnivAbstract(*cubesCoarser_[c]);
+        Zcand = Zcand.Permute(permutesCoarser_[c]);
+
+        if (Zcand <= Zc->symbolicSet_) {
+            return 0;
+        }
+        else {
+            Zc->symbolicSet_ = Zcand;
+            return 1;
+        }
+    }
+
+    void initializeProjs() {
+        for (int i = 1; i < *system_->numAbs_; i++) {
+            BDD* varsCoarser = new BDD[*system_->dimX_];
+            for (int j = 0; j < *system_->dimX_; j++) {
+                varsCoarser[j] = ddmgr_->bddVar(Xs_[i]->indBddVars_[j][0]);
+            }
+            BDD* cubeCoarser = new BDD;
+            *cubeCoarser = ddmgr_->bddComputeCube(varsCoarser, NULL, *system_->dimX_);
+            cubesCoarser_.push_back(cubeCoarser);
+            delete[] varsCoarser;
+        }
+
+        for (int i = 1; i < *system_->numAbs_; i++) {
+            int* permuteCoarser = new int[numBDDVars_];
+            for (int ind = 0; ind < numBDDVars_; ind++) {
+                permuteCoarser[ind] = 0;
+            }
+
+            for (int dim = 0; dim < *system_->dimX_; dim++) {
+                for (size_t projInd = 1; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
+                    permuteCoarser[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i-1]->indBddVars_[dim][projInd-1];
+                }
+            }
+            permutesCoarser_.push_back(permuteCoarser);
+
+            clog << "permuteCoarser " << i << " to " << i-1 << ": ";
+            printArray(permuteCoarser, numBDDVars_);
+        }
+
+        for (int i = 0; i < *system_->numAbs_ - 1; i++) {
+            int* permuteFiner = new int[numBDDVars_];
+            for (int ind = 0; ind < numBDDVars_; ind++) {
+                permuteFiner[ind] = 0;
+            }
+
+            for (int dim = 0; dim < *system_->dimX_; dim++) {
+                for (size_t projInd = 0; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
+                    permuteFiner[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i+1]->indBddVars_[dim][projInd+1];
+                }
+            }
+            permutesFiner_.push_back(permuteFiner);
+
+            clog << "permuteFiner " << i << " to " << i+1 << ": ";
+            printArray(permuteFiner, numBDDVars_);
+        }
+    }
+
 
     /*! Initializes the BDDs that are the precursors to notXvars_ and notXUvars_ */
     void initializeCubes() {

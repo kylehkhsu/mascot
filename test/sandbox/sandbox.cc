@@ -14,9 +14,97 @@ using namespace helper;
 #define dimX 2
 #define dimU 2
 
+auto sandboxAddO = [](SymbolicSet* O) -> void {
+    ;
+};
 
-int main() {
+void testFiner() {
+    double lbX[dimX] = {-3, -3};
+    double ubX[dimX] = { 3,  3};
+    double etaX[dimX] = {0.5, 0.5};
+    double tau = 1;
 
+    double lbU[dimU] = {-1.2, -1.6};
+    double ubU[dimU] = {1.2, 1.6};
+    double etaU[dimU] = {.3, .2};
+
+    double etaRatio[dimX] = {2, 2};
+    double tauRatio = 2;
+
+    int nSubInt = 5;
+    int numAbs = 3;
+
+    int readXX = 0;
+    int readAbs = 0;
+
+    System sandbox(dimX, lbX, ubX, etaX, tau,
+                   dimU, lbU, ubU, etaU,
+                   etaRatio, tauRatio, nSubInt, numAbs);
+    Adaptive abs("sandbox.txt");
+    abs.initialize(&sandbox, readXX, readAbs, sandboxAddO);
+
+    SymbolicSet Zc(*abs.Xs_[1]);
+
+    double H[4*2]={-1, 0,
+                      1, 0,
+                      0,-1,
+                      0, 1};
+    double c[4] = {0, 2, 1, 1};
+
+    Zc.addPolytope(4, H, c, OUTER);
+    SymbolicSet Zf(*abs.Xs_[2]);
+
+    abs.finer(&Zc, &Zf, 1);
+
+    abs.Xs_[0]->writeToFile("X.bdd");
+    Zf.writeToFile("Zf.bdd");
+    Zc.writeToFile("Zc.bdd");
+}
+
+void testCoarser() {
+    double lbX[dimX] = {-3, -3};
+    double ubX[dimX] = { 3,  3};
+    double etaX[dimX] = {0.5, 0.5};
+    double tau = 1;
+
+    double lbU[dimU] = {-1.2, -1.6};
+    double ubU[dimU] = {1.2, 1.6};
+    double etaU[dimU] = {.3, .2};
+
+    double etaRatio[dimX] = {2, 2};
+    double tauRatio = 2;
+
+    int nSubInt = 5;
+    int numAbs = 3;
+
+    int readXX = 0;
+    int readAbs = 0;
+
+    System sandbox(dimX, lbX, ubX, etaX, tau,
+                   dimU, lbU, ubU, etaU,
+                   etaRatio, tauRatio, nSubInt, numAbs);
+    Adaptive abs("sandbox.txt");
+    abs.initialize(&sandbox, readXX, readAbs, sandboxAddO);
+
+    SymbolicSet Zf(*abs.Xs_[2]);
+
+    double H[4*2]={-1, 0,
+                      1, 0,
+                      0,-1,
+                      0, 1};
+    double c[4] = {0, 2, 1, 1};
+
+    Zf.addPolytope(4, H, c, OUTER);
+    SymbolicSet Zc(*abs.Xs_[1]);
+
+    abs.coarser(&Zc, &Zf, 1);
+
+    abs.Xs_[0]->writeToFile("X.bdd");
+    Zf.writeToFile("Zf.bdd");
+    Zc.writeToFile("Zc.bdd");
+}
+
+void hardCode() {
     Cudd mgr;
     double lb[dimX] = {-3, -3};
     double ub[dimX] = { 3,  3};
@@ -72,7 +160,7 @@ int main() {
     SymbolicSet Xc(mgr, dimX, lb, ub, etac, 0);
     Xc.addGridPoints();
 
-    int permute[Xf.nvars_] = {0, 8, 9, 10, 0, 11, 12, 13};
+    int permute[Xf.nvars_] = {0, 8, 9, 10, 4, 11, 12, 13};
 
     SymbolicSet Zc(Xc);
     Zc.symbolicSet_ = Zf2.symbolicSet_.Permute(permute);
@@ -80,5 +168,10 @@ int main() {
     Zc.printInfo(1);
 
     Zc.writeToFile("Zc.bdd");
+}
+
+int main() {
+//    testCoarser();
+    testFiner();
 
 }

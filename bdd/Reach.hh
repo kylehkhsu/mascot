@@ -137,7 +137,7 @@ public:
                         validCs_[*curAbs]->symbolicSet_ = this->Cs_[*curAbs]->symbolicSet_;
 
                         saveCZ(*curAbs);
-                        this->innerFinerAligned(this->Zs_[*curAbs], this->Zs_[*curAbs+1], *curAbs);
+                        this->finer(this->Zs_[*curAbs], this->Zs_[*curAbs+1], *curAbs);
                         validZs_[*curAbs+1]->symbolicSet_ = this->Zs_[*curAbs+1]->symbolicSet_;
                     }
                     *curAbs += 1;
@@ -168,7 +168,7 @@ public:
                         if (verbose_) {
                             clog << "More new states, minToGoCoarser achieved; try going coarser.\n";
                         }
-                        int more = this->innerCoarserAligned(this->Zs_[*curAbs-1], this->Zs_[*curAbs], *curAbs-1);
+                        int more = this->coarser(this->Zs_[*curAbs-1], this->Zs_[*curAbs], *curAbs-1);
 
                         if (more == 0) {
                             if (verbose_) {
