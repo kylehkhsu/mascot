@@ -1,5 +1,5 @@
 function sandbox(mode)
-  addpath(genpath('/home/kylehsu/control/SCOTS+Adaptive'));
+  addpath(genpath('../..'));
   colors=get(groot,'DefaultAxesColorOrder'); 
   figure, hold on
     X = SymbolicSet('X.bdd');

@@ -1092,6 +1092,7 @@ public:
                     c*=2;
                 }
                 gridPoints[i*nofMinterms+k]=firstGridPoint_[i]+num*eta_[i];
+                std::cout << firstGridPoint_[i]+num*eta_[i] << '\n';
             }
             //for(size_t i=0; i<dim_; i++)
             //  std::cout << gridPoints[i*nofMinterms+k] << " " ;
@@ -1265,6 +1266,7 @@ public:
             }
             else {
                 int idx = std::lround((point[i]-firstGridPoint_[i])/eta_[i]);
+                std::cout << "idx: " << idx << '\n';
                 if (idx < 0 || idx > (int)nofGridPoints_[i]) {
                     std::ostringstream os;
                     os << "Error: SymbolicSet::pointToMinterm(double* point): index out of range";
