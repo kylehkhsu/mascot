@@ -106,8 +106,7 @@ int main() {
 
     int numAbs = 3;
     int startAbs = 0;
-    int readXX = 1;
-    int readAbs = 1;
+    int readAbs = 0;
 
     X_type x;
     U_type u;
@@ -117,7 +116,7 @@ int main() {
                     etaRatio, tauRatio, nSubInt, numAbs);
 
     Reach abs("unicycle3A.txt");
-    abs.initialize(&unicycle, readXX, readAbs, unicycleAddO);
+    abs.initialize(&unicycle, readAbs, unicycleAddO);
     abs.initializeReach(unicycleAddG, unicycleAddI);
     abs.computeAbstractions(sysNext, radNext, x, u);
 
