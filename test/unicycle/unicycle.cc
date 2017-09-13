@@ -90,7 +90,7 @@ auto unicycleAddI = [](SymbolicSet* I) -> void {
 int main() {
 
     double lbX[dimX] = {0, 0, -M_PI-0.4};
-    double ubX[dimX] = {9.1, 9.1, M_PI+0.4};
+    double ubX[dimX] = {9, 9, M_PI+0.4};
 
     double lbU[dimU] = {-1.2, -1.6};
     double ubU[dimU] = {1.2, 1.6};
@@ -115,7 +115,7 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    Reach abs("unicycle3A.txt");
+    Reach abs("unicycle3Abrain.txt");
     abs.initialize(&unicycle, readAbs, unicycleAddO);
     abs.initializeReach(unicycleAddG, unicycleAddI);
     abs.computeAbstractions(sysNext, radNext, x, u);
