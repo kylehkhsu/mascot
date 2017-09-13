@@ -28,20 +28,19 @@ void testFiner() {
     double ubU[dimU] = {1.2, 1.6};
     double etaU[dimU] = {.3, .2};
 
-    double etaRatio[dimX] = {2, 2};
+    double etaRatio[dimX] = {2, 1};
     double tauRatio = 2;
 
     int nSubInt = 5;
     int numAbs = 3;
 
-    int readXX = 0;
     int readAbs = 0;
 
     System sandbox(dimX, lbX, ubX, etaX, tau,
                    dimU, lbU, ubU, etaU,
                    etaRatio, tauRatio, nSubInt, numAbs);
-    Adaptive abs("sandbox.txt");
-    abs.initialize(&sandbox, readXX, readAbs, sandboxAddO);
+    Adaptive abs("sandboxFiner.txt");
+    abs.initialize(&sandbox, readAbs, sandboxAddO);
 
     SymbolicSet Zc(*abs.Xs_[1]);
 
@@ -71,20 +70,19 @@ void testCoarser() {
     double ubU[dimU] = {1.2, 1.6};
     double etaU[dimU] = {.3, .2};
 
-    double etaRatio[dimX] = {2, 2};
+    double etaRatio[dimX] = {2, 1};
     double tauRatio = 2;
 
     int nSubInt = 5;
     int numAbs = 3;
 
-    int readXX = 0;
     int readAbs = 0;
 
     System sandbox(dimX, lbX, ubX, etaX, tau,
                    dimU, lbU, ubU, etaU,
                    etaRatio, tauRatio, nSubInt, numAbs);
-    Adaptive abs("sandbox.txt");
-    abs.initialize(&sandbox, readXX, readAbs, sandboxAddO);
+    Adaptive abs("sandboxCoarser.txt");
+    abs.initialize(&sandbox, readAbs, sandboxAddO);
 
     SymbolicSet Zf(*abs.Xs_[2]);
 

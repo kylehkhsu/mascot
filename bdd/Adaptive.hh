@@ -30,7 +30,6 @@ public:
 
     Cudd* ddmgr_; /*!< A single manager object common to all BDDs used in the program. */
     System* system_; /*!< Contains abstraction parameters. */
-    int readXX_; /*!< Whether XXs_ is computed or read from file. */
     int readAbs_; /*!< Whether Abs_ is computed or read from file. */
 
     vector<double*> etaXs_; /*!< *system_->numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
@@ -398,8 +397,8 @@ public:
     /*! Initializes the abstractions' state space grid parameters and time sampling parameters. */
     void initializeEtaTau() {
         for (int i = 0; i < *system_->dimX_; i++) {
-            if (system_->etaRatio_[i] != 2) {
-                error("Error: unsupported etaRatio, which must consist of only 2s.\n");
+            if (system_->etaRatio_[i] != 1 && system_->etaRatio_[i] != 2) {
+                error("Error: unsupported etaRatio, which must consist of only 1s or 2s.\n");
             }
         }
 
@@ -473,13 +472,22 @@ public:
     }
 
     void initializeProjs() {
+        int ones = 0;
+        for (int i = 0; i < *system_->dimX_; i++) {
+            if (system_->etaRatio_[i] == 1) {
+                ones++;
+            }
+        }
+
         for (int i = 1; i < *system_->numAbs_; i++) {
-            BDD* varsCoarser = new BDD[*system_->dimX_];
+            BDD* varsCoarser = new BDD[*system_->dimX_ - ones];
             for (int j = 0; j < *system_->dimX_; j++) {
-                varsCoarser[j] = ddmgr_->bddVar(Xs_[i]->indBddVars_[j][0]);
+                if (system_->etaRatio_[j] == 2) {
+                    varsCoarser[j] = ddmgr_->bddVar(Xs_[i]->indBddVars_[j][0]);
+                }
             }
             BDD* cubeCoarser = new BDD;
-            *cubeCoarser = ddmgr_->bddComputeCube(varsCoarser, NULL, *system_->dimX_);
+            *cubeCoarser = ddmgr_->bddComputeCube(varsCoarser, NULL, *system_->dimX_ - ones);
             cubesCoarser_.push_back(cubeCoarser);
             delete[] varsCoarser;
         }
@@ -491,8 +499,15 @@ public:
             }
 
             for (int dim = 0; dim < *system_->dimX_; dim++) {
-                for (size_t projInd = 1; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
-                    permuteCoarser[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i-1]->indBddVars_[dim][projInd-1];
+                if (system_->etaRatio_[dim] == 2) {
+                    for (size_t projInd = 1; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
+                        permuteCoarser[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i-1]->indBddVars_[dim][projInd-1];
+                    }
+                }
+                else if (system_->etaRatio_[dim] == 1){
+                    for (size_t projInd = 0; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
+                        permuteCoarser[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i-1]->indBddVars_[dim][projInd];
+                    }
                 }
             }
             permutesCoarser_.push_back(permuteCoarser);
@@ -508,8 +523,15 @@ public:
             }
 
             for (int dim = 0; dim < *system_->dimX_; dim++) {
-                for (size_t projInd = 0; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
-                    permuteFiner[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i+1]->indBddVars_[dim][projInd+1];
+                if (system_->etaRatio_[dim] == 2) {
+                    for (size_t projInd = 0; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
+                        permuteFiner[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i+1]->indBddVars_[dim][projInd+1];
+                    }
+                }
+                else if (system_->etaRatio_[dim] == 1) {
+                    for (size_t projInd = 0; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
+                        permuteFiner[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i+1]->indBddVars_[dim][projInd];
+                    }
                 }
             }
             permutesFiner_.push_back(permuteFiner);
