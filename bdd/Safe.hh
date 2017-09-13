@@ -51,8 +51,8 @@ public:
             }
             else { // converged
                 clog << iter << '\n';
-                cout << "Z:\n";
-                this->Zs_[curAbs]->printInfo(1);
+//                cout << "Z:\n";
+//                this->Zs_[curAbs]->printInfo(1);
                 break;
             }
             iter += 1;
@@ -61,8 +61,8 @@ public:
         infZs_[curAbs]->symbolicSet_ |= Zs_[curAbs]->symbolicSet_;
         if (curAbs != *this->system_->numAbs_ - 1) {
             this->finer(this->infZs_[curAbs], this->infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
-            cout << "infZ:\n";
-            this->infZs_[curAbs+1]->printInfo(1);
+//            cout << "infZ:\n";
+//            this->infZs_[curAbs+1]->printInfo(1);
 
             this->Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
             *this->TTs_[curAbs+1] &= !(infZs_[curAbs+1]->symbolicSet_); // same as above

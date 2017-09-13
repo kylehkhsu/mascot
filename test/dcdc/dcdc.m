@@ -43,13 +43,13 @@ function dcdc (mode, numAbs)
     
     D = SymbolicSet('plotting/D.bdd');
     d = D.points;
-    plot(d(:,1),d(:,2),'.','color', [0.75 0.85 0.95], 'MarkerSize', 3);
+    plot(d(:,1),d(:,2),'.','color', [0.75 0.85 0.95], 'MarkerSize', 10);
     
     for i = numAbs:-1:1
       try
 	Z = SymbolicSet(['Z/Z' int2str(i) '.bdd']);
 	z = Z.points;
-	plot(z(:,1),z(:,2),'.','color', colors(i,:)*0.5+0.5, 'MarkerSize', 3);
+	plot(z(:,1),z(:,2),'.','color', colors(i,:)*0.5+0.5, 'MarkerSize', 10);
 	drawnow
 	pause
       end
@@ -63,7 +63,7 @@ function dcdc (mode, numAbs)
     
     D = SymbolicSet('plotting/D.bdd');
     d = D.points;
-    plot(d(:,1),d(:,2),'.','color', [0.75 0.85 0.95], 'MarkerSize', 3);
+    plot(d(:,1),d(:,2),'.','color', [0.75 0.85 0.95], 'MarkerSize', 10);
   end    
     
   
@@ -73,7 +73,7 @@ function dcdc (mode, numAbs)
     drawnow
     
     tau = 0.5;
-    x = [1.19 5.51];
+    x = [1.23 5.5];
     v = [];
     T = 80;        
     

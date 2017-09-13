@@ -90,8 +90,8 @@ auto dcdcAddS = [](SymbolicSet* S) -> void {
 
 int main() {
 
-    double lbX[dimX]  = {1.15, 5.45};
-    double ubX[dimX]  = {1.55, 5.85};
+    double lbX[dimX]  = {1.14999, 5.4499};
+    double ubX[dimX]  = {1.55001, 5.85001};
 
     double lbU[dimU]  = {0};
     double ubU[dimU]  = {2};
@@ -99,7 +99,7 @@ int main() {
 
     int nint = 5;
 
-    double etaX[dimX]= {2/4e3*2*2, 2/4e3*2*2};
+    double etaX[dimX]= {2/4e3*2*2*2*2, 2/4e3*2*2*2*2};
     double tau = 0.5;
 
     double etaRatio[dimX] = {2, 2};
@@ -108,13 +108,13 @@ int main() {
     X_type x;
     U_type u;
 
-    int numAbs = 3;
+    int numAbs = 5;
     int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
     System dcdc(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
-    Safe abs("dcdc3A.txt");
+    Safe abs("dcdc5A.txt");
     abs.initialize(&dcdc, readAbs, dcdcAddO);
     abs.initializeSafe(dcdcAddS);
     abs.computeAbstractions(sysNext, radNext, x, u);
