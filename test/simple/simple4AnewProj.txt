@@ -8,7 +8,6 @@ U_ initialized with full domain.
 Os_ initialized according to specification.
 Zs_ initialized with empty domain.
 Cs_ initialized with empty domain.
-------------------------------------------------initializeXXs: Elapsed time is 0.350019 seconds.
 Number of BDD variables: 78
 Initialized permutes.
 Initialized cubes.
@@ -31,14 +30,14 @@ abstraction 2: 0.6
 abstraction 3: 0.3
 Gs_ initialized.
 Is_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.000690977 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.000476593 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
 preYs_ initialized with full domain.
 Ts_ initialized with empty domain.
 Ts_ computed by sampling system behavior.
-------------------------------------------------computeAbstractions: Elapsed time is 2.97798 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 2.66655 seconds.
 Wrote Ts_ to file.
 TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
@@ -817,5 +816,5 @@ reached: 0
 controllers: 6
 
 mu number of controllers: 7
-----------------------------------------reach: Elapsed time is 0.133495 seconds.
+----------------------------------------reach: Elapsed time is 0.138721 seconds.
 Won.

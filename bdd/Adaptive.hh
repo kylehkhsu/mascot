@@ -33,7 +33,6 @@ public:
     int readXX_; /*!< Whether XXs_ is computed or read from file. */
     int readAbs_; /*!< Whether Abs_ is computed or read from file. */
 
-    int alignment_; /*!< Affects how XX is defined, determined by etaRatio_. */
     vector<double*> etaXs_; /*!< *system_->numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
     vector<double*> tau_; /*!< *system_->numAbs_ x 1 matrix of time steps. */
 
@@ -41,7 +40,6 @@ public:
     vector<SymbolicSet*> Os_; /*!< Instance of *Xs_[i] containing unsafe (obstacle) states. */
     vector<SymbolicSet*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
     vector<SymbolicSet*> X2s_; /*!< The *system_->numAbs_ "post" state space abstractions, coarsest (0) to finest. */
-    vector<SymbolicSet*> XXs_; /*!< The *system_->numAbs_ - 1 mappings between consecutive state space abstractions for which membership implies that the finer cell is a subset of the coarser cell. */
     SymbolicSet* U_; /*!< The single input space abstraction. */
     vector<SymbolicSet*> Cs_; /*!< Controller \subseteq *Xs_[i] x *U_. */
 
@@ -82,7 +80,6 @@ public:
         deleteVec(Os_);
         deleteVec(Zs_);
         deleteVec(X2s_);
-        deleteVec(XXs_);
         delete U_;
         deleteVec(Cs_);
         deleteVec(cubesX_);
@@ -104,18 +101,15 @@ public:
 
     /*! Initializes data members.
      *  \param[in]  system      Contains abstraction parameters.
-     *  \param[in]	readXX		Whether initializeXXs should be done by construction (0) or reading from files (1).
      *  \param[in]	readAbs		Whether initializeAbs should be done by construction (0) or reading from files (1).
      *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
      */
     template<class O_type>
-    void initialize(System* system, int readXX, int readAbs, O_type addO) {
+    void initialize(System* system, int readAbs, O_type addO) {
         ddmgr_ = new Cudd;
         system_ = system;
-        readXX_ = readXX;
         readAbs_ = readAbs;
 
-        initializeAlignment();
         initializeEtaTau();
         initializeSolvers();
         initializeBDDs(addO);
@@ -128,12 +122,6 @@ public:
     void initializeBDDs(O_type addO) {
 
         initializeXX2UOZCs(addO);
-
-        TicToc tt;
-        tt.tic();
-        initializeXXs();
-        clog << "------------------------------------------------initializeXXs: ";
-        tt.toc();
 
         initializeNumBDDVars();
         initializePermutes();
@@ -150,7 +138,6 @@ public:
         printTau();
         printVec(Xs_, "X");
         printVec(Os_, "O");
-        printVec(XXs_, "XX");
         cout << "U:\n";
         U_->printInfo(1);
         checkMakeDir("plotting");
@@ -261,49 +248,6 @@ public:
         return preF;
     }
 
-    BDD nPreC(BDD Z, BDD T, BDD TT, int curAbs) {
-        // swap to X2s_[curAbs]
-        BDD Z2 = Z.Permute(permutesXtoX2_[curAbs]);
-        // {(x,u)} with some posts in winning set
-        BDD Fbdd = T.AndAbstract(Z2, *notXUvars_[curAbs]);
-        // {(x,u)} with no posts in winning set
-        BDD nF = !Fbdd & Xs_[curAbs]->symbolicSet_ & U_->symbolicSet_;
-//        // get rid of junk
-//        BDD preF = TT.AndAbstract(nF, *notXUvars_[curAbs]);
-        // project to X
-        BDD preZ = nF.ExistAbstract(*notXvars_[curAbs]);
-        // second complement
-        BDD nPreZ = !preZ & Xs_[curAbs]->symbolicSet_;
-
-        SymbolicSet Z2SS(*X2s_[curAbs]);
-        Z2SS.addGridPoints();
-        Z2SS.symbolicSet_ &= Z2;
-        cout << "Z2:\n";
-        Z2SS.printInfo(1);
-
-        SymbolicSet FbddSS(*Cs_[curAbs]);
-        FbddSS.symbolicSet_ = Fbdd;
-        cout << "Fbdd:\n";
-        FbddSS.printInfo(1);
-
-        SymbolicSet nFSS(*Cs_[curAbs]);
-        nFSS.symbolicSet_ = nF;
-        cout << "nF:\n";
-        nFSS.printInfo(1);
-
-        SymbolicSet preZSS(*Xs_[curAbs]);
-        preZSS.symbolicSet_ = preZ;
-        cout << "preZ:\n";
-        preZSS.printInfo(1);
-
-        SymbolicSet nPreZSS(*Xs_[curAbs]);
-        nPreZSS.symbolicSet_ = nPreZ;
-        cout << "nPreZ:\n";
-        nPreZSS.printInfo(1);
-
-        return nPreZ;
-    }
-
     /*! Initializes the BDDs useful for existential abstraction. Must be called only after initializing Xs, U, and X2s. */
     void initializeNotVars() {
         for (int i = 0; i < *system_->numAbs_; i++) {
@@ -323,155 +267,6 @@ public:
         }
 
         clog << "Initialized notVars.\n";
-    }
-
-    /*!	Inner-approximates a set of states in a coarser abstraction with a finer abstraction.
-        This version takes advantage of the fact that cells in the two abstractions are aligned,
-        which occurs if all elements of etaRatio_ are a power of 3.
-        \param[in]      Zc      Winning states in the coarser abstraction.
-        \param[in,out]  Zf      Winning states in the finer abstraction.
-        \param[in]      c       0-index of the coarser abstraction.
-    */
-    void innerFinerAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
-        BDD Q = XXs_[c]->symbolicSet_ & Zc->symbolicSet_;
-        Zf->symbolicSet_ = Q.ExistAbstract(*notXvars_[c+1]) & Xs_[c+1]->symbolicSet_;
-    }
-
-//    /*!	Inner-approximates a set of states in a coarser abstraction with a finer abstraction.
-//        Optimal only if each element of etaRatio_ is 2 (or a greater power of; not 1!).
-//        \param[in]      Zc      Winning states in the coarser abstraction.
-//        \param[in,out]  Zf      Winning states in the finer abstraction.
-//        \param[in]      c       0-index of the coarser abstraction.
-//    */
-//    void innerFinerAll2(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
-
-//        int dimX = *system_->dimX_;
-//        double* etaX = etaXs_[c+1];
-
-//        auto f = [Zc, dimX, etaX](double* x)->bool {
-//            std::vector<double> exPlus(x, x + dimX);
-//            std::vector<double> exMinus(x, x + dimX);
-//            for (int i = 0; i < dimX; i++) {
-//                exPlus[i] += etaX[i];
-//                exMinus[i] -= etaX[i];
-
-////                clog << exPlus[i] << ' ' << exMinus[i] << '\n';
-//            }
-////            if (Zc->isElement(exPlus) && Zc->isElement(exMinus)) {
-////                clog << "x: " << x[0] << ' ' << x[1] << '\n';
-////            }
-//            return (Zc->isElement(exPlus) && Zc->isElement(exMinus));
-
-//        };
-//        int iter = Zf->addByFunction(f);
-
-//        clog << "iterations: " << iter << '\n';
-
-//    }
-
-    /*!	Inner-approximates a set of states in a finer abstraction with a coarser abstraction.
-        This version takes advantage of the fact that cells in the two abstractions are aligned,
-        which occurs if all elements of etaRatio_ are a power of 3.
-        \param[in,out]  Zc      Winning states in the coarser abstraction.
-        \param[in]      Zf      Winning states in the finer abstraction.
-        \param[in]      c       0-index of the coarser abstraction.
-        \return         1 if Zc grows; 0 otherwise
-    */
-    int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
-        BDD nQ = !((!(XXs_[c]->symbolicSet_)) | Zf->symbolicSet_);
-        BDD cand = (!(nQ.ExistAbstract(*notXvars_[c]))) & Xs_[c]->symbolicSet_;
-        if (cand <= Zc->symbolicSet_) {
-            return 0;
-        }
-        else {
-            Zc->symbolicSet_ = cand;
-            return 1;
-        }
-    }
-//    int innerCoarserAligned(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
-
-//        /* Use numFiner to check if the right number of finer cells are in Zf for a particular corresponding cell in Zc. */
-//        int numFiner = 1;
-//        for (int i = 0; i < *system_->dimX_; i++) {
-//            numFiner *= system_->etaRatio_[i];
-//        }
-
-//        SymbolicSet Qcf(*XXs_[c]);
-//        Qcf.symbolicSet_ = XXs_[c]->symbolicSet_ & Zf->symbolicSet_;
-
-//        SymbolicSet Qc(*Zc);
-//        Qc.symbolicSet_ = Qcf.symbolicSet_.ExistAbstract(*notXvars_[c]); // & S1
-//        Qc.symbolicSet_ &= !(Zc->symbolicSet_); /* don't check states that are already in Zc */
-
-//        int* QcMintermWhole;
-//        SymbolicSet Ccf(Qcf);
-//        BDD result = ddmgr_->bddZero();
-//        int* QcMinterm = new int[Qc.nvars_];
-
-//        for (Qc.begin(); !Qc.done(); Qc.next()) { // iterate over all coarse cells with any corresponding finer cells in Zf
-//            QcMintermWhole = (int*) Qc.currentMinterm();
-//            std::copy(QcMintermWhole + Qc.idBddVars_[0], QcMintermWhole + Qc.idBddVars_[0] + Qc.nvars_, QcMinterm);
-
-//            BDD coarseCell = Qc.mintermToBDD(QcMinterm) & Xs_[c]->symbolicSet_; // a particular coarse cell
-
-//            Ccf.symbolicSet_ = Qcf.symbolicSet_ & coarseCell; // corresponding finer cells to the coarse cell
-
-//            if ((Ccf.symbolicSet_.CountMinterm(Ccf.nvars_)) == (numFiner)) { // if there's a full set of finer cells
-//                result |= coarseCell;
-//            }
-//        }
-
-//        delete[] QcMinterm;
-
-//        if (result == ddmgr_->bddZero()) {
-//            return 0;
-//        }
-
-//        Zc->symbolicSet_ |= result;
-//        return 1;
-//    }
-
-    /*! Debugging function. Tests the functions for projecting a set from one state space abtraction to another. */
-    template<class G_type>
-    void testProjections(G_type addG, int which) {
-        int c = 0;
-        SymbolicSet Zc(*Xs_[c]);
-        SymbolicSet Zf(*Xs_[c+1]);
-
-        if (which == 1) {
-            cout << "Testing innerCoarserAligned.\n";
-            addG(&Zf);
-            TicToc tt;
-            tt.tic();
-
-            double p[2] = {2, 2};
-            Zc.addPoint(p);
-
-//            innerCoarserRupak(&Zc, &Zf, c);
-            innerCoarserAligned(&Zc, &Zf, c);
-
-            tt.toc();
-        }
-        else {
-            cout << "Testing innerFinerAligned.\n";
-
-            addG(&Zc);
-            TicToc tt;
-            tt.tic();
-
-            innerFinerAligned(&Zc, &Zf, c);
-            tt.toc();
-        }
-
-
-        cout << "Zf:\n";
-        Zf.printInfo(1);
-        cout << "Zc:\n";
-        Zc.printInfo(1);
-
-        checkMakeDir("test");
-        Zc.writeToFile("test/Zc.bdd");
-        Zf.writeToFile("test/Zf.bdd");
     }
 
     /*! Initializes SymbolicModelGrowthBound objects for each abstraction as well as Ts_, TTs_ for use in the fixed points.
@@ -600,29 +395,14 @@ public:
         clog << "Cs_ initialized with empty domain.\n";
     }
 
-    /*! Initializes alignment_ by examining etaRatio_. */
-    void initializeAlignment() {
-        int onlyIntegers = 1;
-        int inRange = 1;
-        for (int i = 0; i < *system_->dimX_; i++) {
-            double etaRatio = system_->etaRatio_[i];
-            int etaRatioInt = (int) etaRatio;
-            if (!(etaRatio == etaRatioInt)) {
-                onlyIntegers = 0;
-            }
-            if (etaRatio <= 0) {
-                inRange = 0;
-            }
-        }
-        if (!onlyIntegers || !inRange) {
-            error("Error: unsupported etaRatio, which must be only positive integers.\n");
-        }
-        alignment_ = 1;
-        clog << "Initialized alignment.\n";
-    }
-
     /*! Initializes the abstractions' state space grid parameters and time sampling parameters. */
     void initializeEtaTau() {
+        for (int i = 0; i < *system_->dimX_; i++) {
+            if (system_->etaRatio_[i] != 2) {
+                error("Error: unsupported etaRatio, which must consist of only 2s.\n");
+            }
+        }
+
         double* etaCur = new double[*system_->dimX_];
         for (int i = 0; i < *system_->dimX_; i++) {
             etaCur[i] = system_->etaX_[i];
@@ -660,33 +440,6 @@ public:
             solvers_.push_back(solver);
         }
         clog << "Initialized solvers.\n";
-    }
-
-    /*! Initializes SymbolicSets containing the mappings between consecutive state space abstractions. Reads and writes BDDs from/to file depending on readXXs_. */
-    void initializeXXs() {
-        for (int i = 0; i < *system_->numAbs_ - 1; i++) {
-            SymbolicSet* XX = new SymbolicSet(*Xs_[i], *Xs_[i+1]);
-
-            if (readXX_ == 0) {
-                mapAbstractions(Xs_[i], Xs_[i+1], XX);
-            }
-            else {
-                string Str = "XX/XX";
-                Str += std::to_string(i+1);
-                Str += ".bdd";
-                char Char[20];
-                size_t Length = Str.copy(Char, Str.length() + 1);
-                Char[Length] = '\0';
-                SymbolicSet XXSet(*ddmgr_, Char);
-                XX->symbolicSet_ = XXSet.symbolicSet_;
-            }
-            XXs_.push_back(XX);
-        }
-
-        if (readXX_ == 0) {
-            checkMakeDir("XX");
-            saveVec(XXs_, "XX/XX");
-        }
     }
 
     /*! Initializes the number of total distinct BDD variables in use. */
@@ -827,53 +580,6 @@ public:
 
         clog << "Initialized permutes.\n";
     }
-
-    /*! Generates a mapping between two consecutive state space abstractions.
-     *  \param[in]      Xc          Coarser state space abstraction.
-     *  \param[in]      Xf          Finer state space abstraction.
-     *  \param[in,out]  XX    Mapping for a finer cell to the coarser cell that is its superset.
-     */
-    void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX) {
-
-
-        int* XfMinterm;
-        double* xPoint = new double[Xc->dim_];
-        vector<double> XcPoint (Xc->dim_, 0);
-        double* XXPoint = new double[XX->dim_];
-
-        int totalIter = Xf->symbolicSet_.CountMinterm(Xf->nvars_);
-        int iter = 0;
-        //            int progress = 0;
-
-        cout << "XXs totalIter: " << totalIter << '\n';
-
-        for (Xf->begin(); !Xf->done(); Xf->next()) {
-            iter++;
-            //                cout << iter << '\n';
-            if (iter % 50000 == 0) {
-                cout << iter << "\n";
-                //                    progress++;
-            }
-
-            XfMinterm = (int*)Xf->currentMinterm();
-            Xf->mintermToElement(XfMinterm, xPoint);
-            for (size_t i = 0; i < Xc->dim_; i++) {
-                XcPoint[i] = xPoint[i];
-            }
-            if (!(Xc->isElement(XcPoint))) {
-                continue;
-            }
-            for (size_t i = 0; i < XX->dim_; i++) {
-                XXPoint[i] = xPoint[i % Xc->dim_];
-            }
-            XX->addPoint(XXPoint);
-        }
-        cout << '\n';
-
-        delete[] xPoint;
-        delete[] XXPoint;
-    }
-
 
     /*! Prints information regarding the abstractions' grid parameters to the log file. */
     void printEtaX() {

@@ -99,24 +99,23 @@ int main() {
 
     int nint = 5;
 
-    double etaX[dimX]= {2/4e3*3*4, 2/4e3*3*4};
+    double etaX[dimX]= {2/4e3*2*2, 2/4e3*2*2};
     double tau = 0.5;
 
-    double etaRatio[dimX] = {4, 4};
+    double etaRatio[dimX] = {2, 2};
     double tauRatio = 1;
 
     X_type x;
     U_type u;
 
-    int numAbs = 2;
-    int readXX = 0; // if X, U have changed, needs to be 0.
+    int numAbs = 3;
     int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
     System dcdc(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
-    Safe abs("dcdc2A.txt");
-    abs.initialize(&dcdc, readXX, readAbs, dcdcAddO);
+    Safe abs("dcdc3A.txt");
+    abs.initialize(&dcdc, readAbs, dcdcAddO);
     abs.initializeSafe(dcdcAddS);
     abs.computeAbstractions(sysNext, radNext, x, u);
     abs.safe();
