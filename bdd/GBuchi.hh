@@ -316,7 +316,7 @@ public:
             }
             else {
                 if (*iterCurAbs >= minToBeValid_) {
-                    if (*justCoarsed = 1) {
+                    if (*justCoarsed == 1) {
                         if (verbose_) {
                             clog << "Current controller now valid.\n";
                         }

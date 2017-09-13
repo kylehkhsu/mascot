@@ -25,14 +25,14 @@ abstraction 1: 0.6
 abstraction 2: 0.3
 Gs_ initialized.
 Is_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.000504436 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.000465448 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
 preYs_ initialized with full domain.
 Ts_ initialized with empty domain.
 Ts_ computed by sampling system behavior.
-------------------------------------------------computeAbstractions: Elapsed time is 2.61077 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 2.5053 seconds.
 Wrote Ts_ to file.
 TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
@@ -518,5 +518,5 @@ reached: 0
 controllers: 4
 
 mu number of controllers: 5
-----------------------------------------reach: Elapsed time is 0.104706 seconds.
+----------------------------------------reach: Elapsed time is 0.109762 seconds.
 Won.

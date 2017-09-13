@@ -107,17 +107,17 @@ void testCoarser() {
 
 void hardCode() {
     Cudd mgr;
-    double lb[dimX] = {-3.01, -3.01};
-    double ub[dimX] = { 3.01,  3.01};
-    double etaf[dimX] = {2, 2};
+    double lb[dimX-1] = {-3.01};
+    double ub[dimX-1] = { 3.01};
+    double etaf[dimX-1] = {2};
 
-    SymbolicSet Xf(mgr, dimX, lb, ub, etaf, 0);
+    SymbolicSet Xf(mgr, dimX-1, lb, ub, etaf, 0);
     Xf.addGridPoints();
 //    Xf.symbolicSet_ = mgr.bddOne();
 
 
-    double q[dimX] = {-1, -1};
-    Xf.remPoint(q);
+    double q[dimX-1] = {-1};
+//    Xf.remPoint(q);
 //    q[0] = 1;
 //    Xf.addPoint(q);
 //    q[1] = -1;
@@ -125,9 +125,9 @@ void hardCode() {
 //    q[0] = -1;
 //    Xf.addPoint(q);
 
-    double gridPoints[16*2] = {0};
+    double gridPoints[4] = {0};
     Xf.copyGridPoints(gridPoints);
-    printArray(gridPoints, 16*2);
+    printArray(gridPoints, 4);
 
     Xf.printInfo(2);
 
