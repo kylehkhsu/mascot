@@ -145,11 +145,13 @@ public:
                 }
             }
             else { // if there were new (x,u)
-                if ((*justCoarsed == 1) && (*iterCurAbs >= minToBeValid_)) {
-                    if (verbose_) {
-                        clog << "Current controller now valid.\n";
+                if (*iterCurAbs >= minToBeValid_) {
+                    if (*justCoarsed = 1) {
+                        if (verbose_) {
+                            clog << "Current controller now valid.\n";
+                        }
+                        *justCoarsed = 0;
                     }
-                    *justCoarsed = 0;
                     if (*justStarted == 1) {
                         *justStarted = 0;
                         if (verbose_) {

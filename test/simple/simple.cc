@@ -54,7 +54,7 @@ auto simpleAddG = [](SymbolicSet* G) -> void {
                       1, 0,
                       0,-1,
                       0, 1};
-    double c[4] = {-9, 10, -9, 10};
+    double c[4] = {-7, 10, -7, 10};
     G->addPolytope(4, H, c, INNER);
 };
 
@@ -79,11 +79,10 @@ int main() {
     double tauRatio = 2;
     int nint = 5;
 
-    double etaX[dimX]= {1.6, 1.6};
-    double tau = 2.4;
-    int numAbs = 4;
+    double etaX[dimX]= {1.6/2, 1.6/2};
+    double tau = 2.4/2;
+    int numAbs = 3;
 
-    int readXX = 0; // if specification has changed, needs to be 0
     int readAbs = 0;
 
     System system(dimX, lbX, ubX, etaX, tau,
