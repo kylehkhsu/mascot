@@ -131,19 +131,19 @@ void composition() {
 
     double a0LbX[a0DimX] = {  -3, 0};
     double a0UbX[a0DimX] = {   3, 8};
-    double a0EtaX[a0DimX] = {  2, 8}; // {0.5 8} for the finest layer
+    double a0EtaX[a0DimX] = {  1, 8}; // {0.5 8} for the finest layer
     a0X_t a0x;
     double a0EtaRatioX[a0DimX] = {2, 1};
 
     double a1LbX[a1DimX] = {   0, -3};
     double a1UbX[a1DimX] = {   8,  3};
-    double a1EtaX[a1DimX] = {  8,  2}; // {8, 0.5} for the finest layer
+    double a1EtaX[a1DimX] = {  8,  1}; // {8, 0.5} for the finest layer
     a1X_t a1x;
     double a1EtaRatioX[a1DimX] = {1, 2};
 
     double a2LbX[a2DimX] = {  -3, -8};
     double a2UbX[a2DimX] = {   3,  0};
-    double a2EtaX[a2DimX] = {  2,  8}; // {0.5 8} for the finest layer
+    double a2EtaX[a2DimX] = {  1,  8}; // {0.5 8} for the finest layer
     a2X_t a2x;
     double a2EtaRatioX[a2DimX] = {2, 1};
 
@@ -171,27 +171,27 @@ void composition() {
     clog << "-------------------------------------------------------initialize: ";
     tt.toc();
 
-    abs.initializeProdGs(prod0AddG, 0);
-    abs.initializeProdGs(prod1AddG, 1);
-    abs.initializeProdGs(prod2AddG, 2);
+//    abs.initializeProdGs(prod0AddG, 0);
+//    abs.initializeProdGs(prod1AddG, 1);
+//    abs.initializeProdGs(prod2AddG, 2);
 
-    abs.initializeBaseOs(baseAddO);
+//    abs.initializeBaseOs(baseAddO);
 
-    //TicToc tt;
-    tt.tic();
-    abs.computeBaseAbstractions(baseSysNext, baseRadNext, bx, bu);
-    abs.computeAuxAbstractions(aux0SysNext, aux0RadNext, a0x, au, 0);
-    abs.computeAuxAbstractions(aux1SysNext, aux1RadNext, a1x, au, 1);
-    abs.computeAuxAbstractions(aux2SysNext, aux2RadNext, a2x, au, 2);
-    abs.composeAbstractions();
-    clog << "-------------------------------------------------------abstraction process: ";
-    tt.toc();
+//    //TicToc tt;
+//    tt.tic();
+//    abs.computeBaseAbstractions(baseSysNext, baseRadNext, bx, bu);
+//    abs.computeAuxAbstractions(aux0SysNext, aux0RadNext, a0x, au, 0);
+//    abs.computeAuxAbstractions(aux1SysNext, aux1RadNext, a1x, au, 1);
+//    abs.computeAuxAbstractions(aux2SysNext, aux2RadNext, a2x, au, 2);
+//    abs.composeAbstractions();
+//    clog << "-------------------------------------------------------abstraction process: ";
+//    tt.toc();
 
-    int startAbs = 1-1;
-    int minToGoCoarser = 3;
-    int minToBeValid = 3;
+//    int startAbs = 1-1;
+//    int minToGoCoarser = 3;
+//    int minToBeValid = 3;
 
-    abs.gBuchi(startAbs, minToGoCoarser, minToBeValid);
+//    abs.gBuchi(startAbs, minToGoCoarser, minToBeValid);
 }
 
 
