@@ -481,9 +481,11 @@ public:
 
         for (int i = 1; i < *system_->numAbs_; i++) {
             BDD* varsCoarser = new BDD[*system_->dimX_ - ones];
+            int ind = 0;
             for (int j = 0; j < *system_->dimX_; j++) {
                 if (system_->etaRatio_[j] == 2) {
-                    varsCoarser[j] = ddmgr_->bddVar(Xs_[i]->indBddVars_[j][0]);
+                    varsCoarser[ind] = ddmgr_->bddVar(Xs_[i]->indBddVars_[j][0]);
+                    ind++;
                 }
             }
             BDD* cubeCoarser = new BDD;

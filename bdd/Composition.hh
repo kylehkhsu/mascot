@@ -26,6 +26,8 @@ public:
 
     vector<double*> baseEtaXs_; /*!< Grid parameters for base system abstractions. */
     vector<vector<double*>*> auxsEtaXs_; /*!< Grid parameters for auxiliary system abstractions. */
+    vector<vector<double*>*> prodsEtaXs_;
+    vector<double*> prodsEtaRatio_;
     vector<double*> taus_; /*!< Time sampling parameters. */
     vector<OdeSolver*> baseSolvers_; /*!< Runge-Kutta solvers for base system abstractions. */
     vector<vector<OdeSolver*>*> auxsSolvers_; /*!< Runge-Kutta solvers for auxiliary system abstractions. */
@@ -76,6 +78,10 @@ public:
     vector<vector<int*>*> prodsPermutesXtoX2_; /*!< Used for projecting from state space to post-state space of product system abstractions. */
     vector<vector<int*>*> prodsPermutesX2toX_; /*!< Used for projecting from post-state space to state space of product system abstractions. */
 
+    vector<vector<int*>*> prodsPermutesCoarser_;
+    vector<vector<int*>*> prodsPermutesFiner_;
+    vector<vector<BDD*>*> prodsCubesCoarser_;
+
     int* baseNumFiner_; /*!< Number of finer cells that compose a coarser cell for consecutive base system abstractions. */
     int* prodsNumFiner_; /*!< Number of finer cells that compose a coarser cell for consecutive product system abstractions. */
 
@@ -91,6 +97,8 @@ public:
     ~Composition() {
         deleteVecArray(baseEtaXs_);
         deleteVecVecArray(auxsEtaXs_);
+        deleteVecVecArray(prodsEtaXs_);
+        deleteVecArray(prodsEtaRatio_);
         deleteVec(taus_);
         deleteVec(baseSolvers_);
         deleteVecVec(auxsSolvers_);
@@ -141,10 +149,12 @@ public:
         deleteVecVecArray(prodsPermutesXtoX2_);
         deleteVecVecArray(prodsPermutesX2toX_);
 
+        deleteVecVecArray(prodsPermutesCoarser_);
+        deleteVecVecArray(prodsPermutesFiner_);
+        deleteVecVec(prodsCubesCoarser_);
+
         fclose(stderr);
 
-        delete baseNumFiner_;
-        delete[] prodsNumFiner_;
         delete ddmgr_;
     }
 
@@ -198,7 +208,7 @@ public:
         auxs_ = auxs;
 
         initializeVecVecs();
-        initializeEtaTauNumFiner();
+        initializeEtaTau();
         initializeSolvers();
         initializeBDDs();
     }
@@ -272,7 +282,7 @@ public:
     }
 
     /*! Initializes grid parameters and time sampling parameters for each layer. */
-    void initializeEtaTauNumFiner() {
+    void initializeEtaTau() {
 
         double* baseEtaCur = new double[*base_->dimX_];
         for (int i = 0; i < *base_->dimX_; i++) {
@@ -312,6 +322,21 @@ public:
             auxsEtaXs_.push_back(auxEtaX);
         }
 
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            vector<double*>* prodEtaX = new vector<double*>;
+            for (int iAbs = 0; iAbs < *base_->numAbs_; iAbs++) {
+                double* prodEtai = new double[*base_->dimX_ + *auxs_[iAux]->dimX_];
+                for (int iDim = 0; iDim < *base_->dimX_; iDim++) {
+                    prodEtai[iDim] = baseEtaXs_[iAbs][iDim];
+                }
+                for (int iDim = 0; iDim < *auxs_[iAux]->dimX_; iDim++) {
+                    prodEtai[iDim + *base_->dimX_] = (*(auxsEtaXs_[iAux]))[iAbs][iDim];
+                }
+                prodEtaX->push_back(prodEtai);
+            }
+            prodsEtaXs_.push_back(prodEtaX);
+        }
+
         double* allTauCur = new double;
         *allTauCur = *base_->tau_;
 
@@ -323,7 +348,7 @@ public:
         }
         delete allTauCur;
 
-        clog << "Initialized base's, auxs' etaXs, taus.\n";
+        clog << "Initialized base's, auxs', prods' etaXs, taus.\n";
 
         printVecArray(baseEtaXs_, "baseEtaXs_", *base_->dimX_);
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
@@ -333,25 +358,27 @@ public:
             printVecArray(*auxsEtaXs_[iAux], prefix, *auxs_[iAux]->dimX_);
         }
 
-        baseNumFiner_ = new int;
-        *baseNumFiner_ = 1;
-        for (int i = 0; i < *base_->dimX_; i++) {
-            *baseNumFiner_ *= base_->etaRatio_[i];
-        }
-
-        prodsNumFiner_ = new int[auxs_.size()];
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
-            prodsNumFiner_[iAux] = 1;
-            for (int i = 0; i < *auxs_[iAux]->dimX_; i++) {
-                prodsNumFiner_[iAux] *= auxs_[iAux]->etaRatio_[i];
-            }
-            prodsNumFiner_[iAux] *= *baseNumFiner_;
+            string prefix = "prodsEtaXs_[";
+            prefix += std::to_string(iAux);
+            prefix += "]";
+            printVecArray(*prodsEtaXs_[iAux], prefix, *base_->dimX_ + *auxs_[iAux]->dimX_);
         }
 
-        clog << "Initialized base's, prods' numFiners.\n";
-        clog << "baseNumFiner_: " << *baseNumFiner_ << '\n';
-        clog << "prodsNumFiner_: ";
-        printArray(prodsNumFiner_, auxs_.size());
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            double* prodEtaRatio = new double[*base_->dimX_ + *auxs_[iAux]->dimX_];
+            for (int iDim = 0; iDim < *base_->dimX_; iDim++) {
+                prodEtaRatio[iDim] = base_->etaRatio_[iDim];
+            }
+            for (int iDim = 0; iDim < *auxs_[iAux]->dimX_; iDim++) {
+                prodEtaRatio[iDim + *base_->dimX_] = auxs_[iAux]->etaRatio_[iDim];
+            }
+            prodsEtaRatio_.push_back(prodEtaRatio);
+
+            clog << "prodsEtaRatio[" << iAux << "]: ";
+            printArray(prodEtaRatio, *base_->dimX_ + *auxs_[iAux]->dimX_);
+        }
+        clog << "Initialized prods' etaRatio.\n";
     }
 
     /*! Initializes vectors of vectors of SymbolicSets, BDDs, and others. Each vector of a SymbolicSet or BDD is always for a particular product system.
@@ -406,12 +433,18 @@ public:
             vector<int*>* prodPermutesX2toX = new vector<int*>;
             vector<BDD*>* prodNotXUVars = new vector<BDD*>;
             vector<BDD*>* prodNotXVars = new vector<BDD*>;
+            vector<int*>* prodPermutesCoarser = new vector<int*>;
+            vector<int*>* prodPermutesFiner = new vector<int*>;
+            vector<BDD*>* prodCubeCoarser = new vector<BDD*>;
             auxsCubesX_.push_back(auxCubesX);
             auxsCubesX2_.push_back(auxCubesX2);
             prodsPermutesXtoX2_.push_back(prodPermutesXtoX2);
             prodsPermutesX2toX_.push_back(prodPermutesX2toX);
             prodsNotXUVars_.push_back(prodNotXUVars);
             prodsNotXVars_.push_back(prodNotXVars);
+            prodsPermutesCoarser_.push_back(prodPermutesCoarser);
+            prodsPermutesFiner_.push_back(prodPermutesFiner);
+            prodsCubesCoarser_.push_back(prodCubeCoarser);
         }
     }
 
@@ -612,6 +645,89 @@ public:
             baseNotXUVars_.push_back(baseNotXUVar);
             baseNotXVars_.push_back(baseNotXVar);
         }
+        clog << "Initialized BDDs used for projection (ExistAbstract).\n";
+
+        int ones[auxs_.size()] = {0}; // number of ones in each prodXs' etaRatio
+
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            for (size_t iDim = 0; iDim < (*prodsXs_[iAux])[0]->dim_; iDim++) {
+                if (prodsEtaRatio_[iAux][iDim] == 1) {
+                    ones[iAux] = ones[iAux] + 1;
+                }
+            }
+        }
+        clog << "here\n";
+
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            for (int iAbs = 1; iAbs < *base_->numAbs_; iAbs++) {
+                BDD* varsCoarser = new BDD[(*prodsXs_[iAux])[iAbs]->dim_ - ones[iAux]];
+                int ind = 0;
+                for (size_t iDim = 0; iDim < (*prodsXs_[iAux])[iAbs]->dim_; iDim++) {
+                    if (prodsEtaRatio_[iAux][iDim] == 2) {
+                        varsCoarser[ind] = ddmgr_->bddVar((*prodsXs_[iAux])[iAbs]->indBddVars_[iDim][0]);
+                        ind++;
+                    }
+                }
+                BDD* cubeCoarser = new BDD;
+                *cubeCoarser = ddmgr_->bddComputeCube(varsCoarser, NULL, (*prodsXs_[iAux])[iAbs]->dim_ - ones[iAux]);
+                prodsCubesCoarser_[iAux]->push_back(cubeCoarser);
+                delete[] varsCoarser;
+            }
+        }
+        clog << "Initialized prodsCubesCoarser.\n";
+
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            for (int iAbs = 1; iAbs < *base_->numAbs_; iAbs++) {
+                int* permuteCoarser = new int[numBDDVars];
+                for (int ind = 0; ind < numBDDVars; ind++) {
+                    permuteCoarser[ind] = 0;
+                }
+                for (size_t iDim = 0; iDim < (*prodsXs_[iAux])[iAbs]->dim_; iDim++) {
+                    if (prodsEtaRatio_[iAux][iDim] == 2) {
+                        for (size_t projInd = 1; projInd < (*prodsXs_[iAux])[iAbs]->nofBddVars_[iDim]; projInd++) {
+                            permuteCoarser[(*prodsXs_[iAux])[iAbs]->indBddVars_[iDim][projInd]] = (*prodsXs_[iAux])[iAbs-1]->indBddVars_[iDim][projInd-1];
+                        }
+                    }
+                    else if (prodsEtaRatio_[iAux][iDim] == 1) {
+                        for (size_t projInd = 0; projInd < (*prodsXs_[iAux])[iAbs]->nofBddVars_[iDim]; projInd++) {
+                            permuteCoarser[(*prodsXs_[iAux])[iAbs]->indBddVars_[iDim][projInd]] = (*prodsXs_[iAux])[iAbs-1]->indBddVars_[iDim][projInd];
+                        }
+                    }
+                }
+                prodsPermutesCoarser_[iAux]->push_back(permuteCoarser);
+
+                clog << "permuteCoarser[" << iAux << "][" << iAbs << "]: ";
+                printArray(permuteCoarser, numBDDVars);
+            }
+        }
+
+        for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            for (int iAbs = 0; iAbs < *base_->numAbs_ - 1; iAbs++) {
+                int* permuteFiner = new int[numBDDVars];
+                for (int ind = 0; ind < numBDDVars; ind++) {
+                    permuteFiner[ind] = 0;
+                }
+
+                for (size_t iDim = 0; iDim < (*prodsXs_[iAux])[iAbs]->dim_; iDim++) {
+                    if (prodsEtaRatio_[iAux][iDim] == 2) {
+                        for (size_t projInd = 0; projInd < (*prodsXs_[iAux])[iAbs]->nofBddVars_[iDim]; projInd++) {
+                            permuteFiner[(*prodsXs_[iAux])[iAbs]->indBddVars_[iDim][projInd]] = (*prodsXs_[iAux])[iAbs+1]->indBddVars_[iDim][projInd+1];
+                        }
+                    }
+                    else if (prodsEtaRatio_[iAux][iDim] == 1) {
+                        for (size_t projInd = 0; projInd < (*prodsXs_[iAux])[iAbs]->nofBddVars_[iDim]; projInd++) {
+                            permuteFiner[(*prodsXs_[iAux])[iAbs]->indBddVars_[iDim][projInd]] = (*prodsXs_[iAux])[iAbs+1]->indBddVars_[iDim][projInd];
+                        }
+                    }
+                }
+                prodsPermutesFiner_[iAux]->push_back(permuteFiner);
+
+                clog << "permuteFiner[" << iAux << "][" << iAbs << "]: ";
+                printArray(permuteFiner, numBDDVars);
+            }
+        }
+
+
 
         printVec(baseXs_, "baseXs");
         //        printVec(baseXXs_, "baseXXs");
