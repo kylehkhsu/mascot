@@ -171,27 +171,27 @@ void composition() {
     clog << "-------------------------------------------------------initialize: ";
     tt.toc();
 
-//    abs.initializeProdGs(prod0AddG, 0);
-//    abs.initializeProdGs(prod1AddG, 1);
-//    abs.initializeProdGs(prod2AddG, 2);
+    abs.initializeProdGs(prod0AddG, 0);
+    abs.initializeProdGs(prod1AddG, 1);
+    abs.initializeProdGs(prod2AddG, 2);
 
-//    abs.initializeBaseOs(baseAddO);
+    abs.initializeBaseOs(baseAddO);
 
-//    //TicToc tt;
-//    tt.tic();
-//    abs.computeBaseAbstractions(baseSysNext, baseRadNext, bx, bu);
-//    abs.computeAuxAbstractions(aux0SysNext, aux0RadNext, a0x, au, 0);
-//    abs.computeAuxAbstractions(aux1SysNext, aux1RadNext, a1x, au, 1);
-//    abs.computeAuxAbstractions(aux2SysNext, aux2RadNext, a2x, au, 2);
-//    abs.composeAbstractions();
-//    clog << "-------------------------------------------------------abstraction process: ";
-//    tt.toc();
+    //TicToc tt;
+    tt.tic();
+    abs.computeBaseAbstractions(baseSysNext, baseRadNext, bx, bu);
+    abs.computeAuxAbstractions(aux0SysNext, aux0RadNext, a0x, au, 0);
+    abs.computeAuxAbstractions(aux1SysNext, aux1RadNext, a1x, au, 1);
+    abs.computeAuxAbstractions(aux2SysNext, aux2RadNext, a2x, au, 2);
+    abs.composeAbstractions();
+    clog << "-------------------------------------------------------abstraction process: ";
+    tt.toc();
 
-//    int startAbs = 1-1;
-//    int minToGoCoarser = 3;
-//    int minToBeValid = 3;
+    int startAbs = 1-1;
+    int minToGoCoarser = 7;
+    int minToBeValid = 7;
 
-//    abs.gBuchi(startAbs, minToGoCoarser, minToBeValid);
+    abs.gBuchi(startAbs, minToGoCoarser, minToBeValid);
 }
 
 

@@ -9,9 +9,9 @@
 function whirlpoolDiscrete (mode, numGoals, numAbs, controllers)
   w = [0.05 0.05];
   bx = [0 0];
-  a1x = [0.75 4];
-  a2x = [4 -0.75];
-  a3x = [-2.75 -4];
+  a1x = [1.125 4];
+  a2x = [4 -2.125];
+  a3x = [0.125 -4];
   bInd = [1 2];
   aInd = [3 4; 5 6; 7 8];
   x = [bx a1x a2x a3x];

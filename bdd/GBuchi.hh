@@ -159,9 +159,8 @@ public:
             for (int iAbs = fAbs; iAbs > 0; iAbs--) {
                 innerCoarser((*this->prodsPreYs_[*curAux])[iAbs-1],
                         (*this->prodsPreYs_[*curAux])[iAbs],
-                        (*this->prodsXXs_[*curAux])[iAbs-1],
-                        (*this->prodsNotXVars_[*curAux])[iAbs-1],
-                        (*this->prodsXs_[*curAux])[iAbs-1]);
+                        (*this->prodsPermutesCoarser_[*curAux])[iAbs-1],
+                        (*this->prodsCubesCoarser_[*curAux])[iAbs-1]);
             }
 
             // initialization for minimal fixed point
@@ -201,9 +200,7 @@ public:
             for (int iAbs = 0; iAbs < *this->base_->numAbs_ - 1; iAbs++) {
                 innerFiner((*this->prodsYs_[*curAux])[iAbs],
                         (*this->prodsYs_[*curAux])[iAbs+1],
-                        (*this->prodsXXs_[*curAux])[iAbs],
-                        (*this->prodsNotXVars_[*curAux])[iAbs+1],
-                        (*this->prodsXs_[*curAux])[iAbs+1]);
+                        (*this->prodsPermutesFiner_[*curAux])[iAbs]);
                 ((*this->prodsYs_[*curAux])[iAbs+1])->symbolicSet_ |= ((*this->prodsZs_[*curAux])[iAbs+1])->symbolicSet_;
             }
 
@@ -305,9 +302,7 @@ public:
 
                         innerFiner((*this->prodsZs_[curAux])[*curAbs],
                                 (*this->prodsZs_[curAux])[*curAbs+1],
-                                (*this->prodsXXs_[curAux])[*curAbs],
-                                (*this->prodsNotXVars_[curAux])[*curAbs+1],
-                                (*this->prodsXs_[curAux])[*curAbs+1]);
+                                (*this->prodsPermutesFiner_[curAux])[*curAbs]);
                         ((*this->prodsValidZs_[curAux])[*curAbs+1])->symbolicSet_ = ((*this->prodsZs_[curAux])[*curAbs+1])->symbolicSet_;
                     }
                     *curAbs += 1;
@@ -340,13 +335,10 @@ public:
                         if (verbose_) {
                             clog << "More new states, minToGoCoarser achieved; try going coarser.\n";
                         }
-                        int more = 1;
-                        innerCoarser((*this->prodsZs_[curAux])[*curAbs-1],
+                        int more = innerCoarser((*this->prodsZs_[curAux])[*curAbs-1],
                                 (*this->prodsZs_[curAux])[*curAbs],
-                                (*this->prodsXXs_[curAux])[*curAbs-1],
-                                (*this->prodsNotXVars_[curAux])[*curAbs-1],
-                                (*this->prodsXs_[curAux])[*curAbs-1]);
-//                                this->prodsNumFiner_[curAux]);
+                                (*this->prodsPermutesCoarser_[curAux])[*curAbs-1],
+                                (*this->prodsCubesCoarser_[curAux])[*curAbs-1]);
                         if (more == 0) {
                             if (verbose_) {
                                 clog << "Projecting to coarser gives no more states in coarser; not changing abstraction.\n";
@@ -407,14 +399,21 @@ public:
         return C;
     }
 
-    void innerFiner(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarf, SymbolicSet* Xf) {
-        BDD Q = XXc->symbolicSet_ & Zc->symbolicSet_;
-        Zf->symbolicSet_ = Q.ExistAbstract(*notXVarf) & Xf->symbolicSet_;
+    void innerFiner(SymbolicSet* Zc, SymbolicSet* Zf, int* permuteFiner) {
+        Zf->addGridPoints();
+        Zf->symbolicSet_ &= Zc->symbolicSet_.Permute(permuteFiner);
     }
 
-    void innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarc, SymbolicSet* Xc) {
-        BDD nQ = !((!(XXc->symbolicSet_)) | Zf->symbolicSet_);
-        Zc->symbolicSet_ = (!(nQ.ExistAbstract(*notXVarc))) & Xc->symbolicSet_;
+    int innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, int* permuteCoarser, BDD* cubeCoarser) {
+        BDD Zcand = Zf->symbolicSet_.UnivAbstract(*cubeCoarser);
+        Zcand = Zcand.Permute(permuteCoarser);
+        if (Zcand <= Zc->symbolicSet_) {
+            return 0;
+        }
+        else {
+            Zc->symbolicSet_ = Zcand;
+            return 1;
+        }
     }
 
 //    int innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarc, SymbolicSet* Xc, int numFiner) {
