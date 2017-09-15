@@ -170,7 +170,7 @@ public:
                         if (verbose_) {
                             clog << "More new states, minToGoCoarser achieved; try going coarser.\n";
                         }
-                        int more = this->coarser(this->Zs_[*curAbs-1], this->Zs_[*curAbs], *curAbs-1);
+                        int more = this->coarser(this->Zs_[*curAbs-1], this->Zs_[*curAbs], *curAbs-1, 1);
 
                         if (more == 0) {
                             if (verbose_) {
@@ -349,133 +349,7 @@ public:
         Is_[*this->system_->numAbs_-1]->writeToFile("plotting/I.bdd");
         checkMakeDir("G");
         saveVec(Gs_, "G/G");
-
     }
-
-    //    /*! Debugging function. Implementation of basic SCOTS reachability (single abstraction) in the Adaptive framework. */
-    //    template<class G_type, class I_type, class O_type>
-    //    void reachBasicDebug(int startAbs, G_type addG, I_type addI, O_type addO, int debug = 0) {
-
-    //        int curAbs = startAbs;
-
-    //        SymbolicSet G(*Xs_[curAbs]);
-    //        addG(&G);
-    //        SymbolicSet O(G);
-    //        addO(&O);
-    //        G.symbolicSet_ &= !(O.symbolicSet_);
-
-    ////        G.printInfo(1);
-
-    //        SymbolicSet F(*Xs_[curAbs], *U_);
-    ////        F.symbolicSet_ = G.symbolicSet_ & U_->symbolicSet_;
-    ////        F.printInfo(1);
-    ////        U_->printInfo(1);
-
-    //        SymbolicSet C(*Xs_[curAbs], *U_);
-
-    //        BDD Z = ddmgr_->bddZero();
-
-    //        SymbolicSet domain(C);
-    //        domain.addGridPoints();
-
-    //        int iter = 1;
-    //        while ((C.symbolicSet_ & Is_[curAbs]->symbolicSet_) == ddmgr_->bddZero()) {
-
-    //            //             project onto Xs_[curAbs]
-
-    //            Z = F.symbolicSet_.ExistAbstract(*notXvars_[curAbs]);
-
-    //            if (iter == debug) {
-    //                SymbolicSet Zss(*Xs_[curAbs]);
-    //                Zss.symbolicSet_ = Z;
-    //                clog << "Z = F.symbolicSet_.ExistAbstract(notXvars)\n";
-    //                Zss.printInfo(1);
-    //            }
-
-    //            // swap to X2s_[curAbs]
-    //            Z = Z.Permute(permutesXtoX2_[curAbs]);
-
-    //            SymbolicSet X2(*X2s_[curAbs]);
-    //            X2.symbolicSet_ = Z;
-    //            //            X2.printInfo(1);
-
-    //            BDD nZ = !Z;
-
-    //            if (iter == debug) {
-    //                X2.symbolicSet_ = nZ;
-    //                clog << "BDD nZ = !Z\n";
-    //                X2.printInfo(1);
-    //            }
-
-    //            BDD T = Abs_[curAbs]->transitionRelation_;
-    //            BDD Fbdd = T.AndAbstract(nZ, *notXUvars_[curAbs]);
-
-
-    //            SymbolicSet Tss(C, X2);
-    //            Tss.symbolicSet_ = T;
-    //            //            Tss.printInfo(1);
-
-    //            if (iter == debug) {
-    //                SymbolicSet Fss(*Xs_[curAbs], *U_);
-    //                Fss.symbolicSet_ = Fbdd;
-    //                clog << "BDD Fbdd = T.AndAbstract(nZ, notXUvars)\n";
-    //                Fss.printInfo(1);
-    //            }
-
-    //            BDD nF = !Fbdd;
-
-    //            if (iter == debug) {
-    //                SymbolicSet nFss(*Xs_[curAbs], *U_);
-    //                nFss.symbolicSet_ = nF;
-    //                clog << "BDD nF = !Fbdd\n";
-    //                nFss.printInfo(1);
-    //            }
-
-    //            BDD TT = T.ExistAbstract(*cubesX2_[curAbs]);
-    //            BDD preF = TT.AndAbstract(nF, *notXUvars_[curAbs]);
-
-    //            if (iter == debug) {
-    //                SymbolicSet preFss(*Xs_[curAbs], *U_);
-    //                preFss.symbolicSet_ = preF;
-    //                clog << "BDD preF = TT.AndAbstract(nF, notXUvars)\n";
-    //                preFss.printInfo(1);
-    //            }
-
-    //            preF |= G.symbolicSet_;
-
-    //            BDD N = preF & (!(C.symbolicSet_.ExistAbstract(*cubeU_)));
-
-    //            if (iter == debug) {
-    //                SymbolicSet Nss(*Xs_[curAbs], *U_);
-    //                Nss.symbolicSet_ = N;
-    //                clog << "BDD N = preF & (!(C.symbolicSet_.ExistAbstract(notXvars)))\n";
-    //                Nss.printInfo(1);
-    //            }
-
-    //            C.symbolicSet_ |= N;
-
-    //            F.symbolicSet_ = preF;
-
-    //            iter++;
-
-    //        }
-    //        clog << "iterations: " << iter << '\n';
-    //        C.printInfo(1);
-    //        checkMakeDir("debug");
-    //        C.writeToFile("debug/C.bdd");
-
-    //        // normal SCOTS sanity check
-    //        clog << "------------------------------normal SCOTS-----------------------------------\n";
-    //        FixedPoint fp(Abs_[curAbs]);
-    //        SymbolicSet C2(C);
-    //        C2.symbolicSet_ = fp.reach(G.symbolicSet_, Is_[curAbs]->symbolicSet_, 1, 1);
-    ////        C.symbolicSet_ &= domain.symbolicSet_;
-    //        C2.printInfo(1);
-
-    //        clog << "Cs are equal: " << ((C.symbolicSet_ <= C2.symbolicSet_) && (C2.symbolicSet_ <= C.symbolicSet_)) << "\n";
-    ////        domain.printInfo(2);
-    //    }
-
 };
 
 }
