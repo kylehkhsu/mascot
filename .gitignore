@@ -1,3 +1,5 @@
 *.bdd 
 05_AdaptiveGridding/**
 *.fig
+doxygen/html/**
+doxygen/latex/**
