@@ -458,16 +458,19 @@ public:
         Zf->symbolicSet_ &= Zc->symbolicSet_.Permute(permutesFiner_[c]);
     }
 
-    int coarser(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+    int coarser(SymbolicSet* Zc, SymbolicSet* Zf, int c, int mu) {
         BDD Zcand = Zf->symbolicSet_.UnivAbstract(*cubesCoarser_[c]);
         Zcand = Zcand.Permute(permutesCoarser_[c]);
 
-        if (Zcand <= Zc->symbolicSet_) {
+        if (mu == 1 && Zcand <= Zc->symbolicSet_) {
             return 0;
         }
-        else {
+        else if (mu == 0) {
             Zc->symbolicSet_ = Zcand;
             return 1;
+        }
+        else {
+            error("Adaptive::coarser(): invalid mu.\n");
         }
     }
 

@@ -160,7 +160,8 @@ public:
                 innerCoarser((*this->prodsPreYs_[*curAux])[iAbs-1],
                         (*this->prodsPreYs_[*curAux])[iAbs],
                         (*this->prodsPermutesCoarser_[*curAux])[iAbs-1],
-                        (*this->prodsCubesCoarser_[*curAux])[iAbs-1]);
+                        (*this->prodsCubesCoarser_[*curAux])[iAbs-1],
+                        0);
             }
 
             // initialization for minimal fixed point
@@ -338,7 +339,8 @@ public:
                         int more = innerCoarser((*this->prodsZs_[curAux])[*curAbs-1],
                                 (*this->prodsZs_[curAux])[*curAbs],
                                 (*this->prodsPermutesCoarser_[curAux])[*curAbs-1],
-                                (*this->prodsCubesCoarser_[curAux])[*curAbs-1]);
+                                (*this->prodsCubesCoarser_[curAux])[*curAbs-1],
+                                1);
                         if (more == 0) {
                             if (verbose_) {
                                 clog << "Projecting to coarser gives no more states in coarser; not changing abstraction.\n";
@@ -404,10 +406,10 @@ public:
         Zf->symbolicSet_ &= Zc->symbolicSet_.Permute(permuteFiner);
     }
 
-    int innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, int* permuteCoarser, BDD* cubeCoarser) {
+    int innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, int* permuteCoarser, BDD* cubeCoarser, int mu) {
         BDD Zcand = Zf->symbolicSet_.UnivAbstract(*cubeCoarser);
         Zcand = Zcand.Permute(permuteCoarser);
-        if (Zcand <= Zc->symbolicSet_) {
+        if (mu == 1 && Zcand <= Zc->symbolicSet_) {
             return 0;
         }
         else {
@@ -415,45 +417,6 @@ public:
             return 1;
         }
     }
-
-//    int innerCoarser(SymbolicSet* Zc, SymbolicSet* Zf, SymbolicSet* XXc, BDD* notXVarc, SymbolicSet* Xc, int numFiner) {
-//        // debug
-////        XXc->printInfo(1);
-
-//        SymbolicSet Qcf(*XXc);
-//        Qcf.symbolicSet_ = XXc->symbolicSet_ & Zf->symbolicSet_;
-
-//        SymbolicSet Qc(*Zc);
-//        Qc.symbolicSet_ = Qcf.symbolicSet_.ExistAbstract(*notXVarc); // & S1
-//        Qc.symbolicSet_ &= !(Zc->symbolicSet_); /* don't check states that are already in Zc */
-
-//        int* QcMintermWhole;
-//        SymbolicSet Ccf(Qcf);
-//        BDD result = ddmgr_->bddZero();
-//        int* QcMinterm = new int[Qc.nvars_];
-
-//        for (Qc.begin(); !Qc.done(); Qc.next()) { // iterate over all coarse cells with any corresponding finer cells in Zf
-//            QcMintermWhole = (int*) Qc.currentMinterm();
-//            std::copy(QcMintermWhole + Qc.idBddVars_[0], QcMintermWhole + Qc.idBddVars_[0] + Qc.nvars_, QcMinterm);
-
-//            BDD coarseCell = Qc.mintermToBDD(QcMinterm) & Xc->symbolicSet_; // a particular coarse cell
-
-//            Ccf.symbolicSet_ = Qcf.symbolicSet_ & coarseCell; // corresponding finer cells to the coarse cell
-
-//            if ((Ccf.symbolicSet_.CountMinterm(Ccf.nvars_)) == (numFiner)) { // if there's a full set of finer cells
-//                result |= coarseCell;
-//            }
-//        }
-
-//        delete[] QcMinterm;
-
-//        if (result == ddmgr_->bddZero()) {
-//            return 0;
-//        }
-
-//        Zc->symbolicSet_ |= result;
-//        return 1;
-//    }
 
     /*! Saves a controller C and its domain Z into the appropriate vectors of SymbolicSets.
      *  \param[in]  curAux      0-index of product system.
