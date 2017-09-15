@@ -57,28 +57,30 @@ int main() {
     double ubU[dimU]= { 2,   1};
     double etaU[dimU]= {0.5, 0.2};
 
-    double etaRatio[dimX] = {3, 3};
-    double tauRatio = 3;
+    double etaRatio[dimX] = {2, 2};
+    double tauRatio = 2;
     int nint = 5;
 
-    double etaX[dimX]= {0.2/3, 0.2/3};
-    double tau = 0.3/3;
-    int numAbs = 1;
+    double etaX[dimX]= {0.6, 0.6};
+    double tau = 0.6;
+    int numAbs = 3;
 
     X_type x;
     U_type u;
 
-    int readXX = 0; // if X or U has changed, needs to be 0
     int readAbs = 0; // if X or U or O or dynamics has changed, needs to be 0
 
     System whirlpool(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
 
-    Safe abs("whirlpoolSafe1A.txt");
-    abs.initialize(&whirlpool, readXX, readAbs, whirlpoolAddO);
+    Safe abs("whirlpoolSafe3Asafe2.txt");
+    abs.initialize(&whirlpool, readAbs, whirlpoolAddO);
     abs.initializeSafe(whirlpoolAddS);
     abs.computeAbstractions(sysNext, radNext, x, u);
-    abs.safe();
+//    abs.safe();
+
+    int itersToNextAbs = 100;
+    abs.safe2(itersToNextAbs);
 
 }

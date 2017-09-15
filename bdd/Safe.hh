@@ -17,8 +17,8 @@ class Safe: public virtual Adaptive {
 public:
     vector<SymbolicSet*> Ss_; /*!< Instance of *Xs_[i] containing safe states. */
     vector<SymbolicSet*> infZs_; /*!< Instance of *Xs_[i] containing projection of convergence of previous maximal fixed points. */
-    vector<SymbolicSet*> validZs_; /*!< Contains winning states that act as savepoints. */
 
+    int itersToNextAbs_;
 
     /*! Constructor for a Safe object. */
     Safe(char* logFile)
@@ -29,7 +29,6 @@ public:
     ~Safe() {
         deleteVec(Ss_);
         deleteVec(infZs_);
-        deleteVec(validZs_);
     }
 
     /*! Adaptive maximal fixed point. */
@@ -59,10 +58,9 @@ public:
         }
 
         infZs_[curAbs]->symbolicSet_ |= Zs_[curAbs]->symbolicSet_;
+        infZs_[curAbs]->printInfo(1);
         if (curAbs != *this->system_->numAbs_ - 1) {
-            this->finer(this->infZs_[curAbs], this->infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
-//            cout << "infZ:\n";
-//            this->infZs_[curAbs+1]->printInfo(1);
+            this->finer(infZs_[curAbs], infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
 
             this->Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
             *this->TTs_[curAbs+1] &= !(infZs_[curAbs+1]->symbolicSet_); // same as above
@@ -91,8 +89,8 @@ public:
         saveVec(this->Cs_, "C/C");
 
         cout << "Domain of all controllers:\n";
-        this->infZs_[*this->system_->numAbs_-1]->printInfo(1);
-        this->infZs_[*this->system_->numAbs_-1]->writeToFile("plotting/D.bdd");
+        infZs_[*this->system_->numAbs_-1]->printInfo(1);
+        infZs_[*this->system_->numAbs_-1]->writeToFile("plotting/D.bdd");
     }
 
     /*! Initializes objects specific to the following specifications: safe.
@@ -110,8 +108,7 @@ public:
 
         // maximal fixed point starts with whole set
         for (int i = 0; i < *this->system_->numAbs_; i++) {
-            this->Zs_[i]->symbolicSet_ = this->ddmgr_->bddOne();
-            ;
+            this->Zs_[i]->symbolicSet_ = this->ddmgr_->bddOne();            
         }
         clog << "Zs_ modified to BDD-1.\n";
 
@@ -120,12 +117,6 @@ public:
             infZs_.push_back(infZ);
         }
         clog << "infZs_ initialized to empty.\n";
-
-        for (int i = 0; i < *this->system_->numAbs_; i++) {
-            SymbolicSet* validZ = new SymbolicSet(*this->Xs_[i]);
-            validZs_.push_back(validZ);
-        }
-        clog << "validZs_ initialized with empty domain.\n";
 
         saveVerify();
     }
@@ -137,53 +128,99 @@ public:
         saveVec(Ss_,"S/S");
     }
 
-    //    /*! Debugging fucntion. Implementation of basic SCOTS safety (single abstraction) in the Adaptive framework. */
-    //    void safeBasicDebug(int verbose = 0) {
-    //        if (numAbs_ != 1) {
-    //            error("Error: For comparison with SCOTS, numAbs needs to be 1.\n");
-    //        }
+    void nu2(int* curAbs, int* iterTotal, int* stop) {
+        int iterCurAbs = 1;
+        clog << "current abstraction: " << *curAbs << '\n';
+        while (iterCurAbs <= itersToNextAbs_) {
+            *iterTotal += 1;
+            clog << ".";
+            // get pre of current abtraction's Z disjuncted with projection of Z from previous abstraction
+            this->Cs_[*curAbs]->symbolicSet_ = this->preC(this->Zs_[*curAbs]->symbolicSet_ | infZs_[*curAbs]->symbolicSet_, this->Ts_[*curAbs]->symbolicSet_, *this->TTs_[*curAbs], *curAbs);
+            // conjunct with safe set (maximal fixed point)
+            this->Cs_[*curAbs]->symbolicSet_ &= Ss_[*curAbs]->symbolicSet_;
+            // project onto Xs_[curAbs]
+            BDD Z = this->Cs_[*curAbs]->symbolicSet_.ExistAbstract(*this->notXvars_[*curAbs]);
+            if (Z != this->Zs_[*curAbs]->symbolicSet_) { // not converged
+                this->Zs_[*curAbs]->symbolicSet_ = Z; // update and continue
+                iterCurAbs += 1;
+            }
+            else { // this abstraction has converged
+                if (*curAbs == *this->system_->numAbs_ - 1) { // this is the finest abstraction
+                    *stop = 1;
+                }
+                break;
+            }
+        }
+        clog << iterCurAbs << " ";
+        clog << "total iterations: " << *iterTotal << '\n';
+        infZs_[*curAbs]->symbolicSet_ |= this->Zs_[*curAbs]->symbolicSet_;
+        infZs_[*curAbs]->printInfo(1);
+        if (*this->system_->numAbs_ == 1) {
+            return;
+        }
+        else {
+            if (*curAbs == *this->system_->numAbs_ - 1) { // finished a pass
+                if (*stop == 1) {
+                    return;
+                }
+                else {
+                    for (int iAbs = *curAbs; iAbs > 0; iAbs--) {
+                        this->coarser(infZs_[iAbs - 1], infZs_[iAbs], iAbs - 1, 0);
+                    }
+                    this->Ts_[0]->symbolicSet_ &= !(infZs_[0]->symbolicSet_);
+                    *this->TTs_[0] &= !(infZs_[0]->symbolicSet_);
 
-    //        int curAbs = 0;
+                    for (int i = 0; i < *this->system_->numAbs_; i++) {
+                        this->Zs_[i]->symbolicSet_ = this->ddmgr_->bddOne();
+                    }
+                    clog << "Zs reset to BDD-1.\n";
 
-    //        TicToc tt;
-    //        tt.tic();
+                    *curAbs = 0;
+                }
+            }
+            else {
+                this->finer(infZs_[*curAbs], infZs_[*curAbs+1],  *curAbs);
+                this->Ts_[*curAbs+1]->symbolicSet_ &= !(infZs_[*curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
+                *this->TTs_[*curAbs+1] &= !(infZs_[*curAbs+1]->symbolicSet_); // same as above
+                *curAbs += 1;
+            }
+        }
+    }
 
-    //        SymbolicSet C(*Xs_[curAbs], *U_);
+    void safe2(int itersToNextAbs) {
 
-    //        int iter = 1;
+        itersToNextAbs_ = itersToNextAbs;
+        TicToc tt;
+        tt.tic();
 
-    //        while (1) {
-    //            // get pre(Z)
-    //            C.symbolicSet_ = preC(Zs_[curAbs]->symbolicSet_, curAbs);
-    //            // conjunct with safe set (maximal fixed point)
-    //            C.symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
-    //            // project onto Xs_[curAbs]
-    //            BDD Z = C.symbolicSet_.ExistAbstract(*notXvars_[curAbs]);
+        // removing obstacles from transition relation
+        this->removeFromTs(&(this->Os_));
+        clog << "Os_ removed from Ts_, TTs_.\n";
 
-    //            clog << "iter: " << iter << '\n';
-    //            iter += 1;
 
-    //            if (Z != Zs_[curAbs]->symbolicSet_) {
-    //                Zs_[curAbs]->symbolicSet_ = Z;
-    //            }
-    //            else {
-    //                break;
-    //            }
-    //        }
+        int curAbs = 0;
+        int iterTotal = 0;
+        int stop = 0;
+        while (1) {
+            nu2(&curAbs, &iterTotal, &stop);
+            if (stop == 1) {
+                break;
+            }
+        }
 
-    //        tt.toc();
+        clog << "----------------------------------------safe: ";
+        tt.toc();
 
-    //        C.printInfo(1);
-    //        checkMakeDir("debug");
-    //        C.writeToFile("debug/C.bdd");
+        checkMakeDir("Z");
+        saveVec(this->Zs_, "Z/Z");
+        checkMakeDir("C");
+        saveVec(this->Cs_, "C/C");
 
-    //        SymbolicSet X(*Xs_[curAbs]);
-    //        X.symbolicSet_ = C.symbolicSet_.ExistAbstract(U_->getCube());
+        cout << "Domain of all controllers:\n";
+        infZs_[*this->system_->numAbs_-1]->printInfo(1);
+        infZs_[*this->system_->numAbs_-1]->writeToFile("plotting/D.bdd");
 
-    //        clog << "Domain of controller:\n";
-    //        X.printInfo(1);
-    //    }
-
+    }
 };
 }
 
