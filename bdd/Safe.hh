@@ -40,8 +40,8 @@ public:
             this->Cs_[curAbs]->symbolicSet_ = this->preC(this->Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs);
 //            this->Cs_[curAbs]->symbolicSet_ = this->preC(this->Zs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs);
             // conjunct with safe set (maximal fixed point)
-//            this->Cs_[curAbs]->symbolicSet_ &= (Ss_[curAbs]->symbolicSet_ & !infZs_[curAbs]->symbolicSet_);
-            this->Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
+            this->Cs_[curAbs]->symbolicSet_ &= (Ss_[curAbs]->symbolicSet_ & !infZs_[curAbs]->symbolicSet_);
+//            this->Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
             // project onto Xs_[curAbs]
             BDD Z = this->Cs_[curAbs]->symbolicSet_.ExistAbstract(*this->notXvars_[curAbs]);
 
@@ -62,8 +62,8 @@ public:
         if (curAbs != *this->system_->numAbs_ - 1) {
             this->finer(infZs_[curAbs], infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
 
-            this->Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
-            *this->TTs_[curAbs+1] &= !(infZs_[curAbs+1]->symbolicSet_); // same as above
+//            this->Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
+//            *this->TTs_[curAbs+1] &= !(infZs_[curAbs+1]->symbolicSet_); // same as above
         }
     }
 
@@ -137,7 +137,8 @@ public:
             // get pre of current abtraction's Z disjuncted with projection of Z from previous abstraction
             this->Cs_[*curAbs]->symbolicSet_ = this->preC(this->Zs_[*curAbs]->symbolicSet_ | infZs_[*curAbs]->symbolicSet_, this->Ts_[*curAbs]->symbolicSet_, *this->TTs_[*curAbs], *curAbs);
             // conjunct with safe set (maximal fixed point)
-            this->Cs_[*curAbs]->symbolicSet_ &= Ss_[*curAbs]->symbolicSet_;
+            this->Cs_[*curAbs]->symbolicSet_ &= (Ss_[*curAbs]->symbolicSet_ & !infZs_[*curAbs]->symbolicSet_);
+//            this->Cs_[*curAbs]->symbolicSet_ &= Ss_[*curAbs]->symbolicSet_;
             // project onto Xs_[curAbs]
             BDD Z = this->Cs_[*curAbs]->symbolicSet_.ExistAbstract(*this->notXvars_[*curAbs]);
             if (Z != this->Zs_[*curAbs]->symbolicSet_) { // not converged
@@ -171,17 +172,17 @@ public:
                     *this->TTs_[0] &= !(infZs_[0]->symbolicSet_);
 
                     for (int i = 0; i < *this->system_->numAbs_; i++) {
-                        this->Zs_[i]->symbolicSet_ = this->ddmgr_->bddOne();
+                        this->Zs_[i]->symbolicSet_ = infZs_[i]->symbolicSet_;
                     }
-                    clog << "Zs reset to BDD-1.\n";
+                    clog << "Zs updated to infZs.\n";
 
                     *curAbs = 0;
                 }
             }
             else {
                 this->finer(infZs_[*curAbs], infZs_[*curAbs+1],  *curAbs);
-                this->Ts_[*curAbs+1]->symbolicSet_ &= !(infZs_[*curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
-                *this->TTs_[*curAbs+1] &= !(infZs_[*curAbs+1]->symbolicSet_); // same as above
+//                this->Ts_[*curAbs+1]->symbolicSet_ &= !(infZs_[*curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
+//                *this->TTs_[*curAbs+1] &= !(infZs_[*curAbs+1]->symbolicSet_); // same as above
                 *curAbs += 1;
             }
         }

@@ -80,7 +80,7 @@ int main() {
     abs.computeAbstractions(sysNext, radNext, x, u);
 //    abs.safe();
 
-    int itersToNextAbs = 100;
+    int itersToNextAbs = 10;
     abs.safe2(itersToNextAbs);
 
 }

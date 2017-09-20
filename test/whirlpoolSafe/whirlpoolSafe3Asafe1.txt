@@ -24,15 +24,15 @@ abstraction 0: 0.6
 abstraction 1: 0.3
 abstraction 2: 0.15
 Ss_ initialized
-------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.000259147 seconds.
+------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.000260117 seconds.
 Zs_ modified to BDD-1.
 infZs_ initialized to empty.
 Ts_ initialized with empty domain.
 Ts_ computed by sampling system behavior.
-------------------------------------------------computeAbstractions: Elapsed time is 5.61167 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 8.57519 seconds.
 Wrote Ts_ to file.
 TTs_ initialized by ExistAbstracting from Ts_.
 ............................28
 ...........................27
 ................................................48
-----------------------------------------safe: Elapsed time is 0.638039 seconds.
+----------------------------------------safe: Elapsed time is 1.11842 seconds.
