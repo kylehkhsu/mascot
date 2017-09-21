@@ -168,8 +168,8 @@ public:
                     for (int iAbs = *curAbs; iAbs > 0; iAbs--) {
                         this->coarser(infZs_[iAbs - 1], infZs_[iAbs], iAbs - 1, 0);
                     }
-                    this->Ts_[0]->symbolicSet_ &= !(infZs_[0]->symbolicSet_);
-                    *this->TTs_[0] &= !(infZs_[0]->symbolicSet_);
+//                    this->Ts_[0]->symbolicSet_ &= !(infZs_[0]->symbolicSet_);
+//                    *this->TTs_[0] &= !(infZs_[0]->symbolicSet_);
 
                     for (int i = 0; i < *this->system_->numAbs_; i++) {
                         this->Zs_[i]->symbolicSet_ = infZs_[i]->symbolicSet_;

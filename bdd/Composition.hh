@@ -647,7 +647,7 @@ public:
         }
         clog << "Initialized BDDs used for projection (ExistAbstract).\n";
 
-        int ones[auxs_.size()] = {0}; // number of ones in each prodXs' etaRatio
+        int* ones = new int[auxs_.size()]; // number of ones in each prodXs' etaRatio
 
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
             for (size_t iDim = 0; iDim < (*prodsXs_[iAux])[0]->dim_; iDim++) {
@@ -726,6 +726,8 @@ public:
                 printArray(permuteFiner, numBDDVars);
             }
         }
+
+        delete[] ones;
 
 
 
