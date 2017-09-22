@@ -465,12 +465,9 @@ public:
         if (mu == 1 && Zcand <= Zc->symbolicSet_) {
             return 0;
         }
-        else if (mu == 0) {
+        else {
             Zc->symbolicSet_ = Zcand;
             return 1;
-        }
-        else {
-            error("Adaptive::coarser(): invalid mu.\n");
         }
     }
 
