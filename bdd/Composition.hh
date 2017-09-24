@@ -34,14 +34,11 @@ public:
 
     vector<SymbolicSet*> baseXs_; /*!< State spaces of base system abstractions. */
     vector<SymbolicSet*> baseX2s_; /*!< Post-state spaces of base system abstractions. */
-    vector<SymbolicSet*> baseXXs_; /*!< Projection mappings between consecutive base system abstractions. */
     vector<vector<SymbolicSet*>*> auxsXs_; /*!< State spaces of auxiliary system abstractions. */
     vector<vector<SymbolicSet*>*> auxsX2s_; /*!< Post-state spaces of auxiliary system abstractions. */
-    vector<vector<SymbolicSet*>*> auxsXXs_; /*!< Projection mappings between consecutive auxiliary system abstractions. */
 
     vector<vector<SymbolicSet*>*> prodsXs_; /*!< State spaces of product abstractions. */
     vector<vector<SymbolicSet*>*> prodsX2s_; /*!< Post-state spaces of product abstractions. */
-    vector<vector<SymbolicSet*>*> prodsXXs_; /*!< Projection mappings between consecutive product abstractions. */
 
     vector<SymbolicSet*> baseOs_; /*!< Instance of baseXs_ containing obstacle states. */
     vector<vector<SymbolicSet*>*> prodsGs_; /*!< Instance of prodsXs_ containing goal states. */
@@ -105,13 +102,10 @@ public:
 
         deleteVec(baseXs_);
         deleteVec(baseX2s_);
-        deleteVec(baseXXs_);
         deleteVecVec(auxsXs_);
         deleteVecVec(auxsX2s_);
-        deleteVecVec(auxsXXs_);
         deleteVecVec(prodsXs_);
         deleteVecVec(prodsX2s_);
-        deleteVecVec(prodsXXs_);
 
         deleteVec(baseOs_);
         deleteVecVec(prodsGs_);
@@ -388,10 +382,8 @@ public:
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
             vector<SymbolicSet*>* auxXs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* auxX2s = new vector<SymbolicSet*>;
-            vector<SymbolicSet*>* auxXXs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodXs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodX2s = new vector<SymbolicSet*>;
-            vector<SymbolicSet*>* prodXXs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodZs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodYs = new vector<SymbolicSet*>;
             vector<SymbolicSet*>* prodPreYs = new vector<SymbolicSet*>;
@@ -408,10 +400,8 @@ public:
             vector<SymbolicSet*>* prodFinalCs = new vector<SymbolicSet*>;
             auxsXs_.push_back(auxXs);
             auxsX2s_.push_back(auxX2s);
-            auxsXXs_.push_back(auxXXs);
             prodsXs_.push_back(prodXs);
             prodsX2s_.push_back(prodX2s);
-            prodsXXs_.push_back(prodXXs);
             prodsZs_.push_back(prodZs);
             prodsYs_.push_back(prodYs);
             prodsPreYs_.push_back(prodPreYs);
@@ -504,24 +494,6 @@ public:
         clog << "Initialized base's X2s to empty.\n";
         clog << "Initialized auxs' X2s to empty.\n";
         clog << "Initialized prods' X2s to empty.\n";
-
-
-        for (int iAbs = 0; iAbs < *base_->numAbs_ - 1; iAbs++) {
-            SymbolicSet* baseXX = new SymbolicSet(*baseXs_[iAbs], *baseXs_[iAbs+1]);
-            mapAbstractions(baseXs_[iAbs], baseXs_[iAbs+1], baseXX);
-            baseXXs_.push_back(baseXX);
-
-            for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
-                SymbolicSet* auxXX = new SymbolicSet(*((*auxsXs_[iAux])[iAbs]), *((*auxsXs_[iAux])[iAbs+1]));
-                mapAbstractions((*auxsXs_[iAux])[iAbs], (*auxsXs_[iAux])[iAbs+1], auxXX);
-                auxsXXs_[iAux]->push_back(auxXX);
-
-                SymbolicSet* prodXX = new SymbolicSet(*((*prodsXs_[iAux])[iAbs]), *((*prodsXs_[iAux])[iAbs+1]));
-                prodXX->symbolicSet_ = baseXX->symbolicSet_ & auxXX->symbolicSet_;
-                prodsXXs_[iAux]->push_back(prodXX);
-            }
-        }
-        clog << "Initialized base's, auxs', via mapAbstractions, and prods' XXs via composition.\n";
 
         baseU_ = new SymbolicSet(*ddmgr_, *base_->dimU_, base_->lbU_, base_->ubU_, base_->etaU_, 0);
         baseU_->addGridPoints();
@@ -650,13 +622,15 @@ public:
         int* ones = new int[auxs_.size()]; // number of ones in each prodXs' etaRatio
 
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
+            ones[iAux] = 0;
             for (size_t iDim = 0; iDim < (*prodsXs_[iAux])[0]->dim_; iDim++) {
                 if (prodsEtaRatio_[iAux][iDim] == 1) {
                     ones[iAux] = ones[iAux] + 1;
                 }
             }
         }
-        clog << "here\n";
+        clog << "ones: ";
+        printArray(ones, auxs_.size());
 
         for (size_t iAux = 0; iAux < auxs_.size(); iAux++) {
             for (int iAbs = 1; iAbs < *base_->numAbs_; iAbs++) {
@@ -729,65 +703,12 @@ public:
 
         delete[] ones;
 
-
-
         printVec(baseXs_, "baseXs");
-        //        printVec(baseXXs_, "baseXXs");
-
-        //        printVecVec(auxsXs_, "auxsXs");
-        //        printVecVec(auxsXXs_, "auxsXXs");
-
         printVecVec(prodsXs_, "prodsXs");
-        printVecVec(prodsXXs_, "prodsXXs");
-
         //        printVecVec(prodsTs_, "prodsTs");
-
-
 //        checkNotVars();
     }
 
-    /*! Generates a mapping between two consecutive state space abstractions.
-     *  \param[in]      Xc          Coarser state space abstraction.
-     *  \param[in]      Xf          Finer state space abstraction.
-     *  \param[in,out]  XX    Mapping for a finer cell to the coarser cell that is its superset.
-     */
-    void mapAbstractions(SymbolicSet* Xc, SymbolicSet* Xf, SymbolicSet* XX) {
-
-
-        int* XfMinterm;
-        double* xPoint = new double[Xc->dim_];
-        vector<double> XcPoint (Xc->dim_, 0);
-        double* XXPoint = new double[XX->dim_];
-
-        int totalIter = Xf->symbolicSet_.CountMinterm(Xf->nvars_);
-        int iter = 0;
-
-        cout << "XXs totalIter: " << totalIter << '\n';
-
-        for (Xf->begin(); !Xf->done(); Xf->next()) {
-            iter++;
-            if (iter % 50000 == 0) {
-                cout << iter << "\n";
-            }
-
-            XfMinterm = (int*)Xf->currentMinterm();
-            Xf->mintermToElement(XfMinterm, xPoint);
-            for (size_t i = 0; i < Xc->dim_; i++) {
-                XcPoint[i] = xPoint[i];
-            }
-            if (!(Xc->isElement(XcPoint))) {
-                continue;
-            }
-            for (size_t i = 0; i < XX->dim_; i++) {
-                XXPoint[i] = xPoint[i % Xc->dim_];
-            }
-            XX->addPoint(XXPoint);
-        }
-        cout << '\n';
-
-        delete[] xPoint;
-        delete[] XXPoint;
-    }
 
     /*! Debugging function. */
     void checkNotVars() {
