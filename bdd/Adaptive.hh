@@ -459,6 +459,9 @@ public:
     }
 
     int coarser(SymbolicSet* Zc, SymbolicSet* Zf, int c, int mu) {
+//        BDD nZf = !Zf->symbolicSet_;
+//        BDD nZc = nZf.ExistAbstract(*cubesCoarser_[c]);
+//        BDD Zcand = !nZc;
         BDD Zcand = Zf->symbolicSet_.UnivAbstract(*cubesCoarser_[c]);
         Zcand = Zcand.Permute(permutesCoarser_[c]);
 

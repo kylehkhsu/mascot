@@ -16,7 +16,7 @@ namespace scots {
 class Safe: public virtual Adaptive {
 public:
     vector<SymbolicSet*> Ss_; /*!< Instance of *Xs_[i] containing safe states. */
-    vector<SymbolicSet*> infZs_; /*!< Instance of *Xs_[i] containing projection of convergence of previous maximal fixed points. */
+    vector<SymbolicSet*> infZs_; /*!< Instance of *Xs_[i] containing projection of convergence of previous maximal fixed points, aka Magic set. */
 
     int itersToNextAbs_;
 
@@ -137,7 +137,7 @@ public:
             // get pre of current abtraction's Z disjuncted with projection of Z from previous abstraction
             this->Cs_[*curAbs]->symbolicSet_ = this->preC(this->Zs_[*curAbs]->symbolicSet_ | infZs_[*curAbs]->symbolicSet_, this->Ts_[*curAbs]->symbolicSet_, *this->TTs_[*curAbs], *curAbs);
             // conjunct with safe set (maximal fixed point)
-            this->Cs_[*curAbs]->symbolicSet_ &= (Ss_[*curAbs]->symbolicSet_ & !infZs_[*curAbs]->symbolicSet_);
+            this->Cs_[*curAbs]->symbolicSet_ &= (Ss_[*curAbs]->symbolicSet_ & !infZs_[*curAbs]->symbolicSet_); // !!! shaves thigns off
 //            this->Cs_[*curAbs]->symbolicSet_ &= Ss_[*curAbs]->symbolicSet_;
             // project onto Xs_[curAbs]
             BDD Z = this->Cs_[*curAbs]->symbolicSet_.ExistAbstract(*this->notXvars_[*curAbs]);
@@ -166,15 +166,15 @@ public:
                 }
                 else {
                     for (int iAbs = *curAbs; iAbs > 0; iAbs--) {
-                        this->coarser(infZs_[iAbs - 1], infZs_[iAbs], iAbs - 1, 0);
+                        SymbolicSet P(*infZs_[iAbs - 1]);
+                        this->coarser(&P, infZs_[iAbs], iAbs - 1, 0);
+                        infZs_[iAbs-1]->symbolicSet_ |= P.symbolicSet_;
                     }
 //                    this->Ts_[0]->symbolicSet_ &= !(infZs_[0]->symbolicSet_);
 //                    *this->TTs_[0] &= !(infZs_[0]->symbolicSet_);
-
-                    for (int i = 0; i < *this->system_->numAbs_; i++) {
-                        this->Zs_[i]->symbolicSet_ = infZs_[i]->symbolicSet_;
+                    for (int iAbs = 0; iAbs < *this->system_->numAbs_ - 1; iAbs++) {
+                        Zs_[iAbs]->addGridPoints();
                     }
-                    clog << "Zs updated to infZs.\n";
 
                     *curAbs = 0;
                 }
@@ -204,7 +204,10 @@ public:
         int stop = 0;
         while (1) {
             nu2(&curAbs, &iterTotal, &stop);
-            if (stop == 1) {
+//            if (stop == 1) {
+//                break;
+//            }
+            if (iterTotal == 30) {
                 break;
             }
         }
