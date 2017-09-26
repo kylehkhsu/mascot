@@ -88,7 +88,7 @@ int main() {
     System system(dimX, lbX, ubX, etaX, tau,
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nint, numAbs);
-    Reach abs("simple4AnewProj.txt");
+    Reach abs("simple4AcoarseUniv.txt");
     abs.initialize(&system, readAbs, simpleAddO);
     abs.initializeReach(simpleAddG, simpleAddI);
     abs.computeAbstractions(sysNext, radNext, x, u);
