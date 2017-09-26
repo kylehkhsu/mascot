@@ -41,10 +41,10 @@ auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
 };
 
 auto unicycleAddG = [](SymbolicSet* G) -> void {
-    double H[9]={ 1.6,   0,   0,
-                    0, 0.8,   0,
-                    0,   0, 0.1};
-    double c[3] = {8.1, 7.8, 0};
+    double H[9]={   2, 0, 0,
+                    0, 1, 0,
+                    0, 0, 0.1};
+    double c[3] = {10.5, 1, 0};
     G->addEllipsoid(H, c, INNER);
 
 //    double H[9]={   1.6,  0,   0,
@@ -60,27 +60,27 @@ auto unicycleAddO = [](SymbolicSet* O) -> void {
                     0,-1, 0,
                     0, 1, 0};
 
-    double h1[4] = {-1.9, 2.3, -2, 10};
+    double h1[4] = {-1.9, 2.3, -1.9, 12};
     O->addPolytope(4, H, h1, OUTER);
 
-    double h2[4] = {-4.3, 4.7, -0, 7.1};
+    double h2[4] = {-4.3, 4.7, -0, 10.1};
     O->addPolytope(4, H, h2, OUTER);
 
-    double h3[4] = {-6.7, 7.1, -2, 10};
+    double h3[4] = {-6.7, 7.1, -1.9, 12};
     O->addPolytope(4, H, h3, OUTER);
+
+    double h6[4] = {-9.1, 9.5, -0, 10.1};
+    O->addPolytope(4, H, h6, OUTER);
 
     double h4[4] = {-2.5, 3.2, -3.7, 4.6};
     O->addPolytope(4, H, h4, OUTER);
 
     double h5[4] = {-5.39, 6.5, -4.9, 6.5};
     O->addPolytope(4, H, h5, OUTER);
-
-//    double h[4] = {-0.6, 5, -1.81, 2.39};
-//    O->addPolytope(4, H, h, OUTER);
 };
 
 auto unicycleAddI = [](SymbolicSet* I) -> void {
-    double q[3] = {1, 8.7, -M_PI/2};
+    double q[3] = {1, 11, -M_PI/2};
     I->addPoint(q);
 
 //    double q[3] = {4.5, 0.5, M_PI};
@@ -90,7 +90,7 @@ auto unicycleAddI = [](SymbolicSet* I) -> void {
 int main() {
 
     double lbX[dimX] = {0, 0, -M_PI-0.4};
-    double ubX[dimX] = {9, 9, M_PI+0.4};
+    double ubX[dimX] = {11.4, 11.4, M_PI+0.4};
 
     double lbU[dimU] = {-1.2, -1.6};
     double ubU[dimU] = {1.2, 1.6};
@@ -118,13 +118,13 @@ int main() {
     Reach abs("unicycle3Abrain.txt");
     abs.initialize(&unicycle, readAbs, unicycleAddO);
     abs.initializeReach(unicycleAddG, unicycleAddI);
-    abs.computeAbstractions(sysNext, radNext, x, u);
+//    abs.computeAbstractions(sysNext, radNext, x, u);
 
-    int minToGoCoarser = 7;
-    int minToBeValid = 7;
-    int earlyBreak = 1;
+//    int minToGoCoarser = 7;
+//    int minToBeValid = 7;
+//    int earlyBreak = 1;
 
-    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+//    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
 }
 
 
