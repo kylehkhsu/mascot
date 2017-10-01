@@ -1,10 +1,10 @@
 
 function unicycleGB (mode, numAbs, numGoals, controllers)
   w = [0.05 0.05 0];
-  bx = [5.5 5.5 -pi/2];
-  a1x = [1.5 1.5];
-  a2x = [7.5 7.5];
-  a3x = [1.5 4.5];
+  bx = [5.5 2 -pi/2];
+  a1x = [0.35 11];
+  a2x = [11 0.35];
+  a3x = [6.2 11];
    bInd = [1 2 3];
   aInd = [4 5; 6 7; 8 9];
   x = [bx a1x a2x a3x];
@@ -58,7 +58,7 @@ function unicycleGB (mode, numAbs, numGoals, controllers)
   end
   
   if (strcmp(mode, 'GB')) % generalized Buchi
-    numLoops = 5;
+    numLoops = 2;
 %     openfig('system');
     openfig('problem');
     hold on
