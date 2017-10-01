@@ -670,7 +670,7 @@ public:
                 }
                 prodsPermutesCoarser_[iAux]->push_back(permuteCoarser);
 
-                clog << "permuteCoarser[" << iAux << "][" << iAbs << "]: ";
+                clog << "permuteCoarser[" << iAux << "][" << iAbs-1 << "]: ";
                 printArray(permuteCoarser, numBDDVars);
             }
         }
@@ -707,6 +707,20 @@ public:
         printVecVec(prodsXs_, "prodsXs");
         //        printVecVec(prodsTs_, "prodsTs");
 //        checkNotVars();
+    }
+
+    void verify() {
+        checkMakeDir("G");
+        string prefix = "";
+        for (size_t iAux = 0; iAux < this->auxs_.size(); iAux++) {
+            prefix = "G/G";
+            prefix += std::to_string(iAux+1);
+            saveVec(*prodsGs_[iAux], prefix);
+        }
+
+        checkMakeDir("plotting");
+        baseXs_[0]->writeToFile("plotting/X.bdd");
+        baseOs_[*base_->numAbs_ - 1]->writeToFile("plotting/O.bdd");
     }
 
 
