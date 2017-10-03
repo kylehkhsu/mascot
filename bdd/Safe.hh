@@ -37,11 +37,11 @@ public:
         while (1) {
             clog << ".";
             // get pre of current abtraction's Z disjuncted with projection of converged Z from previous abstraction
-            this->Cs_[curAbs]->symbolicSet_ = this->preC(this->Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs);
-//            this->Cs_[curAbs]->symbolicSet_ = this->preC(this->Zs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs);
+//            this->Cs_[curAbs]->symbolicSet_ = this->preC(this->Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs);
+            this->Cs_[curAbs]->symbolicSet_ = this->preC(this->Zs_[curAbs]->symbolicSet_, this->Ts_[curAbs]->symbolicSet_, *this->TTs_[curAbs], curAbs);
             // conjunct with safe set (maximal fixed point)
-            this->Cs_[curAbs]->symbolicSet_ &= (Ss_[curAbs]->symbolicSet_ & !infZs_[curAbs]->symbolicSet_);
-//            this->Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
+//            this->Cs_[curAbs]->symbolicSet_ &= (Ss_[curAbs]->symbolicSet_ & !infZs_[curAbs]->symbolicSet_);
+            this->Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
             // project onto Xs_[curAbs]
             BDD Z = this->Cs_[curAbs]->symbolicSet_.ExistAbstract(*this->notXvars_[curAbs]);
 
@@ -58,12 +58,12 @@ public:
         }
 
         infZs_[curAbs]->symbolicSet_ |= Zs_[curAbs]->symbolicSet_;
-        infZs_[curAbs]->printInfo(1);
+//        infZs_[curAbs]->printInfo(1);
         if (curAbs != *this->system_->numAbs_ - 1) {
             this->finer(infZs_[curAbs], infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
 
-//            this->Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
-//            *this->TTs_[curAbs+1] &= !(infZs_[curAbs+1]->symbolicSet_); // same as above
+            this->Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
+            *this->TTs_[curAbs+1] &= !(infZs_[curAbs+1]->symbolicSet_); // same as above
         }
     }
 
@@ -88,8 +88,8 @@ public:
         checkMakeDir("C");
         saveVec(this->Cs_, "C/C");
 
-        cout << "Domain of all controllers:\n";
-        infZs_[*this->system_->numAbs_-1]->printInfo(1);
+//        cout << "Domain of all controllers:\n";
+//        infZs_[*this->system_->numAbs_-1]->printInfo(1);
         infZs_[*this->system_->numAbs_-1]->writeToFile("plotting/D.bdd");
     }
 
