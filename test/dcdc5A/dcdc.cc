@@ -107,13 +107,13 @@ int main() {
     X_type x;
     U_type u;
 
-    int numAbs = 3;
+    int numAbs = 5;
     int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
     System dcdc(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
-    Safe abs("dcdc.txt");
+    Safe abs("dcdc5A.txt");
     abs.initialize(&dcdc, readAbs, dcdcAddO);
     abs.initializeSafe(dcdcAddS);
     abs.computeAbstractions(sysNext, radNext, x, u);

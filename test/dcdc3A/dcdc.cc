@@ -98,7 +98,7 @@ int main() {
 
     int nint = 5;
 
-    double etaX[dimX]= {2/4e3*2*2*2*2, 2/4e3*2*2*2*2};
+    double etaX[dimX]= {2/4e3*2*2, 2/4e3*2*2};
     double tau = 0.5;
 
     double etaRatio[dimX] = {2, 2};
@@ -113,7 +113,7 @@ int main() {
     System dcdc(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
-    Safe abs("dcdc.txt");
+    Safe abs("dcdc3A.txt");
     abs.initialize(&dcdc, readAbs, dcdcAddO);
     abs.initializeSafe(dcdcAddS);
     abs.computeAbstractions(sysNext, radNext, x, u);
