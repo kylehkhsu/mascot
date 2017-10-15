@@ -1,0 +1,28 @@
+whirlpoolSafe1Asafe1.txt
+Initialized etaXs_, tau_.
+Initialized solvers.
+Xs_ initialized with full domain.
+X2s_ initialized with full domain.
+U_ initialized with full domain.
+Os_ initialized according to specification.
+Zs_ initialized with empty domain.
+Cs_ initialized with empty domain.
+Number of BDD variables: 33
+Initialized permutes.
+Initialized cubes.
+Initialized notVars.
+etaXs_:
+abstraction 0: 0.15 0.15 
+tau_:
+abstraction 0: 0.15
+Ss_ initialized
+------------------------------------------------initializeSpec on Ss_: Elapsed time is 0.000139201 seconds.
+Zs_ modified to BDD-1.
+infZs_ initialized to empty.
+Ts_ initialized with empty domain.
+Ts_ computed by sampling system behavior.
+------------------------------------------------computeAbstractions: Elapsed time is 4.91121 seconds.
+Wrote Ts_ to file.
+TTs_ initialized by ExistAbstracting from Ts_.
+................................................48
+----------------------------------------safe: Elapsed time is 0.772647 seconds.

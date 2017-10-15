@@ -1,4 +1,4 @@
-simple4AcoarseUniv.txt
+simple3A
 Initialized etaXs_, tau_.
 Initialized solvers.
 Xs_ initialized with full domain.
@@ -25,14 +25,14 @@ abstraction 1: 0.6
 abstraction 2: 0.3
 Gs_ initialized.
 Is_ initialized.
-------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.00316878 seconds.
+------------------------------------------------initializeSpec on Gs_, Is_, Os_: Elapsed time is 0.000531281 seconds.
 No obstacle problem with specification.
 validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
 preYs_ initialized with full domain.
 Ts_ initialized with empty domain.
 Ts_ computed by sampling system behavior.
-------------------------------------------------computeAbstractions: Elapsed time is 2.73466 seconds.
+------------------------------------------------computeAbstractions: Elapsed time is 1.72892 seconds.
 Wrote Ts_ to file.
 TTs_ initialized by ExistAbstracting from Ts_.
 Os_ removed from Ts_, TTs_.
@@ -500,5 +500,5 @@ reached: 0
 controllers: 4
 
 mu number of controllers: 5
-----------------------------------------reach: Elapsed time is 0.110468 seconds.
+----------------------------------------reach: Elapsed time is 0.066228 seconds.
 Won.

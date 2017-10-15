@@ -1,7 +1,7 @@
 #
 # compiler
 #
-CC        = g++-4.9
+CC        = g++
 #CC       	  = clang++
 CXXFLAGS 		= -Wall -Wextra -g -std=c++11 -O0 -DNDEBUG
 
@@ -19,7 +19,7 @@ CUDDINC 		= -I$(CUDDPATH)/include
 CUDDLIBS		= -lcudd 
 CUDDLPATH   = -L$(CUDDPATH)/lib
 
-TARGET = simple
+TARGET = whirlpoolSafe
 
 all: $(TARGET)
 

@@ -144,7 +144,37 @@ function simple (mode, numAbs, controllers)
 %      plotCells(G,'facecolor',colors(2,:)*0.5+0.5,'edgec',colors(2,:),'linew',.1)
     savefig('simulation');
   end
-  
+  	if strcmp(mode,'plot')
+		openfig('system');
+		for i = controllers:-1:1
+			Z = SymbolicSet(['G/G' int2str(numAbs) '.bdd']);
+			plotCells(Z, 'facecolor', colors(1,:), 'edgec', colors(1,:), 'linew', 0.1)
+			drawnow
+		end
+		    % load and draw obstacles
+    	try
+      		O = SymbolicSet('plotting/O.bdd', 'projection', [1 2]);
+      		plotCells(O, 'facecolor', colors(1,:)*0.5+0.5, 'edgec', colors(1,:), 'linew', 0.1)
+      		drawnow
+      		disp('Done plotting obstacles')
+    	catch
+      		warning('No obstacles');
+    		end
+        
+    	% load and draw goal
+    	G = SymbolicSet('plotting/G.bdd', 'projection', [1 2]);
+    	plotCells(G, 'facecolor', colors(2,:)*0.5+0.5, 'edgec', colors(2,:), 'linew', 0.1)
+    	drawnow
+    	disp('Done plotting goal')
+   
+    	% load and draw initial
+    	I = SymbolicSet('plotting/I.bdd', 'projection', [1 2]);
+    	plotCells(I, 'facecolor', colors(3,:)*0.5+0.5, 'edgec', colors(3,:), 'linew', 0.1)
+    	drawnow
+    	disp('Done plotting initial')
+    	
+    	savefig('figure')
+	end
   if (strcmp(mode,'scots'))
     openfig('problem');
     hold on

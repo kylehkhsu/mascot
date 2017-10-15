@@ -3,10 +3,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
-#include "cuddObj.hh"
-
 #include "Reach.hh"
-#include "Compare.hh"
 
 using namespace std;
 using namespace scots;
@@ -41,17 +38,12 @@ auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
 };
 
 auto unicycleAddG = [](SymbolicSet* G) -> void {
-    double H[9]={   2, 0, 0,
-                    0, 1, 0,
-                    0, 0, 0.1};
-    double c[3] = {10.5, 1, 0};
-    G->addEllipsoid(H, c, INNER);
-
-//    double H[9]={   1.6,  0,   0,
-//                    0,  1.6,   0,
-//                    0,  0, 0.1};
-//    double c[3] = {4.5, 4.5, 0};
-//    G->addEllipsoid(H, c, INNER);
+    double H[4*3]={-1, 0, 0,
+                    1, 0, 0,
+                    0,-1, 0,
+                    0, 1, 0};
+    double h1[4] = {-10.79, 11.3, -0.1, 0.61};
+    G->addPolytope(4, H, h1, INNER);
 };
 
 auto unicycleAddO = [](SymbolicSet* O) -> void {
@@ -77,14 +69,12 @@ auto unicycleAddO = [](SymbolicSet* O) -> void {
 
     double h5[4] = {-5.39, 6.5, -4.9, 6.5};
     O->addPolytope(4, H, h5, OUTER);
+    ;
 };
 
 auto unicycleAddI = [](SymbolicSet* I) -> void {
-    double q[3] = {1, 11, -M_PI/2};
+    double q[3] = {0.55, 10.85, -M_PI/2};
     I->addPoint(q);
-
-//    double q[3] = {4.5, 0.5, M_PI};
-//    I->addPoint(q);
 };
 
 int main() {
@@ -115,14 +105,14 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    Reach abs("unicycle3Abrain.txt");
+    Reach abs("unicycle3A.txt");
     abs.initialize(&unicycle, readAbs, unicycleAddO);
     abs.initializeReach(unicycleAddG, unicycleAddI);
 //    abs.computeAbstractions(sysNext, radNext, x, u);
 
-//    int minToGoCoarser = 7;
-//    int minToBeValid = 7;
-//    int earlyBreak = 1;
+//    int minToGoCoarser = 6;
+//    int minToBeValid = 6;
+//    int earlyBreak = 0;
 
 //    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
 }

@@ -60,8 +60,9 @@ function unicycle (mode, numAbs, controllers)
     hold on
     drawnow
     
-    I = SymbolicSet('plotting/I.bdd');
-    x = I.points();
+%    I = SymbolicSet('plotting/I.bdd');
+%    x = I.points();
+	x = [3, 4.7, pi/2];
     x = x(1,:);
     
     v = [];
@@ -126,7 +127,77 @@ function unicycle (mode, numAbs, controllers)
 %      plotCells(G,'facecolor',colors(2,:)*0.5+0.5,'edgec',colors(2,:),'linew',.1)
     savefig('simulation');
   end
+
+  if (strcmp(mode,'Q')) % plot controller domains
+      openfig('problem');
+      hold on;
+      cmap = [hot(numAbs) 0.5*ones(numAbs,1)];
+      
+%     if numAbs~=size(etaAbs,1) % Sanity check
+%           error();
+%       end
+      
+      for ii=controllers:-1:1
+          C = SymbolicSet(['C/C' int2str(ii) '.bdd'], 'projection', [1 2]);
+          eta = C.eta(1:2);
+          for jj=1:numAbs
+              if isequal(eta',etaAbs(jj,1:2))
+                  layer = jj;
+                  break;
+              end
+          end
+          
+          
+          if (ii == 1)
+            G = SymbolicSet(['G/G' int2str(numAbs) '.bdd'], 'projection', [1 2]);
+          else
+            G = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd'], 'projection', [1 2]);
+          end
+          
+          points = setdiff(C.points,G.points,'rows');
+          for jj=1:size(points,1)
+              rectangle('Position',[points(jj,:)-eta' 2*eta'],'FaceColor',cmap(layer,:));
+              %alpha(s,0.5);
+          end
+      end
+  end
+	
+	if strcmp(mode,'plot')
+		green = [0.7569    0.8667    0.7765];
+		purple = [0.8196    0.6549    0.8471];
+		orange = [0.9137    0.8275    0.3804];
+		red = [0.9373    0.2980    0.2980];
+		gray = [0.2471    0.2471    0.2471];
+		openfig('system');
+		for i = controllers:-1:1
+			Z = SymbolicSet(['Z/Z' int2str(i) '.bdd'], 'projection', [1 2]);
+			if Z.eta(1) == 0.6
+				thiscolor = green;
+			elseif Z.eta(1) == 0.3
+				thiscolor = purple;
+			elseif Z.eta(1) == 0.15
+				thiscolor = orange;
+			end
+			plotCells(Z, 'facecolor', thiscolor, 'edgec', thiscolor, 'linew', 0.1)
+			drawnow
+		end
+		    % load and draw obstacles
   
+      	O = SymbolicSet('plotting/O.bdd', 'projection', [1 2]);
+      	plotCells(O, 'facecolor', gray*0.5+0.5, 'edgec', gray, 'linew', 0.1)
+      	drawnow
+      	disp('Done plotting obstacles')
+        
+    	% load and draw goal
+    	G = SymbolicSet('plotting/G.bdd', 'projection', [1 2]);
+    	plotCells(G, 'facecolor', red*0.5+0.5, 'edgec', red, 'linew', 0.1)
+    	drawnow
+    	disp('Done plotting goal')  
+    	
+    	savefig('figure')
+	end
+
+
   if (strcmp(mode,'scots'))
     openfig('problem');
     hold on
