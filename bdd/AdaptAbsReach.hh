@@ -52,12 +52,15 @@ public:
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
     vector<SymbolicSet*> Ds_; /*!< Instance of *Xs_[i] containing possible winning states. */
     vector<SymbolicSet*> computedDs_;
-    vector<SymbolicSet*> saved
+    vector<SymbolicSet*> savedZs_;
 
     int minToGoCoarser_;
     int minToBeValid_;
     int earlyBreak_;
     int verbose_;
+
+    int m_;
+    int p_;
 
     /*!	Constructor for an AdaptAbsReach object.
      *  \param[in]  logFile     Filename of program log.
@@ -96,26 +99,84 @@ public:
         deleteVec(finalZs_);
         deleteVec(Ds_);
         deleteVec(computedDs_);
+        deleteVec(savedZs_);
         fclose(stderr);
         delete ddmgr_;
     }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReach(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        m_ = 10;
+        p_ = 5;
+
         // start by synthesizing the full transition relation for the coarsest abstraction
         Ds_[0]->addGridPoints();
         computeAbstraction(0, sysNext, radNext, x, u);
         int ab = 0;
         onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
+
+        checkMakeDir("C");
+        saveVec(finalCs_, "C/C");
+        checkMakeDir("Z");
+        saveVec(finalZs_, "Z/Z");
+        return;
     }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         if (ab == 0) {
-            ReachResult = reach(ab);
-
-
+            ReachResult result = reach(ab);
+            saveCZ(ab);
+            savedZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+            if (*system_->numAbs_ == 1) {
+                return;
+            }
+            else { // go finer
+                int nextAb = ab + 1;
+                eightToTen(ab, nextAb, sysNext, radNext, x, u);
+                finer(Zs_[ab], Zs_[nextAb], ab);
+                onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+                return;
+            }
         }
+        else {
+            ReachResult result = reach(ab, m_);
+            saveCZ(ab);
+            savedZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+            if (result == CONVERGED) {
+                if (ab == *system_->numAbs_ - 1) {
+                    return;
+                }
+                else { // go finer
+                    int nextAb = ab + 1;
+                    eightToTen(ab, nextAb, sysNext, radNext, x, u);
+                    finer(Zs_[ab], Zs_[nextAb], ab);
+                    onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+                }
+            }
+            else { // go coarser
+                int nextAb = ab - 1;
+                if (ab > 1) {
+                    eightToTen(ab, nextAb, sysNext, radNext, x, u);
+                }
+                coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
+                onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+                return;
+            }
+        }
+    }
+
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void eightToTen(int curAb, int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        Ds_[curAb]->symbolicSet_ = savedZs_[curAb]->symbolicSet_;
+        for (int c = curAb - 1; c >= 0; c--) {
+            coarserOuter(Ds_[c], Ds_[c+1], c); // compounding outer approximations?
+        }
+        Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, p_) & (!Ds_[0]->symbolicSet_); // need to verify that Ds_[0] isn't modified by uReach
+        for (int c = 0; c < nextAb; c++) {
+            finer(Ds_[c], Ds_[c+1], c);
+        }
+        computeAbstraction(nextAb, sysNext, radNext, x, u);
     }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
@@ -129,13 +190,13 @@ public:
     ReachResult reach(int ab, int m = -1) {
         int i = 1;
         while (1) {
-            BDD CpreZ = Cpre(Zs_[ab]->symbolicSet_, ab);
-            BDD C = CpreZ | Gs_[ab]->symbolicSet_;
+            BDD cPreZ = cPre(Zs_[ab]->symbolicSet_, ab);
+            BDD C = cPreZ | Gs_[ab]->symbolicSet_;
             BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
             Cs_[ab]->symbolicSet_ |= N;
             Zs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_.ExistAbstract(*notXvars_[ab]);
 
-            if (N == ddmgr_->bddZero()) {
+            if (N == ddmgr_->bddZero() && i != 1) {
                 return CONVERGED;
             }
             if (i == m) {
@@ -176,7 +237,6 @@ public:
             }
             i += 1;
         }
-
     }
 
     /*! Calculates the uncontrollable predecessor of a given set with respect to the transition relation at the specified level of abstraction.
@@ -187,7 +247,7 @@ public:
     BDD uPre(BDD Z, int ab) {
         BDD Z2 = Z.Permute(permutesXtoX2_[ab]);
         BDD uPreZ = Ts_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[ab]);
-        BDD uPreZ = UpreZ.ExistAbstract(*notXvars_[ab]);
+        uPreZ = uPreZ.ExistAbstract(*notXvars_[ab]);
         return uPreZ;
     }
 
@@ -327,6 +387,12 @@ public:
             computedDs_.push_back(computedD);
         }
         clog << "computedDs_ initialized with empty domain.\n";
+
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            SymbolicSet* savedZ = new SymbolicSet(*Xs_[i]);
+            savedZs_.push_back(savedZ);
+        }
+        clog << "savedZs_ initialized with empty domain.\n";
 
         for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
@@ -590,6 +656,18 @@ public:
         saveVec(Os_, "O/O");
         checkMakeDir("G");
         saveVec(Gs_, "G/G");
+    }
+
+    /*! Saves a snapshot of a controller and its domain into the sequence of final controllers and controller domains.
+        \param[in] ab	0-index of the abstraction which the controller and controller domain that should be saved belong to.
+    */
+    void saveCZ(int ab) {
+        SymbolicSet* C = new SymbolicSet(*Cs_[ab]);
+        C->symbolicSet_ = Cs_[ab]->symbolicSet_;
+        finalCs_.push_back(C);
+        SymbolicSet* Z = new SymbolicSet(*Xs_[ab]);
+        Z->symbolicSet_ = Zs_[ab]->symbolicSet_;
+        finalZs_.push_back(Z);
     }
 };
 }

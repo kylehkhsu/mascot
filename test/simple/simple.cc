@@ -89,8 +89,7 @@ int main() {
     AdaptAbsReach syn("simple3A.log");
     syn.initialize(&system, simpleAddO, simpleAddG);
 
-    syn.test();
-    syn.computeAbstraction(0, sysNext, radNext, x, u);
+    syn.onTheFlyReach(sysNext, radNext, x, u);
 
 //    int startAbs = 0;
 //    int minToGoCoarser = 1;

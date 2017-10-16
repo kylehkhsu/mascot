@@ -13,6 +13,7 @@ validZs_ initialized with empty domain.
 validCs_ initialized with empty domain.
 Ds_ initialized with empty domain.
 computedDs_ initialized with empty domain.
+savedZs_ initialized with empty domain.
 Ts_ initialized with empty domain.
 TTs_ initialized with empty domain.
 Number of BDD variables: 66
