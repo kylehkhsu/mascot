@@ -51,6 +51,7 @@ public:
     vector<SymbolicSet*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
     vector<SymbolicSet*> Ds_; /*!< Instance of *Xs_[i] containing possible winning states. */
+    vector<SymbolicSet*> innerDs_;
     vector<SymbolicSet*> computedDs_;
     vector<SymbolicSet*> savedZs_;
 
@@ -98,6 +99,7 @@ public:
         deleteVec(finalCs_);
         deleteVec(finalZs_);
         deleteVec(Ds_);
+        deleteVec(innerDs_);
         deleteVec(computedDs_);
         deleteVec(savedZs_);
         fclose(stderr);
@@ -169,10 +171,12 @@ public:
     template<class sys_type, class rad_type, class X_type, class U_type>
     void eightToTen(int curAb, int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         Ds_[curAb]->symbolicSet_ = savedZs_[curAb]->symbolicSet_;
+        innerDs_[curAb]->symbolicSet_ = savedZs_[curAb]->symbolicSet_;
         for (int c = curAb - 1; c >= 0; c--) {
             coarserOuter(Ds_[c], Ds_[c+1], c); // compounding outer approximations?
+            coarserInner(innerDs_[c], innerDs_[c+1], c);
         }
-        Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, p_) & (!Ds_[0]->symbolicSet_); // need to verify that Ds_[0] isn't modified by uReach
+        Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, p_) & (!innerDs_[0]->symbolicSet_);
         for (int c = 0; c < nextAb; c++) {
             finer(Ds_[c], Ds_[c+1], c);
         }
@@ -381,6 +385,12 @@ public:
             Ds_.push_back(D);
         }
         clog << "Ds_ initialized with empty domain.\n";
+
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            SymbolicSet* innerD = new SymbolicSet(*Xs_[i]);
+            innerDs_.push_back(innerD);
+        }
+        clog << "innerDs_ initialized with empty domain.\n";
 
         for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* computedD = new SymbolicSet(*Xs_[i]);
