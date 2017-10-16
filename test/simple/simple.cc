@@ -4,6 +4,7 @@
 #define _USE_MATH_DEFINES
 
 #include "AdaptAbsReach.hh"
+#include "Reach.hh"
 
 using namespace std;
 using namespace scots;
@@ -77,26 +78,30 @@ int main() {
 
     double etaRatio[dimX] = {2, 2};
     double tauRatio = 2;
-    int nint = 5;
+    int nSubInt = 5;
 
-    double etaX[dimX]= {1.6/2, 1.6/2};
-    double tau = 2.4/2;
-    int numAbs = 3;
+    double etaX[dimX]= {1.6/2/2/2, 1.6/2/2/2};
+    double tau = 2.4/2/2/2;
+    int numAbs = 1;
 
     System system(dimX, lbX, ubX, etaX, tau,
                   dimU, lbU, ubU, etaU,
-                  etaRatio, tauRatio, nint, numAbs);
-    AdaptAbsReach syn("simple3A.log");
+                  etaRatio, tauRatio, nSubInt, numAbs);
+
+    AdaptAbsReach syn("simple1A.log");
     syn.initialize(&system, simpleAddO, simpleAddG);
 
     syn.onTheFlyReach(sysNext, radNext, x, u);
 
+//    Reach abs("simple1AReach.log");
+//    abs.initialize(&system, 0, simpleAddO);
+//    abs.initializeReach(simpleAddG, simpleAddI);
+//    abs.computeAbstractions(sysNext, radNext, x, u);
+
 //    int startAbs = 0;
 //    int minToGoCoarser = 1;
 //    int minToBeValid = 2;
-//    int earlyBreak = 1;
+//    int earlyBreak = 0;
 
 //    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
-
-//    return 1;
 }
