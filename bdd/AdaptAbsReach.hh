@@ -1,17 +1,12 @@
-/*! \file Adaptive.hh
-    Contains the Adaptive class.
-*/
-
-#ifndef ADAPTIVE_HH_
-#define ADAPTIVE_HH_
+#ifndef ADAPTABSREACH_HH_
+#define ADAPTABSREACH_HH_
 
 #include <cstdio>
 #include <vector>
 
 #include "SymbolicModelGrowthBound.hh"
-#include "FixedPoint.hh"
-#include "Helper.hh"
 #include "System.hh"
+#include "Helper.hh"
 
 using std::clog;
 using std::freopen;
@@ -21,57 +16,57 @@ using namespace helper;
 
 namespace scots {
 
-/*! \class Adaptive
-    \brief A class that does abstraction-based synthesis with adaptive time- and state space-gridding.
-*/
-class Adaptive {
-public:
+enum ReachResult {CONVERGED, VALID};
 
+class AdaptAbsReach {
+public:
     Cudd* ddmgr_; /*!< A single manager object common to all BDDs used in the program. */
     System* system_; /*!< Contains abstraction parameters. */
-    int readAbs_; /*!< Whether Abs_ is computed or read from file. */
-
     vector<double*> etaXs_; /*!< *system_->numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
     vector<double*> tau_; /*!< *system_->numAbs_ x 1 matrix of time steps. */
-
     vector<SymbolicSet*> Xs_; /*!< The *system_->numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
     vector<SymbolicSet*> Os_; /*!< Instance of *Xs_[i] containing unsafe (obstacle) states. */
     vector<SymbolicSet*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
     vector<SymbolicSet*> X2s_; /*!< The *system_->numAbs_ "post" state space abstractions, coarsest (0) to finest. */
     SymbolicSet* U_; /*!< The single input space abstraction. */
     vector<SymbolicSet*> Cs_; /*!< Controller \subseteq *Xs_[i] x *U_. */
-
     int numBDDVars_; /*!< Total number of BDD variables used by ddmgr_. */
-
     vector<BDD*> cubesX_; /*!< *cubesX_[i] is a BDD with a single minterm of all 1s over the domain of *Xs_[i]. */
     vector<BDD*> cubesX2_; /*!< *cubesX2_[i] is a BDD with a single minterm of all 1s over the domain of *X2s_[i]. */
     BDD* cubeU_; /*!< A BDD with a single minterm of all 1s over the domain of the input SymbolicSet. */
     vector<BDD*> notXUvars_; /*!< notXUvars_[i] is a BDD over all ddmgr_ variables whose 1-term is DC for *Xs_[i] and *U_ and 1 otherwise. */
     vector<BDD*> notXvars_; /*!< notXvars_[i] is a BDD over all ddmgr_ variables whose 1-term is DC for *Xs_[i] and 1 otherwise. */
-
     vector<BDD*> cubesCoarser_;
-
     vector<SymbolicSet*> Ts_; /*!< Ts_[i] stores the transition relation of abstraction i. */
-    vector<BDD*> TTs_; /*!< TTs_[i] is Ts_[i] with X2s_[i] existentially abtracted. */
-
+    vector<SymbolicSet*> TTs_; /*!< TTs_[i] is Ts_[i] with X2s_[i] existentially abtracted. */
     vector<int*> permutesXtoX2_; /*!< To transform a BDD over X variables to an equivalent one over X2 variables. */
     vector<int*> permutesX2toX_; /*!< To transform a BDD over X2 variables to an equivalent one over X variables. */
-
     vector<int*> permutesCoarser_;
     vector<int*> permutesFiner_;
-
     vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
 
-    /*!	Constructor for an Adaptive object.
+    vector<SymbolicSet*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
+    vector<SymbolicSet*> validZs_; /*!< Contains winning states that act as savepoints. */
+    vector<SymbolicSet*> validCs_; /*!< Controllers that act as savepoints. */
+    vector<SymbolicSet*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
+    vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
+    vector<SymbolicSet*> Ds_; /*!< Instance of *Xs_[i] containing possible winning states. */
+    vector<SymbolicSet*> computedDs_;
+
+    int minToGoCoarser_;
+    int minToBeValid_;
+    int earlyBreak_;
+    int verbose_;
+
+    /*!	Constructor for an AdaptAbsReach object.
      *  \param[in]  logFile     Filename of program log.
      */
-    Adaptive(char* logFile) {
+    AdaptAbsReach(char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
     }
-
-    /*! Destructor for an Adaptive object. */
-    ~Adaptive() {
+    /*! Destructor for an AdaptAbsReach object. */
+    ~AdaptAbsReach() {
         deleteVecArray(etaXs_);
         deleteVec(tau_);
         deleteVec(Xs_);
@@ -93,271 +88,136 @@ public:
         deleteVecArray(permutesCoarser_);
         deleteVecArray(permutesFiner_);
         deleteVec(solvers_);
+        deleteVec(Gs_);
+        deleteVec(validZs_);
+        deleteVec(validCs_);
+        deleteVec(finalCs_);
+        deleteVec(finalZs_);
+        deleteVec(Ds_);
+        deleteVec(computedDs_);
         fclose(stderr);
-        delete ddmgr_;        
+        delete ddmgr_;
     }
 
-    /*! Initializes data members.
-     *  \param[in]  system      Contains abstraction parameters.
-     *  \param[in]	readAbs		Whether initializeAbs should be done by construction (0) or reading from files (1).
-     *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
-     */
-    template<class O_type>
-    void initialize(System* system, int readAbs, O_type addO) {
-        ddmgr_ = new Cudd;
-        system_ = system;
-        readAbs_ = readAbs;
 
-        initializeEtaTau();
-        initializeSolvers();
-        initializeBDDs(addO);
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void computeAbstractionsTest(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        SymbolicModelGrowthBound<X_type, U_type> Ab(Ds_[0], U_, X2s_[0]);
+        Ab.computeTransitionRelation(sysNext, radNext, *solvers_[0]);
+        Ts_[0]->symbolicSet_ = Ab.transitionRelation_;
+        Ts_[0]->printInfo(1);
     }
 
-    /*! Initializes BDD-related data members.
-     *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
-     */
-    template<class O_type>
-    void initializeBDDs(O_type addO) {
+    ReachResult reach(int ab, int m = -1) {
+        int i = 1;
+        while (1) {
+            BDD CpreZ = Cpre(Zs_[ab]->symbolicSet_, ab);
+            BDD C = CpreZ | Gs_[ab]->symbolicSet_;
+            BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
+            Cs_[ab]->symbolicSet_ |= N;
+            Zs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_.ExistAbstract(notXvars_[ab]);
 
-        initializeXX2UOZCs(addO);
-
-        initializeNumBDDVars();
-        initializePermutes();
-        initializeCubes();
-        initializeNotVars();
-        initializeProjs();
-
-        saveVerify();
+            if (N == ddmgr_->bddZero()) {
+                return CONVERGED;
+            }
+            if (i == m) {
+                return VALID;
+            }
+            i += 1;
+        }
     }
 
-    /*! Prints information to the console/log file for the user, and saves some other information. */
-    void saveVerify() {
-        printEtaX();
-        printTau();
-        printVec(Xs_, "X");
-        printVec(Os_, "O");
-        cout << "U:\n";
-        U_->printInfo(1);
-        checkMakeDir("plotting");
-        Xs_[0]->writeToFile("plotting/X.bdd");
-        Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
-        checkMakeDir("O");
-        saveVec(Os_, "O/O");
+    // testing computeAbstraction
+    void test() {
+        Ds_[0]->addGridPoints();
     }
 
-//    template<class G_type, class I_type, class O_type, class S_type>
-//    void initializeReachAndStay(G_type addG, I_type addI, O_type addO, S_type addS) {
-//        if (stage_ != 1) {
-//            error("Error: initializeReachAndStay called out of order.\n");
-//        }
-//        stage_ = 2;
+    // abstraction synthesis will only iterate over the elements in the domain of the state space SymbolicSet (first argument in constructing abstraction)
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void computeAbstraction(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_) & (!Os_[ab]->symbolicSet_);
+        computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
+        Ds_[ab]->symbolicSet_ = D;
+        SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
+        abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[0]);
+        Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
+        Ts_[ab]->printInfo(1);
+    }
 
-//        TicToc tt;
-//        tt.tic();
-//        initializeSpec(&Gs_, addG);
-//        clog << "Gs_ initialized.\n";
-//        initializeSpec(&Is_, addI);
-//        clog << "Is_ initialized.\n";
-//        initializeSpec(&Os_, addO);
-//        clog << "Os_ initialized.\n";
-//        initializeSpec(&Ss_, addS);
-//        clog << "Ss_ initialized\n";
-//        clog << "------------------------------------------------initializeSpec on Gs_, Is_, Os_, Ss_: ";
-//        tt.toc();
-
-//        // checking that specification is valid
-//        for (int i = 0; i < *system_->numAbs_; i++) {
-//            if ((Gs_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
-//                error("Error: G and O have nonzero intersection.\n");
-//            }
-//            if ((Is_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
-//                error("Error: I and O have nonzero intersection.\n");
-//            }
-//            if ((Ss_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
-//                error("Error: S and O have nonzero intersection.\n");
-//            }
-//        }
-//        clog << "No obstacle problem with specification.\n";
-
-//        // maximal fixed point starts with whole set
-//        for (int i = 0; i < *system_->numAbs_; i++) {
-//            Zs_[i]->symbolicSet_ = ddmgr_->bddOne();
-//        }
-//        clog << "Zs_ modified to BDD-1.\n";
-
-//        for (int i = 0; i < *system_->numAbs_; i++) {
-//            SymbolicSet* infZ = new SymbolicSet(*Xs_[i]);
-//            infZs_.push_back(infZ);
-//        }
-//        clog << "infZs_ initialized to empty.\n";
-//    }
-
-
-
-
-
-
-//    int reachAndStay(int startAbs, int minToGoCoarser, int minToBeValid, int earlyBreak, int verbose = 1) {
-//        if (stage_ != 3) {
-//            error("Error: reachAndStay called out of order.\n");
-//        }
-//        TicToc tt;
-//        tt.tic();
-
-
-//    }
-
-
-//    /*! Maximal fixed-point for an entire abstraction. */
-//    void nu(BDD T, int* curAbs) {
-//        int iter = 1;
-//        while (1) {
-//            clog << ".";
-//            // get pre of current abtraction's Z disjuncted with projection of converged Z from previous abstraction
-//            Cs_[curAbs]->symbolicSet_ = preC(Zs_[curAbs]->symbolicSet_ | infZs_[curAbs]->symbolicSet_, curAbs);
-//            // conjunct with safe set (maximal fixed point)
-//            Cs_[curAbs]->symbolicSet_ &= Ss_[curAbs]->symbolicSet_;
-//            // project onto Xs_[curAbs]
-//            BDD Z = Cs_[curAbs]->symbolicSet_.ExistAbstract(*notXvars_[curAbs]);
-//        }
-//    }
-
+    BDD Upre(BDD Z, int ab) {
+        BDD Z2 = Z.Permute(permutesXtoX2_[ab]);
+        BDD UpreZ = Ts_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[ab]);
+        return UpreZ;
+    }
 
 
     /*! Calculates the enforceable predecessor of the given set with respect to the transition relation at the specified level of abstraction.
      *  \param[in]  Z           The winning set.
-     *  \param[in]  T           The transition relation.
-     *  \param[in]  TT          The transition relation with post states existentially abstracted.
      *  \param[in]  curAbs      0-index of the current abstraction.
      *  \return     BDD containing {(x,u)} for which all post states are in Z.
      */
-    BDD preC(BDD Z, BDD T, BDD TT, int curAbs) {
+    BDD Cpre(BDD Z, int curAbs) {
         // swap to X2s_[curAbs]
         BDD Z2 = Z.Permute(permutesXtoX2_[curAbs]);
         // posts outside of winning set
         BDD nZ2 = !Z2;
         // {(x,u)} with some posts outside of winning set
-        BDD Fbdd = T.AndAbstract(nZ2, *notXUvars_[curAbs]);
+        BDD Fbdd = Ts_[curAbs]->symbolicSet_.AndAbstract(nZ2, *notXUvars_[curAbs]);
         // {(x,u)} with no posts outside of winning set
         BDD nF = !Fbdd;
         // get rid of junk
-        BDD preF = TT.AndAbstract(nF, *notXUvars_[curAbs]);
-
+        BDD preF = TTs_[curAbs]->symbolicSet_.AndAbstract(nF, *notXUvars_[curAbs]);
         return preF;
     }
 
-    /*! Initializes the BDDs useful for existential abstraction. Must be called only after initializing Xs, U, and X2s. */
-    void initializeNotVars() {
-        for (int i = 0; i < *system_->numAbs_; i++) {
-            BDD* notXUvars = new BDD;
-            BDD* notXvars = new BDD;
-            *notXUvars = ddmgr_->bddOne();
-            for (int j = 0; j < *system_->numAbs_; j++) {
-                *notXUvars &= *cubesX2_[j];
-                if (i != j) {
-                    *notXUvars &= *cubesX_[j];
-                }
-            }
-            *notXvars = *notXUvars & *cubeU_;
-
-            notXUvars_.push_back(notXUvars);
-            notXvars_.push_back(notXvars);
-        }
-
-        clog << "Initialized notVars.\n";
+    void finer(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+        Zf->addGridPoints();
+        Zf->symbolicSet_ &= Zc->symbolicSet_.Permute(permutesFiner_[c]);
     }
 
-    /*! Initializes SymbolicModelGrowthBound objects for each abstraction as well as Ts_, TTs_ for use in the fixed points.
-        \param[in]	sysNext		Function pointer to equation that evolves system state.
-        \param[in]	radNext		Function pointer to equation that computes growth bound.
-    */
-    template<class sys_type, class rad_type, class X_type, class U_type>
-    void computeAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+    int coarserInner(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+        BDD Zcand = Zf->symbolicSet_.UnivAbstract(*cubesCoarser_[c]);
+        Zcand = Zcand.Permute(permutesCoarser_[c]);
 
-        for (int i = 0; i < *system_->numAbs_; i++) {
-            SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
-            Ts_.push_back(T);
-        }
-        clog << "Ts_ initialized with empty domain.\n";
-
-        TicToc tt;
-        tt.tic();
-        if (readAbs_ == 0) {
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicModelGrowthBound<X_type, U_type> Ab(Xs_[i], U_, X2s_[i]);
-                Ab.computeTransitionRelation(sysNext, radNext, *solvers_[i]);
-
-                Ts_[i]->symbolicSet_ = Ab.transitionRelation_;
-            }
-            clog << "Ts_ computed by sampling system behavior.\n";
+        if (Zcand <= Zc->symbolicSet_) {
+            return 0;
         }
         else {
-            loadTs();
-        }
-
-        clog << "------------------------------------------------computeAbstractions: ";
-        tt.toc();
-
-        if (readAbs_ == 0) {
-            checkMakeDir("T");
-            saveVec(Ts_, "T/T");
-            clog << "Wrote Ts_ to file.\n";
-        }
-
-        for (int i = 0; i < *system_->numAbs_; i++) {
-            BDD* TT = new BDD;
-            *TT = Ts_[i]->symbolicSet_.ExistAbstract(*cubesX2_[i]);
-            TTs_.push_back(TT);
-        }
-        clog << "TTs_ initialized by ExistAbstracting from Ts_.\n";
-    }
-
-    /*! Reads transition relation BDDs from file and saves them into Ts_. */
-    void loadTs() {
-        for (int i = 0; i < *system_->numAbs_; i++) {
-            string Str = "T/T";
-            Str += std::to_string(i+1);
-            Str += ".bdd";
-            char Char[20];
-            size_t Length = Str.copy(Char, Str.length() + 1);
-            Char[Length] = '\0';
-            SymbolicSet T(*ddmgr_, Char);
-            Ts_[i]->symbolicSet_ = T.symbolicSet_;
-
-            Ts_[i]->printInfo(1);
-        }
-        clog << "Ts_ read from file.\n";
-    }
-
-    /*! Removes a series of sets of states from the pre-states of the series of transition relations.
-     *  \param[in] vec      Pointer to vector of SymbolicSets whose BDDs are removed from Ts_ and TTs_.
-     */
-    template<class vec_type>
-    void removeFromTs(vec_type* vec) {
-        for (int i = 0; i < *system_->numAbs_; i++) {
-            Ts_[i]->symbolicSet_ &= !(vec[0][i]->symbolicSet_);
-            *TTs_[i] &= !(vec[0][i]->symbolicSet_);
+            Zc->symbolicSet_ = Zcand;
+            return 1;
         }
     }
 
-    /*! Initializes a vector of SymbolicSets that is an instance of Xs_ containing points as specified by addSpec.
-     *  \param[in] vec      Vector of SymbolicSets to initialize.
-     *  \param[in] addSpec  Function pointer specifying the points to add to each element of vec.
-     */
-    template<class vec_type, class spec_type>
-    void initializeSpec(vec_type* vec, spec_type addSpec) {
-        for (int i = 0; i < *system_->numAbs_; i++) {
-            SymbolicSet* Xinstance = new SymbolicSet(*Xs_[i]);
-            addSpec(Xinstance);
-            vec->push_back(Xinstance);
-        }
+    void coarserOuter(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+        Zc->symbolicSet_ = (Zf->symbolicSet_.ExistAbstract(*cubesCoarser_[c])).Permute(permutesCoarser_[c]);
     }
 
-    /*! Initializes the vectors of SymbolicSets Xs_, Os_, X2s_, Us_, Zs_, validZs_, Cs_, validCs_.
+    /*! Initializes data members.
+     *  \param[in]  system      Contains abstraction parameters.
      *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
      */
-    template<class O_type>
-    void initializeXX2UOZCs(O_type addO) {
+    template<class O_type, class G_type>
+    void initialize(System* system, O_type addO, G_type addG) {
+        ddmgr_ = new Cudd;
+        system_ = system;
+
+        initializeEtaTau();
+        initializeSolvers();
+        initializeSymbolicSets(addO, addG);
+        initializeNumBDDVars();
+        initializePermutes();
+        initializeCubes();
+        initializeNotVars();
+        initializeProjs();
+        verifySave();
+    }
+
+    /*! Initializes SymbolicSet data members.
+     *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
+     *  \param[in]	addG	Function pointer specifying the points that should be added to the goal set.
+     */
+    template<class O_type, class G_type>
+    void initializeSymbolicSets(O_type addO, G_type addG) {
         for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* X = new SymbolicSet(*ddmgr_, *system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[i], tau_[i][0]);
             X->addGridPoints();
@@ -391,6 +251,87 @@ public:
             Cs_.push_back(C);
         }
         clog << "Cs_ initialized with empty domain.\n";
+
+        initializeSpec(&Gs_, addG);
+        clog << "Gs_ initialized according to specification.\n";
+
+        // checking that specification is valid
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            if ((Gs_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
+                error("Error: G and O have nonzero intersection.\n");
+            }
+        }
+        clog << "No obstacle problem with specification.\n";
+
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            SymbolicSet* validZ = new SymbolicSet(*Xs_[i]);
+            validZs_.push_back(validZ);
+        }
+        clog << "validZs_ initialized with empty domain.\n";
+
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            SymbolicSet* validC = new SymbolicSet(*Xs_[i], *U_);
+            validCs_.push_back(validC);
+        }
+        clog << "validCs_ initialized with empty domain.\n";
+
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            SymbolicSet* D = new SymbolicSet(*Xs_[i]);
+            Ds_.push_back(D);
+        }
+        clog << "Ds_ initialized with empty domain.\n";
+
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            SymbolicSet* computedD = new SymbolicSet(*Xs_[i]);
+            computedDs_.push_back(computedD);
+        }
+        clog << "computedDs_ initialized with empty domain.\n";
+
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
+            Ts_.push_back(T);
+        }
+        clog << "Ts_ initialized with empty domain.\n";
+
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            SymbolicSet* TT = new SymbolicSet(*Cs_[i]);
+            TTs_.push_back(TT);
+        }
+        clog << "TTs_ initialized with empty domain.\n";
+    }
+
+    /*! Initializes a vector of SymbolicSets that is an instance of Xs_ containing points as specified by addSpec.
+     *  \param[in] vec      Vector of SymbolicSets to initialize.
+     *  \param[in] addSpec  Function pointer specifying the points to add to each element of vec.
+     */
+    template<class vec_type, class spec_type>
+    void initializeSpec(vec_type* vec, spec_type addSpec) {
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            SymbolicSet* Xinstance = new SymbolicSet(*Xs_[i]);
+            addSpec(Xinstance);
+            vec->push_back(Xinstance);
+        }
+    }
+
+    /*! Initializes the BDDs useful for existential abstraction. Must be called only after initializing Xs, U, and X2s. */
+    void initializeNotVars() {
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            BDD* notXUvars = new BDD;
+            BDD* notXvars = new BDD;
+            *notXUvars = ddmgr_->bddOne();
+            for (int j = 0; j < *system_->numAbs_; j++) {
+                *notXUvars &= *cubesX2_[j];
+                if (i != j) {
+                    *notXUvars &= *cubesX_[j];
+                }
+            }
+            *notXvars = *notXUvars & *cubeU_;
+
+            notXUvars_.push_back(notXUvars);
+            notXvars_.push_back(notXvars);
+        }
+
+        clog << "Initialized notVars.\n";
     }
 
     /*! Initializes the abstractions' state space grid parameters and time sampling parameters. */
@@ -450,27 +391,6 @@ public:
         numBDDVars_ += U_->nvars_;
 
         clog << "Number of BDD variables: " << numBDDVars_ << '\n';
-    }
-
-    void finer(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
-        Zf->addGridPoints();
-        Zf->symbolicSet_ &= Zc->symbolicSet_.Permute(permutesFiner_[c]);
-    }
-
-    int coarser(SymbolicSet* Zc, SymbolicSet* Zf, int c, int mu) {
-//        BDD nZf = !Zf->symbolicSet_;
-//        BDD nZc = nZf.ExistAbstract(*cubesCoarser_[c]);
-//        BDD Zcand = !nZc;
-        BDD Zcand = Zf->symbolicSet_.UnivAbstract(*cubesCoarser_[c]);
-        Zcand = Zcand.Permute(permutesCoarser_[c]);
-
-        if (mu == 1 && Zcand <= Zc->symbolicSet_) {
-            return 0;
-        }
-        else {
-            Zc->symbolicSet_ = Zcand;
-            return 1;
-        }
     }
 
     void initializeProjs() {
@@ -545,7 +465,6 @@ public:
         }
     }
 
-
     /*! Initializes the BDDs that are the precursors to notXvars_ and notXUvars_ */
     void initializeCubes() {
         for (int i = 0; i < *system_->numAbs_; i++) {
@@ -576,10 +495,6 @@ public:
 
         cubeU_ = new BDD;
         *cubeU_ = U_->getCube();
-//        SymbolicSet U(*U_);
-//        U.symbolicSet_ = *cubeU_;
-//        clog << "cubeU: " << '\n';
-//        U.printInfo(2);
 
         clog << "Initialized cubes.\n";
     }
@@ -606,9 +521,8 @@ public:
 
         clog << "Initialized permutes.\n";
     }
-
-    /*! Prints information regarding the abstractions' grid parameters to the log file. */
-    void printEtaX() {
+    /*! Saves and prints to log file some information related to the reachability/always-eventually specification. */
+    void verifySave() {
         clog << "etaXs_:\n";
         for (size_t i = 0; i < etaXs_.size(); i++) {
             clog << "abstraction " << i << ": ";
@@ -617,74 +531,26 @@ public:
             }
             clog << '\n';
         }
-    }
-
-    /*! Prints information regarding the abstractions' time sampling parameter to the log file. */
-    void printTau() {
         clog << "tau_:\n";
         for (size_t i = 0; i < etaXs_.size(); i++) {
             clog << "abstraction " << i << ": " << *tau_[i] << '\n';
         }
+        printVec(Xs_, "X");
+        printVec(Os_, "O");
+        cout << "U:\n";
+        U_->printInfo(1);
+        printVec(Gs_, "G");
+
+        checkMakeDir("plotting");
+        Xs_[0]->writeToFile("plotting/X.bdd");
+        Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
+        Gs_[*this->system_->numAbs_-1]->writeToFile("plotting/G.bdd");
+        checkMakeDir("O");
+        saveVec(Os_, "O/O");
+        checkMakeDir("G");
+        saveVec(Gs_, "G/G");
     }
-
-    /*! Debugging function. */
-    void checkPermutes() {
-        for (int i = 0; i < *system_->numAbs_; i++) {
-            clog << "X:\n";
-            Xs_[i]->printInfo(1);
-            clog << "X2:\n";
-            X2s_[i]->printInfo(1);
-
-            clog << "XtoX2:\n";
-            printArray(permutesXtoX2_[i], numBDDVars_);
-
-            clog << "X2toX:\n";
-            printArray(permutesX2toX_[i], numBDDVars_);
-
-        }
-    }
-
-    /*! Debugging function. */
-    void checkCubes() {
-
-        // for *system_->numAbs_ = 2
-
-        SymbolicSet Xs(*Xs_[0], *Xs_[1]);
-        SymbolicSet X2s(*X2s_[0], *X2s_[1]);
-        SymbolicSet X(Xs, X2s);
-        SymbolicSet all(X, *U_);
-
-        all.symbolicSet_ = *cubesX_[0];
-        all.printInfo(2);
-
-//        for (int i = 0; i < *system_->numAbs_; i++) {
-//            clog << "X " << i << ":\n";
-//            BDD thesevars = ddmgr_->bddOne();
-//            for (int j = 0; j < *system_->numAbs_; j++) {
-//                thesevars &= *cubesX2_[j];
-//                if (i != j) {
-//                    thesevars &= *cubesX_[j];
-//                }
-//            }
-//            thesevars &= *cubeU_;
-//            all.symbolicSet_ = thesevars;
-//            all.printInfo(2);
-//            clog << "X2 " << i << ":\n";
-//            all.symbolicSet_ = *cubesX2_[i];
-//            all.printInfo(2);
-//        }
-    }
-
-
-    /*! Debugging function. */
-    void debug() {
-        clog << "\n--------------------debug--------------------\n";
-        checkPermutes();
-        checkCubes();
-    }
-
 };
-
 }
 
-#endif /* ADAPTIVE_HH_ */
+#endif /* ADAPTABSREACH_HH_ */

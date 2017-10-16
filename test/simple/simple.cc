@@ -3,7 +3,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
-#include "Reach.hh"
+#include "AdaptAbsReach.hh"
 
 using namespace std;
 using namespace scots;
@@ -83,22 +83,21 @@ int main() {
     double tau = 2.4/2;
     int numAbs = 3;
 
-    int readAbs = 0;
-
     System system(dimX, lbX, ubX, etaX, tau,
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nint, numAbs);
-    Reach abs("simple3A");
-    abs.initialize(&system, readAbs, simpleAddO);
-    abs.initializeReach(simpleAddG, simpleAddI);
-    abs.computeAbstractions(sysNext, radNext, x, u);
+    AdaptAbsReach syn("simple3A.log");
+    syn.initialize(&system, simpleAddO, simpleAddG);
 
-    int startAbs = 0;
-    int minToGoCoarser = 1;
-    int minToBeValid = 2;
-    int earlyBreak = 1;
+    syn.test();
+    syn.computeAbstraction(0, sysNext, radNext, x, u);
 
-    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+//    int startAbs = 0;
+//    int minToGoCoarser = 1;
+//    int minToBeValid = 2;
+//    int earlyBreak = 1;
 
-    return 1;
+//    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+
+//    return 1;
 }

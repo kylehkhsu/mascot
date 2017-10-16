@@ -4,6 +4,8 @@
 #ifndef SYSTEM_HH_
 #define SYSTEM_HH_
 
+#include "Helper.hh"
+
 using namespace helper;
 
 namespace scots {
