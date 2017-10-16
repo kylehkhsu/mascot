@@ -127,14 +127,14 @@ public:
         if (ab == 0) {
             ReachResult result = reach(ab);
             saveCZ(ab);
-            savedZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+            savedZs_[ab]->symbolicSet_ |= Zs_[ab]->symbolicSet_;
             if (*system_->numAbs_ == 1) {
                 return;
             }
             else { // go finer
                 int nextAb = ab + 1;
                 eightToTen(ab, nextAb, sysNext, radNext, x, u);
-                finer(Zs_[ab], Zs_[nextAb], ab);
+                finer(savedZs_[ab], Zs_[nextAb], ab);
                 onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 return;
             }
@@ -142,7 +142,7 @@ public:
         else {
             ReachResult result = reach(ab, m_);
             saveCZ(ab);
-            savedZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+            savedZs_[ab]->symbolicSet_ |= Zs_[ab]->symbolicSet_;
             if (result == CONVERGED) {
                 if (ab == *system_->numAbs_ - 1) {
                     return;
@@ -150,7 +150,7 @@ public:
                 else { // go finer
                     int nextAb = ab + 1;
                     eightToTen(ab, nextAb, sysNext, radNext, x, u);
-                    finer(Zs_[ab], Zs_[nextAb], ab);
+                    finer(savedZs_[ab], Zs_[nextAb], ab);
                     onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 }
             }
@@ -159,7 +159,7 @@ public:
                 if (ab > 1) {
                     eightToTen(ab, nextAb, sysNext, radNext, x, u);
                 }
-                coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
+                coarserInner(Zs_[nextAb], savedZs_[ab], nextAb);
                 onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 return;
             }
@@ -214,7 +214,7 @@ public:
     // abstraction synthesis will only iterate over the elements in the domain of the state space SymbolicSet (first argument in constructing abstraction)
     template<class sys_type, class rad_type, class X_type, class U_type>
     void computeAbstraction(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_) & (!Os_[ab]->symbolicSet_);
+        BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_) & (!Os_[ab]->symbolicSet_); // for coarsest layer, don't remove obstacles
         computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
         Ds_[ab]->symbolicSet_ = D;
         SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
