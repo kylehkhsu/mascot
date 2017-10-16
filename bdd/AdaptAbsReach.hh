@@ -16,7 +16,7 @@ using namespace helper;
 
 namespace scots {
 
-enum ReachResult {CONVERGED, VALID};
+enum ReachResult {CONVERGED, NOTCONVERGED};
 
 class AdaptAbsReach {
 public:
@@ -52,6 +52,7 @@ public:
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
     vector<SymbolicSet*> Ds_; /*!< Instance of *Xs_[i] containing possible winning states. */
     vector<SymbolicSet*> computedDs_;
+    vector<SymbolicSet*> saved
 
     int minToGoCoarser_;
     int minToBeValid_;
@@ -99,6 +100,23 @@ public:
         delete ddmgr_;
     }
 
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void onTheFlyReach(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        // start by synthesizing the full transition relation for the coarsest abstraction
+        Ds_[0]->addGridPoints();
+        computeAbstraction(0, sysNext, radNext, x, u);
+        int ab = 0;
+        onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
+    }
+
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        if (ab == 0) {
+            ReachResult = reach(ab);
+
+
+        }
+    }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void computeAbstractionsTest(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
@@ -115,13 +133,13 @@ public:
             BDD C = CpreZ | Gs_[ab]->symbolicSet_;
             BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
             Cs_[ab]->symbolicSet_ |= N;
-            Zs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_.ExistAbstract(notXvars_[ab]);
+            Zs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_.ExistAbstract(*notXvars_[ab]);
 
             if (N == ddmgr_->bddZero()) {
                 return CONVERGED;
             }
             if (i == m) {
-                return VALID;
+                return NOTCONVERGED;
             }
             i += 1;
         }
@@ -144,10 +162,33 @@ public:
         Ts_[ab]->printInfo(1);
     }
 
-    BDD Upre(BDD Z, int ab) {
+    /*! Calculates all possible winning states at most p transitions away from Z.
+     */
+    BDD uReach(BDD Z, int p) {
+        int i = 1;
+        while (1) {
+            BDD uPreZ = uPre(Z, 0);
+            BDD N = uPreZ & (!Z);
+            Z = uPreZ;
+
+            if (i == p || N == ddmgr_->bddZero()) {
+                return uPreZ;
+            }
+            i += 1;
+        }
+
+    }
+
+    /*! Calculates the uncontrollable predecessor of a given set with respect to the transition relation at the specified level of abstraction.
+     *  \param[in]  Z       The given set.
+     *  \param[in]  ab      0-index of the considered abstraction.
+     *  \return     BDD containing {x} for which there exists a u s.t. there exists a post state of (x,u) in Z.
+     */
+    BDD uPre(BDD Z, int ab) {
         BDD Z2 = Z.Permute(permutesXtoX2_[ab]);
-        BDD UpreZ = Ts_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[ab]);
-        return UpreZ;
+        BDD uPreZ = Ts_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[ab]);
+        BDD uPreZ = UpreZ.ExistAbstract(*notXvars_[ab]);
+        return uPreZ;
     }
 
 
@@ -156,7 +197,7 @@ public:
      *  \param[in]  curAbs      0-index of the current abstraction.
      *  \return     BDD containing {(x,u)} for which all post states are in Z.
      */
-    BDD Cpre(BDD Z, int curAbs) {
+    BDD cPre(BDD Z, int curAbs) {
         // swap to X2s_[curAbs]
         BDD Z2 = Z.Permute(permutesXtoX2_[curAbs]);
         // posts outside of winning set
