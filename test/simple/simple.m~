@@ -11,6 +11,21 @@ function simple (mode, numAbs, controllers)
       p1 = C1.points;
       plot(p1(:,1),p1(:,2),'ko');
       
+      C2 = SymbolicSet('D/D2.bdd');
+      p2 = C2.points;
+      plot(p2(:,1),p2(:,2),'bo');
+      
+      C3 = SymbolicSet('D/D3.bdd');
+      p3 = C3.points;
+      plot(p3(:,1),p3(:,2),'ro');    
+      
+  end
+  if (strcmp(mode, 'C'))
+      openfig('problem')
+      C1 = SymbolicSet('C/C1.bdd');
+      p1 = C1.points;
+      plot(p1(:,1),p1(:,2),'ko');
+      
       C2 = SymbolicSet('C/C2.bdd');
       p2 = C2.points;
       plot(p2(:,1),p2(:,2),'bo');
@@ -22,17 +37,18 @@ function simple (mode, numAbs, controllers)
   end
  
   if (strcmp(mode, 'T'))
-    openfig('system');
-    hold on
-    drawnow
-    
-    Zc = SymbolicSet('test/Zc.bdd');
-    Zf = SymbolicSet('test/Zf.bdd');
-    
-    plotCells(Zf, 'facecolor', colors(3,:)*0.5+0.5, 'edgec', colors(3,:), 'linew', 0.1)
-    drawnow
-    pause
-    plotCells(Zc, 'facecolor', colors(2,:)*0.5+0.5, 'edgec', colors(2,:), 'linew', 0.1)
+      openfig('problem')
+      T1 = SymbolicSet('T/CT.bdd');
+      p1 = C1.points;
+      plot(p1(:,1),p1(:,2),'ko');
+      
+      C2 = SymbolicSet('C/C2.bdd');
+      p2 = C2.points;
+      plot(p2(:,1),p2(:,2),'bo');
+      
+      C3 = SymbolicSet('C/C3.bdd');
+      p3 = C3.points;
+      plot(p3(:,1),p3(:,2),'ro');  
   end
  
   if (strcmp(mode, 'S'))

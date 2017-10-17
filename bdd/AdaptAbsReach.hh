@@ -124,6 +124,9 @@ public:
         saveVec(finalCs_, "C/C");
         checkMakeDir("Z");
         saveVec(finalZs_, "Z/Z");
+        checkMakeDir("T");
+        saveVec(Ts_, "T/T");
+        clog << "Wrote Ts_ to file.\n";
         return;
     }
 
@@ -146,6 +149,14 @@ public:
             }
         }
         else {
+            if (ab == 1) {
+                checkMakeDir("D");
+                Zs_[ab]->writeToFile("D/Z2.bdd");
+            }
+            if (ab == 2) {
+                checkMakeDir("D");
+                Zs_[ab]->writeToFile("D/Z3.bdd");
+            }
             ReachResult result = reach(ab, m_);
             saveCZ(ab);
             savedZs_[ab]->symbolicSet_ |= Zs_[ab]->symbolicSet_;
@@ -187,34 +198,32 @@ public:
             finer(Ds_[c], Ds_[c+1], c);
         }
 
-        if (nextAb == 1) {
-            checkMakeDir("D");
-            Ds_[nextAb]->writeToFile("D/D2.bdd");
-        }
-        if (nextAb == 2) {
-            checkMakeDir("D");
-            Ds_[nextAb]->writeToFile("D/D3.bdd");
-        }
+//        if (nextAb == 1) {
+//            checkMakeDir("D");
+//            Ds_[nextAb]->writeToFile("D/D2.bdd");
+//        }
+//        if (nextAb == 2) {
+//            checkMakeDir("D");
+//            Ds_[nextAb]->writeToFile("D/D3.bdd");
+//        }
 
         computeAbstraction(nextAb, sysNext, radNext, x, u);
     }
 
-    template<class sys_type, class rad_type, class X_type, class U_type>
-    void computeAbstractionsTest(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        SymbolicModelGrowthBound<X_type, U_type> Ab(Ds_[0], U_, X2s_[0]);
-        Ab.computeTransitionRelation(sysNext, radNext, *solvers_[0]);
-        Ts_[0]->symbolicSet_ = Ab.transitionRelation_;
-        Ts_[0]->printInfo(1);
-    }
-
     ReachResult reach(int ab, int m = -1) {
         int i = 1;
-        while (1) {
+        cout << "abstraction: " << ab << '\n';
+        while (1) {            
+            cout << "iteration: " << i << '\n';
+
+            if (ab != 0) {
+                Zs_[ab]->printInfo(1);
+            }
             BDD cPreZ = cPre(Zs_[ab]->symbolicSet_, ab);
             BDD C = cPreZ | Gs_[ab]->symbolicSet_;
             BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
             Cs_[ab]->symbolicSet_ |= N;
-            Zs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_.ExistAbstract(*notXvars_[ab]);
+            Zs_[ab]->symbolicSet_ |= C.ExistAbstract(*notXvars_[ab]);
 
             if (N == ddmgr_->bddZero() && i != 1) {
                 return CONVERGED;
@@ -240,6 +249,24 @@ public:
         }
         computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
         Ds_[ab]->symbolicSet_ = D;
+
+        if (ab == 1) {
+            checkMakeDir("D");
+            Ds_[ab]->writeToFile("D/D2.bdd");
+        }
+        if (ab == 2) {
+            checkMakeDir("D");
+            Ds_[ab]->writeToFile("D/D3.bdd");
+        }
+
+        // just for debugging
+        Ds_[ab]->addGridPoints();
+        if (ab != 0) {
+            Ds_[ab]->symbolicSet_ &= !Os_[ab]->symbolicSet_;
+        }
+        // end debugging
+
+
         SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
         abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[0]);
         Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation

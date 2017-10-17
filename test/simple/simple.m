@@ -5,20 +5,35 @@ function simple (mode, numAbs, controllers)
   
   % colors
   colors=get(groot,'DefaultAxesColorOrder'); 
+  if (strcmp(mode, 'Z'))
+      openfig('problem')
+      C1 = SymbolicSet('C/C1.bdd');
+      p1 = C1.points;
+      plot(p1(:,1),p1(:,2),'ko');
+      
+      Z2 = SymbolicSet('D/Z2.bdd');
+      p2 = Z2.points;
+      plot(p2(:,1),p2(:,2),'bo');
+      
+      Z3 = SymbolicSet('D/Z3.bdd');
+      p3 = Z3.points;
+      plot(p3(:,1),p3(:,2),'ro');  
+      title('Z')
+  end
   if (strcmp(mode, 'D'))
       openfig('problem')
       C1 = SymbolicSet('C/C1.bdd');
       p1 = C1.points;
       plot(p1(:,1),p1(:,2),'ko');
       
-      C2 = SymbolicSet('D/D2.bdd');
-      p2 = C2.points;
+      D2 = SymbolicSet('D/D2.bdd');
+      p2 = D2.points;
       plot(p2(:,1),p2(:,2),'bo');
       
-      C3 = SymbolicSet('D/D3.bdd');
-      p3 = C3.points;
-      plot(p3(:,1),p3(:,2),'ro');    
-      
+      D3 = SymbolicSet('D/D3.bdd');
+      p3 = D3.points;
+      plot(p3(:,1),p3(:,2),'ro');  
+      title('D')
   end
   if (strcmp(mode, 'C'))
       openfig('problem')
@@ -33,21 +48,23 @@ function simple (mode, numAbs, controllers)
       C3 = SymbolicSet('C/C3.bdd');
       p3 = C3.points;
       plot(p3(:,1),p3(:,2),'ro');    
-      
+      title('C')      
   end
  
   if (strcmp(mode, 'T'))
-    openfig('system');
-    hold on
-    drawnow
-    
-    Zc = SymbolicSet('test/Zc.bdd');
-    Zf = SymbolicSet('test/Zf.bdd');
-    
-    plotCells(Zf, 'facecolor', colors(3,:)*0.5+0.5, 'edgec', colors(3,:), 'linew', 0.1)
-    drawnow
-    pause
-    plotCells(Zc, 'facecolor', colors(2,:)*0.5+0.5, 'edgec', colors(2,:), 'linew', 0.1)
+      openfig('problem')
+      T1 = SymbolicSet('T/T1.bdd', 'projection', [1 2]);
+      p1 = T1.points;
+      plot(p1(:,1),p1(:,2),'ko');
+      
+      T2 = SymbolicSet('T/T2.bdd', 'projection', [1 2]);
+      p2 = T2.points;
+      plot(p2(:,1),p2(:,2),'bo');
+      
+      T3 = SymbolicSet('T/T3.bdd', 'projection', [1 2]);
+      p3 = T3.points;
+      plot(p3(:,1),p3(:,2),'ro');  
+      title('T')
   end
  
   if (strcmp(mode, 'S'))

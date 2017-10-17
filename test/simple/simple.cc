@@ -14,7 +14,7 @@ using namespace scots;
 #define dimU 2
 
 /* disturbance */
-const double w[dimX] = {0.3, 0.3};
+const double w[dimX] = {0.1, 0.1};
 
 /* data types for the ode solver */
 typedef std::array<double, dimX> X_type;
@@ -46,7 +46,8 @@ auto simpleAddO = [](SymbolicSet* O) -> void {
                       1, 0,
                       0,-1,
                       0, 1};
-    double h1[4] = {-4, 5, 1, 9};
+//    double h1[4] = {-4, 5, 1, 8.5};
+     double h1[4] = {-4, 5, 1, 9}; // doesn't work with this, but Reach.hh does
     O->addPolytope(4, H, h1, OUTER);
 };
 
@@ -93,7 +94,7 @@ int main() {
 
     syn.onTheFlyReach(sysNext, radNext, x, u);
 
-//    Reach abs("simple1AReach.log");
+//    Reach abs("simple3AReach.log");
 //    abs.initialize(&system, 0, simpleAddO);
 //    abs.initializeReach(simpleAddG, simpleAddI);
 //    abs.computeAbstractions(sysNext, radNext, x, u);

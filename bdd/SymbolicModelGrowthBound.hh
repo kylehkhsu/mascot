@@ -109,7 +109,11 @@ public:
         int* permute = new int[n];
         for(size_t i=0; i<nssVars_; i++)
             permute[preVars_[i]]=postVars_[i];
-        BDD ss = stateSpace_->getSymbolicSet();
+
+        SymbolicSet fullStateSpace(*stateSpace_);
+        fullStateSpace.addGridPoints();
+        BDD ss = fullStateSpace.getSymbolicSet();
+//        BDD ss = stateSpace_->getSymbolicSet();
         BDD constraints=ss.Permute(permute);
         delete[] permute;
         int iter = 0;
