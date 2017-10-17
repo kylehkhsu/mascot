@@ -55,6 +55,8 @@ public:
     vector<SymbolicSet*> computedDs_;
     vector<SymbolicSet*> savedZs_;
 
+    SymbolicSet* uT_;
+
     int minToGoCoarser_;
     int minToBeValid_;
     int earlyBreak_;
@@ -102,6 +104,7 @@ public:
         deleteVec(innerDs_);
         deleteVec(computedDs_);
         deleteVec(savedZs_);
+        delete uT_;
         fclose(stderr);
         delete ddmgr_;
     }
@@ -109,7 +112,7 @@ public:
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReach(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         m_ = 10;
-        p_ = 5;
+        p_ = 4;
 
         // start by synthesizing the full transition relation for the coarsest abstraction
         Ds_[0]->addGridPoints();
@@ -127,7 +130,7 @@ public:
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         if (ab == 0) {
-            ReachResult result = reach(ab);
+            reach(ab);
             saveCZ(ab);
             savedZs_[ab]->symbolicSet_ |= Zs_[ab]->symbolicSet_;
             if (*system_->numAbs_ == 1) {
@@ -137,6 +140,7 @@ public:
                 int nextAb = ab + 1;
                 eightToTen(ab, nextAb, sysNext, radNext, x, u);
                 finer(savedZs_[ab], Zs_[nextAb], ab);
+                savedZs_[nextAb]->symbolicSet_ |= Zs_[nextAb]->symbolicSet_;
                 onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 return;
             }
@@ -153,6 +157,7 @@ public:
                     int nextAb = ab + 1;
                     eightToTen(ab, nextAb, sysNext, radNext, x, u);
                     finer(savedZs_[ab], Zs_[nextAb], ab);
+                    savedZs_[nextAb]->symbolicSet_ |= Zs_[nextAb]->symbolicSet_;
                     onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 }
             }
@@ -162,6 +167,7 @@ public:
                     eightToTen(ab, nextAb, sysNext, radNext, x, u);
                 }
                 coarserInner(Zs_[nextAb], savedZs_[ab], nextAb);
+                savedZs_[nextAb]->symbolicSet_ |= Zs_[nextAb]->symbolicSet_;
                 onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 return;
             }
@@ -175,11 +181,21 @@ public:
         for (int c = curAb - 1; c >= 0; c--) {
             coarserOuter(Ds_[c], Ds_[c+1], c); // compounding outer approximations?
             coarserInner(innerDs_[c], innerDs_[c+1], c);
-        }
+        }        
         Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, p_) & (!innerDs_[0]->symbolicSet_);
         for (int c = 0; c < nextAb; c++) {
             finer(Ds_[c], Ds_[c+1], c);
         }
+
+        if (nextAb == 1) {
+            checkMakeDir("D");
+            Ds_[nextAb]->writeToFile("D/D2.bdd");
+        }
+        if (nextAb == 2) {
+            checkMakeDir("D");
+            Ds_[nextAb]->writeToFile("D/D3.bdd");
+        }
+
         computeAbstraction(nextAb, sysNext, radNext, x, u);
     }
 
@@ -218,13 +234,22 @@ public:
     // abstraction synthesis will only iterate over the elements in the domain of the state space SymbolicSet (first argument in constructing abstraction)
     template<class sys_type, class rad_type, class X_type, class U_type>
     void computeAbstraction(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_) & (!Os_[ab]->symbolicSet_); // for coarsest layer, don't remove obstacles
+        BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_);
+        if (ab != 0) { // for coarsest layer, don't remove obstacles until after abstraction
+            D &= !Os_[ab]->symbolicSet_;
+        }
         computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
         Ds_[ab]->symbolicSet_ = D;
         SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
         abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[0]);
         Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
         Ts_[ab]->printInfo(1);
+        TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
+        if (ab == 0) {
+            uT_->symbolicSet_ = Ts_[0]->symbolicSet_;
+            Ts_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
+            TTs_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
+        }
     }
 
     /*! Calculates all possible winning states at most p transitions away from Z.
@@ -232,7 +257,7 @@ public:
     BDD uReach(BDD Z, int p) {
         int i = 1;
         while (1) {
-            BDD uPreZ = uPre(Z, 0);
+            BDD uPreZ = uPre(Z);
             BDD N = uPreZ & (!Z);
             Z = uPreZ;
 
@@ -243,15 +268,14 @@ public:
         }
     }
 
-    /*! Calculates the uncontrollable predecessor of a given set with respect to the transition relation at the specified level of abstraction.
+    /*! Calculates the uncontrollable predecessor of a given set with respect to the un-restricted transition relation at the coarsest level of abstraction.
      *  \param[in]  Z       The given set.
-     *  \param[in]  ab      0-index of the considered abstraction.
      *  \return     BDD containing {x} for which there exists a u s.t. there exists a post state of (x,u) in Z.
      */
-    BDD uPre(BDD Z, int ab) {
-        BDD Z2 = Z.Permute(permutesXtoX2_[ab]);
-        BDD uPreZ = Ts_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[ab]);
-        uPreZ = uPreZ.ExistAbstract(*notXvars_[ab]);
+    BDD uPre(BDD Z) {
+        BDD Z2 = Z.Permute(permutesXtoX2_[0]);
+        BDD uPreZ = uT_->symbolicSet_.AndAbstract(Z2, *notXUvars_[0]);
+        uPreZ = uPreZ.ExistAbstract(*notXvars_[0]);
         return uPreZ;
     }
 
@@ -415,6 +439,9 @@ public:
             TTs_.push_back(TT);
         }
         clog << "TTs_ initialized with empty domain.\n";
+
+        uT_ = new SymbolicSet(*Cs_[0], *X2s_[0]);
+        clog << "uT_ initialized with empty domain.\n";
     }
 
     /*! Initializes a vector of SymbolicSets that is an instance of Xs_ containing points as specified by addSpec.

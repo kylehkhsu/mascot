@@ -80,15 +80,15 @@ int main() {
     double tauRatio = 2;
     int nSubInt = 5;
 
-    double etaX[dimX]= {1.6/2/2/2, 1.6/2/2/2};
-    double tau = 2.4/2/2/2;
-    int numAbs = 1;
+    double etaX[dimX]= {1.6/2, 1.6/2};
+    double tau = 2.4/2;
+    int numAbs = 3;
 
     System system(dimX, lbX, ubX, etaX, tau,
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nSubInt, numAbs);
 
-    AdaptAbsReach syn("simple1A.log");
+    AdaptAbsReach syn("simple3A.log");
     syn.initialize(&system, simpleAddO, simpleAddG);
 
     syn.onTheFlyReach(sysNext, radNext, x, u);

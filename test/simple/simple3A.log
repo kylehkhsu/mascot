@@ -17,6 +17,7 @@ computedDs_ initialized with empty domain.
 savedZs_ initialized with empty domain.
 Ts_ initialized with empty domain.
 TTs_ initialized with empty domain.
+uT_ initialized with empty domain.
 Number of BDD variables: 66
 Initialized permutes.
 Initialized cubes.

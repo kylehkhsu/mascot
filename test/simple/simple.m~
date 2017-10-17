@@ -11,21 +11,6 @@ function simple (mode, numAbs, controllers)
       p1 = C1.points;
       plot(p1(:,1),p1(:,2),'ko');
       
-      C2 = SymbolicSet('D/D2.bdd');
-      p2 = C2.points;
-      plot(p2(:,1),p2(:,2),'bo');
-      
-      C3 = SymbolicSet('D/D3.bdd');
-      p3 = C3.points;
-      plot(p3(:,1),p3(:,2),'ro');    
-      
-  end
-  if (strcmp(mode, 'C'))
-      openfig('problem')
-      C1 = SymbolicSet('C/C1.bdd');
-      p1 = C1.points;
-      plot(p1(:,1),p1(:,2),'ko');
-      
       C2 = SymbolicSet('C/C2.bdd');
       p2 = C2.points;
       plot(p2(:,1),p2(:,2),'bo');
