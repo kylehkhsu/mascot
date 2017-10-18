@@ -46,8 +46,7 @@ auto simpleAddO = [](SymbolicSet* O) -> void {
                       1, 0,
                       0,-1,
                       0, 1};
-//    double h1[4] = {-4, 5, 1, 8.5};
-     double h1[4] = {-4, 5, 1, 9}; // doesn't work with this, but Reach.hh does
+     double h1[4] = {-4, 5, 1, 9.6};
     O->addPolytope(4, H, h1, OUTER);
 };
 
@@ -56,7 +55,7 @@ auto simpleAddG = [](SymbolicSet* G) -> void {
                       1, 0,
                       0,-1,
                       0, 1};
-    double c[4] = {-7, 10, -7, 10};
+    double c[4] = {-9, 11, -9, 11};
     G->addPolytope(4, H, c, INNER);
 };
 
@@ -68,7 +67,7 @@ auto simpleAddI = [](SymbolicSet* I) -> void {
 int main() {
 
     double lbX[dimX]={0, 0};
-    double ubX[dimX]={10, 10};
+    double ubX[dimX]={10.4, 10.4};
 
     double lbU[dimU]={-1.3, -1.3};
     double ubU[dimU]= {1.3, 1.3};
@@ -81,28 +80,36 @@ int main() {
     double tauRatio = 2;
     int nSubInt = 5;
 
-    double etaX[dimX]= {1.6/2, 1.6/2};
-    double tau = 2.4/2;
+    double etaX[dimX]= {0.8, 0.8};
+    double tau = 1.2;
     int numAbs = 3;
 
     System system(dimX, lbX, ubX, etaX, tau,
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nSubInt, numAbs);
 
-    AdaptAbsReach syn("simple3A.log");
+    AdaptAbsReach syn("simple3A_m3p3.log");
     syn.initialize(&system, simpleAddO, simpleAddG);
 
+    TicToc tt_tot;
+    tt_tot.tic();
     syn.onTheFlyReach(sysNext, radNext, x, u);
-
-//    Reach abs("simple3AReach.log");
-//    abs.initialize(&system, 0, simpleAddO);
-//    abs.initializeReach(simpleAddG, simpleAddI);
-//    abs.computeAbstractions(sysNext, radNext, x, u);
+    clog << "------------------------------------Total time:";
+    tt_tot.toc();
 
 //    int startAbs = 0;
 //    int minToGoCoarser = 1;
 //    int minToBeValid = 2;
 //    int earlyBreak = 0;
 
+//    Reach abs("simple3AReachPlain.log");
+//    abs.initialize(&system, 0, simpleAddO);
+//    abs.initializeReach(simpleAddG, simpleAddI);
+
+//    TicToc tt_tot;
+//    tt_tot.tic();
+//    abs.computeAbstractions(sysNext, radNext, x, u);
 //    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+//    clog << "------------------------------------Total time:";
+//    tt_tot.toc();
 }

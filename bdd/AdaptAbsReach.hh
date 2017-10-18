@@ -111,8 +111,8 @@ public:
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReach(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        m_ = 10;
-        p_ = 4;
+        m_ = 3;
+        p_ = 3;
 
         // start by synthesizing the full transition relation for the coarsest abstraction
         Ds_[0]->addGridPoints();
@@ -140,10 +140,12 @@ public:
                 return;
             }
             else { // go finer
+                cout << "Going finer\n";
                 int nextAb = ab + 1;
                 eightToTen(ab, nextAb, sysNext, radNext, x, u);
                 finer(savedZs_[ab], Zs_[nextAb], ab);
-                savedZs_[nextAb]->symbolicSet_ |= Zs_[nextAb]->symbolicSet_;
+                Zs_[nextAb]->symbolicSet_ |= savedZs_[nextAb]->symbolicSet_;
+                savedZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
                 onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 return;
             }
@@ -151,11 +153,21 @@ public:
         else {
             if (ab == 1) {
                 checkMakeDir("D");
-                Zs_[ab]->writeToFile("D/Z2.bdd");
+                if (std::ifstream("D/Z21.bdd")){
+                    Zs_[ab]->writeToFile("D/Z22.bdd");
+                } else {
+                    Zs_[ab]->writeToFile("D/Z21.bdd");
+                }
+
             }
             if (ab == 2) {
                 checkMakeDir("D");
-                Zs_[ab]->writeToFile("D/Z3.bdd");
+//                Zs_[ab]->writeToFile("D/Z3.bdd");
+                if (std::ifstream("D/Z31.bdd")){
+                    Zs_[ab]->writeToFile("D/Z32.bdd");
+                } else {
+                    Zs_[ab]->writeToFile("D/Z31.bdd");
+                }
             }
             ReachResult result = reach(ab, m_);
             saveCZ(ab);
@@ -165,20 +177,24 @@ public:
                     return;
                 }
                 else { // go finer
+                    cout << "Going finer\n";
                     int nextAb = ab + 1;
                     eightToTen(ab, nextAb, sysNext, radNext, x, u);
                     finer(savedZs_[ab], Zs_[nextAb], ab);
-                    savedZs_[nextAb]->symbolicSet_ |= Zs_[nextAb]->symbolicSet_;
+                    Zs_[nextAb]->symbolicSet_ |= savedZs_[nextAb]->symbolicSet_;
+                    savedZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
                     onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 }
             }
             else { // go coarser
+                cout << "Going coarser\n";
                 int nextAb = ab - 1;
                 if (ab > 1) {
                     eightToTen(ab, nextAb, sysNext, radNext, x, u);
                 }
                 coarserInner(Zs_[nextAb], savedZs_[ab], nextAb);
-                savedZs_[nextAb]->symbolicSet_ |= Zs_[nextAb]->symbolicSet_;
+                Zs_[nextAb]->symbolicSet_ |= savedZs_[nextAb]->symbolicSet_;
+                savedZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
                 onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 return;
             }
@@ -192,10 +208,21 @@ public:
         for (int c = curAb - 1; c >= 0; c--) {
             coarserOuter(Ds_[c], Ds_[c+1], c); // compounding outer approximations?
             coarserInner(innerDs_[c], innerDs_[c+1], c);
-        }        
+        }
         Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, p_) & (!innerDs_[0]->symbolicSet_);
         for (int c = 0; c < nextAb; c++) {
             finer(Ds_[c], Ds_[c+1], c);
+        }
+
+        checkMakeDir("D0");
+        if (!(std::ifstream("D0/D1.bdd"))) {
+            Ds_[0]->writeToFile("D0/D1.bdd");
+        } else if (!(std::ifstream("D0/D2.bdd"))) {
+            Ds_[0]->writeToFile("D0/D2.bdd");
+        } else if (!(std::ifstream("D0/D3.bdd"))) {
+            Ds_[0]->writeToFile("D0/D3.bdd");
+        } else if (!(std::ifstream("D0/D4.bdd"))) {
+            Ds_[0]->writeToFile("D0/D4.bdd");
         }
 
 //        if (nextAb == 1) {
@@ -213,7 +240,7 @@ public:
     ReachResult reach(int ab, int m = -1) {
         int i = 1;
         cout << "abstraction: " << ab << '\n';
-        while (1) {            
+        while (1) {
             cout << "iteration: " << i << '\n';
 
             if (ab != 0) {
@@ -223,7 +250,7 @@ public:
             BDD C = cPreZ | Gs_[ab]->symbolicSet_;
             BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
             Cs_[ab]->symbolicSet_ |= N;
-            Zs_[ab]->symbolicSet_ |= C.ExistAbstract(*notXvars_[ab]);
+            Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]);
 
             if (N == ddmgr_->bddZero() && i != 1) {
                 return CONVERGED;
@@ -252,19 +279,29 @@ public:
 
         if (ab == 1) {
             checkMakeDir("D");
-            Ds_[ab]->writeToFile("D/D2.bdd");
+            if (std::ifstream("D/D21.bdd")){
+                Ds_[ab]->writeToFile("D/D22.bdd");
+            } else {
+                Ds_[ab]->writeToFile("D/D21.bdd");
+            }
+
         }
         if (ab == 2) {
             checkMakeDir("D");
-            Ds_[ab]->writeToFile("D/D3.bdd");
+//            Ds_[ab]->writeToFile("D/D3.bdd");
+            if (std::ifstream("D/D31.bdd")){
+                Ds_[ab]->writeToFile("D/D32.bdd");
+            } else {
+                Ds_[ab]->writeToFile("D/D31.bdd");
+            }
         }
 
-        // just for debugging
-        Ds_[ab]->addGridPoints();
-        if (ab != 0) {
-            Ds_[ab]->symbolicSet_ &= !Os_[ab]->symbolicSet_;
-        }
-        // end debugging
+//        // just for debugging
+//        Ds_[ab]->addGridPoints();
+//        if (ab != 0) {
+//            Ds_[ab]->symbolicSet_ &= !Os_[ab]->symbolicSet_;
+//        }
+//        // end debugging
 
 
         SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
@@ -289,7 +326,7 @@ public:
             Z = uPreZ;
 
             if (i == p || N == ddmgr_->bddZero()) {
-                return uPreZ;
+                return Z;
             }
             i += 1;
         }

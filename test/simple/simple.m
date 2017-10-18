@@ -2,6 +2,7 @@
 function simple (mode, numAbs, controllers)
   w = [0.3 0.3];
   addpath(genpath('../..'));
+  addpath(genpath('~/ownCloud/C++/SCOTS_modified/mfiles/'));
   
   % colors
   colors=get(groot,'DefaultAxesColorOrder'); 
@@ -10,58 +11,130 @@ function simple (mode, numAbs, controllers)
       C1 = SymbolicSet('C/C1.bdd');
       p1 = C1.points;
       plot(p1(:,1),p1(:,2),'ko');
+      pause
       
-      Z2 = SymbolicSet('D/Z2.bdd');
+      Z2 = SymbolicSet('Z/Z2.bdd');
       p2 = Z2.points;
       plot(p2(:,1),p2(:,2),'bo');
+      pause
       
-      Z3 = SymbolicSet('D/Z3.bdd');
+%       Z22 = SymbolicSet('D/Z2.bdd');
+%       p2 = Z22.points;
+%       plot(p2(:,1),p2(:,2),'ro');
+      
+      Z3 = SymbolicSet('Z/Z3.bdd');
       p3 = Z3.points;
       plot(p3(:,1),p3(:,2),'ro');  
+      pause
+      
+      Z4 = SymbolicSet('Z/Z4.bdd');
+      p4 = Z4.points;
+      plot(p4(:,1),p4(:,2),'go');  
       title('Z')
+      pause
+      
+      Z5 = SymbolicSet('Z/Z5.bdd');
+      p5 = Z5.points;
+      plot(p5(:,1),p5(:,2),'go'); 
   end
   if (strcmp(mode, 'D'))
       openfig('problem')
       C1 = SymbolicSet('C/C1.bdd');
       p1 = C1.points;
       plot(p1(:,1),p1(:,2),'ko');
+      pause
       
-      D2 = SymbolicSet('D/D2.bdd');
+      D2 = SymbolicSet('D/D21.bdd');
       p2 = D2.points;
       plot(p2(:,1),p2(:,2),'bo');
+      pause
       
-      D3 = SymbolicSet('D/D3.bdd');
+      Z2 = SymbolicSet('D/Z21.bdd');
+      p2 = Z2.points;
+      plot(p2(:,1),p2(:,2),'ro');
+      pause
+%       
+%       D3 = SymbolicSet('D/D22.bdd');
+%       p3 = D3.points;
+%       plot(p3(:,1),p3(:,2),'go');  
+%       title('D')
+%       pause
+      
+      Z3 = SymbolicSet('D/Z22.bdd');
+      p4 = Z3.points;
+      plot(p4(:,1),p4(:,2),'yo');
+      
+      D3 = SymbolicSet('D/D31.bdd');
       p3 = D3.points;
-      plot(p3(:,1),p3(:,2),'ro');  
+      plot(p3(:,1),p3(:,2),'co');  
       title('D')
+      pause
+      
+      Z3 = SymbolicSet('D/Z31.bdd');
+      p4 = Z3.points;
+      plot(p4(:,1),p4(:,2),'mo');
+  end
+  if (strcmp(mode, 'D0'))
+      openfig('problem')
+      D1 = SymbolicSet('AdaptiveAbsResults/D0/D1.bdd');
+      p1 = D1.points;
+      plot(p1(:,1),p1(:,2),'bo');
+      pause
+      
+      D2 = SymbolicSet('AdaptiveAbsResults/D0/D2.bdd');
+      p2 = D2.points;
+      plot(p2(:,1),p2(:,2),'ro');
   end
   if (strcmp(mode, 'C'))
       openfig('problem')
-      C1 = SymbolicSet('C/C1.bdd');
-      p1 = C1.points;
-      plot(p1(:,1),p1(:,2),'ko');
       
-      C2 = SymbolicSet('C/C2.bdd');
-      p2 = C2.points;
-      plot(p2(:,1),p2(:,2),'bo');
-      
-      C3 = SymbolicSet('C/C3.bdd');
-      p3 = C3.points;
-      plot(p3(:,1),p3(:,2),'ro');    
-      title('C')      
+      for ii=1:controllers
+        C = SymbolicSet(['C/C' int2str(ii) '.bdd']);
+        p = C.points;
+        plotColor = colors(mod(ii,7)+1,:)*0.3+0.3;
+        scatter(p(:,1),p(:,2),'Marker','o','MarkerFaceColor',plotColor);
+        pause
+      end
+%       C1 = SymbolicSet('C/C1.bdd');
+%       p1 = C1.points;
+%       plot(p1(:,1),p1(:,2),'ko');
+%       pause
+%       
+%       C2 = SymbolicSet('C/C2.bdd');
+%       p2 = C2.points;
+%       plot(p2(:,1),p2(:,2),'bo');
+%       pause
+%       
+%       C3 = SymbolicSet('C/C3.bdd');
+%       p3 = C3.points;
+%       plot(p3(:,1),p3(:,2),'go');    
+%       title('C') 
+%       pause
+%       
+%       C4 = SymbolicSet('C/C4.bdd');
+%       p4 = C4.points;
+%       plot(p4(:,1),p4(:,2),'yo');    
+%       title('C')
+%       
+%       C5 = SymbolicSet('C/C5.bdd');
+%       p5 = C5.points;
+%       plot(p5(:,1),p5(:,2),'co');    
+%       title('C')
   end
  
   if (strcmp(mode, 'T'))
       openfig('problem')
-      T1 = SymbolicSet('T/T1.bdd', 'projection', [1 2]);
+      T1 = SymbolicSet('AdaptiveAbsResults/T/T1.bdd', 'projection', [1 2]);
       p1 = T1.points;
       plot(p1(:,1),p1(:,2),'ko');
+      pause
       
-      T2 = SymbolicSet('T/T2.bdd', 'projection', [1 2]);
+      T2 = SymbolicSet('AdaptiveAbsResults/T/T2.bdd', 'projection', [1 2]);
       p2 = T2.points;
       plot(p2(:,1),p2(:,2),'bo');
+      pause
       
-      T3 = SymbolicSet('T/T3.bdd', 'projection', [1 2]);
+      T3 = SymbolicSet('AdaptiveAbsResults/T/T3.bdd', 'projection', [1 2]);
       p3 = T3.points;
       plot(p3(:,1),p3(:,2),'ro');  
       title('T')
@@ -125,9 +198,10 @@ function simple (mode, numAbs, controllers)
     hold on
     drawnow
     
-    I = SymbolicSet('plotting/I.bdd');
-    x = I.points();
-    x = x(1,:);
+%     I = SymbolicSet('plotting/I.bdd');
+%     x = I.points();
+%     x = x(1,:);
+    x = [1 1];
     
     v = [];
     
