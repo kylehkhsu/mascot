@@ -94,7 +94,6 @@ function simple (mode, numAbs, controllers)
 %         plotColor = colors(mod(ii,7)+1,:)*0.3+0.3;
         set = plot(p(:,1),p(:,2),'ko');
         pause
-        delete(set)
       end
 %       C1 = SymbolicSet('C/C1.bdd');
 %       p1 = C1.points;

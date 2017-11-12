@@ -16,7 +16,7 @@ using namespace helper;
 
 namespace scots {
 
-enum ReachResult {CONVERGED, NOTCONVERGED};
+enum ReachResult {CONVERGEDVALID, CONVERGEDINVALID, NOTCONVERGED};
 
 class AdaptAbsReach {
 public:
@@ -71,6 +71,8 @@ public:
     AdaptAbsReach(char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
+
+        minToBeValid_ = 4;
     }
     /*! Destructor for an AdaptAbsReach object. */
     ~AdaptAbsReach() {
@@ -111,14 +113,15 @@ public:
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReach(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        m_ = 3;
-        p_ = 3;
+        m_ = 5; // max. iterations for consecutive reachability for non-coarsest layers
+        p_ = 10; // coarsest layer uncontrollable-pred. parameter
 
         // start by synthesizing the full transition relation for the coarsest abstraction
         Ds_[0]->addGridPoints();
         computeAbstraction(0, sysNext, radNext, x, u);
         int ab = 0;
-        onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
+        int justCoarsed = 0;
+        onTheFlyReachRecurse(ab, justCoarsed, sysNext, radNext, x, u);
 
         checkMakeDir("C");
         saveVec(finalCs_, "C/C");
@@ -131,11 +134,26 @@ public:
     }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
-    void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+    void onTheFlyReachRecurse(int ab, int justCoarsed, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         if (ab == 0) {
-            reach(ab);
-            saveCZ(ab);
-            savedZs_[ab]->symbolicSet_ |= Zs_[ab]->symbolicSet_;
+            ReachResult result = reach(ab);
+            if (result != CONVERGEDINVALID) { // valid controller
+                saveCZ(ab);
+                validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+                validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
+            }
+            else {
+                if (justCoarsed && finalCs_.size() > 0) {
+                    SymbolicSet* C = finalCs_.back();
+                    finalCs_.pop_back();
+                    delete(C);
+                    SymbolicSet* Z = finalZs_.back();
+                    finalZs_.pop_back();
+                    delete(Z);
+                }
+                Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_;
+                Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
+            }
             if (*system_->numAbs_ == 1) {
                 return;
             }
@@ -143,36 +161,52 @@ public:
                 cout << "Going finer\n";
                 int nextAb = ab + 1;
                 eightToTen(ab, nextAb, sysNext, radNext, x, u);
-                finer(savedZs_[ab], Zs_[nextAb], ab);
-                Zs_[nextAb]->symbolicSet_ |= savedZs_[nextAb]->symbolicSet_;
-                savedZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+                if (result != CONVERGEDINVALID) {
+                    finer(Zs_[ab], Zs_[nextAb], ab);
+                    validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+                }
+                onTheFlyReachRecurse(nextAb, 0, sysNext, radNext, x, u);
                 return;
             }
         }
         else {
-            if (ab == 1) {
-                checkMakeDir("D");
-                if (std::ifstream("D/Z21.bdd")){
-                    Zs_[ab]->writeToFile("D/Z22.bdd");
-                } else {
-                    Zs_[ab]->writeToFile("D/Z21.bdd");
-                }
+//            if (ab == 1) {
+//                checkMakeDir("D");
+//                if (std::ifstream("D/Z21.bdd")){
+//                    Zs_[ab]->writeToFile("D/Z22.bdd");
+//                } else {
+//                    Zs_[ab]->writeToFile("D/Z21.bdd");
+//                }
 
-            }
-            if (ab == 2) {
-                checkMakeDir("D");
-//                Zs_[ab]->writeToFile("D/Z3.bdd");
-                if (std::ifstream("D/Z31.bdd")){
-                    Zs_[ab]->writeToFile("D/Z32.bdd");
-                } else {
-                    Zs_[ab]->writeToFile("D/Z31.bdd");
-                }
-            }
+//            }
+//            if (ab == 2) {
+//                checkMakeDir("D");
+////                Zs_[ab]->writeToFile("D/Z3.bdd");
+//                if (std::ifstream("D/Z31.bdd")){
+//                    Zs_[ab]->writeToFile("D/Z32.bdd");
+//                } else {
+//                    Zs_[ab]->writeToFile("D/Z31.bdd");
+//                }
+//            }
             ReachResult result = reach(ab, m_);
-            saveCZ(ab);
-            savedZs_[ab]->symbolicSet_ |= Zs_[ab]->symbolicSet_;
-            if (result == CONVERGED) {
+            if (result != CONVERGEDINVALID) { // valid controller
+                saveCZ(ab);
+                validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+                validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
+            }
+            else {
+                if (justCoarsed && finalCs_.size() > 0) {
+                    SymbolicSet* C = finalCs_.back();
+                    finalCs_.pop_back();
+                    delete(C);
+                    SymbolicSet* Z = finalZs_.back();
+                    finalZs_.pop_back();
+                    delete(Z);
+                }
+                Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_;
+                Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
+            }
+            if (result != NOTCONVERGED) { // converged
                 if (ab == *system_->numAbs_ - 1) {
                     return;
                 }
@@ -180,22 +214,23 @@ public:
                     cout << "Going finer\n";
                     int nextAb = ab + 1;
                     eightToTen(ab, nextAb, sysNext, radNext, x, u);
-                    finer(savedZs_[ab], Zs_[nextAb], ab);
-                    Zs_[nextAb]->symbolicSet_ |= savedZs_[nextAb]->symbolicSet_;
-                    savedZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                    onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+                    if (result == CONVERGEDVALID) {
+                        finer(Zs_[ab], Zs_[nextAb], ab);
+                        validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+                    }
+                    onTheFlyReachRecurse(nextAb, 0, sysNext, radNext, x, u);
                 }
             }
             else { // go coarser
                 cout << "Going coarser\n";
                 int nextAb = ab - 1;
-                if (ab > 1) {
+                if (nextAb != 0) { // pointless to do for coarsest layer
                     eightToTen(ab, nextAb, sysNext, radNext, x, u);
                 }
-                coarserInner(Zs_[nextAb], savedZs_[ab], nextAb);
-                Zs_[nextAb]->symbolicSet_ |= savedZs_[nextAb]->symbolicSet_;
-                savedZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+                coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
+                validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+                validCs_[nextAb]->symbolicSet_ = Cs_[nextAb]->symbolicSet_;
+                onTheFlyReachRecurse(nextAb, 1, sysNext, radNext, x, u);
                 return;
             }
         }
@@ -203,8 +238,8 @@ public:
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void eightToTen(int curAb, int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        Ds_[curAb]->symbolicSet_ = savedZs_[curAb]->symbolicSet_;
-        innerDs_[curAb]->symbolicSet_ = savedZs_[curAb]->symbolicSet_;
+        Ds_[curAb]->symbolicSet_ = savedZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_;
+        innerDs_[curAb]->symbolicSet_ = savedZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_;
         for (int c = curAb - 1; c >= 0; c--) {
             coarserOuter(Ds_[c], Ds_[c+1], c); // compounding outer approximations?
             coarserInner(innerDs_[c], innerDs_[c+1], c);
@@ -214,16 +249,16 @@ public:
             finer(Ds_[c], Ds_[c+1], c);
         }
 
-        checkMakeDir("D0");
-        if (!(std::ifstream("D0/D1.bdd"))) {
-            Ds_[0]->writeToFile("D0/D1.bdd");
-        } else if (!(std::ifstream("D0/D2.bdd"))) {
-            Ds_[0]->writeToFile("D0/D2.bdd");
-        } else if (!(std::ifstream("D0/D3.bdd"))) {
-            Ds_[0]->writeToFile("D0/D3.bdd");
-        } else if (!(std::ifstream("D0/D4.bdd"))) {
-            Ds_[0]->writeToFile("D0/D4.bdd");
-        }
+//        checkMakeDir("D0");
+//        if (!(std::ifstream("D0/D1.bdd"))) {
+//            Ds_[0]->writeToFile("D0/D1.bdd");
+//        } else if (!(std::ifstream("D0/D2.bdd"))) {
+//            Ds_[0]->writeToFile("D0/D2.bdd");
+//        } else if (!(std::ifstream("D0/D3.bdd"))) {
+//            Ds_[0]->writeToFile("D0/D3.bdd");
+//        } else if (!(std::ifstream("D0/D4.bdd"))) {
+//            Ds_[0]->writeToFile("D0/D4.bdd");
+//        }
 
 //        if (nextAb == 1) {
 //            checkMakeDir("D");
@@ -243,9 +278,9 @@ public:
         while (1) {
             cout << "iteration: " << i << '\n';
 
-            if (ab != 0) {
-                Zs_[ab]->printInfo(1);
-            }
+//            if (ab != 0) {
+//                Zs_[ab]->printInfo(1);
+//            }
             BDD cPreZ = cPre(Zs_[ab]->symbolicSet_, ab);
             BDD C = cPreZ | Gs_[ab]->symbolicSet_;
             BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
@@ -253,7 +288,12 @@ public:
             Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]);
 
             if (N == ddmgr_->bddZero() && i != 1) {
-                return CONVERGED;
+                if (i >= minToBeValid_) {
+                    return CONVERGEDVALID;
+                }
+                else{
+                    return CONVERGEDINVALID;
+                }
             }
             if (i == m) {
                 return NOTCONVERGED;
@@ -270,31 +310,31 @@ public:
     // abstraction synthesis will only iterate over the elements in the domain of the state space SymbolicSet (first argument in constructing abstraction)
     template<class sys_type, class rad_type, class X_type, class U_type>
     void computeAbstraction(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_);
+        BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_); // don't repeat sampling
         if (ab != 0) { // for coarsest layer, don't remove obstacles until after abstraction
             D &= !Os_[ab]->symbolicSet_;
         }
         computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
         Ds_[ab]->symbolicSet_ = D;
 
-        if (ab == 1) {
-            checkMakeDir("D");
-            if (std::ifstream("D/D21.bdd")){
-                Ds_[ab]->writeToFile("D/D22.bdd");
-            } else {
-                Ds_[ab]->writeToFile("D/D21.bdd");
-            }
+//        if (ab == 1) {
+//            checkMakeDir("D");
+//            if (std::ifstream("D/D21.bdd")){
+//                Ds_[ab]->writeToFile("D/D22.bdd");
+//            } else {
+//                Ds_[ab]->writeToFile("D/D21.bdd");
+//            }
 
-        }
-        if (ab == 2) {
-            checkMakeDir("D");
-//            Ds_[ab]->writeToFile("D/D3.bdd");
-            if (std::ifstream("D/D31.bdd")){
-                Ds_[ab]->writeToFile("D/D32.bdd");
-            } else {
-                Ds_[ab]->writeToFile("D/D31.bdd");
-            }
-        }
+//        }
+//        if (ab == 2) {
+//            checkMakeDir("D");
+////            Ds_[ab]->writeToFile("D/D3.bdd");
+//            if (std::ifstream("D/D31.bdd")){
+//                Ds_[ab]->writeToFile("D/D32.bdd");
+//            } else {
+//                Ds_[ab]->writeToFile("D/D31.bdd");
+//            }
+//        }
 
 //        // just for debugging
 //        Ds_[ab]->addGridPoints();
@@ -310,8 +350,8 @@ public:
         Ts_[ab]->printInfo(1);
         TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
         if (ab == 0) {
-            uT_->symbolicSet_ = Ts_[0]->symbolicSet_;
-            Ts_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
+            uT_->symbolicSet_ = Ts_[0]->symbolicSet_; // "necessary" transition relation for coarsest layer (for uncontrollable reaching)
+            Ts_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_; // actual transition relation for coarsest layer
             TTs_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
         }
     }

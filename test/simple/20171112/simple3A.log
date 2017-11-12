@@ -1,4 +1,4 @@
-simple2A.log
+simple3A.log
 Initialized etaXs_, tau_.
 Initialized solvers.
 Xs_ initialized with full domain.
@@ -35,3 +35,4 @@ abstraction 0: 1.2
 abstraction 1: 0.6
 abstraction 2: 0.3
 Wrote Ts_ to file.
+------------------------------------Total time:Elapsed time is 3.57852 seconds.

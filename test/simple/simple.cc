@@ -88,7 +88,7 @@ int main() {
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nSubInt, numAbs);
 
-    AdaptAbsReach syn("simple3A_m3p3.log");
+    AdaptAbsReach syn("simple3A.log");
     syn.initialize(&system, simpleAddO, simpleAddG);
 
     TicToc tt_tot;
@@ -102,7 +102,7 @@ int main() {
 //    int minToBeValid = 2;
 //    int earlyBreak = 0;
 
-//    Reach abs("simple3AReachPlain.log");
+//    Reach abs("simple3Aprev.log");
 //    abs.initialize(&system, 0, simpleAddO);
 //    abs.initializeReach(simpleAddG, simpleAddI);
 
