@@ -65,15 +65,20 @@ auto simpleAddO = [](SymbolicSet* O) -> void {
     double h3[4] = {-6.7, 7.1, -1.9, 12};
     O->addPolytope(4, H, h3, OUTER);
 
-    double h6[4] = {-9.1, 9.5, -0, 10.1};
-    O->addPolytope(4, H, h6, OUTER);
-
     double h4[4] = {-2.5, 3.2, -3.7, 4.6};
     O->addPolytope(4, H, h4, OUTER);
 
     double h5[4] = {-5.39, 6.5, -4.9, 6.5};
     O->addPolytope(4, H, h5, OUTER);
-    ;
+
+    double h6[4] = {-7, 8.5, -7, 9};
+    O->addPolytope(4, H, h6, OUTER);
+
+    double h7[4] = {-0.5, 2, -6, 8};
+    O->addPolytope(4, H, h7, OUTER);
+
+    double h8[4] = {-9.1, 9.5, -0, 10.4};
+    O->addPolytope(4, H, h8, OUTER);
 };
 
 auto simpleAddI = [](SymbolicSet* I) -> void {

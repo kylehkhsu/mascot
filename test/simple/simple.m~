@@ -37,64 +37,43 @@ if (strcmp(mode, 'Z'))
     p5 = Z5.points;
     plot(p5(:,1),p5(:,2),'go');
 end
-if (strcmp(mode, 'D1'))
+if (strcmp(mode, 'D'))
     openfig('problem')
-    C1 = SymbolicSet('C/C1.bdd');
-    p1 = C1.points;
-    plot(p1(:,1),p1(:,2),'ko');
+    C = SymbolicSet('C/C1.bdd');
+    p = C.points;
+    plot(p(:,1),p(:,2),'ko');
     pause
-    
-    D2 = SymbolicSet('D/D21.bdd');
-    p2 = D2.points;
-    plot(p2(:,1),p2(:,2),'bo');
+    D1 = SymbolicSet('D1/1.bdd');
+    p = D1.points;
+    plot(p(:,1),p(:,2),'bo');
     pause
-    
-    Z2 = SymbolicSet('D/Z21.bdd');
-    p2 = Z2.points;
-    plot(p2(:,1),p2(:,2),'ro');
+    D2 = SymbolicSet('D2/1.bdd');
+    p = D2.points;
+    plot(p(:,1),p(:,2),'ro');
     pause
-    %
-    %       D3 = SymbolicSet('D/D22.bdd');
-    %       p3 = D3.points;
-    %       plot(p3(:,1),p3(:,2),'go');
-    %       title('D')
-    %       pause
-    
-    Z3 = SymbolicSet('D/Z22.bdd');
-    p4 = Z3.points;
-    plot(p4(:,1),p4(:,2),'yo');
-    
-    D3 = SymbolicSet('D/D31.bdd');
-    p3 = D3.points;
-    plot(p3(:,1),p3(:,2),'co');
-    title('D')
-    pause
-    
-    Z3 = SymbolicSet('D/Z31.bdd');
-    p4 = Z3.points;
-    plot(p4(:,1),p4(:,2),'mo');
 end
-if (strcmp(mode, 'D0'))
-    openfig('problem')
-    D1 = SymbolicSet('AdaptiveAbsResults/D0/D1.bdd');
-    p1 = D1.points;
-    plot(p1(:,1),p1(:,2),'bo');
-    pause
-    
-    D2 = SymbolicSet('AdaptiveAbsResults/D0/D2.bdd');
-    p2 = D2.points;
-    plot(p2(:,1),p2(:,2),'ro');
-end
-if (strcmp(mode, 'C'))
+
+if (strcmp(mode, 'CZ'))
     openfig('problem')
     
     for ii=1:controllers
+        if ii ~= 1
+            Z = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd']);
+            p = Z.points;
+            Zset = plot(p(:,1),p(:,2),'ro');
+            pause
+        end
+        
         C = SymbolicSet(['C/C' int2str(ii) '.bdd']);
         p = C.points;
         %         plotColor = colors(mod(ii,7)+1,:)*0.3+0.3;
-        set = plot(p(:,1),p(:,2),'ko');
-        pause
-        delete(set)
+        Cset = plot(p(:,1),p(:,2),'ko');
+        pause        
+        
+        if ii ~= 1
+            delete(Zset)
+        end
+        delete(Cset)        
     end
     %       C1 = SymbolicSet('C/C1.bdd');
     %       p1 = C1.points;
@@ -125,17 +104,17 @@ end
 
 if (strcmp(mode, 'T'))
     openfig('problem')
-    T1 = SymbolicSet('AdaptiveAbsResults/T/T1.bdd', 'projection', [1 2]);
+    T1 = SymbolicSet('T/T1.bdd', 'projection', [1 2]);
     p1 = T1.points;
     plot(p1(:,1),p1(:,2),'ko');
     pause
     
-    T2 = SymbolicSet('AdaptiveAbsResults/T/T2.bdd', 'projection', [1 2]);
+    T2 = SymbolicSet('T/T2.bdd', 'projection', [1 2]);
     p2 = T2.points;
     plot(p2(:,1),p2(:,2),'bo');
     pause
     
-    T3 = SymbolicSet('AdaptiveAbsResults/T/T3.bdd', 'projection', [1 2]);
+    T3 = SymbolicSet('T/T3.bdd', 'projection', [1 2]);
     p3 = T3.points;
     plot(p3(:,1),p3(:,2),'ro');
     title('T')

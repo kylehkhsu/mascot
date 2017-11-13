@@ -1,12 +1,57 @@
 
-function unicycle (mode, numAbs, controllers)
+function unicycle (mode, numAbs, controllers, progression)
   w = [0.05 0.05 0];
   addpath(genpath('../..'));
   addpath(genpath('~/ownCloud/C++/SCOTS_modified/mfiles/'));
   
   % colors
   colors=get(groot,'DefaultAxesColorOrder');
-  
+if (strcmp(mode, 'CZ'))
+    % visualize progression. black = sub-controller domain, red = sub-target
+    openfig('problem')
+    
+    if strcmp(progression, 'b')
+        for ii=1:controllers
+            if ii ~= 1
+                Z = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd']);
+                p = Z.points;
+                Zset = plot(p(:,1),p(:,2),'ro');
+                pause
+            end
+            
+            C = SymbolicSet(['C/C' int2str(ii) '.bdd']);
+            p = C.points;
+            %         plotColor = colors(mod(ii,7)+1,:)*0.3+0.3;
+            Cset = plot(p(:,1),p(:,2),'ko');
+            pause
+            
+            if ii ~= 1
+                delete(Zset)
+            end
+            delete(Cset)
+        end
+    elseif strcmp(progression, 'f')
+        for ii = controllers:-1:1
+            C = SymbolicSet(['C/C' int2str(ii) '.bdd']);
+            p = C.points;
+            %         plotColor = colors(mod(ii,7)+1,:)*0.3+0.3;
+            Cset = plot(p(:,1),p(:,2),'ko');
+            pause
+            
+            if ii ~= 1
+                Z = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd']);
+                p = Z.points;
+                Zset = plot(p(:,1),p(:,2),'ro');
+                pause
+            end       
+            
+            if ii ~= 1
+                delete(Zset)
+            end
+            delete(Cset)
+        end
+    end
+end
   if (strcmp(mode, 'S'))
     figure
     hold on
@@ -54,6 +99,24 @@ function unicycle (mode, numAbs, controllers)
    
     savefig('problem');
 
+  end
+  
+  if (strcmp(mode, 'T'))
+      openfig('problem')
+      T1 = SymbolicSet('T/T1.bdd', 'projection', [1 2]);
+      p1 = T1.points;
+      plot(p1(:,1),p1(:,2),'ko');
+      pause
+      
+      T2 = SymbolicSet('T/T2.bdd', 'projection', [1 2]);
+      p2 = T2.points;
+      plot(p2(:,1),p2(:,2),'bo');
+      pause
+      
+      T3 = SymbolicSet('T/T3.bdd', 'projection', [1 2]);
+      p3 = T3.points;
+      plot(p3(:,1),p3(:,2),'ro');
+      title('T')
   end
   
   

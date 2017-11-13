@@ -34,12 +34,5 @@ tau_:
 abstraction 0: 0.9
 abstraction 1: 0.45
 abstraction 2: 0.225
-----------------------------------------------------Compute abstractions:Elapsed time is 21.7715 seconds.
-----------------------------------------------------Compute abstractions:Elapsed time is 56.5958 seconds.
-----------------------------------------------------Compute abstractions:Elapsed time is 51.9725 seconds.
-----------------------------------------------------Compute abstractions:Elapsed time is 804.284 seconds.
-----------------------------------------------------Compute abstractions:Elapsed time is 31.1811 seconds.
-----------------------------------------------------Compute abstractions:Elapsed time is 0.041935 seconds.
-----------------------------------------------------Compute abstractions:Elapsed time is 1.679 seconds.
 Wrote Ts_ to file.
-------------------------------------Total time:Elapsed time is 1007.72 seconds.
+------------------------------------Total time:Elapsed time is 2012.09 seconds.

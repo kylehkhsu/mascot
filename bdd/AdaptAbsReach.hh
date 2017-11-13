@@ -141,17 +141,17 @@ public:
         if (ab == 0) {
             ReachResult result = reach(ab);
             if (result == CONVERGEDVALID) { // can't be NOTCONVERGED as m = infinity
-                if (finalCs_.size() > 0) {
-                    if (finalAbs_.back() == ab) { // extend last controller
-                        SymbolicSet* C = finalCs_.back();
-                        finalCs_.pop_back();
-                        delete(C);
-                        SymbolicSet* Z = finalZs_.back();
-                        finalZs_.pop_back();
-                        delete(Z);
-                        finalAbs_.pop_back();
-                    }
-                }
+//                if (finalCs_.size() > 0) { // merge controllers if possible; completely optional and in fact might be more informative to not
+//                    if (finalAbs_.back() == ab) {
+//                        SymbolicSet* C = finalCs_.back();
+//                        finalCs_.pop_back();
+//                        delete(C);
+//                        SymbolicSet* Z = finalZs_.back();
+//                        finalZs_.pop_back();
+//                        delete(Z);
+//                        finalAbs_.pop_back();
+//                    }
+//                }
                 saveCZ(ab);
                 validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
                 validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
@@ -166,7 +166,7 @@ public:
             else { // go finer
                 cout << "Going finer\n";
                 int nextAb = ab + 1;
-                eightToTen(ab, nextAb, sysNext, radNext, x, u); // when should this be done?
+                eightToTen(ab, nextAb, sysNext, radNext, x, u); // depends on validZs_[ab]
                 finer(Zs_[ab], Zs_[nextAb], ab);
                 Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                 validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
@@ -195,17 +195,17 @@ public:
 //            }
             ReachResult result = reach(ab, m_);
             if (result != CONVERGEDINVALID) { // valid controller
-                if (finalCs_.size() > 0) {
-                    if (finalAbs_.back() == ab) { // extend last controller
-                        SymbolicSet* C = finalCs_.back();
-                        finalCs_.pop_back();
-                        delete(C);
-                        SymbolicSet* Z = finalZs_.back();
-                        finalZs_.pop_back();
-                        delete(Z);
-                        finalAbs_.pop_back();
-                    }
-                }
+//                if (finalCs_.size() > 0) { // merge controllers if possible; completely optional and in fact might be more informative to not
+//                    if (finalAbs_.back() == ab) { // extend last controller
+//                        SymbolicSet* C = finalCs_.back();
+//                        finalCs_.pop_back();
+//                        delete(C);
+//                        SymbolicSet* Z = finalZs_.back();
+//                        finalZs_.pop_back();
+//                        delete(Z);
+//                        finalAbs_.pop_back();
+//                    }
+//                }
                 saveCZ(ab);
                 validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
                 validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
@@ -236,8 +236,9 @@ public:
                     eightToTen(ab, nextAb, sysNext, radNext, x, u);
                 }
                 coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
+                Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                 validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                validCs_[nextAb]->symbolicSet_ = Cs_[nextAb]->symbolicSet_;
+//                validCs_[nextAb]->symbolicSet_ = Cs_[nextAb]->symbolicSet_;
                 onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 return;
             }
