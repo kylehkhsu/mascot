@@ -121,8 +121,7 @@ public:
         Ds_[0]->addGridPoints();
         computeAbstraction(0, sysNext, radNext, x, u);
         int ab = 0;
-        int justCoarsed = 0;
-        onTheFlyReachRecurse(ab, justCoarsed, sysNext, radNext, x, u);
+        onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
 
         checkMakeDir("C");
         saveVec(finalCs_, "C/C");
@@ -135,26 +134,29 @@ public:
     }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
-    void onTheFlyReachRecurse(int ab, int justCoarsed, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+    void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         cout << "current abstraction: " << ab << '\n';
         cout << "controllers: " << finalCs_.size() << '\n';
 
         if (ab == 0) {
             ReachResult result = reach(ab);
             if (result == CONVERGEDVALID) { // can't be NOTCONVERGED as m = infinity
+                if (finalCs_.size() > 0) {
+                    if (finalAbs_.back() == ab) { // extend last controller
+                        SymbolicSet* C = finalCs_.back();
+                        finalCs_.pop_back();
+                        delete(C);
+                        SymbolicSet* Z = finalZs_.back();
+                        finalZs_.pop_back();
+                        delete(Z);
+                        finalAbs_.pop_back();
+                    }
+                }
                 saveCZ(ab);
                 validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
                 validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
             }
             else { // result == CONVERGEDINVALID
-                if (justCoarsed && finalCs_.size() > 0) { // we want to extend the last controller saved
-                    SymbolicSet* C = finalCs_.back();
-                    finalCs_.pop_back();
-                    delete(C);
-                    SymbolicSet* Z = finalZs_.back();
-                    finalZs_.pop_back();
-                    delete(Z);
-                }
                 Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
                 Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
             }
@@ -168,7 +170,7 @@ public:
                 finer(Zs_[ab], Zs_[nextAb], ab);
                 Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                 validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                onTheFlyReachRecurse(nextAb, 0, sysNext, radNext, x, u);
+                onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 return;
             }
         }
@@ -193,19 +195,22 @@ public:
 //            }
             ReachResult result = reach(ab, m_);
             if (result != CONVERGEDINVALID) { // valid controller
+                if (finalCs_.size() > 0) {
+                    if (finalAbs_.back() == ab) { // extend last controller
+                        SymbolicSet* C = finalCs_.back();
+                        finalCs_.pop_back();
+                        delete(C);
+                        SymbolicSet* Z = finalZs_.back();
+                        finalZs_.pop_back();
+                        delete(Z);
+                        finalAbs_.pop_back();
+                    }
+                }
                 saveCZ(ab);
                 validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
                 validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
             }
             else {
-                if (justCoarsed && finalCs_.size() > 0) {
-                    SymbolicSet* C = finalCs_.back();
-                    finalCs_.pop_back();
-                    delete(C);
-                    SymbolicSet* Z = finalZs_.back();
-                    finalZs_.pop_back();
-                    delete(Z);
-                }
                 Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_;
                 Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
             }
@@ -220,7 +225,7 @@ public:
                     finer(Zs_[ab], Zs_[nextAb], ab);
                     Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                     validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                    onTheFlyReachRecurse(nextAb, 0, sysNext, radNext, x, u);
+                    onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                     return;
                 }
             }
@@ -233,7 +238,7 @@ public:
                 coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
                 validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
                 validCs_[nextAb]->symbolicSet_ = Cs_[nextAb]->symbolicSet_;
-                onTheFlyReachRecurse(nextAb, 1, sysNext, radNext, x, u);
+                onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
                 return;
             }
         }
@@ -801,6 +806,7 @@ public:
         SymbolicSet* Z = new SymbolicSet(*Xs_[ab]);
         Z->symbolicSet_ = Zs_[ab]->symbolicSet_;
         finalZs_.push_back(Z);
+        finalAbs_.push_back(ab);
     }
 };
 }
