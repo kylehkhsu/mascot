@@ -14,7 +14,7 @@ using namespace scots;
 #define dimU 2
 
 /* disturbance */
-const double w[dimX] = {0.1, 0.1};
+const double w[dimX] = {0.05, 0.05};
 
 /* data types for the ode solver */
 typedef std::array<double, dimX> X_type;
@@ -41,33 +41,50 @@ auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
     solver(radODE, r, u);
 };
 
-auto simpleAddO = [](SymbolicSet* O) -> void {
-    double H[4*2]={-1, 0,
-                      1, 0,
-                      0,-1,
-                      0, 1};
-     double h1[4] = {-4, 5, 1, 9.6};
-    O->addPolytope(4, H, h1, OUTER);
-};
-
 auto simpleAddG = [](SymbolicSet* G) -> void {
     double H[4*2]={-1, 0,
-                      1, 0,
-                      0,-1,
-                      0, 1};
-    double c[4] = {-9, 11, -9, 11};
-    G->addPolytope(4, H, c, INNER);
+                    1, 0,
+                    0,-1,
+                    0, 1};
+    double h1[4] = {-9.5, 11.4, 0, 3};
+    G->addPolytope(4, H, h1, INNER);
+};
+
+auto simpleAddO = [](SymbolicSet* O) -> void {
+    double H[4*2]={-1, 0,
+                    1, 0,
+                    0,-1,
+                    0, 1};
+
+    double h1[4] = {-1.9, 2.3, -1.9, 12};
+    O->addPolytope(4, H, h1, OUTER);
+
+    double h2[4] = {-4.3, 4.7, -0, 10.1};
+    O->addPolytope(4, H, h2, OUTER);
+
+    double h3[4] = {-6.7, 7.1, -1.9, 12};
+    O->addPolytope(4, H, h3, OUTER);
+
+    double h6[4] = {-9.1, 9.5, -0, 10.1};
+    O->addPolytope(4, H, h6, OUTER);
+
+    double h4[4] = {-2.5, 3.2, -3.7, 4.6};
+    O->addPolytope(4, H, h4, OUTER);
+
+    double h5[4] = {-5.39, 6.5, -4.9, 6.5};
+    O->addPolytope(4, H, h5, OUTER);
+    ;
 };
 
 auto simpleAddI = [](SymbolicSet* I) -> void {
-    double q[2] = {1, 1};
+    double q[3] = {0.55, 10.85, -M_PI/2};
     I->addPoint(q);
 };
 
 int main() {
 
     double lbX[dimX]={0, 0};
-    double ubX[dimX]={10.4, 10.4};
+    double ubX[dimX]={11.4, 11.4};
 
     double lbU[dimU]={-1.3, -1.3};
     double ubU[dimU]= {1.3, 1.3};
@@ -80,8 +97,8 @@ int main() {
     double tauRatio = 2;
     int nSubInt = 5;
 
-    double etaX[dimX]= {0.8, 0.8};
-    double tau = 1.2;
+    double etaX[dimX]= {0.6, 0.6};
+    double tau = 0.9;
     int numAbs = 3;
 
     System system(dimX, lbX, ubX, etaX, tau,

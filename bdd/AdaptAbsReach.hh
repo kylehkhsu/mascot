@@ -50,6 +50,7 @@ public:
     vector<SymbolicSet*> validCs_; /*!< Controllers that act as savepoints. */
     vector<SymbolicSet*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
+    vector<int> finalAbs_; /*!< Sequence of abstraction layer indices of finalCs_. */
     vector<SymbolicSet*> Ds_; /*!< Instance of *Xs_[i] containing possible winning states. */
     vector<SymbolicSet*> innerDs_;
     vector<SymbolicSet*> computedDs_;
@@ -114,7 +115,7 @@ public:
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReach(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         m_ = 5; // max. iterations for consecutive reachability for non-coarsest layers
-        p_ = 10; // coarsest layer uncontrollable-pred. parameter
+        p_ = 5; // coarsest layer uncontrollable-pred. parameter
 
         // start by synthesizing the full transition relation for the coarsest abstraction
         Ds_[0]->addGridPoints();
@@ -135,15 +136,18 @@ public:
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReachRecurse(int ab, int justCoarsed, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        cout << "current abstraction: " << ab << '\n';
+        cout << "controllers: " << finalCs_.size() << '\n';
+
         if (ab == 0) {
             ReachResult result = reach(ab);
-            if (result != CONVERGEDINVALID) { // valid controller
+            if (result == CONVERGEDVALID) { // can't be NOTCONVERGED as m = infinity
                 saveCZ(ab);
                 validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
                 validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
             }
-            else {
-                if (justCoarsed && finalCs_.size() > 0) {
+            else { // result == CONVERGEDINVALID
+                if (justCoarsed && finalCs_.size() > 0) { // we want to extend the last controller saved
                     SymbolicSet* C = finalCs_.back();
                     finalCs_.pop_back();
                     delete(C);
@@ -151,7 +155,7 @@ public:
                     finalZs_.pop_back();
                     delete(Z);
                 }
-                Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_;
+                Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
                 Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
             }
             if (*system_->numAbs_ == 1) {
@@ -160,11 +164,10 @@ public:
             else { // go finer
                 cout << "Going finer\n";
                 int nextAb = ab + 1;
-                eightToTen(ab, nextAb, sysNext, radNext, x, u);
-                if (result != CONVERGEDINVALID) {
-                    finer(Zs_[ab], Zs_[nextAb], ab);
-                    validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                }
+                eightToTen(ab, nextAb, sysNext, radNext, x, u); // when should this be done?
+                finer(Zs_[ab], Zs_[nextAb], ab);
+                Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+                validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
                 onTheFlyReachRecurse(nextAb, 0, sysNext, radNext, x, u);
                 return;
             }
@@ -214,14 +217,14 @@ public:
                     cout << "Going finer\n";
                     int nextAb = ab + 1;
                     eightToTen(ab, nextAb, sysNext, radNext, x, u);
-                    if (result == CONVERGEDVALID) {
-                        finer(Zs_[ab], Zs_[nextAb], ab);
-                        validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                    }
+                    finer(Zs_[ab], Zs_[nextAb], ab);
+                    Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+                    validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
                     onTheFlyReachRecurse(nextAb, 0, sysNext, radNext, x, u);
+                    return;
                 }
             }
-            else { // go coarser
+            else { // not converged, go coarser
                 cout << "Going coarser\n";
                 int nextAb = ab - 1;
                 if (nextAb != 0) { // pointless to do for coarsest layer
@@ -238,37 +241,17 @@ public:
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void eightToTen(int curAb, int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        Ds_[curAb]->symbolicSet_ = savedZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_;
-        innerDs_[curAb]->symbolicSet_ = savedZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_;
+        Ds_[curAb]->symbolicSet_ = validZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_; // target for uncontrollable reach
+        innerDs_[curAb]->symbolicSet_ = validZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_;
         for (int c = curAb - 1; c >= 0; c--) {
             coarserOuter(Ds_[c], Ds_[c+1], c); // compounding outer approximations?
             coarserInner(innerDs_[c], innerDs_[c+1], c);
         }
-        Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, p_) & (!innerDs_[0]->symbolicSet_);
+        Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, p_); // do uncontrollable reach
+        Ds_[0]->symbolicSet_ &= (!innerDs_[0]->symbolicSet_); // states to do abstraction for
         for (int c = 0; c < nextAb; c++) {
             finer(Ds_[c], Ds_[c+1], c);
         }
-
-//        checkMakeDir("D0");
-//        if (!(std::ifstream("D0/D1.bdd"))) {
-//            Ds_[0]->writeToFile("D0/D1.bdd");
-//        } else if (!(std::ifstream("D0/D2.bdd"))) {
-//            Ds_[0]->writeToFile("D0/D2.bdd");
-//        } else if (!(std::ifstream("D0/D3.bdd"))) {
-//            Ds_[0]->writeToFile("D0/D3.bdd");
-//        } else if (!(std::ifstream("D0/D4.bdd"))) {
-//            Ds_[0]->writeToFile("D0/D4.bdd");
-//        }
-
-//        if (nextAb == 1) {
-//            checkMakeDir("D");
-//            Ds_[nextAb]->writeToFile("D/D2.bdd");
-//        }
-//        if (nextAb == 2) {
-//            checkMakeDir("D");
-//            Ds_[nextAb]->writeToFile("D/D3.bdd");
-//        }
-
         computeAbstraction(nextAb, sysNext, radNext, x, u);
     }
 
@@ -278,14 +261,14 @@ public:
         while (1) {
             cout << "iteration: " << i << '\n';
 
-//            if (ab != 0) {
-//                Zs_[ab]->printInfo(1);
-//            }
+            if (ab != 0) {
+                Zs_[ab]->printInfo(1);
+            }
             BDD cPreZ = cPre(Zs_[ab]->symbolicSet_, ab);
             BDD C = cPreZ | Gs_[ab]->symbolicSet_;
             BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
             Cs_[ab]->symbolicSet_ |= N;
-            Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]);
+            Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_; // the disjunction part is new
 
             if (N == ddmgr_->bddZero() && i != 1) {
                 if (i >= minToBeValid_) {
@@ -317,42 +300,51 @@ public:
         computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
         Ds_[ab]->symbolicSet_ = D;
 
-//        if (ab == 1) {
-//            checkMakeDir("D");
-//            if (std::ifstream("D/D21.bdd")){
-//                Ds_[ab]->writeToFile("D/D22.bdd");
-//            } else {
-//                Ds_[ab]->writeToFile("D/D21.bdd");
-//            }
-
-//        }
-//        if (ab == 2) {
-//            checkMakeDir("D");
-////            Ds_[ab]->writeToFile("D/D3.bdd");
-//            if (std::ifstream("D/D31.bdd")){
-//                Ds_[ab]->writeToFile("D/D32.bdd");
-//            } else {
-//                Ds_[ab]->writeToFile("D/D31.bdd");
-//            }
-//        }
-
-//        // just for debugging
-//        Ds_[ab]->addGridPoints();
-//        if (ab != 0) {
-//            Ds_[ab]->symbolicSet_ &= !Os_[ab]->symbolicSet_;
-//        }
-//        // end debugging
+        if (ab == 1) {
+            checkMakeDir("D1");
+            if (!(std::ifstream("D1/1.bdd"))) {
+                Ds_[1]->writeToFile("D1/1.bdd");
+            } else if (!(std::ifstream("D1/2.bdd"))) {
+                Ds_[1]->writeToFile("D1/2.bdd");
+            } else if (!(std::ifstream("D1/3.bdd"))) {
+                Ds_[1]->writeToFile("D1/3.bdd");
+            } else if (!(std::ifstream("D1/4.bdd"))) {
+                Ds_[1]->writeToFile("D1/4.bdd");
+            } else if (!(std::ifstream("D1/5.bdd"))) {
+                Ds_[1]->writeToFile("D1/5.bdd");
+            } else if (!(std::ifstream("D1/6.bdd"))) {
+                Ds_[1]->writeToFile("D1/6.bdd");
+            }
+        }
+        if (ab == 2) {
+            checkMakeDir("D2");
+            if (!(std::ifstream("D2/1.bdd"))) {
+                Ds_[2]->writeToFile("D2/1.bdd");
+            } else if (!(std::ifstream("D2/2.bdd"))) {
+                Ds_[2]->writeToFile("D2/2.bdd");
+            } else if (!(std::ifstream("D2/3.bdd"))) {
+                Ds_[2]->writeToFile("D2/3.bdd");
+            } else if (!(std::ifstream("D2/4.bdd"))) {
+                Ds_[2]->writeToFile("D2/4.bdd");
+            } else if (!(std::ifstream("D2/5.bdd"))) {
+                Ds_[2]->writeToFile("D2/5.bdd");
+            } else if (!(std::ifstream("D2/6.bdd"))) {
+                Ds_[2]->writeToFile("D2/6.bdd");
+            }
+        }
 
 
         SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
         abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[0]);
-        Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
-        Ts_[ab]->printInfo(1);
-        TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
-        if (ab == 0) {
-            uT_->symbolicSet_ = Ts_[0]->symbolicSet_; // "necessary" transition relation for coarsest layer (for uncontrollable reaching)
-            Ts_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_; // actual transition relation for coarsest layer
-            TTs_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
+        if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
+            Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
+            Ts_[ab]->printInfo(1);
+            TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
+            if (ab == 0) {
+                uT_->symbolicSet_ = Ts_[0]->symbolicSet_; // "necessary" transition relation for coarsest layer (for uncontrollable reaching)
+                Ts_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_; // actual transition relation for coarsest layer
+                TTs_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
+            }
         }
     }
 
@@ -792,7 +784,7 @@ public:
         checkMakeDir("plotting");
         Xs_[0]->writeToFile("plotting/X.bdd");
         Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
-        Gs_[*this->system_->numAbs_-1]->writeToFile("plotting/G.bdd");
+        Gs_[*system_->numAbs_-1]->writeToFile("plotting/G.bdd");
         checkMakeDir("O");
         saveVec(Os_, "O/O");
         checkMakeDir("G");
