@@ -34,5 +34,648 @@ tau_:
 abstraction 0: 0.9
 abstraction 1: 0.45
 abstraction 2: 0.225
+m: 2
+p: 1
+
+current abstraction: 0
+controllers: 0
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 1
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 2
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 3
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 3
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 4
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 4
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 5
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 5
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 5
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 6
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 6
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 7
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 7
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 8
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 8
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 9
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 9
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 10
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 10
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 11
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 11
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 12
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 12
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 13
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 13
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 14
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 14
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 15
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 15
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 16
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 17
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 18
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 19
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 19
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 19
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 20
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 20
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 21
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 21
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 22
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 22
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 23
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 23
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 24
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 24
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 25
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 25
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 26
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 26
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 27
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 27
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 28
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 28
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 29
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 29
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 30
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 30
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 31
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 31
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 32
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 32
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 33
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 33
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 34
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 34
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 35
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 36
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 37
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 38
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 38
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 39
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 39
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 40
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 40
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 41
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 42
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 43
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 43
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 43
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 44
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 44
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 45
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 45
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 46
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 46
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 47
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 47
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 48
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 48
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 49
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 49
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 50
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 50
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 51
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 51
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 52
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 52
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 53
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 53
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 54
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 55
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 56
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 56
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 57
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 57
+result: converged invalid
+reset to valids
 Wrote Ts_ to file.
-------------------------------------Total time:Elapsed time is 1.99069 seconds.
+------------------------------------Total time:Elapsed time is 2.00164 seconds.

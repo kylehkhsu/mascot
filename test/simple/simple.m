@@ -59,6 +59,7 @@ if (strcmp(mode, 'CZ'))
     
     if strcmp(progression, 'b')
         for ii=1:controllers
+            disp(num2str(ii))
             if ii ~= 1
                 Z = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd']);
                 p = Z.points;
@@ -79,6 +80,7 @@ if (strcmp(mode, 'CZ'))
         end
     elseif strcmp(progression, 'f')
         for ii = controllers:-1:1
+            disp(num2str(ii))
             C = SymbolicSet(['C/C' int2str(ii) '.bdd']);
             p = C.points;
             %         plotColor = colors(mod(ii,7)+1,:)*0.3+0.3;
@@ -215,7 +217,7 @@ if (strcmp(mode,'R'))
             if (mod(j,1) == 0)
                 plot(x(:,1),x(:,2),'k.-')
                 drawnow
-                pause
+%                 pause
             end
             
             if (G.isElement(x(end,:)))

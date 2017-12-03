@@ -68,7 +68,7 @@ auto simpleAddO = [](SymbolicSet* O) -> void {
     double h4[4] = {-2.5, 3.2, -3.7, 4.6};
     O->addPolytope(4, H, h4, OUTER);
 
-    double h5[4] = {-5.39, 6.5, -4.9, 6.5};
+    double h5[4] = {-5.39, 6.5, -3, 6.5};
     O->addPolytope(4, H, h5, OUTER);
 
     double h6[4] = {-7, 8.5, -7, 9};

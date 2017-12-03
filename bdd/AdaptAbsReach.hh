@@ -114,8 +114,10 @@ public:
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReach(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        m_ = 5; // max. iterations for consecutive reachability for non-coarsest layers
-        p_ = 5; // coarsest layer uncontrollable-pred. parameter
+        m_ = 2; // max. iterations for consecutive reachability for non-coarsest layers
+        p_ = 1; // coarsest layer uncontrollable-pred. parameter
+        clog << "m: " << m_ << '\n';
+        clog << "p: " << p_ << '\n';
 
         // start by synthesizing the full transition relation for the coarsest abstraction
         Ds_[0]->addGridPoints();
@@ -131,42 +133,71 @@ public:
         saveVec(Ts_, "T/T");
         clog << "Wrote Ts_ to file.\n";
         return;
-    }
+    }    
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        cout << '\n';
+        clog << '\n';
         cout << "current abstraction: " << ab << '\n';
         cout << "controllers: " << finalCs_.size() << '\n';
+        clog << "current abstraction: " << ab << '\n';
+        clog << "controllers: " << finalCs_.size() << '\n';
 
+        ReachResult result;
         if (ab == 0) {
-            ReachResult result = reach(ab);
-            if (result == CONVERGEDVALID) { // can't be NOTCONVERGED as m = infinity
-//                if (finalCs_.size() > 0) { // merge controllers if possible; completely optional and in fact might be more informative to not
-//                    if (finalAbs_.back() == ab) {
-//                        SymbolicSet* C = finalCs_.back();
-//                        finalCs_.pop_back();
-//                        delete(C);
-//                        SymbolicSet* Z = finalZs_.back();
-//                        finalZs_.pop_back();
-//                        delete(Z);
-//                        finalAbs_.pop_back();
-//                    }
+            result = reach(ab);
+        }
+        else {
+            result = reach(ab, m_);
+        }
+        if (result == CONVERGEDVALID) {
+            cout << "result: converged valid\n";
+            clog << "result: converged valid\n";
+        }
+        else if (result == CONVERGEDINVALID) {
+            cout << "result: converged invalid\n";
+            clog << "result: converged invalid\n";
+        }
+        else {
+            cout << "result: not converged\n";
+            clog << "result: not converged\n";
+        }
+
+        if (result != CONVERGEDINVALID) {
+//            if (finalCs_.size() > 0) { // merge controllers if possible; completely optional and in fact might be more informative to not
+//                if (finalAbs_.back() == ab) {
+//                    SymbolicSet* C = finalCs_.back();
+//                    finalCs_.pop_back();
+//                    delete(C);
+//                    SymbolicSet* Z = finalZs_.back();
+//                    finalZs_.pop_back();
+//                    delete(Z);
+//                    finalAbs_.pop_back();
 //                }
-                saveCZ(ab);
-                validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
-                validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
-            }
-            else { // result == CONVERGEDINVALID
-                Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
-                Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
-            }
-            if (*system_->numAbs_ == 1) {
+//            }
+            saveCZ(ab);
+            validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
+            cout << "saved as snapshot, saved to valids\n";
+            clog << "saved as snapshot, saved to valids\n";
+        }
+        else { // result is CONVERGEDINVALID
+            Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
+            Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
+            cout << "reset to valids\n";
+            clog << "reset to valids\n";
+        }
+
+        if (result != NOTCONVERGED) { // ab = 0 always converges
+            if (ab == *system_->numAbs_ - 1) {
                 return;
             }
             else { // go finer
                 cout << "Going finer\n";
+                clog << "Going finer\n";
                 int nextAb = ab + 1;
-                eightToTen(ab, nextAb, sysNext, radNext, x, u); // depends on validZs_[ab]
+                eightToTen(ab, nextAb, sysNext, radNext, x, u);
                 finer(Zs_[ab], Zs_[nextAb], ab);
                 Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                 validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
@@ -174,74 +205,18 @@ public:
                 return;
             }
         }
-        else {
-//            if (ab == 1) {
-//                checkMakeDir("D");
-//                if (std::ifstream("D/Z21.bdd")){
-//                    Zs_[ab]->writeToFile("D/Z22.bdd");
-//                } else {
-//                    Zs_[ab]->writeToFile("D/Z21.bdd");
-//                }
-
-//            }
-//            if (ab == 2) {
-//                checkMakeDir("D");
-////                Zs_[ab]->writeToFile("D/Z3.bdd");
-//                if (std::ifstream("D/Z31.bdd")){
-//                    Zs_[ab]->writeToFile("D/Z32.bdd");
-//                } else {
-//                    Zs_[ab]->writeToFile("D/Z31.bdd");
-//                }
-//            }
-            ReachResult result = reach(ab, m_);
-            if (result != CONVERGEDINVALID) { // valid controller
-//                if (finalCs_.size() > 0) { // merge controllers if possible; completely optional and in fact might be more informative to not
-//                    if (finalAbs_.back() == ab) { // extend last controller
-//                        SymbolicSet* C = finalCs_.back();
-//                        finalCs_.pop_back();
-//                        delete(C);
-//                        SymbolicSet* Z = finalZs_.back();
-//                        finalZs_.pop_back();
-//                        delete(Z);
-//                        finalAbs_.pop_back();
-//                    }
-//                }
-                saveCZ(ab);
-                validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
-                validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
+        else { // not converged, go coarser
+            cout << "Going coarser\n";
+            clog << "Going coarser\n";
+            int nextAb = ab - 1;
+            if (nextAb != 0) { // pointless to do for coarsest layer
+                eightToTen(ab, nextAb, sysNext, radNext, x, u);
             }
-            else {
-                Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_;
-                Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
-            }
-            if (result != NOTCONVERGED) { // converged
-                if (ab == *system_->numAbs_ - 1) {
-                    return;
-                }
-                else { // go finer
-                    cout << "Going finer\n";
-                    int nextAb = ab + 1;
-                    eightToTen(ab, nextAb, sysNext, radNext, x, u);
-                    finer(Zs_[ab], Zs_[nextAb], ab);
-                    Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
-                    validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                    onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
-                    return;
-                }
-            }
-            else { // not converged, go coarser
-                cout << "Going coarser\n";
-                int nextAb = ab - 1;
-                if (nextAb != 0) { // pointless to do for coarsest layer
-                    eightToTen(ab, nextAb, sysNext, radNext, x, u);
-                }
-                coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
-                Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
-                validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-//                validCs_[nextAb]->symbolicSet_ = Cs_[nextAb]->symbolicSet_;
-                onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
-                return;
-            }
+            coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
+            Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+            validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+            onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+            return;
         }
     }
 
@@ -339,7 +314,6 @@ public:
             }
         }
 
-
         SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
         abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[0]);
         if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
@@ -397,7 +371,7 @@ public:
         // {(x,u)} with no posts outside of winning set
         BDD nF = !Fbdd;
         // get rid of junk
-        BDD preF = TTs_[curAbs]->symbolicSet_.AndAbstract(nF, *notXUvars_[curAbs]);
+        BDD preF = TTs_[curAbs]->symbolicSet_.AndAbstract(nF, *notXUvars_[curAbs]);        
         return preF;
     }
 
