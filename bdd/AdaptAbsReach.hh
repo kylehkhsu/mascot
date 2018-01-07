@@ -114,7 +114,7 @@ public:
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReach(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        m_ = 2; // max. iterations for consecutive reachability for non-coarsest layers
+        m_ = 4; // max. iterations for consecutive reachability for non-coarsest layers
         p_ = 1; // coarsest layer uncontrollable-pred. parameter
         clog << "m: " << m_ << '\n';
         clog << "p: " << p_ << '\n';
@@ -314,10 +314,12 @@ public:
             }
         }
 
-        SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
-        abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[0]);
+        SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]); // was hard-coded to 0, source of "tunneling" bug
+        abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]);
         if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
             Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
+//            BDD O2 = Os_[ab]->symbolicSet_.Permute(permutesXtoX2_[ab]); // causes unsound behavior, leaving here as warning
+//            Ts_[ab]->symbolicSet_ &= !O2;
             Ts_[ab]->printInfo(1);
             TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
             if (ab == 0) {

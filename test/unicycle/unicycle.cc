@@ -4,6 +4,7 @@
 #define _USE_MATH_DEFINES
 
 #include "Reach.hh"
+#include "AdaptAbsReach.hh"
 
 using namespace std;
 using namespace scots;
@@ -95,8 +96,6 @@ int main() {
     double tauRatio = 2;
 
     int numAbs = 3;
-    int startAbs = 0;
-    int readAbs = 0;
 
     X_type x;
     U_type u;
@@ -105,14 +104,25 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    Reach abs("unicycle3A.txt");
-    abs.initialize(&unicycle, readAbs, unicycleAddO);
-    abs.initializeReach(unicycleAddG, unicycleAddI);
-//    abs.computeAbstractions(sysNext, radNext, x, u);
+    AdaptAbsReach abs("unicycle_3A_adaptabs.txt");
+    abs.initialize(&unicycle, unicycleAddO, unicycleAddG);
 
+    TicToc tt_tot;
+    tt_tot.tic();
+    abs.onTheFlyReach(sysNext, radNext, x, u);
+    clog << "------------------------------------Total time:";
+    tt_tot.toc();
+
+//    int readAbs = 0;
+//    int startAbs = 0;
 //    int minToGoCoarser = 6;
 //    int minToBeValid = 6;
 //    int earlyBreak = 0;
+
+//    Reach abs("unicycle_3A_HSCC.log");
+//    abs.initialize(&unicycle, readAbs, unicycleAddO);
+//    abs.initializeReach(unicycleAddG, unicycleAddI);
+//    abs.computeAbstractions(sysNext, radNext, x, u);
 
 //    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
 }
