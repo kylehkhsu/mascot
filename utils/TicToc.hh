@@ -14,27 +14,28 @@
 /* class: TicToc 
  * helper class to measure elapsed time based on std::chrono library */
 class TicToc {
-  private:
+private:
     std::chrono::high_resolution_clock::time_point start;
     std::chrono::high_resolution_clock::time_point stop;
-  public:
+public:
     TicToc(){};
     ~TicToc(){};
 
-    /* function: tic 
-     * set start time 
+    /* function: tic
+     * set start time
      */
     inline void tic(void) {
-      start=std::chrono::high_resolution_clock::now();
+        start=std::chrono::high_resolution_clock::now();
     }
-    /* function: toc 
-     * set stop time and print out elapsed time since last call of tic()
+    /* function: toc
+     * set stop time and return elapsed time since last call of tic()
      */
-    inline void toc(void) {
-      stop=std::chrono::high_resolution_clock::now();
-      std::chrono::duration<double> dt;
-      dt=std::chrono::duration_cast<std::chrono::duration<double > >(stop-start);
-      std::clog << "Elapsed time is " << dt.count() << " seconds." << std::endl;
+    inline double toc(void) {
+        stop=std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> dt;
+        dt=std::chrono::duration_cast<std::chrono::duration<double > >(stop-start);
+        //      std::clog << "Elapsed time is " << dt.count() << " seconds." << std::endl;
+        return dt.count();
     }
 };
 

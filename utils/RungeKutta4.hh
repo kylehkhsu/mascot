@@ -18,7 +18,9 @@ private:
   const int nint_;
   /* intermidiate step size = tau_/nint_ */
   const double h_;
+
 public:
+  const double tau_;
   /* function: OdeSolver
    *
    * Input:
@@ -26,7 +28,7 @@ public:
    * nint - number of intermediate steps
    * tau - sampling time
    */
-  OdeSolver(const int dim, const int nint, const double tau) : dim_(dim), nint_(nint), h_(tau/nint) { }
+  OdeSolver(const int dim, const int nint, const double tau) : dim_(dim), nint_(nint), h_(tau/nint), tau_(tau) { }
 
   /* function: ()
    *
