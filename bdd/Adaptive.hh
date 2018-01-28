@@ -280,8 +280,8 @@ public:
         }
         clog << "Ts_ initialized with empty domain.\n";
 
-        TicToc tt;
-        tt.tic();
+        TicToc timer;
+        timer.tic();
         if (readAbs_ == 0) {
             for (int i = 0; i < *system_->numAbs_; i++) {
                 SymbolicModelGrowthBound<X_type, U_type> Ab(Xs_[i], U_, X2s_[i]);
@@ -295,8 +295,7 @@ public:
             loadTs();
         }
 
-        clog << "------------------------------------------------computeAbstractions: ";
-        tt.toc();
+        clog << "------------------------------------------------computeAbstractions: " << timer.toc() << " seconds.\n";
 
         if (readAbs_ == 0) {
             checkMakeDir("T");

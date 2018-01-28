@@ -235,8 +235,8 @@ public:
         earlyBreak_ = earlyBreak;
         verbose_ = verbose;
 
-        TicToc tt;
-        tt.tic();
+        TicToc timer;
+        timer.tic();
 
         // removing obstacles from transition relation
         this->removeFromTs(&(this->Os_));
@@ -264,8 +264,7 @@ public:
         saveVec(finalCs_, "C/C");
         checkMakeDir("Z");
         saveVec(finalZs_, "Z/Z");
-        clog << "----------------------------------------reach: ";
-        tt.toc();
+        clog << "----------------------------------------reach: " << timer.toc() << " seconds.\n";
 
         if (reached) {
             cout << "Won.\n";
@@ -286,14 +285,13 @@ public:
     template<class G_type, class I_type>
     void initializeReach(G_type addG, I_type addI) {
 
-        TicToc tt;
-        tt.tic();
+        TicToc timer;
+        timer.tic();
         this->initializeSpec(&Gs_, addG);
         clog << "Gs_ initialized.\n";
         this->initializeSpec(&Is_, addI);
         clog << "Is_ initialized.\n";
-        clog << "------------------------------------------------initializeSpec on Gs_, Is_, Os_: ";
-        tt.toc();
+        clog << "------------------------------------------------initializeSpec on Gs_, Is_, Os_: " << timer.toc() << " seconds.\n";
 
         // checking that specification is valid
         for (int i = 0; i < *this->system_->numAbs_; i++) {

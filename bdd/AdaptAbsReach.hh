@@ -56,7 +56,7 @@ public:
     vector<SymbolicSet*> computedDs_;
     vector<SymbolicSet*> savedZs_;
 
-    SymbolicSet* uT_;
+    vector<SymbolicSet*> uTs_; /*!< Transition relations for exploring, i.e. all with coarsest space gridding but varying time sampling. */
 
     int minToGoCoarser_;
     int minToBeValid_;
@@ -66,6 +66,9 @@ public:
     int m_;
     int p_;
 
+    double abTime_;
+    double synTime_;
+
     /*!	Constructor for an AdaptAbsReach object.
      *  \param[in]  logFile     Filename of program log.
      */
@@ -73,10 +76,14 @@ public:
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
 
+        abTime_ = 0;
+        synTime_ = 0;
         minToBeValid_ = 4;
     }
     /*! Destructor for an AdaptAbsReach object. */
     ~AdaptAbsReach() {
+        clog << "Abstraction construction time: " << abTime_ << " seconds.\n";
+        clog << "Controller synthesis time: " << synTime_ << " seconds.\n";
         deleteVecArray(etaXs_);
         deleteVec(tau_);
         deleteVec(Xs_);
@@ -107,21 +114,31 @@ public:
         deleteVec(innerDs_);
         deleteVec(computedDs_);
         deleteVec(savedZs_);
-        delete uT_;
+        deleteVec(uTs_);
         fclose(stderr);
         delete ddmgr_;
     }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
-    void onTheFlyReach(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        m_ = 4; // max. iterations for consecutive reachability for non-coarsest layers
-        p_ = 1; // coarsest layer uncontrollable-pred. parameter
+    void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
+        p_ = p; // coarsest layer uncontrollable-pred. parameter
         clog << "m: " << m_ << '\n';
         clog << "p: " << p_ << '\n';
 
-        // start by synthesizing the full transition relation for the coarsest abstraction
+        // start by synthesizing all uTs_
         Ds_[0]->addGridPoints();
-        computeAbstraction(0, sysNext, radNext, x, u);
+
+        TicToc timer;
+        timer.tic();
+        computeExplorationAbstractions(sysNext, radNext, x, u);
+        abTime_ += timer.toc();
+
+        // Ts_[0] is uTs_[0] with obstacles removed
+        Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_ & !Os_[0]->symbolicSet_;
+        TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
+
+        // begin on-the-fly reachability synthesis
         int ab = 0;
         onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
 
@@ -133,35 +150,57 @@ public:
         saveVec(Ts_, "T/T");
         clog << "Wrote Ts_ to file.\n";
         return;
-    }    
+    }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
-    void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        cout << '\n';
+    void computeExplorationAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        for (int ab = 0; ab < *system_->numAbs_; ab++) {
+            SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[0], U_, X2s_[0]); // coarsest state gridding
+            abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // use solver with time step corresponding to that of each layer
+            uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
+//            uTs_[ab]->printInfo(1);
+        }
+    }
+
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u, int print = 0) {
         clog << '\n';
-        cout << "current abstraction: " << ab << '\n';
-        cout << "controllers: " << finalCs_.size() << '\n';
         clog << "current abstraction: " << ab << '\n';
         clog << "controllers: " << finalCs_.size() << '\n';
 
+        if (print) {
+            cout << '\n';
+            cout << "current abstraction: " << ab << '\n';
+            cout << "controllers: " << finalCs_.size() << '\n';
+        }
+
         ReachResult result;
         if (ab == 0) {
+            TicToc timer;
+            timer.tic();
             result = reach(ab);
+            synTime_ += timer.toc();
         }
         else {
+            TicToc timer;
+            timer.tic();
             result = reach(ab, m_);
+            synTime_ += timer.toc();
         }
         if (result == CONVERGEDVALID) {
-            cout << "result: converged valid\n";
             clog << "result: converged valid\n";
+            if (print)
+                cout << "result: converged valid\n";
         }
         else if (result == CONVERGEDINVALID) {
-            cout << "result: converged invalid\n";
             clog << "result: converged invalid\n";
+            if (print)
+                cout << "result: converged invalid\n";
         }
         else {
-            cout << "result: not converged\n";
             clog << "result: not converged\n";
+            if (print)
+                cout << "result: not converged\n";
         }
 
         if (result != CONVERGEDINVALID) {
@@ -178,15 +217,17 @@ public:
 //            }
             saveCZ(ab);
             validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
-            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
-            cout << "saved as snapshot, saved to valids\n";
+            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;    
             clog << "saved as snapshot, saved to valids\n";
+            if (print)
+                cout << "saved as snapshot, saved to valids\n";
         }
         else { // result is CONVERGEDINVALID
             Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
             Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
-            cout << "reset to valids\n";
             clog << "reset to valids\n";
+            if (print)
+                cout << "reset to valids\n";
         }
 
         if (result != NOTCONVERGED) { // ab = 0 always converges
@@ -194,10 +235,14 @@ public:
                 return;
             }
             else { // go finer
-                cout << "Going finer\n";
                 clog << "Going finer\n";
+                if (print)
+                    cout << "Going finer\n";
                 int nextAb = ab + 1;
+                TicToc timer;
+                timer.tic();
                 eightToTen(ab, nextAb, sysNext, radNext, x, u);
+                abTime_ += timer.toc();
                 finer(Zs_[ab], Zs_[nextAb], ab);
                 Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                 validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
@@ -206,11 +251,15 @@ public:
             }
         }
         else { // not converged, go coarser
-            cout << "Going coarser\n";
             clog << "Going coarser\n";
+            if (print)
+                cout << "Going coarser\n";
             int nextAb = ab - 1;
             if (nextAb != 0) { // pointless to do for coarsest layer
+                TicToc timer;
+                timer.tic();
                 eightToTen(ab, nextAb, sysNext, radNext, x, u);
+                abTime_ += timer.toc();
             }
             coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
             Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
@@ -228,7 +277,7 @@ public:
             coarserOuter(Ds_[c], Ds_[c+1], c); // compounding outer approximations?
             coarserInner(innerDs_[c], innerDs_[c+1], c);
         }
-        Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, p_); // do uncontrollable reach
+        Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, curAb, p_); // do uncontrollable reach
         Ds_[0]->symbolicSet_ &= (!innerDs_[0]->symbolicSet_); // states to do abstraction for
         for (int c = 0; c < nextAb; c++) {
             finer(Ds_[c], Ds_[c+1], c);
@@ -236,15 +285,19 @@ public:
         computeAbstraction(nextAb, sysNext, radNext, x, u);
     }
 
-    ReachResult reach(int ab, int m = -1) {
+    ReachResult reach(int ab, int m = -1, int print = 0) {
         int i = 1;
-        cout << "abstraction: " << ab << '\n';
+        clog << "abstraction: " << ab << '\n';
+        if (print)
+            cout << "abstraction: " << ab << '\n';
         while (1) {
-            cout << "iteration: " << i << '\n';
+            clog << "iteration: " << i << '\n';
+            if (print)
+                cout << "iteration: " << i << '\n';
 
-            if (ab != 0) {
-                Zs_[ab]->printInfo(1);
-            }
+//            if (ab != 0) {
+//                Zs_[ab]->printInfo(1);
+//            }
             BDD cPreZ = cPre(Zs_[ab]->symbolicSet_, ab);
             BDD C = cPreZ | Gs_[ab]->symbolicSet_;
             BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
@@ -275,9 +328,7 @@ public:
     template<class sys_type, class rad_type, class X_type, class U_type>
     void computeAbstraction(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_); // don't repeat sampling
-        if (ab != 0) { // for coarsest layer, don't remove obstacles until after abstraction
-            D &= !Os_[ab]->symbolicSet_;
-        }
+        D &= !Os_[ab]->symbolicSet_;
         computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
         Ds_[ab]->symbolicSet_ = D;
 
@@ -314,28 +365,23 @@ public:
             }
         }
 
-        SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]); // was hard-coded to 0, source of "tunneling" bug
-        abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]);
+        SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
+        abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // was hard-coded to 0, source of "tunneling" bug
         if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
             Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
 //            BDD O2 = Os_[ab]->symbolicSet_.Permute(permutesXtoX2_[ab]); // causes unsound behavior, leaving here as warning
 //            Ts_[ab]->symbolicSet_ &= !O2;
-            Ts_[ab]->printInfo(1);
+//            Ts_[ab]->printInfo(1);
             TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
-            if (ab == 0) {
-                uT_->symbolicSet_ = Ts_[0]->symbolicSet_; // "necessary" transition relation for coarsest layer (for uncontrollable reaching)
-                Ts_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_; // actual transition relation for coarsest layer
-                TTs_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
-            }
         }
     }
 
     /*! Calculates all possible winning states at most p transitions away from Z.
      */
-    BDD uReach(BDD Z, int p) {
+    BDD uReach(BDD Z, int ab, int p) {
         int i = 1;
         while (1) {
-            BDD uPreZ = uPre(Z);
+            BDD uPreZ = uPre(Z, ab);
             BDD N = uPreZ & (!Z);
             Z = uPreZ;
 
@@ -350,9 +396,9 @@ public:
      *  \param[in]  Z       The given set.
      *  \return     BDD containing {x} for which there exists a u s.t. there exists a post state of (x,u) in Z.
      */
-    BDD uPre(BDD Z) {
+    BDD uPre(BDD Z, int ab) {
         BDD Z2 = Z.Permute(permutesXtoX2_[0]);
-        BDD uPreZ = uT_->symbolicSet_.AndAbstract(Z2, *notXUvars_[0]);
+        BDD uPreZ = uTs_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[0]);
         uPreZ = uPreZ.ExistAbstract(*notXvars_[0]);
         return uPreZ;
     }
@@ -408,6 +454,9 @@ public:
         ddmgr_ = new Cudd;
         system_ = system;
 
+        TicToc timer;
+        timer.tic();
+
         initializeEtaTau();
         initializeSolvers();
         initializeSymbolicSets(addO, addG);
@@ -417,6 +466,8 @@ public:
         initializeNotVars();
         initializeProjs();
         verifySave();
+
+        abTime_ += timer.toc();
     }
 
     /*! Initializes SymbolicSet data members.
@@ -518,7 +569,10 @@ public:
         }
         clog << "TTs_ initialized with empty domain.\n";
 
-        uT_ = new SymbolicSet(*Cs_[0], *X2s_[0]);
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            SymbolicSet* uT = new SymbolicSet(*Ts_[0]); // exploration transition relations are all with coarsest gridding
+            uTs_.push_back(uT);
+        }
         clog << "uT_ initialized with empty domain.\n";
     }
 

@@ -974,8 +974,8 @@ public:
         fclose(file);
         if (storeReturnValue!=DDDMP_SUCCESS)
             throw "Error: Unable to write BDD to file.";
-        else
-            std::cout << "Symbolic set saved to file: "<< filename << std::endl;
+//        else
+//            std::cout << "Symbolic set saved to file: "<< filename << std::endl;
     }
     /* function:  getZ
             * return constant pointer to the double array z_*/

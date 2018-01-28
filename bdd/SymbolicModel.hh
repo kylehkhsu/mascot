@@ -65,7 +65,7 @@ public:
    * given by preVars_ x inpVars_ x postVars_ */
     BDD transitionRelation_;
     friend class FixedPoint;
-    double tau_;
+
 
     /* constructor: SymbolicModel
    *
@@ -118,7 +118,6 @@ public:
             os << "Error: scots::SymbolicModel: stateSpace and stateSpacePost are not allowed to have the same BDD IDs.";
             throw std::invalid_argument(os.str().c_str());
         }
-        tau_ = stateSpace_->tau_;
         ddmgr_=stateSpace_->ddmgr_;
         nssVars_=0;
         for(size_t i=0; i<stateSpace_->dim_; i++)

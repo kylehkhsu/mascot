@@ -49,7 +49,7 @@ public:
    *
    */
     template<class F1, class F2>
-    void computeTransitionRelation(F1 &system_post, F2 &radius_post, OdeSolver solver) {
+    void computeTransitionRelation(F1 &system_post, F2 &radius_post, OdeSolver solver, int print = 0) {
 
         /* create the BDD's with numbers 0,1,2,.., #gridPoints */
         size_t dim=stateSpace_->getDimension();
@@ -119,7 +119,8 @@ public:
         int iter = 0;
         /** big loop over all state elements and input elements **/
         for(begin(); !done(); next()) {
-            progress();
+            if (print)
+                progress();
             minterm=currentMinterm();
 
             /* current state */
@@ -134,8 +135,8 @@ public:
 
             /* integrate system and radius growth bound */
             /* the result is stored in x and r */
-            system_post(x,u, tau_, solver);
-            radius_post(r,u, tau_, solver);
+            system_post(x,u, solver.tau_, solver);
+            radius_post(r,u, solver.tau_, solver);
 
             /* determine the cells which intersect with the attainable set*/
             /* start with the computation of the indices */
@@ -167,7 +168,8 @@ public:
             }
             iter++;
         }
-        std::cout << "\ntransition iterations: " << iter << '\n';
+        if (print)
+            std::cout << "\ntransition iterations: " << iter << '\n';
 
         for(size_t i=0; i<dim; i++)
             delete[] num[i];
