@@ -1,7 +1,7 @@
 
 function unicycle (mode, numAbs, controllers, progression)
 w = [0.05 0.05 0];
-addpath(genpath('../..'));
+addpath(genpath('../../..'));
 addpath(genpath('~/ownCloud/C++/SCOTS_modified/mfiles/'));
 
 % colors
@@ -201,7 +201,8 @@ if (strcmp(mode,'R'))
             if (mod(j,1) == 0)
                 plot(x(:,1),x(:,2),'k.-')
                 drawnow
-                pause
+                % pause
+                pause(0.2)
             end
             
             if (G.isElement(x(end,:)))

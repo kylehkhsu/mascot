@@ -3,8 +3,9 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
-#include "Reach.hh"
-#include "AdaptAbsReach.hh"
+//#include "Reach.hh"
+//#include "AdaptAbsReach.hh"
+#include "UpfrontReach.hh"
 
 using namespace std;
 using namespace scots;
@@ -104,22 +105,16 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    int readAbs = 0;
-    int startAbs = 0;
-    int minToGoCoarser = 6;
-    int minToBeValid = 6;
-    int earlyBreak = 0;
-
-    Reach abs("unicycle.log");
-    abs.initialize(&unicycle, readAbs, unicycleAddO);
-
-
+    int m = 2;
+    UpfrontReach abs("unicycle_small_3A_HSCC_recursive.log");
+    abs.initialize(&unicycle, 0, unicycleAddO);
     abs.initializeReach(unicycleAddG, unicycleAddI);
 
+    TicToc timer;
+    timer.tic();
     abs.computeAbstractions(sysNext, radNext, x, u);
-
-    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
-
+    abs.upfrontReach(m);
+    clog << "------------------------------------Total time: " << timer.toc() << " seconds.\n";
 }
 
 

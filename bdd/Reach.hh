@@ -112,14 +112,14 @@ public:
                         }
 
                         // remove the last saved C and F from finalCs_ and Fs_
-                        if (finalCs_.size() > 0) {
-                            SymbolicSet* C = finalCs_.back();
-                            finalCs_.pop_back();
-                            delete(C);
-                            SymbolicSet* Z = finalZs_.back();
-                            finalZs_.pop_back();
-                            delete(Z);
-                        }
+//                        if (finalCs_.size() > 0) {
+//                            SymbolicSet* C = finalCs_.back();
+//                            finalCs_.pop_back();
+//                            delete(C);
+//                            SymbolicSet* Z = finalZs_.back();
+//                            finalZs_.pop_back();
+//                            delete(Z);
+//                        }
                         *justCoarsed = 0;
 
                         // reset the current winning states and controller

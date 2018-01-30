@@ -284,7 +284,9 @@ public:
         timer.tic();
         if (readAbs_ == 0) {
             for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicModelGrowthBound<X_type, U_type> Ab(Xs_[i], U_, X2s_[i]);
+                SymbolicSet D = SymbolicSet(*Xs_[i]);
+                D.symbolicSet_ = Xs_[i]->symbolicSet_ & !Os_[i]->symbolicSet_;
+                SymbolicModelGrowthBound<X_type, U_type> Ab(&D, U_, X2s_[i]);
                 Ab.computeTransitionRelation(sysNext, radNext, *solvers_[i]);
 
                 Ts_[i]->symbolicSet_ = Ab.transitionRelation_;

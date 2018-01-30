@@ -3,8 +3,9 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
-#include "AdaptAbsReach.hh"
-#include "Reach.hh"
+//#include "AdaptAbsReach.hh"
+//#include "Reach.hh"
+#include "UpfrontReach.hh"
 
 using namespace std;
 using namespace scots;
@@ -105,33 +106,30 @@ int main() {
     double etaX[dimX]= {0.6, 0.6};
     double tau = 0.9;
     int numAbs = 3;
+    int p = 2;
 
     System system(dimX, lbX, ubX, etaX, tau,
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nSubInt, numAbs);
 
-    AdaptAbsReach syn("simple3A.log");
-    syn.initialize(&system, simpleAddO, simpleAddG);
-
-    TicToc tt_tot;
-    tt_tot.tic();
-    syn.onTheFlyReach(sysNext, radNext, x, u);
-    clog << "------------------------------------Total time:";
-    tt_tot.toc();
-
-//    int startAbs = 0;
-//    int minToGoCoarser = 1;
-//    int minToBeValid = 2;
-//    int earlyBreak = 0;
-
-//    Reach abs("simple3Aprev.log");
-//    abs.initialize(&system, 0, simpleAddO);
-//    abs.initializeReach(simpleAddG, simpleAddI);
+//    AdaptAbsReach syn("simple3A_adaptabs.log");
+//    syn.initialize(&system, simpleAddO, simpleAddG);
 
 //    TicToc tt_tot;
 //    tt_tot.tic();
-//    abs.computeAbstractions(sysNext, radNext, x, u);
-//    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
-//    clog << "------------------------------------Total time:";
-//    tt_tot.toc();
+//    syn.onTheFlyReach(p, sysNext, radNext, x, u);
+//    double elapsed = tt_tot.toc();
+//    clog << "------------------------------------Total time: " << elapsed << " seconds.\n";
+
+
+    int m = 2;
+    UpfrontReach abs("simple3A_hscc_recurse.log");
+    abs.initialize(&system, 0, simpleAddO);
+    abs.initializeReach(simpleAddG, simpleAddI);
+
+    TicToc timer;
+    timer.tic();
+    abs.computeAbstractions(sysNext, radNext, x, u);
+    abs.upfrontReach(m);
+    clog << "------------------------------------Total time: " << timer.toc() << " seconds.\n";
 }

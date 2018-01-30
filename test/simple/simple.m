@@ -6,36 +6,53 @@ addpath(genpath('~/ownCloud/C++/SCOTS_modified/mfiles/'));
 
 % colors
 colors=get(groot,'DefaultAxesColorOrder');
-if (strcmp(mode, 'Z'))
+if (strcmp(mode, 'CZ'))
+    % visualize progression. black = sub-controller domain, red = sub-target
     openfig('problem')
-    C1 = SymbolicSet('C/C1.bdd');
-    p1 = C1.points;
-    plot(p1(:,1),p1(:,2),'ko');
-    pause
     
-    Z2 = SymbolicSet('Z/Z2.bdd');
-    p2 = Z2.points;
-    plot(p2(:,1),p2(:,2),'bo');
-    pause
-    
-    %       Z22 = SymbolicSet('D/Z2.bdd');
-    %       p2 = Z22.points;
-    %       plot(p2(:,1),p2(:,2),'ro');
-    
-    Z3 = SymbolicSet('Z/Z3.bdd');
-    p3 = Z3.points;
-    plot(p3(:,1),p3(:,2),'ro');
-    pause
-    
-    Z4 = SymbolicSet('Z/Z4.bdd');
-    p4 = Z4.points;
-    plot(p4(:,1),p4(:,2),'go');
-    title('Z')
-    pause
-    
-    Z5 = SymbolicSet('Z/Z5.bdd');
-    p5 = Z5.points;
-    plot(p5(:,1),p5(:,2),'go');
+    if strcmp(progression, 'b')
+        for ii=1:controllers
+            disp(num2str(ii))
+            if ii ~= 1
+                Z = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd']);
+                p = Z.points;
+                Zset = plot(p(:,1),p(:,2),'ro');
+                pause
+            end
+            
+            C = SymbolicSet(['C/C' int2str(ii) '.bdd']);
+            p = C.points;
+            %         plotColor = colors(mod(ii,7)+1,:)*0.3+0.3;
+            Cset = plot(p(:,1),p(:,2),'ko');
+            pause
+            
+            if ii ~= 1
+                delete(Zset)
+            end
+            delete(Cset)
+        end
+    elseif strcmp(progression, 'f')
+        for ii = controllers:-1:1
+            disp(num2str(ii))
+            C = SymbolicSet(['C/C' int2str(ii) '.bdd']);
+            p = C.points;
+            %         plotColor = colors(mod(ii,7)+1,:)*0.3+0.3;
+            Cset = plot(p(:,1),p(:,2),'ko');
+            pause
+            
+            if ii ~= 1
+                Z = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd']);
+                p = Z.points;
+                Zset = plot(p(:,1),p(:,2),'ro');
+                pause
+            end
+            
+            if ii ~= 1
+                delete(Zset)
+            end
+            delete(Cset)
+        end
+    end
 end
 if (strcmp(mode, 'D'))
     openfig('problem')

@@ -78,7 +78,6 @@ public:
 
         abTime_ = 0;
         synTime_ = 0;
-        minToBeValid_ = 4;
     }
     /*! Destructor for an AdaptAbsReach object. */
     ~AdaptAbsReach() {
@@ -123,6 +122,7 @@ public:
     void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
         p_ = p; // coarsest layer uncontrollable-pred. parameter
+        minToBeValid_ = 2;
         clog << "m: " << m_ << '\n';
         clog << "p: " << p_ << '\n';
 
@@ -141,6 +141,8 @@ public:
         // begin on-the-fly reachability synthesis
         int ab = 0;
         onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
+
+        clog << "controllers: " << finalCs_.size() << '\n';
 
         checkMakeDir("C");
         saveVec(finalCs_, "C/C");
@@ -831,6 +833,10 @@ public:
         \param[in] ab	0-index of the abstraction which the controller and controller domain that should be saved belong to.
     */
     void saveCZ(int ab) {
+        if (Zs_[ab]->symbolicSet_ == ddmgr_->bddZero()) {
+            return;
+        }
+
         SymbolicSet* C = new SymbolicSet(*Cs_[ab]);
         C->symbolicSet_ = Cs_[ab]->symbolicSet_;
         finalCs_.push_back(C);

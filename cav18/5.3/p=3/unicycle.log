@@ -256,27 +256,8 @@ abstraction: 1
 iteration: 1
 iteration: 2
 iteration: 3
-result: converged invalid
-reset to valids
-Going finer
-
-current abstraction: 2
-controllers: 11
-abstraction: 2
-iteration: 1
-iteration: 2
-iteration: 3
-result: not converged
+result: converged valid
 saved as snapshot, saved to valids
-Going coarser
-
-current abstraction: 1
-controllers: 12
-abstraction: 1
-iteration: 1
-iteration: 2
-result: converged invalid
-reset to valids
 Going finer
 
 current abstraction: 2
@@ -408,19 +389,19 @@ controllers: 19
 abstraction: 1
 iteration: 1
 iteration: 2
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 2
+controllers: 19
+abstraction: 2
+iteration: 1
+iteration: 2
 iteration: 3
 result: not converged
 saved as snapshot, saved to valids
 Going coarser
-
-current abstraction: 0
-controllers: 20
-abstraction: 0
-iteration: 1
-iteration: 2
-result: converged invalid
-reset to valids
-Going finer
 
 current abstraction: 1
 controllers: 20
@@ -475,7 +456,6 @@ controllers: 23
 abstraction: 0
 iteration: 1
 iteration: 2
-iteration: 3
 result: converged invalid
 reset to valids
 Going finer
@@ -496,13 +476,6 @@ abstraction: 0
 iteration: 1
 iteration: 2
 iteration: 3
-iteration: 4
-iteration: 5
-iteration: 6
-iteration: 7
-iteration: 8
-iteration: 9
-iteration: 10
 result: converged valid
 saved as snapshot, saved to valids
 Going finer
@@ -525,6 +498,11 @@ iteration: 2
 iteration: 3
 iteration: 4
 iteration: 5
+iteration: 6
+iteration: 7
+iteration: 8
+iteration: 9
+iteration: 10
 result: converged valid
 saved as snapshot, saved to valids
 Going finer
@@ -547,15 +525,6 @@ iteration: 2
 iteration: 3
 iteration: 4
 iteration: 5
-iteration: 6
-iteration: 7
-iteration: 8
-iteration: 9
-iteration: 10
-iteration: 11
-iteration: 12
-iteration: 13
-iteration: 14
 result: converged valid
 saved as snapshot, saved to valids
 Going finer
@@ -575,27 +544,20 @@ controllers: 30
 abstraction: 0
 iteration: 1
 iteration: 2
-result: converged invalid
-reset to valids
-Going finer
-
-current abstraction: 1
-controllers: 30
-abstraction: 1
-iteration: 1
-iteration: 2
 iteration: 3
-result: not converged
+iteration: 4
+iteration: 5
+iteration: 6
+iteration: 7
+iteration: 8
+iteration: 9
+iteration: 10
+iteration: 11
+iteration: 12
+iteration: 13
+iteration: 14
+result: converged valid
 saved as snapshot, saved to valids
-Going coarser
-
-current abstraction: 0
-controllers: 31
-abstraction: 0
-iteration: 1
-iteration: 2
-result: converged invalid
-reset to valids
 Going finer
 
 current abstraction: 1
@@ -629,6 +591,44 @@ Going coarser
 
 current abstraction: 0
 controllers: 33
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 33
+abstraction: 1
+iteration: 1
+iteration: 2
+iteration: 3
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 34
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged invalid
+reset to valids
+Going finer
+
+current abstraction: 1
+controllers: 34
+abstraction: 1
+iteration: 1
+iteration: 2
+iteration: 3
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 35
 abstraction: 0
 iteration: 1
 iteration: 2
@@ -668,7 +668,7 @@ saved as snapshot, saved to valids
 Going finer
 
 current abstraction: 1
-controllers: 34
+controllers: 36
 abstraction: 1
 iteration: 1
 iteration: 2
@@ -678,7 +678,7 @@ saved as snapshot, saved to valids
 Going coarser
 
 current abstraction: 0
-controllers: 35
+controllers: 37
 abstraction: 0
 iteration: 1
 iteration: 2
@@ -687,17 +687,17 @@ reset to valids
 Going finer
 
 current abstraction: 1
-controllers: 35
+controllers: 37
 abstraction: 1
 iteration: 1
 iteration: 2
 iteration: 3
-result: converged invalid
-reset to valids
+result: converged valid
+saved as snapshot, saved to valids
 Going finer
 
 current abstraction: 2
-controllers: 35
+controllers: 38
 abstraction: 2
 iteration: 1
 iteration: 2
@@ -707,7 +707,7 @@ saved as snapshot, saved to valids
 Going coarser
 
 current abstraction: 1
-controllers: 36
+controllers: 39
 abstraction: 1
 iteration: 1
 iteration: 2
@@ -716,7 +716,7 @@ reset to valids
 Going finer
 
 current abstraction: 2
-controllers: 36
+controllers: 39
 abstraction: 2
 iteration: 1
 iteration: 2
@@ -726,7 +726,7 @@ saved as snapshot, saved to valids
 Going coarser
 
 current abstraction: 1
-controllers: 37
+controllers: 40
 abstraction: 1
 iteration: 1
 iteration: 2
@@ -735,14 +735,14 @@ reset to valids
 Going finer
 
 current abstraction: 2
-controllers: 37
+controllers: 40
 abstraction: 2
 iteration: 1
 iteration: 2
 iteration: 3
-result: converged invalid
-reset to valids
+result: converged valid
+saved as snapshot, saved to valids
 Wrote Ts_ to file.
-------------------------------------Total time: 766.175 seconds.
-Abstraction construction time: 741.424 seconds.
-Controller synthesis time: 22.0809 seconds.
+------------------------------------Total time: 791.707 seconds.
+Abstraction construction time: 766.254 seconds.
+Controller synthesis time: 22.6866 seconds.

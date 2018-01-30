@@ -107,13 +107,15 @@ if (strcmp(mode, 'T'))
     openfig('problem')
     T1 = SymbolicSet('T/T1.bdd', 'projection', [1 2]);
     p1 = T1.points;
-    plot(p1(:,1),p1(:,2),'ko');
+    x = plot(p1(:,1),p1(:,2),'ko');
     pause
+    delete(x)
     
     T2 = SymbolicSet('T/T2.bdd', 'projection', [1 2]);
     p2 = T2.points;
-    plot(p2(:,1),p2(:,2),'bo');
-    pause
+    x = plot(p2(:,1),p2(:,2),'bo');
+    pause    
+    delete(x)
     
     T3 = SymbolicSet('T/T3.bdd', 'projection', [1 2]);
     p3 = T3.points;
@@ -164,7 +166,7 @@ if (strcmp(mode,'R'))
     %     I = SymbolicSet('plotting/I.bdd');
     %     x = I.points();
     %     x = x(1,:);
-    x = [1 1.5 0];    
+    x = [0.5 10.9 -pi/2];    
     v = [];    
     j = 1;
 

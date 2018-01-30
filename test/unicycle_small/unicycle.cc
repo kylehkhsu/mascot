@@ -4,11 +4,11 @@
 #define _USE_MATH_DEFINES
 
 #include "AdaptAbsReach.hh"
-#include "Reach.hh"
+//#include "Reach.hh"
+//#include "UpfrontReach.hh"
 
 using namespace std;
 using namespace scots;
-using namespace helper;
 
 #define dimX 3
 #define dimU 2
@@ -59,7 +59,7 @@ auto unicycleAddO = [](SymbolicSet* O) -> void {
 };
 
 auto unicycleAddI = [](SymbolicSet* I) -> void {
-    double q[3] = {0.25, 0.25, 0};
+    double q[3] = {0.5, 0.5, 0};
     I->addPoint(q);
 };
 
@@ -81,8 +81,7 @@ int main() {
     double tauRatio = 2;
 
     int numAbs = 3;
-//    int startAbs = 0;
-//    int readAbs = 0;
+    int p = 2;
 
     X_type x;
     U_type u;
@@ -91,23 +90,25 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    AdaptAbsReach abs("unicycle3A.txt");
+    AdaptAbsReach abs("unicycle_small_3A_cav.txt");
     abs.initialize(&unicycle, unicycleAddO, unicycleAddG);
-    
+
     TicToc tt_tot;
     tt_tot.tic();
-    abs.onTheFlyReach(sysNext, radNext, x, u);
+    abs.onTheFlyReach(p, sysNext, radNext, x, u);
     clog << "------------------------------------Total time:";
     tt_tot.toc();
-    
+
+//    int m = 2;
+//    UpfrontReach abs("unicycle_small_3A_HSCC_recursive.log");
+//    abs.initialize(&unicycle, 0, unicycleAddO);
 //    abs.initializeReach(unicycleAddG, unicycleAddI);
+
+//    TicToc timer;
+//    timer.tic();
 //    abs.computeAbstractions(sysNext, radNext, x, u);
-//
-//    int minToGoCoarser = 6;
-//    int minToBeValid = 6;
-//    int earlyBreak = 0;
-//
-//    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
+//    abs.upfrontReach(m);
+//    clog << "------------------------------------Total time: " << timer.toc() << " seconds.\n";
 }
 
 
