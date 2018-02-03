@@ -279,7 +279,7 @@ public:
             coarserOuter(Ds_[c], Ds_[c+1], c); // compounding outer approximations?
             coarserInner(innerDs_[c], innerDs_[c+1], c);
         }
-        Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, curAb, p_); // do uncontrollable reach
+        Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, curAb, p_); // do cooperative reach
         Ds_[0]->symbolicSet_ &= (!innerDs_[0]->symbolicSet_); // states to do abstraction for
         for (int c = 0; c < nextAb; c++) {
             finer(Ds_[c], Ds_[c+1], c);
