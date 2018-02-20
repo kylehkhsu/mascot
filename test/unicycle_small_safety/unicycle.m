@@ -1,59 +1,27 @@
 
-function unicycle (mode, numAbs, controllers, progression)
-w = [0.05 0.05 0];
-addpath(genpath('../..'));
-addpath(genpath('~/ownCloud/C++/SCOTS_modified/mfiles/'));
+function unicycle (mode, numAbs, tauSet)
+% Plot results for the unicycle example (for safety)
+% Inputs:
+%       - mode (char):  'S' = plot state space
+%                       'P' = plot safe set
+%                       'T' = plot transition domains in various layers
+%                       'Safe' = simulate the safety controller, you can
+%                       change the initial state in the function body
+%           Note: 'S' and 'P' must always be run first (in the respective
+%           order) before 'T' or 'Safe'
+%       - numAbs (int): number of abstraction as was used during controller
+%       synthesis
+%       - tauSet (double array): an array (same length as numAbs)
+%       containing the time discretization parameters in different layers,
+%       with tauSet(1) being for the coarsest and tauSet(end) being the
+%       finest
+
+w = [0.05 0.05 0]; % disturbance, *must* be same as was used during controller synthesis
+addpath(genpath('../..')); % adding the mfiles/ in MATLAB path
 
 % colors
 colors=get(groot,'DefaultAxesColorOrder');
-if (strcmp(mode, 'CZ'))
-    % visualize progression. black = sub-controller domain, red = sub-target
-    openfig('problem')
-    
-    if strcmp(progression, 'b')
-        for ii=1:controllers
-            disp(num2str(ii))
-            if ii ~= 1
-                Z = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd']);
-                p = Z.points;
-                Zset = plot(p(:,1),p(:,2),'ro');
-                pause
-            end
-            
-            C = SymbolicSet(['C/C' int2str(ii) '.bdd']);
-            p = C.points;
-            %         plotColor = colors(mod(ii,7)+1,:)*0.3+0.3;
-            Cset = plot(p(:,1),p(:,2),'ko');
-            pause
-            
-            if ii ~= 1
-                delete(Zset)
-            end
-            delete(Cset)
-        end
-    elseif strcmp(progression, 'f')
-        for ii = controllers:-1:1
-            disp(num2str(ii))
-            C = SymbolicSet(['C/C' int2str(ii) '.bdd']);
-            p = C.points;
-            %         plotColor = colors(mod(ii,7)+1,:)*0.3+0.3;
-            Cset = plot(p(:,1),p(:,2),'ko');
-            pause
-            
-            if ii ~= 1
-                Z = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd']);
-                p = Z.points;
-                Zset = plot(p(:,1),p(:,2),'ro');
-                pause
-            end
-            
-            if ii ~= 1
-                delete(Zset)
-            end
-            delete(Cset)
-        end
-    end
-end
+
 if (strcmp(mode, 'S'))
     figure
     hold on
@@ -111,6 +79,7 @@ if (strcmp(mode, 'T'))
     title('T')
 end
 
+% debug purpose
 if (strcmp(mode, 'Zs'))
     fig0 = openfig('problem');
     figure(fig0)
@@ -176,89 +145,52 @@ if (strcmp(mode, 'Zs'))
 end
 
 
-if (strcmp(mode,'Q')) % plot controller domains
-    openfig('problem');
-    hold on;
-    cmap = [hot(numAbs) 0.5*ones(numAbs,1)];
-    
-    %       if numAbs~=size(etaAbs,1) % Sanity check
-    %           error();
-    %       end
-    etaAbs = [0.6 0.6; 0.3 0.3; 0.15 0.15];
-    
-    for ii=controllers:-1:1
-        ii
-        C = SymbolicSet(['C/C' int2str(ii) '.bdd'], 'projection', [1 2]);
-        eta = C.eta(1:2);
-        for jj=1:numAbs
-            if isequal(eta',etaAbs(jj,1:2))
-                layer = jj;
-                break;
-            end
-        end
-        
-        
-        if (ii == 1)
-            Z = SymbolicSet(['SafeSets/S' int2str(numAbs) '.bdd'], 'projection', [1 2]);
-        else
-            Z = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd'], 'projection', [1 2]);
-        end
-        
-        points = setdiff(C.points,Z.points,'rows');
-        for jj=1:size(points,1)
-            rectangle('Position',[points(jj,:)-eta' 2*eta'],'FaceColor',cmap(layer,:));
-            %alpha(s,0.5);
-        end
-        pause;
-    end
-end
-
 if (strcmp(mode,'Safe'))
     openfig('problem');
     hold on
     drawnow
-    
-    %     I = SymbolicSet('plotting/I.bdd');
-    %     x = I.points();
-    %     x = x(1,:);
-    x = [1 0.5 0];    
+   
+    x = [1 0.5 0];   % Initial state  
     v = [];    
     j = 1;
-    tauSet = [0.9;0.9/2;0.9/2/2];
     
-    C = cell(numAbs,1);
+    % Load controllers (C) and controller domains (Z)
+    C = cell(numAbs,1); 
     Z = cell(numAbs,1);
     for ii=1:numAbs
         C{ii} = SymbolicSet(['C/C' int2str(ii) '.bdd']);
         Z{ii} = SymbolicSet(['Z/Z' int2str(ii) '.bdd']);
     end
     
-    for rounds=1:400
+    for rounds=1:400 % time steps (variable length, depending on the abstraction layer) for which the simulation will run
+        % find the controller whose domain include the present state
         for ii=1:numAbs
             if (Z{ii}.isElement(x(end,:)))
                 tau = tauSet(ii);
-                if (ii==3)
-                    a = 1;
-                end
                 break;
             end
+            if (ii==numAbs)
+                error('Current state is outside the controller domains');
+            end
         end
-        try
-            u = C{ii}.getInputs(x(end,:));
-        catch
-            debug = 1;
-        end
+        u = C{ii}.getInputs(x(end,:));
+        
+        % choose the control input randomly from many possible options
         ran = randi([1 size(u,1)], 1, 1);
         v = [v; u(ran,:)];
+        
+        % random disturbance which respects the given bound
         d = disturbance(w);
+        
+        % solve the ODE
         [t phi] = ode45(@sysODE, [0 tau], x(end,:), [], u(ran,:), d);
+        % contains all the points along the trajectory
         x = [x; phi];
 
-%         if (mod(j,1) == 0)
-            plot(x(:,1),x(:,2),'k.-')
-            drawnow
-%             pause
-%         end
+        plot(x(:,1),x(:,2),'k.-')
+        drawnow
+%       pause
+
         disp('u')
         disp(u(ran,:))
         disp('d')
@@ -276,6 +208,7 @@ function d = disturbance(w)
 d = -w + (2 * w .* rand(size(w)));
 end
 
+% system ODE
 function dxdt = sysODE(t,x,u, d)
 dxdt = zeros(3,1);
 dxdt(1)=u(1)*cos(x(3));
