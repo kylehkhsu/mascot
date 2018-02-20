@@ -1,0 +1,51 @@
+unicycle(52125,0x7fffab0d5340) malloc: *** error for object 0x7f85aad01820: pointer being freed was not allocated
+*** set a breakpoint in malloc_error_break to debug
+unicycle_small_3A_safe.txt
+Initialized etaXs_, tau_.
+Initialized solvers.
+Xs_ initialized with full domain.
+X2s_ initialized with full domain.
+U_ initialized with full domain.
+SafeInner_ initialized according to specification.
+SafeOuter_ initialized with empty domain, and will be set with correct domain later.Zs_ initialized with empty domain.
+Rs_ initialized with empty domain.
+Cs_ initialized with full domain.
+validZs_ initialized with full domain.
+Ds_ initialized with empty domain.
+innerDs_ initialized with empty domain.
+computedDs_ initialized with empty domain.
+savedZs_ initialized with empty domain.
+Ts_ initialized with empty domain.
+TTs_ initialized with empty domain.
+uT_ initialized with empty domain.
+Number of BDD variables: 91
+Initialized permutes.
+Initialized cubes.
+Initialized notVars.
+permuteCoarser 1 to 0: 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 0 4 5 0 6 7 8 9 10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 2 to 1: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 11 12 13 14 15 0 16 17 18 0 19 20 21 22 23 24 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 0 to 1: 12 13 14 15 17 18 20 21 22 23 24 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 1 to 2: 0 0 0 0 0 0 0 0 0 0 0 26 27 28 29 30 32 33 34 36 37 38 39 40 41 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+etaXs_:
+abstraction 0: 0.6 0.6 0.3 
+abstraction 1: 0.3 0.3 0.15 
+abstraction 2: 0.15 0.15 0.075 
+tau_:
+abstraction 0: 0.9
+abstraction 1: 0.45
+abstraction 2: 0.225
+SafeOuter_ set according to specification.
+
+current recursion depth: 1
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 2
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+controllers: 3
+Wrote Ts_ to file.
+------------------------------------Total time:Abstraction construction time: 15.4172 seconds.
+Controller synthesis time: 0.0720327 seconds.
