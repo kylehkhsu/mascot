@@ -155,6 +155,12 @@ public:
 		int print = 1; // print progress on command line
         int recursion_ = 0;
 		onTheFlySafeRecurse(sysNext, radNext, x, u, print);
+
+		// to ensure that the controllers for the coarser layers admit control inputs that allow visit to finer layer states. Note that this doesn't change the controller domain.
+		for (int ab = 0; ab < *system_->numAbs_; ab++) {
+			BDD cPreZ = cPre(validZs_[ab]->symbolicSet_, ab);
+			Cs_[ab]->symbolicSet_ = cPreZ & SafeInner_[ab]->symbolicSet_;
+		}
 		saveCZ();
 
 		clog << "controllers: " << finalCs_.size() << '\n';
@@ -206,6 +212,14 @@ public:
             synTime_ += timer.toc();
 		}
 
+		//Convergence criteria: validZs_ of all the layers are same as Zs_ of the respective layers
+		/*CONVERGED = 1;
+		for (int ab = 0; ab < *system_->numAbs_; ab++) {
+			if (validZs_[ab]->symbolicSet_ != Zs_[ab]->symbolicSet_) {
+				CONVERGED = 0;
+			}
+		}*/
+
         for (int ab = 1; ab <= *system_->numAbs_ - 1; ab++) {
             BDD X = Zs_[ab]->symbolicSet_;
             finer(Zs_[ab - 1], Zs_[ab], ab - 1);
@@ -237,15 +251,27 @@ public:
 			saveVec(validZs_, "validZs4/Zs_");
 		}
 		
+		// Convergence criteria: 
+		/*CONVERGED = 1;
+		for (int ab = 0; ab < *system_->numAbs_; ab++) {
+			if (validZs_[ab]->symbolicSet_ == Zs_[ab]->symbolicSet_) {
+				continue;
+			}
+			else {
+				CONVERGED = 0;
+			}
+		}*/
 
 
-		//if ((validZs_[*system_->numAbs_ - 1] & !(Zs_[*system_->numAbs_ - 1])) | (!(validZs_[*system_->numAbs_ - 1]) & Zs_[*system_->numAbs_ - 1]) == ddmgr_->bddZero()) { // fixed-point converged in all the layers
+		//Convergence criteria: validZs_ of the finest layer is same as Zs_ of the finest layer
 		if (validZs_[*system_->numAbs_ - 1]->symbolicSet_ == Zs_[*system_->numAbs_ - 1]->symbolicSet_) {
 			CONVERGED = 1;
 		} 
 		else {
 			CONVERGED = 0;
 		}
+
+		
 
 		for (int ab = *system_->numAbs_ - 1; ab >= 0; ab--) {
 			validZs_[ab]->symbolicSet_ = ddmgr_->bddZero(); // just to make sure there is no interference with previous result
@@ -260,7 +286,7 @@ public:
 			return;
 		} 
 		else {
-            for (int ab = 0; ab < *system_->numAbs_ - 1; ab++){
+            for (int ab = 0; ab <= *system_->numAbs_ - 1; ab++){
                 Zs_[ab]->symbolicSet_ = ddmgr_->bddZero();
             }
 			onTheFlySafeRecurse(sysNext, radNext, x, u, print);
