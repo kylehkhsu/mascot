@@ -80,8 +80,7 @@ public:
             nu(curAbs);
         }
 
-        clog << "----------------------------------------safe: ";
-        tt.toc();
+        clog << "----------------------------------------safe: " << tt.toc() << " seconds.\n";
 
         checkMakeDir("Z");
         saveVec(this->Zs_, "Z/Z");
@@ -212,8 +211,7 @@ public:
             }
         }
 
-        clog << "----------------------------------------safe: ";
-        tt.toc();
+        clog << "----------------------------------------safe: " << tt.toc() << " seconds.\n";
 
         checkMakeDir("Z");
         saveVec(this->Zs_, "Z/Z");

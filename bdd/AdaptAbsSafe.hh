@@ -126,7 +126,7 @@ public:
 	template<class sys_type, class rad_type, class X_type, class U_type>
 	void onTheFlySafe(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         // Initialize SafeOuter_ with correct domain
-        SafeOuter_[*system_->numAbs_ - 1] = SafeInner_[*system_->numAbs_ - 1]; // outer and inner approximation of the safe set is same in the finest layer
+        SafeOuter_[*system_->numAbs_ - 1]->symbolicSet_ = SafeInner_[*system_->numAbs_ - 1]->symbolicSet_; // outer and inner approximation of the safe set is same in the finest layer
         for (int i = *system_->numAbs_ - 1; i > 0; i--) { // compute the outer approximations of the safe sets accross all layers
             coarserOuter(SafeOuter_[i - 1], SafeOuter_[i], i - 1);
         }
@@ -153,8 +153,8 @@ public:
 
 		// begin on-the-fly safety synthesis
 		int print = 1; // print progress on command line
-        int recursion_ = 0;
-		onTheFlySafeRecurse(sysNext, radNext, x, u, print);
+        int recursion = 0;
+		onTheFlySafeRecurse(sysNext, radNext, x, u, recursion, print);
 
 		// to ensure that the controllers for the coarser layers admit control inputs that allow visit to finer layer states. Note that this doesn't change the controller domain.
 		for (int ab = 0; ab < *system_->numAbs_; ab++) {
@@ -185,15 +185,15 @@ public:
 	}
 
 	template<class sys_type, class rad_type, class X_type, class U_type>
-	void onTheFlySafeRecurse(sys_type sysNext, rad_type radNext, X_type x, U_type u, int print = 0) {
-		recursion_ += 1;
+	void onTheFlySafeRecurse(sys_type sysNext, rad_type radNext, X_type x, U_type u, int recursion, int print = 0) {
+		recursion += 1;
 		bool CONVERGED;
 		clog << '\n';
-		clog << "current recursion depth: " << recursion_ << '\n';
+		clog << "current recursion depth: " << recursion << '\n';
 
 		if (print) {
 			cout << '\n';
-			cout << "current recursion depth: " << recursion_ << '\n';
+			cout << "current recursion depth: " << recursion << '\n';
 		}
 
 		for (int ab = 0; ab < *system_->numAbs_; ab++) {
@@ -226,25 +226,25 @@ public:
             Zs_[ab]->symbolicSet_ |= X;
         }
 
-		if (recursion_ == 1) {
+		if (recursion == 1) {
 			checkMakeDir("Zs1");
 			saveVec(Zs_, "Zs1/Zs_");
 			checkMakeDir("validZs1");
 			saveVec(validZs_, "validZs1/Zs_");
 		}
-		else if (recursion_ == 2) {
+		else if (recursion == 2) {
 			checkMakeDir("Zs2");
 			saveVec(Zs_, "Zs2/Zs_");
 			checkMakeDir("validZs2");
 			saveVec(validZs_, "validZs2/Zs_");
 		}
-		else if (recursion_ == 3) {
+		else if (recursion == 3) {
 			checkMakeDir("Zs3");
 			saveVec(Zs_, "Zs3/Zs_");
 			checkMakeDir("validZs3");
 			saveVec(validZs_, "validZs3/Zs_");
 		}
-		else if (recursion_ == 4) {
+		else if (recursion == 4) {
 			checkMakeDir("Zs4");
 			saveVec(Zs_, "Zs4/Zs_");
 			checkMakeDir("validZs4");
@@ -289,7 +289,7 @@ public:
             for (int ab = 0; ab <= *system_->numAbs_ - 1; ab++){
                 Zs_[ab]->symbolicSet_ = ddmgr_->bddZero();
             }
-			onTheFlySafeRecurse(sysNext, radNext, x, u, print);
+			onTheFlySafeRecurse(sysNext, radNext, x, u, recursion, print);
 			return;
 		}
 	}
