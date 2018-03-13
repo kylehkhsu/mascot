@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <vector>
+#include <thread>
 
 #include "SymbolicModelGrowthBound.hh"
 #include "System.hh"
@@ -57,6 +58,10 @@ public:
     vector<SymbolicSet*> innerDs_;
     vector<SymbolicSet*> computedDs_;
     vector<SymbolicSet*> savedZs_;
+    
+    /* Multi-threading for computation of the transition relation */
+    int numPacket_; /*!< Number of packets/parallel threads for computation of the transition relation */
+    vector<SymbolicSet*> splitDs_; /*!< Ds_[i] divided into packets, the length of the vector being same as the number of packets. */
 
     vector<SymbolicSet*> uTs_; /*!< Transition relations for exploring, i.e. all with coarsest space gridding but varying time sampling. */
 	int recursion_; /*!< current recursion depth. */
@@ -123,6 +128,10 @@ public:
         delete ddmgr_;
     }
 
+	void addNewLayer() {
+		*system_->numAbs_ += 1;
+	}
+
 	template<class sys_type, class rad_type, class X_type, class U_type>
 	void onTheFlySafe(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         // Initialize SafeOuter_ with correct domain
@@ -137,6 +146,7 @@ public:
 //            Ds_[i]->addGridPoints();
 //        }
         Ds_[0]->addGridPoints();
+        Ds_[0]->writeToFile("Ds0.bdd"); // debug purpose
 		
 		TicToc timer;
 		timer.tic();
@@ -147,9 +157,15 @@ public:
 		Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_;
 		TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
 
-		// debug purpose
-		checkMakeDir("validZsInit");
-		saveVec(validZs_, "validZsInit/Zs_");
+        // debug purpose
+        cout << "\nTransition BDD of the coarsest layer:\n";
+        Ts_[0]->printInfo(1);
+        uTs_[0]->printInfo(1);
+        //debug purpose end
+        
+		//// debug purpose
+		//checkMakeDir("validZsInit");
+		//saveVec(validZs_, "validZsInit/Zs_");
 
 		// begin on-the-fly safety synthesis
 		int print = 1; // print progress on command line
@@ -163,16 +179,96 @@ public:
 		}
 		saveCZ();
 
-		clog << "controllers: " << finalCs_.size() << '\n';
+		int NoController = 1;
+		for (int ab = 0; ab < *system_->numAbs_; ab++) {
+			if (Cs_[ab]->symbolicSet_ != ddmgr_->bddZero()) {
+				NoController = 0;
+				clog << "controllers: " << finalCs_.size() << '\n';
+				checkMakeDir("C");
+				saveVec(finalCs_, "C/C");
+				checkMakeDir("Z");
+				saveVec(finalZs_, "Z/Z");
+			}
+		}
 
-		checkMakeDir("C");
-		saveVec(finalCs_, "C/C");
-		checkMakeDir("Z");
-		saveVec(finalZs_, "Z/Z");
+		if (NoController == 1) {
+			clog << "Empty controller domain.\n";
+		}
+		
+        // debug purpose
+        cout << "\nTransition BDD of the coarsest layer:\n";
+        Ts_[0]->printInfo(1);
+//        cout << "\nTransition BDD of the second coarsest layer:\n";
+//        Ts_[1]->printInfo(1);
+        // debug purpose end
 		checkMakeDir("T");
 		saveVec(Ts_, "T/T");
 		clog << "Wrote Ts_ to file.\n";
 //        return;
+	}
+
+	template<class sys_type, class rad_type, class X_type, class U_type>
+	void onTheFlySafeNoAux(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+		// Initialize SafeOuter_ with correct domain
+		SafeOuter_[*system_->numAbs_ - 1]->symbolicSet_ = SafeInner_[*system_->numAbs_ - 1]->symbolicSet_; // outer and inner approximation of the safe set is same in the finest layer
+		for (int i = *system_->numAbs_ - 1; i > 0; i--) { // compute the outer approximations of the safe sets accross all layers
+			coarserOuter(SafeOuter_[i - 1], SafeOuter_[i], i - 1);
+		}
+		clog << "SafeOuter_ set according to specification.\n";
+
+		// start by synthesizing all uTs_
+		//        for (int i = 0; i < *system_->numAbs_; i++){
+		//            Ds_[i]->addGridPoints();
+		//        }
+		Ds_[0]->addGridPoints();
+
+		TicToc timer;
+		timer.tic();
+		SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[0], U_, X2s_[0]); // coarsest state gridding
+		abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[0]); // use solver with time step corresponding to that of each layer
+		uTs_[0]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
+		abTime_ += timer.toc();
+
+		// Ts_[0] is uTs_[0]
+		Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_;
+		TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
+
+		//// debug purpose
+		//checkMakeDir("validZsInit");
+		//saveVec(validZs_, "validZsInit/Zs_");
+
+		// begin on-the-fly safety synthesis
+		int print = 1; // print progress on command line
+		int recursion = 0;
+		onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion, print);
+
+		// to ensure that the controllers for the coarser layers admit control inputs that allow visit to finer layer states. Note that this doesn't change the controller domain.
+		for (int ab = 0; ab < *system_->numAbs_; ab++) {
+			BDD cPreZ = cPre(validZs_[ab]->symbolicSet_, ab);
+			Cs_[ab]->symbolicSet_ = cPreZ & SafeInner_[ab]->symbolicSet_;
+		}
+		saveCZ();
+
+		int NoController = 1;
+		for (int ab = 0; ab < *system_->numAbs_; ab++) {
+			if (Cs_[ab]->symbolicSet_ != ddmgr_->bddZero()) {
+				NoController = 0;
+				clog << "controllers: " << finalCs_.size() << '\n';
+				checkMakeDir("C");
+				saveVec(finalCs_, "C/C");
+				checkMakeDir("Z");
+				saveVec(finalZs_, "Z/Z");
+			}
+		}
+
+		if (NoController == 1) {
+			clog << "Empty controller domain.\n";
+		}
+
+		checkMakeDir("T");
+		saveVec(Ts_, "T/T");
+		clog << "Wrote Ts_ to file.\n";
+		//        return;
 	}
     
 	template<class sys_type, class rad_type, class X_type, class U_type>
@@ -212,13 +308,6 @@ public:
             synTime_ += timer.toc();
 		}
 
-		//Convergence criteria: validZs_ of all the layers are same as Zs_ of the respective layers
-		/*CONVERGED = 1;
-		for (int ab = 0; ab < *system_->numAbs_; ab++) {
-			if (validZs_[ab]->symbolicSet_ != Zs_[ab]->symbolicSet_) {
-				CONVERGED = 0;
-			}
-		}*/
 
         for (int ab = 1; ab <= *system_->numAbs_ - 1; ab++) {
             BDD X = Zs_[ab]->symbolicSet_;
@@ -226,7 +315,8 @@ public:
             Zs_[ab]->symbolicSet_ |= X;
         }
 
-		if (recursion == 1) {
+		// Debug purpose
+		/*if (recursion == 1) {
 			checkMakeDir("Zs1");
 			saveVec(Zs_, "Zs1/Zs_");
 			checkMakeDir("validZs1");
@@ -249,19 +339,8 @@ public:
 			saveVec(Zs_, "Zs4/Zs_");
 			checkMakeDir("validZs4");
 			saveVec(validZs_, "validZs4/Zs_");
-		}
-		
-		// Convergence criteria: 
-		/*CONVERGED = 1;
-		for (int ab = 0; ab < *system_->numAbs_; ab++) {
-			if (validZs_[ab]->symbolicSet_ == Zs_[ab]->symbolicSet_) {
-				continue;
-			}
-			else {
-				CONVERGED = 0;
-			}
 		}*/
-
+		
 
 		//Convergence criteria: validZs_ of the finest layer is same as Zs_ of the finest layer
 		if (validZs_[*system_->numAbs_ - 1]->symbolicSet_ == Zs_[*system_->numAbs_ - 1]->symbolicSet_) {
@@ -295,6 +374,114 @@ public:
 	}
 
 	template<class sys_type, class rad_type, class X_type, class U_type>
+	void onTheFlySafeRecurseNoAux(sys_type sysNext, rad_type radNext, X_type x, U_type u, int recursion, int print = 0) {
+		recursion += 1;
+		bool CONVERGED;
+		clog << '\n';
+		clog << "current recursion depth: " << recursion << '\n';
+
+		if (print) {
+			cout << '\n';
+			cout << "current recursion depth: " << recursion << '\n';
+		}
+
+		/*Ds_[0]->symbolicSet_ = validZs_[0]->symbolicSet_;*/
+		for (int ab = 0; ab < *system_->numAbs_; ab++) {
+			clog << "\t current abstraction: " << ab << '\n';
+			if (print)
+				cout << "\t current abstraction: " << ab << '\n';
+			if (ab > 0) {
+				//Ds_[ab-1]->symbolicSet_ = !Zs_[ab - 1]->symbolicSet_ & validZs_[ab - 1]->symbolicSet_;
+				Ds_[*system_->numAbs_ - 1]->symbolicSet_ = validZs_[*system_->numAbs_ - 1]->symbolicSet_;
+				for (int ii = *system_->numAbs_ - 1; ii >= ab; ii--) {
+					coarserOuter(Ds_[ii - 1], Ds_[ii], ii - 1);
+				}
+				Ds_[ab-1]->symbolicSet_ &= Rs_[ab-1]->symbolicSet_;
+				finer(Ds_[ab - 1], Ds_[ab], ab - 1);
+				TicToc timer;
+				timer.tic();
+				computeAbstraction(ab, sysNext, radNext, x, u);
+				abTime_ += timer.toc();
+			}
+			TicToc timer;
+			timer.tic();
+			safeOne(ab, print);
+			synTime_ += timer.toc();
+
+			/*if (ab > 0) {
+				BDD X = Zs_[ab]->symbolicSet_;
+				finer(Zs_[ab - 1], Zs_[ab], ab - 1);
+				Zs_[ab]->symbolicSet_ |= X;
+			}*/
+		}
+
+
+		for (int ab = 1; ab <= *system_->numAbs_ - 1; ab++) {
+			BDD X = Zs_[ab]->symbolicSet_;
+			finer(Zs_[ab - 1], Zs_[ab], ab - 1);
+			Zs_[ab]->symbolicSet_ |= X;
+		}
+
+		// Debug purpose
+		/*if (recursion == 1) {
+		checkMakeDir("Zs1");
+		saveVec(Zs_, "Zs1/Zs_");
+		checkMakeDir("validZs1");
+		saveVec(validZs_, "validZs1/Zs_");
+		}
+		else if (recursion == 2) {
+		checkMakeDir("Zs2");
+		saveVec(Zs_, "Zs2/Zs_");
+		checkMakeDir("validZs2");
+		saveVec(validZs_, "validZs2/Zs_");
+		}
+		else if (recursion == 3) {
+		checkMakeDir("Zs3");
+		saveVec(Zs_, "Zs3/Zs_");
+		checkMakeDir("validZs3");
+		saveVec(validZs_, "validZs3/Zs_");
+		}
+		else if (recursion == 4) {
+		checkMakeDir("Zs4");
+		saveVec(Zs_, "Zs4/Zs_");
+		checkMakeDir("validZs4");
+		saveVec(validZs_, "validZs4/Zs_");
+		}*/
+
+
+		//Convergence criteria: validZs_ of the finest layer is same as Zs_ of the finest layer
+		if (validZs_[*system_->numAbs_ - 1]->symbolicSet_ == Zs_[*system_->numAbs_ - 1]->symbolicSet_) {
+			CONVERGED = 1;
+		}
+		else {
+			CONVERGED = 0;
+		}
+
+
+
+		for (int ab = *system_->numAbs_ - 1; ab >= 0; ab--) {
+			validZs_[ab]->symbolicSet_ = ddmgr_->bddZero(); // just to make sure there is no interference with previous result
+		}
+
+		validZs_[*system_->numAbs_ - 1]->symbolicSet_ = Zs_[*system_->numAbs_ - 1]->symbolicSet_; // save the winning states for Cpre in next iteration
+		for (int ab = *system_->numAbs_ - 1; ab > 0; ab--) {
+			coarserInner(validZs_[ab - 1], validZs_[ab], ab - 1);
+		}
+
+		if (CONVERGED == 1) {
+			return;
+		}
+		else {
+			for (int ab = 0; ab <= *system_->numAbs_ - 1; ab++) {
+				Zs_[ab]->symbolicSet_ = ddmgr_->bddZero();
+				/*Ds_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_;*/
+			}
+			onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion, print);
+			return;
+		}
+	}
+
+	template<class sys_type, class rad_type, class X_type, class U_type>
 	void ExpandAbstraction(int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
 		Ds_[*system_->numAbs_ - 1]->symbolicSet_ = validZs_[*system_->numAbs_ - 1]->symbolicSet_; // save the winning states for Pre in the next iteration
 		for (int ab = *system_->numAbs_ - 1; ab > 0; ab--) {
@@ -307,7 +494,8 @@ public:
 		}
 		Ds_[nextAb - 1]->symbolicSet_ &= Rs_[nextAb - 1]->symbolicSet_;
 		finer(Ds_[nextAb - 1], Ds_[nextAb], nextAb - 1);
-		computeAbstraction(nextAb, sysNext, radNext, x, u);
+        computeAbstraction(nextAb, sysNext, radNext, x, u);
+//        computeAbstractionInParallel(nextAb, sysNext, radNext, x, u);
 	}
     
     // one step safety fixed-point
@@ -390,8 +578,8 @@ public:
         }
 
         SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
-        (abstraction.getTransitionRelation()).printInfo(1);
         abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab], 1); // was hard-coded to 0, source of "tunneling" bug
+		(abstraction.getTransitionRelation()).printInfo(1);
         if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
             Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
 //            BDD O2 = Os_[ab]->symbolicSet_.Permute(permutesXtoX2_[ab]); // causes unsound behavior, leaving here as warning
@@ -401,6 +589,59 @@ public:
         }
     }
 
+    //template<class sys_type, class rad_type, class X_type, class U_type>
+    //void computeAbstractionInParallel(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+    //    BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_); // don't repeat sampling
+    //    computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
+    //    Ds_[ab]->symbolicSet_ = D;
+    //    
+    //    initializeParallel(ab);
+    //    vector<SymbolicModelGrowthBound<X_type,U_type>> splitAbstraction;
+    //    Ds_[ab]->splitGridPoints(splitDs_, numPacket_);
+    //    for (int packet = 0; packet < numPacket_; packet++) {
+    //        SymbolicModelGrowthBound<X_type, U_type> abs(splitDs_[packet], U_, X2s_[ab]);
+    //        splitAbstraction.push_back(abs);
+    //    }
+    //    std::thread t[numPacket_];
+    //    for (int packet = 0; packet < numPacket_; packet++) {
+    //        t[packet] = std::thread(this->abstractionFromThread(splitAbstraction, sysNext, radNext, ab, packet));
+    //    }
+    //    
+    //    for (int packet = 0; packet < numPacket_; packet++) {
+    //        t[packet].join();
+    //    }
+    //    
+    //    SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
+    //    for (int packet = 0; packet < numPacket_; packet++) {
+    //        abstraction.transitionRelation_ |= splitAbstraction[packet].transitionRelation_;
+    //    }
+    //    deleteVec(splitDs_);
+    //    
+    //    if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
+    //        Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
+    //        //            BDD O2 = Os_[ab]->symbolicSet_.Permute(permutesXtoX2_[ab]); // causes unsound behavior, leaving here as warning
+    //        //            Ts_[ab]->symbolicSet_ &= !O2;
+    //        //            Ts_[ab]->printInfo(1);
+    //        TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
+    //    }
+    //}
+    //
+    //template<class SymbolicModelGrowthBound, class sys_type, class rad_type>
+    //void abstractionFromThread(vector<SymbolicModelGrowthBound*> splitAbstraction, sys_type sysNext, rad_type radNext, int ab, int packet) {
+    //    splitAbstraction[packet].computeTransitionRelation(sysNext, radNext, *solvers_[ab], 1);
+    //}
+    
+//    /*! Divide Ds_[ab] into same-sized packets */
+//    void SplitInPakets(int ab){
+//        initializeParallel(ab);
+//        for (Ds_[ab]->begin(); !Ds_[ab]->done(); Ds_[ab]->next()){
+//            for (int packet = 0; packet < numPacket_; packet++) {
+//                splitDs_[packet]->symbolicSet_ |= Ds_[ab]->currentMinterm();
+//            }
+//        }
+////        deleteVec(splitDs_);
+//    }
+    
 
     /*! Calculates the cooperative predecessor of a given set with respect to the un-restricted transition relation at the coarsest level of abstraction.
      *  \param[in]  Z       The given set.
@@ -462,12 +703,14 @@ public:
 
     /*! Initializes data members.
      *  \param[in]  system      Contains abstraction parameters.
-     *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
+     *  \param[in]	addS	Function pointer specifying the points that should be added to the safe set.
+     *  \param[in]  num     Number of parallel threads
      */
     template<class S_type>
-    void initialize(System* system, S_type addS) {
+    void initialize(System* system, S_type addS, int num=1) {
         ddmgr_ = new Cudd;
         system_ = system;
+        numPacket_ = num;
 
         TicToc timer;
         timer.tic();
@@ -849,6 +1092,14 @@ public:
         SafeInner_[*system_->numAbs_-1]->writeToFile("plotting/SafeInner.bdd");
         checkMakeDir("SafeSets");
         saveVec(SafeInner_,"SafeSets/S");
+    }
+    
+    /*! Initialize the vector containing packets of the symbolicSet for parallel computation of the transition relation */
+    void initializeParallel(int ab) {
+        for (int iter = 0; iter < numPacket_; iter++) {
+            SymbolicSet* D = new SymbolicSet(*Xs_[ab]);
+            splitDs_.push_back(D);
+        }
     }
 
     /*! Saves a snapshot of a controller and its domain into the sequence of final controllers and controller domains.
