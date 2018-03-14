@@ -146,7 +146,15 @@ public:
 //            Ds_[i]->addGridPoints();
 //        }
         Ds_[0]->addGridPoints();
-        Ds_[0]->writeToFile("Ds0.bdd"); // debug purpose
+        
+        // Debug purpose begin
+        Ds_[0]->writeToFile("Ds0.bdd");
+        Xs_[0]->writeToFile("Xs0.bdd");
+        computedDs_[0]->writeToFile("computedDs_[0].bdd");
+        SymbolicSet* D = new SymbolicSet(*computedDs_[0]);
+        D->symbolicSet_ = !computedDs_[0]->symbolicSet_;
+        D->writeToFile("nComputedDs_[0].bdd");
+        // debug purpose end
 		
 		TicToc timer;
 		timer.tic();
@@ -817,6 +825,8 @@ public:
 
         for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* computedD = new SymbolicSet(*Xs_[i]);
+//            computedD->addGridPoints();
+//            computedD->symbolicSet_ = ddmgr_->bddZero();
             computedDs_.push_back(computedD);
         }
         clog << "computedDs_ initialized with empty domain.\n";
@@ -829,18 +839,21 @@ public:
 
         for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
+//            T->symbolicSet_ = ddmgr_->bddZero();
             Ts_.push_back(T);
         }
         clog << "Ts_ initialized with empty domain.\n";
 
         for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* TT = new SymbolicSet(*Cs_[i]);
+//            TT->symbolicSet_ = ddmgr_->bddZero();
             TTs_.push_back(TT);
         }
         clog << "TTs_ initialized with empty domain.\n";
 
         for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* uT = new SymbolicSet(*Ts_[0]); // exploration transition relations are all with coarsest gridding
+            uT->symbolicSet_ = ddmgr_->bddZero();
             uTs_.push_back(uT);
         }
         clog << "uT_ initialized with empty domain.\n";
