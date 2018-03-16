@@ -1,0 +1,9056 @@
+aircraft.log
+Initialized etaXs_, tau_.
+Initialized solvers.
+Xs_ initialized with full domain.
+X2s_ initialized with full domain.
+U_ initialized with full domain.
+Os_ initialized according to specification.
+Zs_ initialized with empty domain.
+Cs_ initialized with empty domain.
+Gs_ initialized according to specification.
+No obstacle problem with specification.
+validZs_ initialized with empty domain.
+validCs_ initialized with empty domain.
+Ds_ initialized with empty domain.
+innerDs_ initialized with empty domain.
+computedDs_ initialized with empty domain.
+savedZs_ initialized with empty domain.
+Ts_ initialized with empty domain.
+TTs_ initialized with empty domain.
+uT_ initialized with empty domain.
+Number of BDD variables: 164
+Initialized permutes.
+Initialized cubes.
+Initialized notVars.
+permuteCoarser 1 to 0: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 6 7 8 0 9 10 11 12 13 14 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 2 to 1: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 15 16 17 18 19 20 21 0 22 23 24 25 0 0 26 27 28 29 30 31 32 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 3 to 2: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 33 34 35 36 37 38 39 40 0 41 42 43 44 45 46 0 47 48 49 50 51 52 53 54 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 0 to 1: 16 17 18 19 20 21 23 24 25 27 28 29 30 31 32 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 1 to 2: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 34 35 36 37 38 39 40 42 43 44 45 48 49 50 51 52 53 54 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 2 to 3: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 56 57 58 59 60 61 62 63 65 66 67 68 69 70 72 73 74 75 76 77 78 79 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+etaXs_:
+abstraction 0: 0.552486 0.00634665 1.34132 
+abstraction 1: 0.276243 0.00317333 0.670659 
+abstraction 2: 0.138122 0.00158666 0.335329 
+abstraction 3: 0.0690608 0.000793331 0.167665 
+tau_:
+abstraction 0: 0.9
+abstraction 1: 0.45
+abstraction 2: 0.225
+abstraction 3: 0.1125
+m: 2
+p: 2
+
+current abstraction: 0
+controllers: 0
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 0
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 1
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 2
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 3
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 4
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 5
+abstraction: 0
+iteration: 1
+iteration: 2
+iteration: 3
+iteration: 4
+iteration: 5
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 6
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 7
+abstraction: 0
+iteration: 1
+iteration: 2
+iteration: 3
+iteration: 4
+iteration: 5
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 8
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 9
+abstraction: 0
+iteration: 1
+iteration: 2
+iteration: 3
+iteration: 4
+iteration: 5
+iteration: 6
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 10
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 11
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 12
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 13
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 14
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 15
+abstraction: 0
+iteration: 1
+iteration: 2
+iteration: 3
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 16
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 17
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 18
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 19
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 20
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 21
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 22
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 23
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 24
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 25
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 26
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 27
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 28
+abstraction: 1
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 0
+controllers: 29
+abstraction: 0
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 1
+controllers: 30
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 31
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 32
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 33
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 34
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 35
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 36
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 37
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 38
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 39
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 40
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 41
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 42
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 43
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 44
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 45
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 46
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 47
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 48
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 49
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 50
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 51
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 52
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 53
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 54
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 55
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 56
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 57
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 58
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 59
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 60
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 61
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 62
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 63
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 64
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 65
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 66
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 67
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 68
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 69
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 70
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 71
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 72
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 73
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 74
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 75
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 76
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 77
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 78
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 79
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 80
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 81
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 82
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 83
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 84
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 85
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 86
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 87
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 88
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 89
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 90
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 91
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 92
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 93
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 94
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 95
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 96
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 97
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 98
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 99
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 100
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 101
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 102
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 103
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 104
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 105
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 106
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 107
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 108
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 109
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 110
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 111
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 112
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 113
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 114
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 115
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 116
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 117
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 118
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 119
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 120
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 121
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 122
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 123
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 124
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 125
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 126
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 127
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 128
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 129
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 130
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 131
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 132
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 133
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 134
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 135
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 136
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 137
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 138
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 139
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 140
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 141
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 142
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 143
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 144
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 145
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 146
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 147
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 148
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 149
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 150
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 151
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 152
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 153
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 154
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 155
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 156
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 157
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 158
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 159
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 160
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 161
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 162
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 163
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 164
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 165
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 166
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 167
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 168
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 169
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 170
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 171
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 172
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 173
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 174
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 175
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 176
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 177
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 178
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 179
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 180
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 181
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 182
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 183
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 184
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 185
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 186
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 187
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 188
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 189
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 190
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 191
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 192
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 193
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 194
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 195
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 196
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 197
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 198
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 199
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 200
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 201
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 202
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 203
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 204
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 205
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 206
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 207
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 208
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 209
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 210
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 211
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 212
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 213
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 214
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 215
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 216
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 217
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 218
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 219
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 220
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 221
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 222
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 223
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 224
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 225
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 226
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 227
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 228
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 229
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 230
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 231
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 232
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 233
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 234
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 235
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 236
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 237
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 238
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 239
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 240
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 241
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 242
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 243
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 244
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 245
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 246
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 247
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 248
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 249
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 250
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 251
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 252
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 253
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 254
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 255
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 256
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 257
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 258
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 259
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 260
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 261
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 262
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 263
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 264
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 265
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 266
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 267
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 268
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 269
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 270
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 271
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 272
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 273
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 274
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 275
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 276
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 277
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 278
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 279
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 280
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 281
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 282
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 283
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 284
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 285
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 286
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 287
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 288
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 289
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 290
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 291
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 292
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 293
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 294
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 295
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 296
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 297
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 298
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 299
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 300
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 301
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 302
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 303
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 304
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 305
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 306
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 307
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 308
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 309
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 310
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 311
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 312
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 313
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 314
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 315
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 316
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 317
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 318
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 319
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 320
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 321
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 322
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 323
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 324
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 325
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 326
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 327
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 328
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 329
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 330
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 331
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 332
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 333
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 334
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 335
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 336
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 337
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 338
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 339
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 340
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 341
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 342
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 343
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 344
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 345
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 346
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 347
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 348
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 349
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 350
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 351
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 352
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 353
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 354
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 355
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 356
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 357
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 358
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 359
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 360
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 361
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 362
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 363
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 364
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 365
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 366
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 367
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 368
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 369
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 370
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 371
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 372
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 373
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 374
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 375
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 376
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 377
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 378
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 379
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 380
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 381
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 382
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 383
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 384
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 385
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 386
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 387
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 388
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 389
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 390
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 391
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 392
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 393
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 394
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 395
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 396
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 397
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 398
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 399
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 400
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 401
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 402
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 403
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 404
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 405
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 406
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 407
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 408
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 409
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 410
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 411
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 412
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 413
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 414
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 415
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 416
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 417
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 418
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 419
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 420
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 421
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 422
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 423
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 424
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 425
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 426
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 427
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 428
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 429
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 430
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 431
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 432
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 433
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 434
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 435
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 436
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 437
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 438
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 439
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 440
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 441
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 442
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 443
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 444
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 445
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 446
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 447
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 448
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 449
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 450
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 451
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 452
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 453
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 454
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 455
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 456
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 457
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 458
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 459
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 460
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 461
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 462
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 463
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 464
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 465
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 466
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 467
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 468
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 469
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 470
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 471
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 472
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 473
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 474
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 475
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 476
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 477
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 478
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 479
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 480
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 481
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 482
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 483
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 484
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 485
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 486
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 487
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 488
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 489
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 490
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 491
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 492
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 493
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 494
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 495
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 496
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 497
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 498
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 499
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 500
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 501
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 502
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 503
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 504
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 505
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 506
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 507
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 508
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 509
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 510
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 511
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 512
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 513
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 514
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 515
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 516
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 517
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 518
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 519
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 520
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 521
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 522
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 523
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 524
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 525
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 526
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 527
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 528
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 529
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 530
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 531
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 532
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 533
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 534
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 535
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 536
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 537
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 538
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 539
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 540
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 541
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 542
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 543
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 544
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 545
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 546
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 547
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 548
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 549
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 550
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 551
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 552
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 553
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 554
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 555
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 556
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 557
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 558
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 559
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 560
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 561
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 562
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 563
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 564
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 565
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 566
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 567
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 568
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 569
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 570
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 571
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 572
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 573
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 574
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 575
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 576
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 577
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 578
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 579
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 580
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 581
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 582
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 583
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 584
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 585
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 586
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 587
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 588
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 589
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 590
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 591
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 592
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 593
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 594
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 595
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 596
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 597
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 598
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 599
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 600
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 601
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 602
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 603
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 604
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 605
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 606
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 607
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 608
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 609
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 610
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 611
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 612
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 613
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 614
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 615
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 616
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 617
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 618
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 619
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 620
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 621
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 622
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 623
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 624
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 625
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 626
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 627
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 628
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 629
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 630
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 631
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 632
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 633
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 634
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 635
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 636
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 637
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 638
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 639
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 640
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 641
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 642
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 643
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 644
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 645
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 646
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 647
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 648
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 649
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 650
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 651
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 652
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 653
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 654
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 655
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 656
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 657
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 658
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 659
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 660
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 661
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 662
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 663
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 664
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 665
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 666
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 667
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 668
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 669
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 670
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 671
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 672
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 673
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 674
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 675
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 676
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 677
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 678
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 679
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 680
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 681
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 682
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 683
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 684
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 685
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 686
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 687
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 688
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 689
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 690
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 691
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 692
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 693
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 694
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 695
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 696
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 697
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 698
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 699
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 700
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 701
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 702
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 703
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 704
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 705
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 706
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 707
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 708
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 709
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 710
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 711
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 712
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 713
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 714
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 715
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 716
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 717
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 718
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 719
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 720
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 721
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 722
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 723
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 724
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 725
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 726
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 727
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 728
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 729
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 730
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 731
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 732
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 733
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 734
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 735
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 736
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 737
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 738
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 739
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 740
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 741
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 742
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 743
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 744
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 745
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 746
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 747
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 748
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 749
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 750
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 751
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 752
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 753
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 754
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 755
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 756
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 757
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 758
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 759
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 760
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 761
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 762
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 763
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 764
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 765
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 766
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 767
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 768
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 769
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 770
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 771
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 772
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 773
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 774
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 775
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 776
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 777
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 778
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 779
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 780
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 781
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 782
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 783
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 784
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 785
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 786
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 787
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 788
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 789
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 790
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 791
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 792
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 793
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 794
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 795
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 796
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 797
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 798
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 799
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 800
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 801
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 802
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 803
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 804
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 805
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 806
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 807
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 808
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 809
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 810
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 811
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 812
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 813
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 814
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 815
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 816
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 817
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 818
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 819
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 820
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 821
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 822
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 823
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 824
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 825
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 826
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 827
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 828
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 829
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 830
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 831
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 832
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 833
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 834
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 835
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 836
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 837
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 838
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 839
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 840
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 841
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 842
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 843
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 844
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 845
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 846
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 847
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 848
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 849
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 850
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 851
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 852
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 853
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 854
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 855
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 856
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 857
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 858
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 859
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 860
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 861
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 862
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 863
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 864
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 865
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 866
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 867
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 868
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 869
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 870
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 871
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 872
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 873
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 874
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 875
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 876
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 877
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 878
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 879
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 880
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 881
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 882
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 883
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 884
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 885
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 886
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 887
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 888
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 889
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 890
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 891
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 892
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 893
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 894
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 895
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 896
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 897
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 898
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 899
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 900
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 901
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 902
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 903
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 904
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 905
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 906
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 907
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 908
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 909
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 910
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 911
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 912
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 913
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 914
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 915
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 916
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 917
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 918
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 919
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 920
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 921
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 922
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 923
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 924
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 925
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 926
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 927
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 928
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 929
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 930
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 931
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 932
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 933
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 934
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 935
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 936
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 937
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 938
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 939
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 940
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 941
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 942
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 943
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 944
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 945
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 946
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 947
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 948
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 949
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 950
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 951
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 952
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 953
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 954
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 955
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 956
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 957
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 958
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 959
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 960
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 961
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 962
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 963
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 964
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 965
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 966
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 967
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 968
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 969
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 970
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 971
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 972
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 973
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 974
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 975
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 976
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 977
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 978
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 979
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 980
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 981
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 982
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 983
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 984
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 985
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 986
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 987
+abstraction: 2
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 1
+controllers: 988
+abstraction: 1
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 2
+controllers: 989
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 990
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 991
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 992
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 993
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 994
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 995
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 996
+abstraction: 3
+iteration: 1
+iteration: 2
+result: not converged
+saved as snapshot, saved to valids
+Going coarser
+
+current abstraction: 2
+controllers: 997
+abstraction: 2
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+Going finer
+
+current abstraction: 3
+controllers: 998
+abstraction: 3
+iteration: 1
+iteration: 2
+result: converged valid
+saved as snapshot, saved to valids
+controllers: 999
+Wrote Ts_ to file.
+------------------------------------Total time:Abstraction construction time: 1246.45 seconds.
+Controller synthesis time: 3933.61 seconds.
