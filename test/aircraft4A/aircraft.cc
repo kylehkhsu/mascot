@@ -134,11 +134,11 @@ int main() {
   /* setup the workspace of the synthesis problem and the uniform grid */
   /* grid node distance diameter */
   /* optimized values computed according to doi: 10.1109/CDC.2015.7403185 */
-  double etaX[state_dim]={(25.0/362)*2*2*2,(3*M_PI/180/66)*2*2*2,(56.0/334)*2*2*2};
+  double etaX[state_dim]={(25.0/362)*2*2*2,(3*M_PI/180/66)*2*2*2,(20.0/334)*2*2*2};
   /* lower bounds of the hyper rectangle */
   double lbX[state_dim]={58,-3*M_PI/180,0};
   /* upper bounds of the hyper rectangle */
-  double ubX[state_dim]={83,0,56};
+  double ubX[state_dim]={83,0,20};
 //  scots::UniformGrid ss(state_dim,s_lb,s_ub,s_eta);
 //  std::cout << "Uniform grid details:" << std::endl;
 //  ss.print_info();
