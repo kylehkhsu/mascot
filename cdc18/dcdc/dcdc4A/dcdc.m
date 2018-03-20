@@ -227,6 +227,30 @@ if (strcmp(mode,'Q')) % plot controller domains
     end
 end
 
+if (strcmp(mode,'K')) % plot controller domains
+    numItr = 89;
+    for ii=1:numItr
+        %openfig('system');
+        figure
+        title(['K' num2str(ii)])
+        hold on;
+        cmap = [jet(numAbs) 0.5*ones(numAbs,1)];  
+
+        for i=1:numAbs
+            disp(['layer ' num2str(i)])
+            C = SymbolicSet(['K' int2str(ii) '/Zs' int2str(i) '.bdd'],'projection',[1 2]);
+            try
+                p = C.points;
+            catch
+                warning(['No points in C' int2str(i) '.bdd']);
+                continue
+            end        
+            plot(p(:,1),p(:,2),'x','color',cmap(i,:))
+            pause
+        end
+    end
+end
+
 if (strcmp(mode,'Safe'))
     openfig('system');
     hold on

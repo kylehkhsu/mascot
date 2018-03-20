@@ -100,11 +100,12 @@ int main() {
     int nint = 5;
 
     double etaX[dimX]= {(pow(2,2)*2/4e3), (pow(2,2)*2/4e3)};
-    double tau = pow(2, 2)*0.0625;
+    //double tau = pow(2, 2)*0.0625;
+    double tau = 0.5;
     int numAbs = 3;
 
     double etaRatio[dimX] = {2, 2};
-    double tauRatio = 2;
+    double tauRatio = 1;
 
     X_type x;
     U_type u;
