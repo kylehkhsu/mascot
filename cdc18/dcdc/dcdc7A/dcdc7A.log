@@ -535,14 +535,8 @@ current recursion depth: 54
 	 current abstraction: 4
 	 current abstraction: 5
 	 current abstraction: 6
-controllers: 7
-controllers: 7
-controllers: 7
-controllers: 7
-controllers: 7
-controllers: 7
-controllers: 7
 Wrote Ts_ to file.
------------------------------------------------Total time: 4.35217 seconds.
-Abstraction construction time: 1.64097 seconds.
-Controller synthesis time: 1.68263 seconds.
+-----------------------------------------------Total time: 4.51817 seconds.
+Abstraction construction time: 1.55251 seconds.
+Controller synthesis time: 1.67614 seconds.
+Abs + syn time: 3.22865 seconds.

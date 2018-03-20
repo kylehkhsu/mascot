@@ -482,12 +482,13 @@ public:
 		}
         synTime_ += timer.toc();
         
-        
+
         // debug purpose
-        string Str = "K/K";
+        string Str = "K";
         Str += std::to_string(recursion);
-        checkMakeDir(Str);
-        saveVec(validZs_,Str);
+        checkMakeDir(Str.c_str());
+        Str += "/K";
+        saveVec(validZs_, Str.c_str());
         // debug purpose ends
 
 		if (CONVERGED == 1) {
