@@ -1,0 +1,652 @@
+dcdc6A.log
+Initialized etaXs_, tau_.
+Initialized solvers.
+Xs_ initialized with full domain.
+X2s_ initialized with full domain.
+U_ initialized with full domain.
+SafeInner_ initialized according to specification.
+SafeOuter_ initialized with empty domain, and will be set with correct domain later.Zs_ initialized with empty domain.
+Rs_ initialized with empty domain.
+Cs_ initialized with full domain.
+validZs_ initialized with full domain.
+Ds_ initialized with empty domain.
+innerDs_ initialized with empty domain.
+computedDs_ initialized with empty domain.
+savedZs_ initialized with empty domain.
+Ts_ initialized with empty domain.
+TTs_ initialized with empty domain.
+uT_ initialized with empty domain.
+Number of BDD variables: 181
+Initialized permutes.
+Initialized cubes.
+Initialized notVars.
+permuteCoarser 1 to 0: 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 0 5 6 7 8 9 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 2 to 1: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 10 11 12 13 14 15 0 16 17 18 19 20 21 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 3 to 2: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 22 23 24 25 26 27 28 0 29 30 31 32 33 34 35 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 4 to 3: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 36 37 38 39 40 41 42 43 0 44 45 46 47 48 49 50 51 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 5 to 4: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 52 53 54 55 56 57 58 59 60 0 61 62 63 64 65 66 67 68 69 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 0 to 1: 11 12 13 14 15 17 18 19 20 21 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 1 to 2: 0 0 0 0 0 0 0 0 0 0 23 24 25 26 27 28 30 31 32 33 34 35 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 2 to 3: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 37 38 39 40 41 42 43 45 46 47 48 49 50 51 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 3 to 4: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 53 54 55 56 57 58 59 60 62 63 64 65 66 67 68 69 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 4 to 5: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 71 72 73 74 75 76 77 78 79 81 82 83 84 85 86 87 88 89 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+etaXs_:
+abstraction 0: 0.016 0.016 
+abstraction 1: 0.008 0.008 
+abstraction 2: 0.004 0.004 
+abstraction 3: 0.002 0.002 
+abstraction 4: 0.001 0.001 
+abstraction 5: 0.0005 0.0005 
+tau_:
+abstraction 0: 2
+abstraction 1: 1
+abstraction 2: 0.5
+abstraction 3: 0.25
+abstraction 4: 0.125
+abstraction 5: 0.0625
+SafeOuter_ set according to specification.
+
+current recursion depth: 1
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 2
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 3
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 4
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 5
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 6
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 7
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 8
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 9
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 10
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 11
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 12
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 13
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 14
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 15
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 16
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 17
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 18
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 19
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 20
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 21
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 22
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 23
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 24
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 25
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 26
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 27
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 28
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 29
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 30
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 31
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 32
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 33
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 34
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 35
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 36
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 37
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 38
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 39
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 40
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 41
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 42
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 43
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 44
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 45
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 46
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 47
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 48
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 49
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 50
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 51
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 52
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 53
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 54
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 55
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 56
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 57
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 58
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 59
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 60
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 61
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 62
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 63
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 64
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 65
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 66
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 67
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 68
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 69
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 70
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 71
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 72
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 73
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 74
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+
+current recursion depth: 75
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+Wrote Ts_ to file.
+-----------------------------------------------Total time: 6.09662 seconds.
+Abstraction construction time: 2.68913 seconds.
+Controller synthesis time: 3.08994 seconds.
+Abs + syn time: 5.77907 seconds.

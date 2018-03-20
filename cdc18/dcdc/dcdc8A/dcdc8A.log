@@ -1,0 +1,490 @@
+dcdc8A.log
+Initialized etaXs_, tau_.
+Initialized solvers.
+Xs_ initialized with full domain.
+X2s_ initialized with full domain.
+U_ initialized with full domain.
+SafeInner_ initialized according to specification.
+SafeOuter_ initialized with empty domain, and will be set with correct domain later.Zs_ initialized with empty domain.
+Rs_ initialized with empty domain.
+Cs_ initialized with full domain.
+validZs_ initialized with full domain.
+Ds_ initialized with empty domain.
+innerDs_ initialized with empty domain.
+computedDs_ initialized with empty domain.
+savedZs_ initialized with empty domain.
+Ts_ initialized with empty domain.
+TTs_ initialized with empty domain.
+uT_ initialized with empty domain.
+Number of BDD variables: 209
+Initialized permutes.
+Initialized cubes.
+Initialized notVars.
+permuteCoarser 1 to 0: 0 0 0 0 0 0 0 0 1 2 0 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 2 to 1: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6 7 8 9 0 10 11 12 13 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 3 to 2: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 14 15 16 17 18 0 19 20 21 22 23 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 4 to 3: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 24 25 26 27 28 29 0 30 31 32 33 34 35 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 5 to 4: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 36 37 38 39 40 41 42 0 43 44 45 46 47 48 49 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 6 to 5: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 50 51 52 53 54 55 56 57 0 58 59 60 61 62 63 64 65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteCoarser 7 to 6: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 66 67 68 69 70 71 72 73 74 0 75 76 77 78 79 80 81 82 83 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 0 to 1: 7 8 9 11 12 13 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 1 to 2: 0 0 0 0 0 0 15 16 17 18 20 21 22 23 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 2 to 3: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 25 26 27 28 29 31 32 33 34 35 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 3 to 4: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 37 38 39 40 41 42 44 45 46 47 48 49 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 4 to 5: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 51 52 53 54 55 56 57 59 60 61 62 63 64 65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 5 to 6: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 67 68 69 70 71 72 73 74 76 77 78 79 80 81 82 83 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+permuteFiner 6 to 7: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 85 86 87 88 89 90 91 92 93 95 96 97 98 99 100 101 102 103 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+etaXs_:
+abstraction 0: 0.064 0.064 
+abstraction 1: 0.032 0.032 
+abstraction 2: 0.016 0.016 
+abstraction 3: 0.008 0.008 
+abstraction 4: 0.004 0.004 
+abstraction 5: 0.002 0.002 
+abstraction 6: 0.001 0.001 
+abstraction 7: 0.0005 0.0005 
+tau_:
+abstraction 0: 8
+abstraction 1: 4
+abstraction 2: 2
+abstraction 3: 1
+abstraction 4: 0.5
+abstraction 5: 0.25
+abstraction 6: 0.125
+abstraction 7: 0.0625
+SafeOuter_ set according to specification.
+
+current recursion depth: 1
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 2
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 3
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 4
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 5
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 6
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 7
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 8
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 9
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 10
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 11
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 12
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 13
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 14
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 15
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 16
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 17
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 18
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 19
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 20
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 21
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 22
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 23
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 24
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 25
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 26
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 27
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 28
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 29
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 30
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 31
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 32
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 33
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 34
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 35
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 36
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 37
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 38
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 39
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 40
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 41
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 42
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+
+current recursion depth: 43
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+	 current abstraction: 3
+	 current abstraction: 4
+	 current abstraction: 5
+	 current abstraction: 6
+	 current abstraction: 7
+Wrote Ts_ to file.
+-----------------------------------------------Total time: 2.18752 seconds.
+Abstraction construction time: 0.996137 seconds.
+Controller synthesis time: 0.913892 seconds.
+Abs + syn time: 1.91003 seconds.
