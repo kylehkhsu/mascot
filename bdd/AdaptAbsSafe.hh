@@ -250,6 +250,7 @@ public:
 		// begin on-the-fly safety synthesis
 		int print = 1; // print progress on command line
 		int recursion = 0;
+        checkMakeDir("K");
 		onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion, print);
 
 		// to ensure that the controllers for the coarser layers admit control inputs that allow visit to finer layer states. Note that this doesn't change the controller domain.
@@ -481,6 +482,13 @@ public:
 			coarserInner(validZs_[ab - 1], validZs_[ab], ab - 1);
 		}
         synTime_ += timer.toc();
+        
+        // debug purpose
+        string Str = "K/K";
+        Str += std::to_string(recursion);
+        checkMakeDir(Str);
+        saveVec(validZs_, Str);
+        // debug purpose end
 
 		if (CONVERGED == 1) {
 			return;
