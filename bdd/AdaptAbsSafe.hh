@@ -481,6 +481,14 @@ public:
 			coarserInner(validZs_[ab - 1], validZs_[ab], ab - 1);
 		}
         synTime_ += timer.toc();
+        
+        
+        // debug purpose
+        string Str = "K/K";
+        Str += std::to_string(recursion);
+        checkMakeDir(Str);
+        saveVec(validZs_,Str);
+        // debug purpose ends
 
 		if (CONVERGED == 1) {
 			return;
