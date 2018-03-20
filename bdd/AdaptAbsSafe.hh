@@ -246,6 +246,16 @@ public:
 		//// debug purpose
 		//checkMakeDir("validZsInit");
 		//saveVec(validZs_, "validZsInit/Zs_");
+        
+//        // debug purpose: all transitions pre computed
+//        for (int ab = 1; ab < *system_->numAbs_; ab++) {
+//            Ds_[ab]->addGridPoints();
+//
+//            SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]); // coarsest state gridding
+//            abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // use solver with time step corresponding to that of each layer
+//            Ts_[ab]->symbolicSet_ = abstraction.transitionRelation_;
+//        }
+//        // debug purpose ends
 
 		// begin on-the-fly safety synthesis
 		int print = 1; // print progress on command line
@@ -410,14 +420,24 @@ public:
 			if (ab > 0) {
 				//Ds_[ab-1]->symbolicSet_ = !Zs_[ab - 1]->symbolicSet_ & validZs_[ab - 1]->symbolicSet_;
 			    timer.tic();
-				Ds_[*system_->numAbs_ - 1]->symbolicSet_ = validZs_[*system_->numAbs_ - 1]->symbolicSet_;
-				for (int ii = *system_->numAbs_ - 1; ii >= ab; ii--) {
-					coarserOuter(Ds_[ii - 1], Ds_[ii], ii - 1);
-				}
-				Ds_[ab-1]->symbolicSet_ &= Rs_[ab-1]->symbolicSet_;
-				finer(Ds_[ab - 1], Ds_[ab], ab - 1);
+                // approach 1: using Rs of the immediate coarser layer
+//                Ds_[*system_->numAbs_ - 1]->symbolicSet_ = validZs_[*system_->numAbs_ - 1]->symbolicSet_;
+//                for (int ii = *system_->numAbs_ - 1; ii >= ab; ii--) {
+//                    coarserOuter(Ds_[ii - 1], Ds_[ii], ii - 1);
+//                }
+//                Ds_[ab-1]->symbolicSet_ &= Rs_[ab-1]->symbolicSet_;
+//                finer(Ds_[ab - 1], Ds_[ab], ab - 1);
+                // approach 1 end
+                // approach 2: using Zs of the immediate coarser layer
+                for (int i = 1; i <= ab; i++) {
+                    BDD X = Zs_[i]->symbolicSet_;
+                    finer(Zs_[i - 1], Zs_[i], i - 1);
+                    Zs_[i]->symbolicSet_ |= X;
+                }
+                Ds_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_ & !Zs_[ab]->symbolicSet_;
 				computeAbstraction(ab, sysNext, radNext, x, u);
 				abTime_ += timer.toc();
+                // approach 2 end
 			}
 			timer.tic();
 			safeOne(ab, print);
@@ -487,8 +507,8 @@ public:
         string Str = "K";
         Str += std::to_string(recursion);
         checkMakeDir(Str.c_str());
-        Str += "/K";
-        saveVec(validZs_, Str.c_str());
+        Str += "/Zs";
+        saveVec(Cs_, Str.c_str());
         // debug purpose ends
 
 		if (CONVERGED == 1) {
@@ -506,22 +526,45 @@ public:
 		}
 	}
 
-	template<class sys_type, class rad_type, class X_type, class U_type>
-	void ExpandAbstraction(int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-		Ds_[*system_->numAbs_ - 1]->symbolicSet_ = validZs_[*system_->numAbs_ - 1]->symbolicSet_; // save the winning states for Pre in the next iteration
-		for (int ab = *system_->numAbs_ - 1; ab > 0; ab--) {
-			coarserOuter(Ds_[ab - 1], Ds_[ab], ab - 1);
-		}
-		BDD uPreD = uPre(Ds_[0]->symbolicSet_, nextAb);
-		Ds_[0]->symbolicSet_ = uPreD & SafeOuter_[0]->symbolicSet_;
-		for (int ab = 0; ab < nextAb - 1; ab++) {
-			finer(Ds_[ab], Ds_[ab + 1], ab);
-		}
-		Ds_[nextAb - 1]->symbolicSet_ &= Rs_[nextAb - 1]->symbolicSet_;
-		finer(Ds_[nextAb - 1], Ds_[nextAb], nextAb - 1);
+    // approach 1: using Rs of the immediate coarser layer
+//    template<class sys_type, class rad_type, class X_type, class U_type>
+//    void ExpandAbstraction(int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+//        Ds_[*system_->numAbs_ - 1]->symbolicSet_ = validZs_[*system_->numAbs_ - 1]->symbolicSet_; // save the winning states for Pre in the next iteration
+//        for (int ab = *system_->numAbs_ - 1; ab > 0; ab--) {
+//            coarserOuter(Ds_[ab - 1], Ds_[ab], ab - 1);
+//        }
+//        BDD uPreD = uPre(Ds_[0]->symbolicSet_, nextAb);
+//        Ds_[0]->symbolicSet_ = uPreD & SafeOuter_[0]->symbolicSet_;
+//        for (int ab = 0; ab < nextAb - 1; ab++) {
+//            finer(Ds_[ab], Ds_[ab + 1], ab);
+//        }
+//        Ds_[nextAb - 1]->symbolicSet_ &= Rs_[nextAb - 1]->symbolicSet_;
+//        finer(Ds_[nextAb - 1], Ds_[nextAb], nextAb - 1);
+//        computeAbstraction(nextAb, sysNext, radNext, x, u);
+////        computeAbstractionInParallel(nextAb, sysNext, radNext, x, u);
+//    }
+    //
+    // approach 2: using Zs of all the coarser layers
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void ExpandAbstraction(int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        Ds_[*system_->numAbs_ - 1]->symbolicSet_ = validZs_[*system_->numAbs_ - 1]->symbolicSet_; // save the winning states for Pre in the next iteration
+        for (int ab = *system_->numAbs_ - 1; ab > 0; ab--) {
+            coarserOuter(Ds_[ab - 1], Ds_[ab], ab - 1);
+        }
+        BDD uPreD = uPre(Ds_[0]->symbolicSet_, nextAb);
+        Ds_[0]->symbolicSet_ = uPreD & SafeOuter_[0]->symbolicSet_;
+        for (int ab = 0; ab <= nextAb - 1; ab++) {
+            finer(Ds_[ab], Ds_[ab + 1], ab);
+        }
+        for (int i = 1; i <= nextAb; i++) {
+            BDD X = Zs_[i]->symbolicSet_;
+            finer(Zs_[i - 1], Zs_[i], i - 1);
+            Zs_[i]->symbolicSet_ |= X;
+        }
+        Ds_[nextAb]->symbolicSet_ &= !Zs_[nextAb]->symbolicSet_;
         computeAbstraction(nextAb, sysNext, radNext, x, u);
 //        computeAbstractionInParallel(nextAb, sysNext, radNext, x, u);
-	}
+    }
     
     // one step safety fixed-point
     void safeOne(int ab, int print = 0) {
