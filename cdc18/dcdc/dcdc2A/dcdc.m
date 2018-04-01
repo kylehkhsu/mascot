@@ -92,15 +92,16 @@ if (strcmp(mode,'P'))
 end
 
 if (strcmp(mode, 'T'))
+    cmap = [jet(numAbs) 0.5*ones(numAbs,1)];
     openfig('system')
+    title(['T' num2str(numAbs)])
     for i = 1:numAbs
         T = SymbolicSet(['T/T' num2str(i) '.bdd'], 'projection', [1 2]);
         p = T.points;
-        plot(p(:,1),p(:,2),'ko');
+        plot(p(:,1),p(:,2),'x','color',cmap(i,:))
         disp(['layer ' num2str(i)])
         pause
-    end
-    title('T')
+    end    
 end
 
 if (strcmp(mode,'Z'))
@@ -208,6 +209,7 @@ end
 
 if (strcmp(mode,'Q')) % plot controller domains
     openfig('system');
+    title(['C' num2str(numAbs)])
     hold on;
     cmap = [jet(numAbs) 0.5*ones(numAbs,1)];  
  

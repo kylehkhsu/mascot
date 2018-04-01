@@ -118,6 +118,6 @@ int main() {
 
     TicToc timer;
     timer.tic();
-    abs.onTheFlySafeNoAux(sysNext, radNext, x, u);
+    abs.onTheFlySafe(sysNext, radNext, x, u);
     clog << "-----------------------------------------------Total time: " << timer.toc() << " seconds.\n";
 }
