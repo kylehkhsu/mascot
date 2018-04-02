@@ -93,7 +93,9 @@ end
 
 if (strcmp(mode, 'T'))
     cmap = [jet(numAbs) 0.5*ones(numAbs,1)];
-    openfig('system')
+%     openfig('system')
+    figure
+    hold on
     title(['T' num2str(numAbs)])
     for i = 1:numAbs
         T = SymbolicSet(['T/T' num2str(i) '.bdd'], 'projection', [1 2]);
@@ -208,7 +210,8 @@ end
 
 
 if (strcmp(mode,'Q')) % plot controller domains
-    openfig('system');
+%     openfig('system');
+    figure
     title(['C' num2str(numAbs)])
     hold on;
     cmap = [jet(numAbs) 0.5*ones(numAbs,1)];  

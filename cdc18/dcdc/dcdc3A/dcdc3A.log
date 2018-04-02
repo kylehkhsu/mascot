@@ -29,9 +29,16 @@ abstraction 0: 0.002 0.002
 abstraction 1: 0.001 0.001 
 abstraction 2: 0.0005 0.0005 
 tau_:
+<<<<<<< HEAD
 abstraction 0: 0.25
 abstraction 1: 0.125
 abstraction 2: 0.0625
+=======
+abstraction 0: 0.5
+abstraction 1: 0.5
+abstraction 2: 0.5
+SafeOuter_ set according to specification.
+>>>>>>> 07e1a694df57c1d6da25f06b98a86615a8fd2575
 
 current recursion depth: 1
 	 current abstraction: 0
@@ -452,6 +459,7 @@ current recursion depth: 84
 	 current abstraction: 0
 	 current abstraction: 1
 	 current abstraction: 2
+<<<<<<< HEAD
 
 current recursion depth: 85
 	 current abstraction: 0
@@ -1057,3 +1065,10 @@ Wrote Ts_ to file.
 Abstraction construction time: 9.26071 seconds.
 Controller synthesis time: 41.9844 seconds.
 Abs + syn time: 51.2451 seconds.
+=======
+Wrote Ts_ to file.
+-----------------------------------------------Total time: 28.5664 seconds.
+Abstraction construction time: 9.28382 seconds.
+Controller synthesis time: 17.5653 seconds.
+Abs + syn time: 26.8491 seconds.
+>>>>>>> 07e1a694df57c1d6da25f06b98a86615a8fd2575

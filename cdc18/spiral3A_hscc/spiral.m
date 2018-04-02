@@ -63,14 +63,20 @@ function spiral(mode, numAbs) % numAbs = num of controllers
     end
     
     if (strcmp(mode,'C_dom'))
-        cmap = [jet(numAbs) 0.5*ones(numAbs,1)];
+%         cmap = [jet(numAbs) 0.5*ones(numAbs,1)];
+        green = [0.7569    0.8667    0.7765];
+		purple = [0.8196    0.6549    0.8471];
+		orange = [0.9137    0.8275    0.3804];
+		red = [0.9373    0.2980    0.2980];
+		gray = [0.2471    0.2471    0.2471];
+        cmap = [green;purple;orange];
         openfig('problem');
         for ii=1:numAbs
             hold on
             C = SymbolicSet(['C/C' num2str(ii) '.bdd'],'projection',[1 2]);
             try
 %                 plotCells(C,'facecolor','k');
-                plot(C.points(:,1),C.points(:,2),'x','color',cmap(ii,:));
+                plotCells(C,'facecolor',cmap(ii,:),'edgec',cmap(ii,:),'linew', 0.1);
             catch
                 warning(['There are no points in C' num2str(ii)]);
             end
@@ -96,8 +102,8 @@ function spiral(mode, numAbs) % numAbs = num of controllers
                 'interpreter','latex',...
                 'FontSize',9,...
                 'FontName','Times');
-        savefig('spiral_hscc');
-        print -depsc spiral_hscc.eps
+        savefig('spiral_cdc');
+        print -depsc spiral_cdc.eps
     end
     
     if (strcmp(mode,'Safe'))
