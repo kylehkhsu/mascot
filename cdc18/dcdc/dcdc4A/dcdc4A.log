@@ -12,7 +12,6 @@ validZs_ initialized with full domain.
 Ds_ initialized with empty domain.
 innerDs_ initialized with empty domain.
 computedDs_ initialized with empty domain.
-savedZs_ initialized with empty domain.
 Ts_ initialized with empty domain.
 TTs_ initialized with empty domain.
 uT_ initialized with empty domain.
@@ -36,6 +35,7 @@ abstraction 0: 0.5
 abstraction 1: 0.25
 abstraction 2: 0.125
 abstraction 3: 0.0625
+SafeOuter_ set according to specification.
 
 current recursion depth: 1
 	 current abstraction: 0
@@ -1230,38 +1230,8 @@ current recursion depth: 199
 	 current abstraction: 1
 	 current abstraction: 2
 	 current abstraction: 3
-
-current recursion depth: 200
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-
-current recursion depth: 201
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-
-current recursion depth: 202
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-
-current recursion depth: 203
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-
-current recursion depth: 204
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
 Wrote Ts_ to file.
------------------------------------------------Total time: 36.7381 seconds.
-Abstraction construction time: 8.37352 seconds.
-Controller synthesis time: 27.458 seconds.
-Abs + syn time: 35.8316 seconds.
+-----------------------------------------------Total time: 47.3346 seconds.
+Abstraction construction time: 19.6056 seconds.
+Controller synthesis time: 25.6211 seconds.
+Abs + syn time: 45.2267 seconds.

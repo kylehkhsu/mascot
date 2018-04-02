@@ -9,7 +9,7 @@ CXXFLAGS 		= -Wall -Wextra -std=c++11
 #
 # scots 
 #
-SCOTSROOT		= ../..
+SCOTSROOT		= ../../..
 SCOTSINC		= -I$(SCOTSROOT)/utils -I$(SCOTSROOT)/bdd 
 
 #
@@ -25,7 +25,7 @@ TARGET = dcdc
 all: $(TARGET)
 
 %.o:%.cc
-	$(CC) -c $(CXXFLAGS) $(CUDDINC) $(SCOTSINC) $< -o $@
+	$(CC) -c -g -O0  $(CXXFLAGS) $(CUDDINC) $(SCOTSINC) $< -o $@
 
 $(TARGET): $(TARGET).o
 	$(CC) $(CXXFLAGS) -o $(TARGET) $(TARGET).o $(CUDDLPATH) $(CUDDLIBS)
@@ -33,3 +33,7 @@ $(TARGET): $(TARGET).o
 
 clean:
 	rm  ./$(TARGET)  ./$(TARGET).o
+
+cleanAll:
+	rm -r -f ./$(TARGET)  ./$(TARGET).o C Z SafeSets *.txt *.fig plotting T *.log Zs* D* validZs* 
+

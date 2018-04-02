@@ -230,54 +230,6 @@ if (strcmp(mode,'R'))
     savefig('simulation');
 end
 
-if (strcmp(mode,'scots'))
-    openfig('problem');
-    hold on
-    drawnow
-    
-    I = SymbolicSet('scots/I.bdd');
-    x = I.points();
-    x = x(1,:);
-    x = [x; x];
-    v = [];
-    
-    G = SymbolicSet('scots/G.bdd');
-    eta = G.eta;
-    tau = eta(1)*3/2;
-    
-    C = SymbolicSet('scots/C.bdd', 'projection', [1 2 3]);
-    
-    j = 1;
-    
-    while(1)
-        disp(j)
-        disp(x(end-1,:))
-        disp(x(end,:))
-        
-        if (mod(j,1) == 0)
-            plot(x(:,1),x(:,2),'k.-')
-            drawnow
-            pause
-        end
-        
-        if (G.isElement(x(end,:)))
-            plot(x(:,1),x(:,2),'k.-')
-            drawnow
-            pause
-            break
-        end
-        
-        u = C.getInputs(x(end,:));
-        ran = randi([1 size(u,1)], 1, 1);
-        v = [v; u(ran,:)];
-        d = disturbance(w);
-        [t phi] = ode45(@unicycle_ode, [0 tau], x(end,:), [], u(ran,:), d);
-        x = [x; phi];
-        
-        j = j + 1;
-    end
-    savefig('scots/simulation')
-end
 end
 
 function d = disturbance(w)
