@@ -570,6 +570,6 @@ controllers: 7
 controllers: 7
 controllers: 7
 Wrote Ts_ to file.
------------------------------------------------Total time: 4.76562 seconds.
-Abstraction construction time: 2.3115 seconds.
-Controller synthesis time: 1.70509 seconds.
+-----------------------------------------------Total time: 5.1021 seconds.
+Abstraction construction time: 2.52257 seconds.
+Controller synthesis time: 1.83706 seconds.

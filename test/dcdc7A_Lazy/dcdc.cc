@@ -110,7 +110,6 @@ int main() {
     U_type u;
 
     int numAbs = 7;
-    int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
     System dcdc(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,

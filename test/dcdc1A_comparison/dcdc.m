@@ -64,7 +64,7 @@ if (strcmp(mode, 'S'))
     X = SymbolicSet('plotting/X.bdd');
     lb = X.first();
     ub = X.last();
-    axis([0.95*lb(1) 1.05*ub(1) 0.99*lb(2) 1.01*ub(2)])
+    axis([0.9*lb(1) 1.1*ub(1) 0.9*lb(2) 1.1*ub(2)])
     plotCells(X, 'facecolor', 'none', 'edgec', [0.8 0.8 0.8], 'linew', 0.1);
     drawnow
     disp('Done plotting state space')
@@ -92,89 +92,44 @@ if (strcmp(mode,'P'))
 end
 
 if (strcmp(mode, 'T'))
-    openfig('system')
-    for i = 1:numAbs
-        T = SymbolicSet(['T/T' num2str(i) '.bdd'], 'projection', [1 2]);
-        p = T.points;
-        plot(p(:,1),p(:,2),'ko');
-        disp(['layer ' num2str(i)])
-        pause
-    end
+    openfig('problem')
+    T1 = SymbolicSet('T/T1.bdd', 'projection', [1 2]);
+    p1 = T1.points;
+    x = plot(p1(:,1),p1(:,2),'ko');
+    pause
+    delete(x)
+    
+    T2 = SymbolicSet('T/T2.bdd', 'projection', [1 2]);
+    p2 = T2.points;
+    x = plot(p2(:,1),p2(:,2),'bo');
+    pause    
+    delete(x)
+    
+    T3 = SymbolicSet('T/T3.bdd', 'projection', [1 2]);
+    p3 = T3.points;
+    plot(p3(:,1),p3(:,2),'ro');
     title('T')
 end
 
-if (strcmp(mode,'Z'))
-    openfig('problem');
-    for ii=1:numAbs
-        Z = SymbolicSet(['Z/Z' int2str(ii) '.bdd']);
-        p = Z.points;
-        x = plot(p(:,1),p(:,2),'ko');
-        pause
-        delete(x)
-    end
-end
-
-% debug purpose
 if (strcmp(mode, 'Zs'))
-    fig0 = openfig('problem');
-    figure(fig0)
-    axis0 = gca;
-    fig1 = openfig('problem');
-    figure(fig1)
-    axis1 = gca;
-    fig2 = openfig('problem');
-    figure(fig2)
-    axis2 = gca;
-    
-    
-    for ii=1:2
-        T1 = SymbolicSet(['validZsInit/Zs_1.bdd']);
-        p1 = T1.points;
-        z = plot(axis0,p1(:,1),p1(:,2),'ko');
-        
+    openfig('problem')
+    for ii=2:2
         T1 = SymbolicSet(['Zs' int2str(ii) '/Zs_1.bdd']);
         p1 = T1.points;
-        x = plot(axis1,p1(:,1),p1(:,2),'ko');
-        
-        T1 = SymbolicSet(['validZs' int2str(ii) '/Zs_1.bdd']);
-        p1 = T1.points;
-        y = plot(axis2,p1(:,1),p1(:,2),'ko');
+        x = plot(p1(:,1),p1(:,2),'ko');
         pause
         delete(x)
-        delete(y)
-        delete(z)
 
-        T2 = SymbolicSet(['validZsInit/Zs_2.bdd']);
-        p2 = T2.points;
-        z = plot(axis0,p2(:,1),p2(:,2),'ko');
-        
         T2 = SymbolicSet(['Zs' int2str(ii) '/Zs_2.bdd']);
         p2 = T2.points;
-        x = plot(axis1,p2(:,1),p2(:,2),'bo');
-        
-        T2 = SymbolicSet(['validZs' int2str(ii) '/Zs_2.bdd']);
-        p2 = T2.points;
-        y = plot(axis2,p2(:,1),p2(:,2),'bo');
+        x = plot(p2(:,1),p2(:,2),'bo');
         pause    
         delete(x)
-        delete(y)
-        delete(z)
-        
-        T3 = SymbolicSet(['validZsInit/Zs_3.bdd']);
-        p3 = T3.points;
-        z = plot(axis0,p3(:,1),p3(:,2),'ko');
 
         T3 = SymbolicSet(['Zs' int2str(ii) '/Zs_3.bdd']);
         p3 = T3.points;
-        x = plot(axis1,p3(:,1),p3(:,2),'ro');
-        
-        T3 = SymbolicSet(['validZs' int2str(ii) '/Zs_3.bdd']);
-        p3 = T3.points;
-        y = plot(axis2,p3(:,1),p3(:,2),'ro');
-        pause
+        plot(p3(:,1),p3(:,2),'ro');
         delete(x)
-        delete(y)
-        delete(z)
     end
     title('Zs')
 end
@@ -207,34 +162,54 @@ end
 
 
 if (strcmp(mode,'Q')) % plot controller domains
-    openfig('system');
+    openfig('problem');
     hold on;
-    cmap = [jet(numAbs) 0.5*ones(numAbs,1)];  
- 
-    for i=1:numAbs
-        disp(['layer ' num2str(i)])
-        C = SymbolicSet(['C/C' int2str(i) '.bdd'],'projection',[1 2]);
-        try
-            p = C.points;
-        catch
-            warning(['No points in C' int2str(i) '.bdd']);
-            continue
-        end        
-        plot(p(:,1),p(:,2),'x','color',cmap(i,:))
-        pause
+    cmap = [hot(numAbs) 0.5*ones(numAbs,1)];
+    
+    %       if numAbs~=size(etaAbs,1) % Sanity check
+    %           error();
+    %       end
+    etaAbs = [0.6 0.6; 0.3 0.3; 0.15 0.15];
+    
+    for ii=controllers:-1:1
+        ii
+        C = SymbolicSet(['C/C' int2str(ii) '.bdd'],'projection',[1 2]);
+        eta = C.eta(1:2);
+        for jj=1:numAbs
+            if isequal(eta',etaAbs(jj,1:2))
+                layer = jj;
+                break;
+            end
+        end
+        
+        
+        if (ii == 1)
+            Z = SymbolicSet(['SafeSets/S' int2str(numAbs) '.bdd']);
+        else
+            Z = SymbolicSet(['Z/Z' int2str(ii-1) '.bdd']);
+        end
+        
+        points = setdiff(C.points,Z.points,'rows');
+        for jj=1:size(points,1)
+            rectangle('Position',[points(jj,:)-eta' 2*eta'],'FaceColor',cmap(layer,:));
+            %alpha(s,0.5);
+        end
+        pause;
     end
 end
 
 if (strcmp(mode,'Safe'))
-    openfig('system');
+    openfig('problem');
     hold on
     drawnow
     
-    x = [1.175 5.475];
-%     x = [1.40700000000000,5.48300000000000];
+    %     I = SymbolicSet('plotting/I.bdd');
+    %     x = I.points();
+    %     x = x(1,:);
+    x = [1 0.5 0];    
     v = [];    
     j = 1;
-    tauSet = [6.4 3.2 1.6 0.8 0.4 0.2 0.1];
+    tauSet = [0.9;0.9/2;0.9/2/2];
     
     C = cell(numAbs,1);
     Z = cell(numAbs,1);
@@ -253,11 +228,11 @@ if (strcmp(mode,'Safe'))
                 break;
             end
         end
-%         try
+        try
             u = C{ii}.getInputs(x(end,:));
-%         catch
-%             debug = 1;
-%         end
+        catch
+            debug = 1;
+        end
         ran = randi([1 size(u,1)], 1, 1);
         v = [v; u(ran,:)];
         d = disturbance(w);
@@ -269,14 +244,10 @@ if (strcmp(mode,'Safe'))
             drawnow
 %             pause
 %         end
-        disp(ii)
-%         disp('u')
-%         disp(u(ran,:))
-%         disp('d')
-%         disp(d)
-%         disp('x')
-        disp(x(end,:))
-%         pause
+        disp('u')
+        disp(u(ran,:))
+        disp('d')
+        disp(d)
        
     end
 
@@ -291,19 +262,9 @@ d = -w + (2 * w .* rand(size(w)));
 end
 
 function dxdt = sysODE(t,x,u, d)
-    r0=1.0;
-  vs = 1.0 ;
-  rl = 0.05 ;
-  rc = rl / 10 ;
-  xl = 3.0 ;
-  xc = 70.0 ;
-
-  if(u==0.5)
-    A = [ -rl / xl  0 ;  0  (-1 / xc) * (1 / (r0 + rc)) ] ;
-  else
-    A = [ (-1 / xl) * (rl + ((r0 * rc) / (r0 + rc)))  ((-1 / xl) * (r0 / (r0 + rc))) / 5 ;
-          5 * (r0 / (r0 + rc)) * (1 / xc)  (-1 / xc) * (1 / (r0 + rc)) ];
-  end
-  b = [(vs / xl) ; 0 ] ;
-    dxdt = A*x + b + d';
+dxdt = zeros(3,1);
+dxdt(1)=u(1)*cos(x(3));
+dxdt(2)=u(1)*sin(x(3));
+dxdt(3)=u(2);
+dxdt = dxdt + d';
 end

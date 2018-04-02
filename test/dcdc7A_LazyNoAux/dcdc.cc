@@ -99,9 +99,8 @@ int main() {
 
     int nint = 5;
 
-    double etaX[dimX]= {(2 * 2 * 2*2*2*2*2 /4e3), (2 * 2 * 2*2*2*2*2/4e3)};
-   /* double etaX[dimX]= {0.002, 0.002}; */
-    double tau = 0.5*2*2*2;
+    double etaX[dimX]= {(pow(2,7)/4e3), (pow(2,7)/4e3)};
+    double tau = 0.5*pow(1.3,7);
 
     double etaRatio[dimX] = {2, 2};
     double tauRatio = 2;
@@ -115,16 +114,11 @@ int main() {
     System dcdc(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
-    AdaptAbsSafe abs("dcdc7A_LazyNoAux.log");
+    AdaptAbsSafe abs("dcdc7A.log");
     abs.initialize(&dcdc, dcdcAddS);
-    /*abs.initializeSafe(dcdcAddS);
-    abs.computeAbstractions(sysNext, radNext, x, u);
-    abs.safe();*/
 
     TicToc timer;
     timer.tic();
     abs.onTheFlySafeNoAux(sysNext, radNext, x, u);
     clog << "-----------------------------------------------Total time: " << timer.toc() << " seconds.\n";
-    
-    return 1;
 }

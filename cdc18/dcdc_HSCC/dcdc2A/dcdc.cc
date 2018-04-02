@@ -3,7 +3,8 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
-#include "AdaptAbsSafe.hh"
+// #include "AdaptAbsSafe.hh"
+#include "Safe.hh"
 
 using namespace scots;
 
@@ -99,9 +100,9 @@ int main() {
 
     int nint = 5;
 
-    double etaX[dimX]= {(pow(2,9)*2/4e3), (pow(2,9)*2/4e3)};
-    double tau = pow(2, 9)*0.0625;
-    int numAbs = 10;
+    double etaX[dimX]= {(pow(2,1)*2/4e3), (pow(2,1)*2/4e3)};
+    double tau = pow(2, 1)*0.0625;
+    int numAbs = 2;
 
     double etaRatio[dimX] = {2, 2};
     double tauRatio = 2;
@@ -109,15 +110,18 @@ int main() {
     X_type x;
     U_type u;
 
+    TicToc timer;
+    timer.tic();    
+
+    int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
     System dcdc(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
-    AdaptAbsSafe abs("dcdc10A.log");
-    abs.initialize(&dcdc, dcdcAddS);
-
-    TicToc timer;
-    timer.tic();
-    abs.onTheFlySafe(sysNext, radNext, x, u);
+    Safe abs("dcdc2A_HSCC.log");
+    abs.initialize(&dcdc, readAbs, dcdcAddO);
+    abs.initializeSafe(dcdcAddS);
+    abs.computeAbstractions(sysNext, radNext, x, u);
+    abs.safe();
     clog << "-----------------------------------------------Total time: " << timer.toc() << " seconds.\n";
 }

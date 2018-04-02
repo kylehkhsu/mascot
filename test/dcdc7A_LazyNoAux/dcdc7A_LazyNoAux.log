@@ -41,13 +41,13 @@ abstraction 4: 0.002 0.002
 abstraction 5: 0.001 0.001 
 abstraction 6: 0.0005 0.0005 
 tau_:
-abstraction 0: 4
-abstraction 1: 2
-abstraction 2: 1
-abstraction 3: 0.5
-abstraction 4: 0.25
-abstraction 5: 0.125
-abstraction 6: 0.0625
+abstraction 0: 3.13743
+abstraction 1: 1.56871
+abstraction 2: 0.784356
+abstraction 3: 0.392178
+abstraction 4: 0.196089
+abstraction 5: 0.0980446
+abstraction 6: 0.0490223
 SafeOuter_ set according to specification.
 
 current recursion depth: 1
@@ -445,96 +445,6 @@ current recursion depth: 44
 	 current abstraction: 4
 	 current abstraction: 5
 	 current abstraction: 6
-
-current recursion depth: 45
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-	 current abstraction: 4
-	 current abstraction: 5
-	 current abstraction: 6
-
-current recursion depth: 46
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-	 current abstraction: 4
-	 current abstraction: 5
-	 current abstraction: 6
-
-current recursion depth: 47
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-	 current abstraction: 4
-	 current abstraction: 5
-	 current abstraction: 6
-
-current recursion depth: 48
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-	 current abstraction: 4
-	 current abstraction: 5
-	 current abstraction: 6
-
-current recursion depth: 49
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-	 current abstraction: 4
-	 current abstraction: 5
-	 current abstraction: 6
-
-current recursion depth: 50
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-	 current abstraction: 4
-	 current abstraction: 5
-	 current abstraction: 6
-
-current recursion depth: 51
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-	 current abstraction: 4
-	 current abstraction: 5
-	 current abstraction: 6
-
-current recursion depth: 52
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-	 current abstraction: 4
-	 current abstraction: 5
-	 current abstraction: 6
-
-current recursion depth: 53
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-	 current abstraction: 4
-	 current abstraction: 5
-	 current abstraction: 6
-
-current recursion depth: 54
-	 current abstraction: 0
-	 current abstraction: 1
-	 current abstraction: 2
-	 current abstraction: 3
-	 current abstraction: 4
-	 current abstraction: 5
-	 current abstraction: 6
 controllers: 7
 controllers: 7
 controllers: 7
@@ -543,6 +453,6 @@ controllers: 7
 controllers: 7
 controllers: 7
 Wrote Ts_ to file.
------------------------------------------------Total time: 4.04649 seconds.
-Abstraction construction time: 1.53001 seconds.
-Controller synthesis time: 1.47414 seconds.
+-----------------------------------------------Total time: 3.02134 seconds.
+Abstraction construction time: 1.24048 seconds.
+Controller synthesis time: 0.919962 seconds.

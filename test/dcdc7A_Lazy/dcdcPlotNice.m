@@ -34,6 +34,7 @@ function dcdcPlotNice(mode, numAbs) % numAbs = num of controllers
                 subplot(1,numAbs,ii)
                 plotCells(T,'facecolor','b','EdgeColor','b');
                 plotCells(C,'facecolor','r','EdgeColor','r');
+                axis([1.1 1.6 5.4 5.9])
             catch
                 warning(['There are no points in T or C' num2str(ii)]);
             end

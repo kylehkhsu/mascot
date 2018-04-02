@@ -1,0 +1,29 @@
+dcdc1A_HSCC.log
+Initialized etaXs_, tau_.
+Initialized solvers.
+Xs_ initialized with full domain.
+X2s_ initialized with full domain.
+U_ initialized with full domain.
+Os_ initialized according to specification.
+Zs_ initialized with empty domain.
+Cs_ initialized with empty domain.
+Number of BDD variables: 41
+Initialized permutes.
+Initialized cubes.
+Initialized notVars.
+etaXs_:
+abstraction 0: 0.0005 0.0005 
+tau_:
+abstraction 0: 0.0625
+Ss_ initialized
+Zs_ modified to BDD-1.
+infZs_ initialized to empty.
+Ts_ initialized with empty domain.
+Ts_ computed by sampling system behavior.
+Wrote Ts_ to file.
+TTs_ initialized by ExistAbstracting from Ts_.
+..............................................................................................................................................................................................................................222
+-----------------------------------------------Total time: 794.435 seconds.
+Abstraction construction time: 51.2219 seconds.
+Controller synthesis time: 736.071 seconds.
+Abs + syn time: 787.293 seconds.

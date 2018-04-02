@@ -60,6 +60,7 @@ public:
         infZs_[curAbs]->symbolicSet_ |= Zs_[curAbs]->symbolicSet_;
 //        infZs_[curAbs]->printInfo(1);
         if (curAbs != *this->system_->numAbs_ - 1) {
+            
             this->finer(infZs_[curAbs], infZs_[curAbs+1], curAbs); // obtain projection of converged Z onto next, finer abstraction
 
             this->Ts_[curAbs+1]->symbolicSet_ &= !(infZs_[curAbs+1]->symbolicSet_); // don't consider pre states that already have a controller in a coarser abstraction
@@ -70,8 +71,8 @@ public:
     /*! Writes, should they exist, controllers of specified abstractions that together satisfy a safety specification. */
     void safe() {
 
-        TicToc tt;
-        tt.tic();
+        TicToc timer;
+        timer.tic();
 
         // removing obstacles from transition relation
         this->removeFromTs(&(this->Os_));
@@ -80,7 +81,7 @@ public:
             nu(curAbs);
         }
 
-        clog << "----------------------------------------safe: " << tt.toc() << " seconds.\n";
+        synTime_ += timer.toc();
 
         checkMakeDir("Z");
         saveVec(this->Zs_, "Z/Z");
@@ -98,12 +99,8 @@ public:
     template<class S_type>
     void initializeSafe(S_type addS) {
 
-        TicToc tt;
-        tt.tic();
         this->initializeSpec(&Ss_, addS);
         clog << "Ss_ initialized\n";
-        clog << "------------------------------------------------initializeSpec on Ss_: ";
-        tt.toc();
 
         // maximal fixed point starts with whole set
         for (int i = 0; i < *this->system_->numAbs_; i++) {

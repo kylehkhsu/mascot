@@ -62,16 +62,25 @@ public:
 
     vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
 
+    double abTime_;
+    double synTime_;
+
     /*!	Constructor for an Adaptive object.
      *  \param[in]  logFile     Filename of program log.
      */
     Adaptive(char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
+
+        abTime_ = 0;
+        synTime_ = 0;
     }
 
     /*! Destructor for an Adaptive object. */
     ~Adaptive() {
+        clog << "Abstraction construction time: " << abTime_ << " seconds.\n";
+        clog << "Controller synthesis time: " << synTime_ << " seconds.\n";
+        clog << "Abs + syn time: " << abTime_ + synTime_ << " seconds.\n";
         deleteVecArray(etaXs_);
         deleteVec(tau_);
         deleteVec(Xs_);
@@ -297,19 +306,20 @@ public:
             loadTs();
         }
 
-        clog << "------------------------------------------------computeAbstractions: " << timer.toc() << " seconds.\n";
+        abTime_ += timer.toc();
 
         if (readAbs_ == 0) {
             checkMakeDir("T");
             saveVec(Ts_, "T/T");
             clog << "Wrote Ts_ to file.\n";
         }
-
+        timer.tic();
         for (int i = 0; i < *system_->numAbs_; i++) {
             BDD* TT = new BDD;
             *TT = Ts_[i]->symbolicSet_.ExistAbstract(*cubesX2_[i]);
             TTs_.push_back(TT);
         }
+        abTime_ += timer.toc();
         clog << "TTs_ initialized by ExistAbstracting from Ts_.\n";
     }
 

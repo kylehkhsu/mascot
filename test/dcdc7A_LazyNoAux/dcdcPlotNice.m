@@ -21,7 +21,26 @@ function dcdcPlotNice(mode, numAbs) % numAbs = num of controllers
         savefig('system');
         savefig('problem'); % for dcdc, they are same
     end
-    
+    if (strcmp(mode,'T&C'))
+        figure
+        cmap = colormap('gray');
+        color1 = cmap(1,:);
+        color2 = cmap(floor(size(cmap,1)/2),:);
+        for ii=1:numAbs
+            disp(ii)
+            T = SymbolicSet(['T/T' num2str(ii) '.bdd'],'projection',[1 2]);
+            C = SymbolicSet(['C/C' num2str(ii) '.bdd'],'projection',[1 2]);
+            try
+                subplot(1,numAbs,ii)
+                plotCells(T,'facecolor','b','EdgeColor','b');
+                plotCells(C,'facecolor','r','EdgeColor','r');
+                axis([1.1 1.6 5.4 5.9]);
+                box on;
+            catch
+                warning(['There are no points in T or C' num2str(ii)]);
+            end
+        end
+    end
     if (strcmp(mode,'Transition'))
         for ii=1:numAbs
             figure

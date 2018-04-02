@@ -24,7 +24,6 @@ etaXs_:
 abstraction 0: 0.0005 0.0005 
 tau_:
 abstraction 0: 0.0625
-SafeOuter_ set according to specification.
 
 current recursion depth: 1
 	 current abstraction: 0
@@ -692,7 +691,7 @@ current recursion depth: 221
 current recursion depth: 222
 	 current abstraction: 0
 Wrote Ts_ to file.
------------------------------------------------Total time: 718.537 seconds.
-Abstraction construction time: 44.9172 seconds.
-Controller synthesis time: 665.992 seconds.
-Abs + syn time: 710.909 seconds.
+-----------------------------------------------Total time: 780.485 seconds.
+Abstraction construction time: 47.0586 seconds.
+Controller synthesis time: 725.964 seconds.
+Abs + syn time: 773.022 seconds.
