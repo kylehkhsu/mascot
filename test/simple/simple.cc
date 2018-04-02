@@ -3,9 +3,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
-//#include "AdaptAbsReach.hh"
-//#include "Reach.hh"
-#include "UpfrontReach.hh"
+#include "AdaptAbsReach.hh"
 
 using namespace std;
 using namespace scots;
@@ -22,13 +20,13 @@ typedef std::array<double, dimX> X_type;
 typedef std::array<double, dimU> U_type;
 
 /* we integrate the simple ode by 0.3 sec (the result is stored in x)  */
-auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
-    x[0] += u[0] * tau;
-    x[1] += u[1] * tau;
+auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
+    x[0] += u[0] * solver.tau_;
+    x[1] += u[1] * solver.tau_;
 };
 
 /* computation of the growth bound (the result is stored in r)  */
-auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
+auto radNext = [](X_type &r, U_type &u, OdeSolver solver) -> void {
     auto radODE = [](X_type &drdt, const X_type &r, const U_type &u) -> void {
         double L[2][2];
         L[0][0] = 0;
@@ -39,7 +37,7 @@ auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
         drdt[0] = L[0][0]*r[0] + L[0][1]*r[1] + w[0];
         drdt[1] = L[1][0]*r[0] + L[1][0]*r[1] + w[1];
     };
-    solver(radODE, r, u);
+    solver(radODE, r, u);    
 };
 
 auto simpleAddG = [](SymbolicSet* G) -> void {
@@ -112,24 +110,11 @@ int main() {
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nSubInt, numAbs);
 
-//    AdaptAbsReach syn("simple3A_adaptabs.log");
-//    syn.initialize(&system, simpleAddO, simpleAddG);
-
-//    TicToc tt_tot;
-//    tt_tot.tic();
-//    syn.onTheFlyReach(p, sysNext, radNext, x, u);
-//    double elapsed = tt_tot.toc();
-//    clog << "------------------------------------Total time: " << elapsed << " seconds.\n";
-
-
-    int m = 2;
-    UpfrontReach abs("simple3A_hscc_recurse.log");
-    abs.initialize(&system, 0, simpleAddO);
-    abs.initializeReach(simpleAddG, simpleAddI);
+    AdaptAbsReach abs("simple.log");
+    abs.initialize(&system, simpleAddO, simpleAddG);
 
     TicToc timer;
     timer.tic();
-    abs.computeAbstractions(sysNext, radNext, x, u);
-    abs.upfrontReach(m);
+    abs.onTheFlyReach(p, sysNext, radNext, x, u);
     clog << "------------------------------------Total time: " << timer.toc() << " seconds.\n";
 }

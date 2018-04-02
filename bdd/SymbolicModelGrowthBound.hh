@@ -135,8 +135,8 @@ public:
 
             /* integrate system and radius growth bound */
             /* the result is stored in x and r */
-            system_post(x,u, solver.tau_, solver);
-            radius_post(r,u, solver.tau_, solver);
+            system_post(x,u, solver);
+            radius_post(r,u, solver);
 
             /* determine the cells which intersect with the attainable set*/
             /* start with the computation of the indices */

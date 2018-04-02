@@ -33,7 +33,7 @@ typedef std::array<double, dimX> X_type;
 typedef std::array<double, dimU> U_type;
 
 /* system ODE (the result is stored in x)  */
-auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
+auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
     /* cartesian to polar conversion */
     X_type y;
     y[0] = pow(pow(x[0], 2) + pow(x[1], 2), 0.5); // radius
@@ -57,7 +57,7 @@ auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
 };
 
 /* computation of the growth bound (the result is stored in r)  */
-auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
+auto radNext = [](X_type &r, U_type &u, OdeSolver solver) -> void {
     /* cartesian to polar conversion */
     X_type s;
     s[0] = pow(pow(r[0], 2) + pow(r[1], 2), 0.5);
@@ -112,7 +112,6 @@ int main() {
     double tauRatio = 2;
     
     int numAbs = 3;
-    int readAbs = 0;
     
     X_type x;
     U_type u;
@@ -121,13 +120,11 @@ int main() {
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nint, numAbs);
     
-    AdaptAbsSafe abs("spiral_3A.log");
+    AdaptAbsSafe abs("spiral.log");
     abs.initialize(&spiral, spiralAddS);
     
     TicToc timer;
     timer.tic();
     abs.onTheFlySafe(sysNext, radNext, x, u);
     clog << "-----------------------------------------------Total time: " << timer.toc() << " seconds.\n";
-    
-    return 1;
 }

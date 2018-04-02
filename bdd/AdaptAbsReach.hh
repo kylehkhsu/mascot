@@ -66,7 +66,7 @@ public:
     /*!	Constructor for an AdaptAbsReach object.
      *  \param[in]  logFile     Filename of program log.
      */
-    AdaptAbsReach(char* logFile) {
+    AdaptAbsReach(const char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
 
@@ -271,6 +271,8 @@ public:
             abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // use solver with time step corresponding to that of each layer
             uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
         }
+        x = x; // gets rid of warning message regarding lack of use
+        u = u;
     }
 
     /*! Does lazy exploration based on the current status of controller synthesis.
@@ -320,6 +322,8 @@ public:
 //            Ts_[ab]->printInfo(1);
             TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
         }
+        x = x; // gets rid of warning message regarding lack of use
+        u = u;
     }
 
     /*! Calculates the reachability fixed-point for m iterations.

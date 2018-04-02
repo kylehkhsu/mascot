@@ -64,7 +64,7 @@ public:
     /*!	Constructor for an AdaptAbsSafe object.
      *  \param[in]  logFile     Filename of program log.
      */
-    AdaptAbsSafe(char* logFile) {
+    AdaptAbsSafe(const char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
 
@@ -393,6 +393,8 @@ public:
 			abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // use solver with time step corresponding to that of each layer
 			uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
 		}
+        x = x; // gets rid of warning message regarding lack of use
+        u = u;
 	}
     
     /*! Does lazy exploration based on the current status of controller synthesis.
@@ -457,6 +459,9 @@ public:
 //            Ts_[ab]->printInfo(1);
             TTs_[ab]->symbolicSet_ |= abstraction.transitionRelation_.ExistAbstract(*notXUvars_[ab]);
         }
+
+        x = x; // gets rid of warning message regarding lack of use
+        u = u;
     }    
 
     /*! Calculates the cooperative predecessor of a given set with respect to the un-restricted transition relation at the coarsest level of abstraction.
