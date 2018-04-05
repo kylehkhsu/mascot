@@ -126,8 +126,8 @@ public:
         /*delete ddmgr_;*/
     }
 
-    template<class sys_type, class rad_type, class X_type, class U_type>
-    void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+    template<class sys_type, class rad_type, class X_type, class U_type, class G_type, class O_type>
+    void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u, G_type isG, O_type isO) {
         m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
         p_ = p; // coarsest layer uncontrollable-pred. parameter
         minToBeValid_ = 2;
@@ -141,10 +141,6 @@ public:
 		clog << "Ds_[0] initialized";
 		//delete D;
 
-		//// debug purpose
-		//UniformGrid U(*system_->dimU_, system_->lbU_, system_->ubU_, system_->etaU_);
-		//U_ = &U;
-		//// debug purpose ends
 
         TicToc timer;
         timer.tic();
@@ -155,7 +151,10 @@ public:
 		checkMakeDir("uTs");
 		saveVec(uTs_, "uTs/uTs");
 
-        //// Ts_[0] is uTs_[0] with obstacles removed
+        // Ts_[0] is uTs_[0] with obstacles removed
+		cout << "Starting computation of transition relation of layer 0: \n";
+		Abstraction<X_type, U_type> abs(*Ds_[0], *U_); // coarsest state gridding
+		abs.compute_gb(*Ts_[0], sysNext, radNext, *solvers_[0], isO);
         //Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_ & !Os_[0]->symbolicSet_;
         //TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
 
@@ -177,6 +176,7 @@ public:
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void computeExplorationAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+		cout << "Starting computation of auxiliary abstractions:\n";
         for (int ab = 0; ab < *system_->numAbs_; ab++) {
 			/*TransitionFunction	uTs_[ab];*/
 			//// debug purpose
@@ -185,9 +185,11 @@ public:
 			//	uTs_.push_back(&uT);
 			//}
 			//// debug purpose
+			cout << "Layer " << ab << ":\n";
             Abstraction<X_type, U_type> abs(*Ds_[0], *U_); // coarsest state gridding
             abs.compute_gb(*uTs_[ab], sysNext, radNext, *solvers_[ab]); // use solver with time step corresponding to that of each layer
         }
+		cout << "Finished computation of auxiliary abstractions.\n\n";
     }
 
 //    template<class sys_type, class rad_type, class X_type, class U_type>
@@ -477,8 +479,7 @@ public:
      *  \param[in]  system      Contains abstraction parameters.
      *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
      */
-    template<class O_type, class G_type>
-    void initialize(System* system, O_type isO, G_type isG) {
+    void initialize(System* system) {
         //ddmgr_ = new Cudd;
         system_ = system;
 
@@ -487,7 +488,7 @@ public:
 
         initializeEtaTau();
         initializeSolvers();
-        initializeSymbolicSets(isO, isG);
+        initializeSymbolicSets();
         /*initializeNumBDDVars();
         initializePermutes();
         initializeCubes();
@@ -502,8 +503,7 @@ public:
      *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
      *  \param[in]	addG	Function pointer specifying the points that should be added to the goal set.
      */
-    template<class O_type, class G_type>
-    void initializeSymbolicSets(O_type isO, G_type isG) {
+    void initializeSymbolicSets() {
         for (int i = 0; i < *system_->numAbs_; i++) {
 			UniformGrid* X = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[i]);
 			Xs_.push_back(X);
@@ -515,10 +515,10 @@ public:
         clog << "U_ initialized with full domain.\n";
 		//delete U;
 
-		O_type obstacle = isO;
-		G_type winning = isG;
+		/*O_type obstacle = isO;
+		G_type winning = isG;*/
         //clog << "Os_ initialized according to specification.\n";
-		clog << "Obstacle and winning functions initialized according to the specification.\n";
+		//clog << "Obstacle and winning functions initialized according to the specification.\n";
 
         /*for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* Z = new SymbolicSet(*Xs_[i]);
@@ -581,11 +581,11 @@ public:
         //}
         //clog << "savedZs_ initialized with empty domain.\n";
 
-        //for (int i = 0; i < *system_->numAbs_; i++) {
-        //    SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
-        //    Ts_.push_back(T);
-        //}
-        //clog << "Ts_ initialized with empty domain.\n";
+		for (int i = 0; i < *system_->numAbs_; i++) {
+			TransitionFunction* Ts = new TransitionFunction; // exploration transition relations are all with coarsest gridding
+			Ts_.push_back(Ts);
+		}
+		clog << "Ts_ initialized with empty domain.\n";
 
         //for (int i = 0; i < *system_->numAbs_; i++) {
         //    SymbolicSet* TT = new SymbolicSet(*Cs_[i]);
