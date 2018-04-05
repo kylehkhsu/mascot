@@ -25,7 +25,7 @@ TARGET = unicycle
 all: $(TARGET)
 
 %.o:%.cc
-	$(CC) -c $(CXXFLAGS) $(CUDDINC) $(SCOTSINC) $< -o $@
+	$(CC) -c -g $(CXXFLAGS) $(CUDDINC) $(SCOTSINC) $< -o $@
 
 $(TARGET): $(TARGET).o
 	$(CC) $(CXXFLAGS) -o $(TARGET) $(TARGET).o $(CUDDLPATH) $(CUDDLIBS)

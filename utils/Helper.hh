@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string>
-#include "SymbolicSet.hh"
+//#include "SymbolicSet.hh"
 
 using std::clog;
 using std::cout;
@@ -59,7 +59,7 @@ namespace helper {
             size_t Length = Str.copy(Char, Str.length() + 1);
             Char[Length] = '\0';
             //            cout << Char << '\n';
-            vec[i]->writeToFile(Char);
+            //vec[i]->writeToFile(Char);
         }
     }
 

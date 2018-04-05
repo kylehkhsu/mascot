@@ -183,11 +183,11 @@ public:
      */
     /* loop over all cells */
     for(abs_type i=0; i<N; i++) {
-	/* by kaushik: profiling of one entire loop */
-	TicToc tu;
-	std::cout << "Starting with a new state-input pair" << std::endl;
-	tu.tic();
-	/* by kaushik: upto this point */
+	///* by kaushik: profiling of one entire loop */
+	//TicToc tu;
+	//std::cout << "Starting with a new state-input pair" << std::endl;
+	//tu.tic();
+	///* by kaushik: upto this point */
       /* is i an element of the avoid symbols ? */
       if(avoid(i)) {
         for(abs_type j=0; j<M; j++) {
@@ -207,14 +207,14 @@ public:
         m_input_alphabet.itox(j,u);
         /* integrate system and radius growth bound */
         /* the result is stored in x and r */
-        /* by kaushik: profiling */
-	TicToc tt;
-	std::cout << "Solving ODE for a state-input pair:" << i << "," << j << std::endl;
-	tt.tic();
-	radius_post(r,x,u,solver);
-        system_post(x,u,solver);
-	tt.toc();
-	/* by kaushik: profiling ends here */
+ //       /* by kaushik: profiling */
+	//TicToc tt;
+	//std::cout << "Solving ODE for a state-input pair:" << i << "," << j << std::endl;
+	//tt.tic();
+	radius_post(x,r,u,solver.tau_,solver);
+    system_post(x,u,solver.tau_,solver);
+	//tt.toc();
+	///* by kaushik: profiling ends here */
         /* determine the cells which intersect with the attainable set: 
          * discrete hyper interval of cell indices 
          * [lb[0]; ub[0]] x .... x [lb[dim-1]; ub[dim-1]]
@@ -276,7 +276,7 @@ public:
           std::cout << "1st loop: ";
       }
       progress(i,N,counter);
-	tu.toc(); /* by kaushik */
+	//tu.toc(); /* by kaushik */
     }
     /* compute pre_ptr */
     abs_ptr_type sum=0;
