@@ -1,10 +1,10 @@
-# Welcome to SCOTS-Adaptive
+# Welcome to MASCOT
 
 **SCOTS**, by Matthias Rungger et al., is a C++ tool (with a small Matlab interface) to synthesize controllers for
 possibly perturbed nonlinear control systems with respect to safety and reachability specifications.
 SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
 
-**SCOTS-Adaptive** builds on SCOTS by using multi-layer abstractions to enable adaptive fixed points in the abstract controller synthesis.
+**MASCOT** builds on SCOTS by using multi-layer abstractions to enable adaptive fixed points in the abstract controller synthesis.
 
 
 ### Requirements
@@ -19,7 +19,7 @@ SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
 
     `$./configure --enable-shared --enable-obj --enable-dddmp --prefix=/opt/local/`
 
-- SCOTS-Adaptive is a header only library. You need only add the SCOTS source
+- MASCOT is a header only library. You need only add the SCOTS source
   directory to the include directory in the compiler command. 
 
     Further details are found in the readme files in example directories and in the manual.
@@ -27,7 +27,7 @@ SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
 ### Directory structure
 
 - ./bdd/
-    Contains the source C++ source code for the SCOTS, SCOTS-Adaptive classes 
+    Contains the source C++ source code for the SCOTS, MASCOT classes
     which use Binary Decision Diagrams as the underlying data structure
 
 - ./doxygen/
@@ -37,7 +37,7 @@ SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
     Some C++/Matlab programs demonstrating the usage of basic SCOTS
   
 - ./test/
-    Examples demonstrating the usage and performance of SCOTS-Adaptive
+    Examples demonstrating the usage and performance of
   
 - ./mfiles
     Contains an mfile as a wrapper to the mex-file functions
