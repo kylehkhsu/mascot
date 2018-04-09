@@ -29,10 +29,16 @@ abstraction 0: 0.002 0.002
 abstraction 1: 0.001 0.001 
 abstraction 2: 0.0005 0.0005 
 tau_:
+<<<<<<< HEAD
 abstraction 0: 0.25
 abstraction 1: 0.125
 abstraction 2: 0.0625
+=======
+abstraction 0: 0.5
+abstraction 1: 0.5
+abstraction 2: 0.5
 SafeOuter_ set according to specification.
+>>>>>>> 07e1a694df57c1d6da25f06b98a86615a8fd2575
 
 current recursion depth: 1
 	 current abstraction: 0
@@ -453,6 +459,7 @@ current recursion depth: 84
 	 current abstraction: 0
 	 current abstraction: 1
 	 current abstraction: 2
+<<<<<<< HEAD
 
 current recursion depth: 85
 	 current abstraction: 0
@@ -768,8 +775,300 @@ current recursion depth: 147
 	 current abstraction: 0
 	 current abstraction: 1
 	 current abstraction: 2
+
+current recursion depth: 148
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 149
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 150
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 151
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 152
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 153
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 154
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 155
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 156
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 157
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 158
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 159
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 160
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 161
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 162
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 163
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 164
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 165
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 166
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 167
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 168
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 169
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 170
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 171
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 172
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 173
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 174
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 175
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 176
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 177
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 178
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 179
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 180
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 181
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 182
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 183
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 184
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 185
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 186
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 187
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 188
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 189
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 190
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 191
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 192
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 193
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 194
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 195
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 196
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 197
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 198
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 199
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 200
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 201
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 202
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 203
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
+
+current recursion depth: 204
+	 current abstraction: 0
+	 current abstraction: 1
+	 current abstraction: 2
 Wrote Ts_ to file.
------------------------------------------------Total time: 36.4677 seconds.
-Abstraction construction time: 11.3298 seconds.
-Controller synthesis time: 24.3241 seconds.
-Abs + syn time: 35.6539 seconds.
+-----------------------------------------------Total time: 52.3236 seconds.
+Abstraction construction time: 9.26071 seconds.
+Controller synthesis time: 41.9844 seconds.
+Abs + syn time: 51.2451 seconds.
+=======
+Wrote Ts_ to file.
+-----------------------------------------------Total time: 28.5664 seconds.
+Abstraction construction time: 9.28382 seconds.
+Controller synthesis time: 17.5653 seconds.
+Abs + syn time: 26.8491 seconds.
+>>>>>>> 07e1a694df57c1d6da25f06b98a86615a8fd2575

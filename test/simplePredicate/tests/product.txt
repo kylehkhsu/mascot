@@ -1,9 +1,0 @@
-product.txt
-Initialized base's, auxs' etaXs, taus.
-Initialized base's, auxs', prods' Xs, X2s to full.
-Initialized base's, auxs', prods' XXs via mapAbstractions.
-Initialized prods' Cs to empty.
-Initialized prods' Ts to empty.
-Initialized base's, auxs', prods' cubesX, cubesX2.
-Number of BDD variables: 74
-Initialized prods' permutes.

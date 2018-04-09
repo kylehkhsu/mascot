@@ -3,7 +3,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
-#include "Safe.hh"
+#include "AdaptAbsSafe.hh"
 
 using namespace scots;
 
@@ -18,7 +18,7 @@ typedef std::array<double, dimU> U_type;
 const double w[dimX] = {0.001, 0.001};
 
 /* we integrate the simple ode by 0.3 sec (the result is stored in x)  */
-auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
+auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
     auto sysODE = [](X_type &dxdt, const X_type &x, const U_type &u) -> void {
         const double r0 = 1.0 ;
         const double vs = 1.0 ;
@@ -48,7 +48,7 @@ auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
 };
 
 /* computation of the growth bound (the result is stored in r)  */
-auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
+auto radNext = [](X_type &r, U_type &u, OdeSolver solver) -> void {
     auto radODE = [](X_type &drdt, const X_type &r, const U_type &u) -> void {
         const double r0 = 1.0 ;
         const double rl = 0.05 ;
@@ -75,7 +75,7 @@ auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
 };
 
 auto dcdcAddO = [](SymbolicSet* O) -> void {
-    ;
+    O = O;
 };
 
 auto dcdcAddS = [](SymbolicSet* S) -> void {
@@ -89,33 +89,35 @@ auto dcdcAddS = [](SymbolicSet* S) -> void {
 
 int main() {
 
-    double lbX[dimX]  = {1.14999, 5.44999};
+    double lbX[dimX]  = {1.15, 5.45};
     double ubX[dimX]  = {1.55, 5.85};
 
+    /* the system dynamics has two modes which correspond to two distinct abstract control inputs (in our case, they are 0.5, 1.5) */
     double lbU[dimU]  = {0};
     double ubU[dimU]  = {2};
     double etaU[dimU] = {1};
 
     int nint = 5;
 
-    double etaX[dimX]= {2/4e3*2*2*2*2, 2/4e3*2*2*2*2};
-    double tau = 0.5;
+    double etaX[dimX]= {(pow(2,3)*2/4e3), (pow(2,3)*2/4e3)};
+    double tau = pow(2, 3)*0.0625;
+    int numAbs = 4;
 
     double etaRatio[dimX] = {2, 2};
-    double tauRatio = 1;
+    double tauRatio = 2;
 
     X_type x;
     U_type u;
 
-    int numAbs = 3;
-    int readAbs = 0; // if above or dynamics have changed, needs to be 0.
 
     System dcdc(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
-    Safe abs("dcdc.txt");
-    abs.initialize(&dcdc, readAbs, dcdcAddO);
-    abs.initializeSafe(dcdcAddS);
-    abs.computeAbstractions(sysNext, radNext, x, u);
-    abs.safe();
+    AdaptAbsSafe abs("dcdc4A.log");
+    abs.initialize(&dcdc, dcdcAddS);
+
+    TicToc timer;
+    timer.tic();
+    abs.onTheFlySafe(sysNext, radNext, x, u);
+    clog << "-----------------------------------------------Total time: " << timer.toc() << " seconds.\n";
 }

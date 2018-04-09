@@ -36,13 +36,13 @@ public:
     BDD* cubeU_; /*!< A BDD with a single minterm of all 1s over the domain of the input SymbolicSet. */
     vector<BDD*> notXUvars_; /*!< notXUvars_[i] is a BDD over all ddmgr_ variables whose 1-term is DC for *Xs_[i] and *U_ and 1 otherwise. */
     vector<BDD*> notXvars_; /*!< notXvars_[i] is a BDD over all ddmgr_ variables whose 1-term is DC for *Xs_[i] and 1 otherwise. */
-    vector<BDD*> cubesCoarser_;
+    vector<BDD*> cubesCoarser_; /*!< Helper BDD for projection to coarser layer. */
     vector<SymbolicSet*> Ts_; /*!< Ts_[i] stores the transition relation of abstraction i. */
     vector<SymbolicSet*> TTs_; /*!< TTs_[i] is Ts_[i] with X2s_[i] existentially abtracted. */
     vector<int*> permutesXtoX2_; /*!< To transform a BDD over X variables to an equivalent one over X2 variables. */
     vector<int*> permutesX2toX_; /*!< To transform a BDD over X2 variables to an equivalent one over X variables. */
-    vector<int*> permutesCoarser_;
-    vector<int*> permutesFiner_;
+    vector<int*> permutesCoarser_; /*!< To project a BDD to the next coarser layer. */
+    vector<int*> permutesFiner_; /*!< To project a BDD to the next finer layer. */
     vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
 
     vector<SymbolicSet*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
@@ -51,28 +51,22 @@ public:
     vector<SymbolicSet*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
     vector<int> finalAbs_; /*!< Sequence of abstraction layer indices of finalCs_. */
-    vector<SymbolicSet*> Ds_; /*!< Instance of *Xs_[i] containing possible winning states. */
-    vector<SymbolicSet*> innerDs_;
-    vector<SymbolicSet*> computedDs_;
-    vector<SymbolicSet*> savedZs_;
+    vector<SymbolicSet*> Ds_; /*!< Instance of *Xs_[i] containing possible winning states (outer projections). */
+    vector<SymbolicSet*> innerDs_; /*!< Instance of *Xs_[i] containing possible winning states (inner projections). */
+    vector<SymbolicSet*> computedDs_; /*!< Instance of *Xs_[i] containing states for which transitions have already been constructed. */
 
     vector<SymbolicSet*> uTs_; /*!< Transition relations for exploring, i.e. all with coarsest space gridding but varying time sampling. */
 
-    int minToGoCoarser_;
-    int minToBeValid_;
-    int earlyBreak_;
-    int verbose_;
+    int m_; /*!< Number of iterations for synthesis in a layer before attempting to go coarser. */
+    int p_; /*!< Number of iterations for exploration before attempting synthesis. */
 
-    int m_;
-    int p_;
-
-    double abTime_;
-    double synTime_;
+    double abTime_; /*!< Abstraction time. */
+    double synTime_; /*!< Synthesis time. */
 
     /*!	Constructor for an AdaptAbsReach object.
      *  \param[in]  logFile     Filename of program log.
      */
-    AdaptAbsReach(char* logFile) {
+    AdaptAbsReach(const char* logFile) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
 
@@ -83,6 +77,7 @@ public:
     ~AdaptAbsReach() {
         clog << "Abstraction construction time: " << abTime_ << " seconds.\n";
         clog << "Controller synthesis time: " << synTime_ << " seconds.\n";
+        clog << "Abs + syn time: " << abTime_ + synTime_ << " seconds.\n";
         deleteVecArray(etaXs_);
         deleteVec(tau_);
         deleteVec(Xs_);
@@ -112,17 +107,22 @@ public:
         deleteVec(Ds_);
         deleteVec(innerDs_);
         deleteVec(computedDs_);
-        deleteVec(savedZs_);
         deleteVec(uTs_);
         fclose(stderr);
         delete ddmgr_;
     }
 
+    /*! Lazy reachability wrapper function.
+     *  \param[in]  p           Parameter controlling amount of exploration to do between synthesis attempts.
+     *  \param[in]  sysNext     System ODE.
+     *  \param[in]  radNext     Growth bound ODE.
+     *  \param[in]  x           Dummy state point.
+     *  \param[in]  u           Dummy input point.
+     */
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
         p_ = p; // coarsest layer uncontrollable-pred. parameter
-        minToBeValid_ = 2;
         clog << "m: " << m_ << '\n';
         clog << "p: " << p_ << '\n';
 
@@ -142,7 +142,7 @@ public:
         int ab = 0;
         onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
 
-        clog << "controllers: " << finalCs_.size() << '\n';
+        clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
 
         checkMakeDir("C");
         saveVec(finalCs_, "C/C");
@@ -154,16 +154,14 @@ public:
         return;
     }
 
-    template<class sys_type, class rad_type, class X_type, class U_type>
-    void computeExplorationAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        for (int ab = 0; ab < *system_->numAbs_; ab++) {
-            SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[0], U_, X2s_[0]); // coarsest state gridding
-            abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // use solver with time step corresponding to that of each layer
-            uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
-//            uTs_[ab]->printInfo(1);
-        }
-    }
-
+    /*! Main lazy reachability synthesis procedure.
+     *  \param[in]  ab          Layer 0-index.
+     *  \param[in]  sysNext     System ODE.
+     *  \param[in]  radNext     Growth bound ODE.
+     *  \param[in]  x           Dummy state point.
+     *  \param[in]  u           Dummy input point.
+     *  \param[in]  print       Whether information should be printed to console.
+     */
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u, int print = 0) {
         clog << '\n';
@@ -206,17 +204,6 @@ public:
         }
 
         if (result != CONVERGEDINVALID) {
-//            if (finalCs_.size() > 0) { // merge controllers if possible; completely optional and in fact might be more informative to not
-//                if (finalAbs_.back() == ab) {
-//                    SymbolicSet* C = finalCs_.back();
-//                    finalCs_.pop_back();
-//                    delete(C);
-//                    SymbolicSet* Z = finalZs_.back();
-//                    finalZs_.pop_back();
-//                    delete(Z);
-//                    finalAbs_.pop_back();
-//                }
-//            }
             saveCZ(ab);
             validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
             validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;    
@@ -243,7 +230,7 @@ public:
                 int nextAb = ab + 1;
                 TicToc timer;
                 timer.tic();
-                eightToTen(ab, nextAb, sysNext, radNext, x, u);
+                explore(ab, nextAb, sysNext, radNext, x, u);
                 abTime_ += timer.toc();
                 finer(Zs_[ab], Zs_[nextAb], ab);
                 Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
@@ -260,7 +247,7 @@ public:
             if (nextAb != 0) { // pointless to do for coarsest layer
                 TicToc timer;
                 timer.tic();
-                eightToTen(ab, nextAb, sysNext, radNext, x, u);
+                explore(ab, nextAb, sysNext, radNext, x, u);
                 abTime_ += timer.toc();
             }
             coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
@@ -271,15 +258,40 @@ public:
         }
     }
 
+    /*! Fully computes the exploration transition relations (which use the coarsest state gridding).
+     *  \param[in]  sysNext     System ODE.
+     *  \param[in]  radNext     Growth bound ODE.
+     *  \param[in]  x           Dummy state point.
+     *  \param[in]  u           Dummy input point.
+     */
     template<class sys_type, class rad_type, class X_type, class U_type>
-    void eightToTen(int curAb, int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+    void computeExplorationAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        for (int ab = 0; ab < *system_->numAbs_; ab++) {
+            SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[0], U_, X2s_[0]); // coarsest state gridding
+            abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // use solver with time step corresponding to that of each layer
+            uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
+        }
+        x = x; // gets rid of warning message regarding lack of use
+        u = u;
+    }
+
+    /*! Does lazy exploration based on the current status of controller synthesis.
+     *  \param[in]  curAb       The current layer 0-index.
+     *  \param[in]  nextAb      The next layer 0-index.
+     *  \param[in]  sysNext     System ODE.
+     *  \param[in]  radNext     Growth bound ODE.
+     *  \param[in]  x           Dummy state point.
+     *  \param[in]  u           Dummy input point.
+     */
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void explore(int curAb, int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         Ds_[curAb]->symbolicSet_ = validZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_; // target for uncontrollable reach
         innerDs_[curAb]->symbolicSet_ = validZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_;
         for (int c = curAb - 1; c >= 0; c--) {
-            coarserOuter(Ds_[c], Ds_[c+1], c); // compounding outer approximations?
+            coarserOuter(Ds_[c], Ds_[c+1], c); 
             coarserInner(innerDs_[c], innerDs_[c+1], c);
         }
-        Ds_[0]->symbolicSet_ = uReach(Ds_[0]->symbolicSet_, curAb, p_); // do cooperative reach
+        Ds_[0]->symbolicSet_ = cooperativeReach(Ds_[0]->symbolicSet_, curAb, p_); // do cooperative reach
         Ds_[0]->symbolicSet_ &= (!innerDs_[0]->symbolicSet_); // states to do abstraction for
         for (int c = 0; c < nextAb; c++) {
             finer(Ds_[c], Ds_[c+1], c);
@@ -287,6 +299,39 @@ public:
         computeAbstraction(nextAb, sysNext, radNext, x, u);
     }
 
+    /*! Calculates the transitions stemming from a certain subset of the state space D and adds them to the transition relation.
+     *  \param[in]  ab      The layer 0-index.
+     *  \param[in]  sysNext     System ODE.
+     *  \param[in]  radNext     Growth bound ODE.
+     *  \param[in]  x           Dummy state point.
+     *  \param[in]  u           Dummy input point.
+     */
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void computeAbstraction(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_); // don't repeat sampling
+        D &= !Os_[ab]->symbolicSet_;
+        computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
+        Ds_[ab]->symbolicSet_ = D;
+
+        SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]); // abstraction computation will only iterate over the elements in the domain of the state space SymbolicSet (first argument)
+        abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // was hard-coded to 0, source of "tunneling" bug
+        if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
+            Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
+//            BDD O2 = Os_[ab]->symbolicSet_.Permute(permutesXtoX2_[ab]); // causes unsound behavior, leaving here as warning
+//            Ts_[ab]->symbolicSet_ &= !O2;
+//            Ts_[ab]->printInfo(1);
+            TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
+        }
+        x = x; // gets rid of warning message regarding lack of use
+        u = u;
+    }
+
+    /*! Calculates the reachability fixed-point for m iterations.
+     *  \param[in]  ab      The layer 0-index.
+     *  \param[in]  m       The number of iterations. Default -1 corresponds to infinity.
+     *  \param[in]  print   Whether to print information to console.
+     *  \returns    Integer representing status of convergence.
+     */
     ReachResult reach(int ab, int m = -1, int print = 0) {
         int i = 1;
         clog << "abstraction: " << ab << '\n';
@@ -296,18 +341,14 @@ public:
             clog << "iteration: " << i << '\n';
             if (print)
                 cout << "iteration: " << i << '\n';
-
-//            if (ab != 0) {
-//                Zs_[ab]->printInfo(1);
-//            }
-            BDD cPreZ = cPre(Zs_[ab]->symbolicSet_, ab);
-            BDD C = cPreZ | Gs_[ab]->symbolicSet_;
+            BDD controllablePreZ = controllablePre(Zs_[ab]->symbolicSet_, ab);
+            BDD C = controllablePreZ | Gs_[ab]->symbolicSet_;
             BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
             Cs_[ab]->symbolicSet_ |= N;
             Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_; // the disjunction part is new
 
             if (N == ddmgr_->bddZero() && i != 1) {
-                if (i >= minToBeValid_) {
+                if (i >= 2) {
                     return CONVERGEDVALID;
                 }
                 else{
@@ -321,71 +362,18 @@ public:
         }
     }
 
-    // testing computeAbstraction
-    void test() {
-        Ds_[0]->addGridPoints();
-    }
-
-    // abstraction synthesis will only iterate over the elements in the domain of the state space SymbolicSet (first argument in constructing abstraction)
-    template<class sys_type, class rad_type, class X_type, class U_type>
-    void computeAbstraction(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-        BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_); // don't repeat sampling
-        D &= !Os_[ab]->symbolicSet_;
-        computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
-        Ds_[ab]->symbolicSet_ = D;
-
-        if (ab == 1) {
-            checkMakeDir("D1");
-            if (!(std::ifstream("D1/1.bdd"))) {
-                Ds_[1]->writeToFile("D1/1.bdd");
-            } else if (!(std::ifstream("D1/2.bdd"))) {
-                Ds_[1]->writeToFile("D1/2.bdd");
-            } else if (!(std::ifstream("D1/3.bdd"))) {
-                Ds_[1]->writeToFile("D1/3.bdd");
-            } else if (!(std::ifstream("D1/4.bdd"))) {
-                Ds_[1]->writeToFile("D1/4.bdd");
-            } else if (!(std::ifstream("D1/5.bdd"))) {
-                Ds_[1]->writeToFile("D1/5.bdd");
-            } else if (!(std::ifstream("D1/6.bdd"))) {
-                Ds_[1]->writeToFile("D1/6.bdd");
-            }
-        }
-        if (ab == 2) {
-            checkMakeDir("D2");
-            if (!(std::ifstream("D2/1.bdd"))) {
-                Ds_[2]->writeToFile("D2/1.bdd");
-            } else if (!(std::ifstream("D2/2.bdd"))) {
-                Ds_[2]->writeToFile("D2/2.bdd");
-            } else if (!(std::ifstream("D2/3.bdd"))) {
-                Ds_[2]->writeToFile("D2/3.bdd");
-            } else if (!(std::ifstream("D2/4.bdd"))) {
-                Ds_[2]->writeToFile("D2/4.bdd");
-            } else if (!(std::ifstream("D2/5.bdd"))) {
-                Ds_[2]->writeToFile("D2/5.bdd");
-            } else if (!(std::ifstream("D2/6.bdd"))) {
-                Ds_[2]->writeToFile("D2/6.bdd");
-            }
-        }
-
-        SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
-        abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // was hard-coded to 0, source of "tunneling" bug
-        if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
-            Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
-//            BDD O2 = Os_[ab]->symbolicSet_.Permute(permutesXtoX2_[ab]); // causes unsound behavior, leaving here as warning
-//            Ts_[ab]->symbolicSet_ &= !O2;
-//            Ts_[ab]->printInfo(1);
-            TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
-        }
-    }
-
-    /*! Calculates all possible winning states at most p transitions away from Z.
+    /*! Calculates the cooperative reachability fixed-point for p iterations.
+     *  \param[in]  Z       The given set.
+     *  \param[in]  ab      The layer 0-index of Z.
+     *  \param[in]  p       The number of iterations.
+     *  \return     BDD containing all possible winning states at most p transitions away from Z.
      */
-    BDD uReach(BDD Z, int ab, int p) {
+    BDD cooperativeReach(BDD Z, int ab, int p) {
         int i = 1;
         while (1) {
-            BDD uPreZ = uPre(Z, ab);
-            BDD N = uPreZ & (!Z);
-            Z = uPreZ;
+            BDD cooperativePreZ = cooperativePre(Z, ab);
+            BDD N = cooperativePreZ & (!Z);
+            Z = cooperativePreZ;
 
             if (i == p || N == ddmgr_->bddZero()) {
                 return Z;
@@ -394,55 +382,62 @@ public:
         }
     }
 
-    /*! Calculates the uncontrollable predecessor of a given set with respect to the un-restricted transition relation at the coarsest level of abstraction.
+    /*! Calculates the cooperative predecessor of a given set with respect to the specified un-restricted transition relation.
      *  \param[in]  Z       The given set.
+     *  \param[in]  ab      0-index of the un-restricted transition relation.
      *  \return     BDD containing {x} for which there exists a u s.t. there exists a post state of (x,u) in Z.
      */
-    BDD uPre(BDD Z, int ab) {
-        BDD Z2 = Z.Permute(permutesXtoX2_[0]);
+    BDD cooperativePre(BDD Z, int ab) {
+        BDD Z2 = Z.Permute(permutesXtoX2_[0]); // ab = 0 because we use the coarsest state griddings
         BDD uPreZ = uTs_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[0]);
         uPreZ = uPreZ.ExistAbstract(*notXvars_[0]);
         return uPreZ;
     }
 
 
-    /*! Calculates the enforceable predecessor of the given set with respect to the transition relation at the specified level of abstraction.
+    /*! Calculates the controllable predecessor of the given set with respect to the transition relation at the specified level of abstraction.
      *  \param[in]  Z           The winning set.
-     *  \param[in]  curAbs      0-index of the current abstraction.
+     *  \param[in]  ab      0-index of the current abstraction.
      *  \return     BDD containing {(x,u)} for which all post states are in Z.
      */
-    BDD cPre(BDD Z, int curAbs) {
-        // swap to X2s_[curAbs]
-        BDD Z2 = Z.Permute(permutesXtoX2_[curAbs]);
+    BDD controllablePre(BDD Z, int ab) {
+        // swap to X2s_[ab]
+        BDD Z2 = Z.Permute(permutesXtoX2_[ab]);
         // posts outside of winning set
         BDD nZ2 = !Z2;
         // {(x,u)} with some posts outside of winning set
-        BDD Fbdd = Ts_[curAbs]->symbolicSet_.AndAbstract(nZ2, *notXUvars_[curAbs]);
+        BDD Fbdd = Ts_[ab]->symbolicSet_.AndAbstract(nZ2, *notXUvars_[ab]);
         // {(x,u)} with no posts outside of winning set
         BDD nF = !Fbdd;
         // get rid of junk
-        BDD preF = TTs_[curAbs]->symbolicSet_.AndAbstract(nF, *notXUvars_[curAbs]);        
+        BDD preF = TTs_[ab]->symbolicSet_.AndAbstract(nF, *notXUvars_[ab]);        
         return preF;
     }
 
+    /*! Calculates the finer projection of Zc and stores it in Zf.
+     *  \param[in]  Zc      Contains set to project.
+     *  \param[in]  Zf      Contains result of projection.
+     *  \param[in]  c       Layer 0-index of Zc.
+     */
     void finer(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
         Zf->addGridPoints();
         Zf->symbolicSet_ &= Zc->symbolicSet_.Permute(permutesFiner_[c]);
     }
 
-    int coarserInner(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
-        BDD Zcand = Zf->symbolicSet_.UnivAbstract(*cubesCoarser_[c]);
-        Zcand = Zcand.Permute(permutesCoarser_[c]);
-
-        if (Zcand <= Zc->symbolicSet_) {
-            return 0;
-        }
-        else {
-            Zc->symbolicSet_ = Zcand;
-            return 1;
-        }
+    /*! Calculates the coarser inner projection of Zf and stores it in Zc.
+     *  \param[in]  Zc      Contains result of projection.
+     *  \param[in]  Zf      Contains set to project.
+     *  \param[in]  c       Layer 0-index of Zc.
+     */
+    void coarserInner(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
+        Zc->symbolicSet_ = (Zf->symbolicSet_.UnivAbstract(*cubesCoarser_[c])).Permute(permutesCoarser_[c]);
     }
 
+    /*! Calculates the coarser outer projection of Zf and stores it in Zc.
+     *  \param[in]  Zc      Contains result of projection.
+     *  \param[in]  Zf      Contains set to project.
+     *  \param[in]  c       Layer 0-index of Zc.
+     */
     void coarserOuter(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
         Zc->symbolicSet_ = (Zf->symbolicSet_.ExistAbstract(*cubesCoarser_[c])).Permute(permutesCoarser_[c]);
     }
@@ -450,6 +445,7 @@ public:
     /*! Initializes data members.
      *  \param[in]  system      Contains abstraction parameters.
      *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
+     *  \param[in]  addG    Function pointer specifying the points that should be added to the goal set.
      */
     template<class O_type, class G_type>
     void initialize(System* system, O_type addO, G_type addG) {
@@ -459,6 +455,7 @@ public:
         TicToc timer;
         timer.tic();
 
+        // This order should be kept.
         initializeEtaTau();
         initializeSolvers();
         initializeSymbolicSets(addO, addG);
@@ -554,12 +551,6 @@ public:
         clog << "computedDs_ initialized with empty domain.\n";
 
         for (int i = 0; i < *system_->numAbs_; i++) {
-            SymbolicSet* savedZ = new SymbolicSet(*Xs_[i]);
-            savedZs_.push_back(savedZ);
-        }
-        clog << "savedZs_ initialized with empty domain.\n";
-
-        for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* T = new SymbolicSet(*Cs_[i], *X2s_[i]);
             Ts_.push_back(T);
         }
@@ -591,7 +582,7 @@ public:
         }
     }
 
-    /*! Initializes the BDDs useful for existential abstraction. Must be called only after initializing Xs, U, and X2s. */
+    /*! Initializes the BDDs useful for existential abstraction. */
     void initializeNotVars() {
         for (int i = 0; i < *system_->numAbs_; i++) {
             BDD* notXUvars = new BDD;
@@ -671,6 +662,7 @@ public:
         clog << "Number of BDD variables: " << numBDDVars_ << '\n';
     }
 
+    /*! Initializes the BDDs used for efficient projection between consecutive layers of abstraction. */
     void initializeProjs() {
         int ones = 0;
         for (int i = 0; i < *system_->dimX_; i++) {
@@ -777,7 +769,7 @@ public:
         clog << "Initialized cubes.\n";
     }
 
-    /*! Initializes the arrays of BDD variable IDs that allow a BDD over an X domain to be projected to the identical BDD over the corresponding X2 domain.
+    /*! Initializes the arrays of BDD variable IDs that allow a BDD over a pre/post-X domain to be projected to the identical BDD over the corresponding post/pre-X domain.
      */
     void initializePermutes() {
         for (int i = 0; i < *system_->numAbs_; i++) {
@@ -799,7 +791,8 @@ public:
 
         clog << "Initialized permutes.\n";
     }
-    /*! Saves and prints to log file some information related to the reachability/always-eventually specification. */
+
+    /*! Saves and prints to log file some information related to the reachability specification. */
     void verifySave() {
         clog << "etaXs_:\n";
         for (size_t i = 0; i < etaXs_.size(); i++) {
@@ -829,7 +822,7 @@ public:
         saveVec(Gs_, "G/G");
     }
 
-    /*! Saves a snapshot of a controller and its domain into the sequence of final controllers and controller domains.
+    /*! Saves a snapshot of a controller C and its domain Z into the sequence of final controllers and controller domains.
         \param[in] ab	0-index of the abstraction which the controller and controller domain that should be saved belong to.
     */
     void saveCZ(int ab) {

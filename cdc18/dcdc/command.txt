@@ -1,10 +1,10 @@
-cd dcdc1A && make && ./dcdc && cd .. &&
-cd dcdc2A && make && ./dcdc && cd .. &&
-cd dcdc3A && make && ./dcdc && cd .. &&
-cd dcdc4A && make && ./dcdc && cd .. &&
-cd dcdc5A && make && ./dcdc && cd .. &&
-cd dcdc6A && make && ./dcdc && cd .. &&
-cd dcdc7A && make && ./dcdc && cd .. &&
-cd dcdc8A && make && ./dcdc && cd .. &&
-cd dcdc9A && make && ./dcdc && cd .. &&
-cd dcdc10A && make && ./dcdc && cd ..
+cd dcdc1A && make clean && make && ./dcdc && cd .. &&
+cd dcdc2A && make clean && make && ./dcdc && cd .. &&
+cd dcdc3A && make clean && make && ./dcdc && cd .. &&
+cd dcdc4A && make clean && make && ./dcdc && cd .. &&
+cd dcdc5A && make clean && make && ./dcdc && cd .. &&
+cd dcdc6A && make clean && make && ./dcdc && cd .. &&
+cd dcdc7A && make clean && make && ./dcdc && cd .. &&
+cd dcdc8A && make clean && make && ./dcdc && cd .. &&
+cd dcdc9A && make clean && make && ./dcdc && cd .. &&
+cd dcdc10A && make clean && make && ./dcdc && cd ..

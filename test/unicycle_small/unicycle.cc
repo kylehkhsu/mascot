@@ -4,8 +4,6 @@
 #define _USE_MATH_DEFINES
 
 #include "AdaptAbsReach.hh"
-//#include "Reach.hh"
-//#include "UpfrontReach.hh"
 
 using namespace std;
 using namespace scots;
@@ -20,7 +18,7 @@ typedef std::array<double, dimX> X_type;
 typedef std::array<double, dimU> U_type;
 
 /* we integrate the unicycle ode by 0.3 sec (the result is stored in x)  */
-auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
+auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
 
   /* the ode describing the unicycle */
   auto rhs =[](X_type& xx,  const X_type &x, U_type &u) -> void {
@@ -33,9 +31,9 @@ auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
 
 /* computation of the growth bound (the result is stored in r)  */
 
-auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
-    r[0] = r[0] + (r[2]*std::abs(u[0]) + w[0]) * tau;
-    r[1] = r[1] + (r[2]*std::abs(u[0]) + w[1]) * tau;
+auto radNext = [](X_type &r, U_type &u, OdeSolver solver) -> void {
+    r[0] = r[0] + (r[2]*std::abs(u[0]) + w[0]) * solver.tau_;
+    r[1] = r[1] + (r[2]*std::abs(u[0]) + w[1]) * solver.tau_;
 };
 
 auto unicycleAddG = [](SymbolicSet* G) -> void {
@@ -90,25 +88,14 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    AdaptAbsReach abs("unicycle_small_3A_cav.txt");
+    AdaptAbsReach abs("unicycle_small.log");
     abs.initialize(&unicycle, unicycleAddO, unicycleAddG);
 
-    TicToc tt_tot;
-    tt_tot.tic();
+    TicToc timer;
+    timer.tic();
     abs.onTheFlyReach(p, sysNext, radNext, x, u);
-    clog << "------------------------------------Total time:";
-    tt_tot.toc();
+    clog << "------------------------------------Total time: " << timer.toc() << " seconds.\n";
 
-//    int m = 2;
-//    UpfrontReach abs("unicycle_small_3A_HSCC_recursive.log");
-//    abs.initialize(&unicycle, 0, unicycleAddO);
-//    abs.initializeReach(unicycleAddG, unicycleAddI);
-
-//    TicToc timer;
-//    timer.tic();
-//    abs.computeAbstractions(sysNext, radNext, x, u);
-//    abs.upfrontReach(m);
-//    clog << "------------------------------------Total time: " << timer.toc() << " seconds.\n";
 }
 
 
