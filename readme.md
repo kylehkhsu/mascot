@@ -4,7 +4,7 @@
 possibly perturbed nonlinear control systems with respect to safety and reachability specifications.
 SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
 
-**MASCOT** builds on SCOTS by using multi-layer abstractions to enable adaptive fixed points in the abstract controller synthesis.
+**MASCOT** builds upon SCOTS by using multi-layered abstractions and lazy exploration to enable adaptive fixed points in controller synthesis process.
 
 
 ### Requirements
@@ -27,7 +27,7 @@ SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
 ### Directory structure
 
 - ./bdd/
-    Contains the source C++ source code for the SCOTS, MASCOT classes
+    Contains the source C++ source code for the SCOTS, MASCOT classes 
     which use Binary Decision Diagrams as the underlying data structure
 
 - ./doxygen/
@@ -37,7 +37,7 @@ SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
     Some C++/Matlab programs demonstrating the usage of basic SCOTS
   
 - ./test/
-    Examples demonstrating the usage and performance of
+    Examples demonstrating the usage and performance of MASCOT
   
 - ./mfiles
     Contains an mfile as a wrapper to the mex-file functions
