@@ -278,14 +278,9 @@ public:
 
 		// begin on-the-fly safety synthesis
 		int print = 1; // print progress on command line
-<<<<<<< HEAD
 		int recursion = 0;
         checkMakeDir("K");
 		onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion, print);
-=======
-        int recursion = 0;
-		onTheFlySafeRecurse(sysNext, radNext, x, u, recursion, print);
->>>>>>> d7568a3f9c7b6463461db9c867118bf879fa605d
 
 		// to ensure that the controllers for the coarser layers admit control inputs that allow visit to finer layer states. Note that this doesn't change the controller domain.
 		for (int ab = 0; ab < *system_->numAbs_; ab++) {
@@ -393,128 +388,11 @@ public:
      *  \param[in]  u           Dummy input point.
      */
 	template<class sys_type, class rad_type, class X_type, class U_type>
-<<<<<<< HEAD
-	void onTheFlySafeRecurseNoAux(sys_type sysNext, rad_type radNext, X_type x, U_type u, int recursion, int print = 0) {
-        TicToc timer;
-		recursion += 1;
-		bool CONVERGED;
-
-        if (print) {
-		    clog << '\n';
-		    clog << "current recursion depth: " << recursion << '\n';
-
-		
-			cout << '\n';
-			cout << "current recursion depth: " << recursion << '\n';
-		}
-
-		/*Ds_[0]->symbolicSet_ = validZs_[0]->symbolicSet_;*/
-		for (int ab = 0; ab < *system_->numAbs_; ab++) {			
-			if (print) {
-                clog << "\t current abstraction: " << ab << '\n';
-				cout << "\t current abstraction: " << ab << '\n';
-            }
-			if (ab > 0) {
-				//Ds_[ab-1]->symbolicSet_ = !Zs_[ab - 1]->symbolicSet_ & validZs_[ab - 1]->symbolicSet_;
-			    timer.tic();
-				Ds_[*system_->numAbs_ - 1]->symbolicSet_ = validZs_[*system_->numAbs_ - 1]->symbolicSet_;
-				for (int ii = *system_->numAbs_ - 1; ii >= ab; ii--) {
-					coarserOuter(Ds_[ii - 1], Ds_[ii], ii - 1);
-				}
-				Ds_[ab-1]->symbolicSet_ &= Rs_[ab-1]->symbolicSet_;
-				finer(Ds_[ab - 1], Ds_[ab], ab - 1);
-				computeAbstraction(ab, sysNext, radNext, x, u);
-				abTime_ += timer.toc();
-			}
-			timer.tic();
-			safeOne(ab, print);
-			synTime_ += timer.toc();
-
-			/*if (ab > 0) {
-				BDD X = Zs_[ab]->symbolicSet_;
-				finer(Zs_[ab - 1], Zs_[ab], ab - 1);
-				Zs_[ab]->symbolicSet_ |= X;
-			}*/
-		}
-
-		timer.tic();
-		for (int ab = 1; ab <= *system_->numAbs_ - 1; ab++) {
-			BDD X = Zs_[ab]->symbolicSet_;
-			finer(Zs_[ab - 1], Zs_[ab], ab - 1);
-			Zs_[ab]->symbolicSet_ |= X;
-		}
-        synTime_ += timer.toc();
-
-		// Debug purpose
-		/*if (recursion == 1) {
-		checkMakeDir("Zs1");
-		saveVec(Zs_, "Zs1/Zs_");
-		checkMakeDir("validZs1");
-		saveVec(validZs_, "validZs1/Zs_");
-		}
-		else if (recursion == 2) {
-		checkMakeDir("Zs2");
-		saveVec(Zs_, "Zs2/Zs_");
-		checkMakeDir("validZs2");
-		saveVec(validZs_, "validZs2/Zs_");
-		}
-		else if (recursion == 3) {
-		checkMakeDir("Zs3");
-		saveVec(Zs_, "Zs3/Zs_");
-		checkMakeDir("validZs3");
-		saveVec(validZs_, "validZs3/Zs_");
-		}
-		else if (recursion == 4) {
-		checkMakeDir("Zs4");
-		saveVec(Zs_, "Zs4/Zs_");
-		checkMakeDir("validZs4");
-		saveVec(validZs_, "validZs4/Zs_");
-		}*/
-
-		timer.tic();
-		//Convergence criteria: validZs_ of the finest layer is same as Zs_ of the finest layer
-		if (validZs_[*system_->numAbs_ - 1]->symbolicSet_ == Zs_[*system_->numAbs_ - 1]->symbolicSet_) {
-			CONVERGED = 1;
-		}
-		else {
-			CONVERGED = 0;
-		}
-		for (int ab = *system_->numAbs_ - 1; ab >= 0; ab--) {
-			validZs_[ab]->symbolicSet_ = ddmgr_->bddZero(); // just to make sure there is no interference with previous result
-		}
-
-		validZs_[*system_->numAbs_ - 1]->symbolicSet_ = Zs_[*system_->numAbs_ - 1]->symbolicSet_; // save the winning states for Cpre in next iteration
-		for (int ab = *system_->numAbs_ - 1; ab > 0; ab--) {
-			coarserInner(validZs_[ab - 1], validZs_[ab], ab - 1);
-		}
-        synTime_ += timer.toc();
-        
-        // debug purpose
-        string Str = "K/K";
-        Str += std::to_string(recursion);
-        checkMakeDir(Str);
-        saveVec(validZs_, Str);
-        // debug purpose end
-
-		if (CONVERGED == 1) {
-			return;
-		}
-		else {
-		    timer.tic();
-			for (int ab = 0; ab <= *system_->numAbs_ - 1; ab++) {
-				Zs_[ab]->symbolicSet_ = ddmgr_->bddZero();
-				/*Ds_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_;*/
-			}
-            synTime_ += timer.toc();
-			onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion, print);
-			return;
-=======
 	void computeExplorationAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
 		for (int ab = 0; ab < *system_->numAbs_; ab++) {
 			SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[0], U_, X2s_[0]); // coarsest state gridding
 			abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // use solver with time step corresponding to that of each layer
 			uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
->>>>>>> d7568a3f9c7b6463461db9c867118bf879fa605d
 		}
         x = x; // gets rid of warning message regarding lack of use
         u = u;
