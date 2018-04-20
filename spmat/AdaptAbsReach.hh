@@ -75,6 +75,7 @@ public:
     double abTime_;
     double synTime_;
 
+
     /*!	Constructor for an AdaptAbsReach object.
      *  \param[in]  logFile     Filename of program log.
      */
@@ -155,8 +156,7 @@ public:
 		cout << "Starting computation of transition relation of layer 0: \n";
 		Abstraction<X_type, U_type> abs(*Ds_[0], *U_); // coarsest state gridding
 		abs.compute_gb(*Ts_[0], sysNext, radNext, *solvers_[0], isO);
-        //Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_ & !Os_[0]->symbolicSet_;
-        //TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
+
 
         //// begin on-the-fly reachability synthesis
         //int ab = 0;
@@ -247,7 +247,7 @@ public:
 ////            }
 //            saveCZ(ab);
 //            validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
-//            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;    
+//            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
 //            clog << "saved as snapshot, saved to valids\n";
 //            if (print)
 //                cout << "saved as snapshot, saved to valids\n";
@@ -315,39 +315,123 @@ public:
 //        computeAbstraction(nextAb, sysNext, radNext, x, u);
 //    }
 //
-//    ReachResult reach(int ab, int m = -1, int print = 0) {
-//        int i = 1;
-//        clog << "abstraction: " << ab << '\n';
-//        if (print)
-//            cout << "abstraction: " << ab << '\n';
-//        while (1) {
-//            clog << "iteration: " << i << '\n';
-//            if (print)
-//                cout << "iteration: " << i << '\n';
-//
-////            if (ab != 0) {
-////                Zs_[ab]->printInfo(1);
-////            }
-//            BDD cPreZ = cPre(Zs_[ab]->symbolicSet_, ab);
-//            BDD C = cPreZ | Gs_[ab]->symbolicSet_;
-//            BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
-//            Cs_[ab]->symbolicSet_ |= N;
-//            Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_; // the disjunction part is new
-//
-//            if (N == ddmgr_->bddZero() && i != 1) {
-//                if (i >= minToBeValid_) {
-//                    return CONVERGEDVALID;
-//                }
-//                else{
-//                    return CONVERGEDINVALID;
-//                }
-//            }
-//            if (i == m) {
-//                return NOTCONVERGED;
-//            }
-//            i += 1;
-//        }
-//    }
+
+    /**
+     * fucntion: solve_reachability_game
+     * @brief solve reachability game according to Algorithm 2 in  <a href="./../../manual/manual.pdf">manual</a>
+     *
+     * @param[in] trans_function - TransitionFunction of the symbolic model
+     * @param[in] target - lambda expression of the form
+     *                      \verbatim [] (const abs_type &i) -> bool \endverbatim
+     *                      returns true if state i is in target set and false otherwise
+     *
+     * @param[in] avoid  - OPTIONALLY provide lambda expression of the form
+     *                      \verbatim [] (const abs_type &i) -> bool \endverbatim
+     *                      returns true if state i is in avoid set and false otherwise
+     *
+     * @param[in] depth - OPTIONALLY provide maximum depth of search for the reachability fix point.
+     *                    Use depth = -1 for the normal algorithm which runs until convergence.
+     *                    The default value is -1
+     *
+     * @param[out] value - OPTIONALLY provide std::vector<double> value to obtain the value function
+     *
+     * @return -  WinningDomain that contains the set of winning states and valid inputs
+     **/
+    template<class F1, class F2=decltype(params::avoid)>
+    WinningDomain solve_reachability_game(const TransitionFunction& trans_function,
+                                          F1& target,
+                                          F2& avoid = params::avoid,
+                                          const double depth = -1,
+                                          std::vector<double> & value = params::value ) {
+      /* size of state alphabet */
+      abs_type N=trans_function.m_no_states;
+      /* size of input alphabet */
+      abs_type M=trans_function.m_no_inputs;
+
+      /* used to encode that a state is not in the winning domain */
+      abs_type loosing = std::numeric_limits<abs_type>::max();
+      if(M > loosing-1) {
+        throw std::runtime_error("scots::solve_reachability_game: Number of inputs exceeds maximum supported value");
+      }
+      /* win_domain[i] = j
+       * contains the input j associated with state i
+       *
+       * j = loosing if the target is not reachable from i
+       *
+       * initialize all states to loosing (win_domain[i]=loosing) */
+      std::vector<abs_type> win_domain(N,loosing);
+      /* initialize value */
+      value.resize(N,std::numeric_limits<double>::infinity());
+      /* keep track of the number of processed post */
+      std::unique_ptr<abs_type[]> K(new abs_type[N*M]);
+      /* keep track of the values (corresponds to M in Alg.2)*/
+      std::unique_ptr<double[]>  edge_val(new double[N*M]);
+
+      /* init fifo */
+      std::queue<abs_type> fifo;
+      for(abs_type i=0; i<N; i++) {
+        if(target(i) && !avoid(i)) {
+          win_domain[i]=loosing;
+          /* value is zero */
+          value[i]=0;
+          /* states in the target are added to the fifo */
+          fifo.push(i);
+        }
+        for(abs_type j=0; j<M; j++) {
+          edge_val[i*M+j]=0;
+          K[i*M+j]=trans_function.m_no_post[i*M+j];
+        }
+      }
+
+      ReachResult result = CONVERGEDINVALID;
+      /* main loop */
+      while(!fifo.empty()) {
+        /* get state to be processed */
+        abs_type q=fifo.front();
+        fifo.pop();
+        /* If the value of the popped state is greater or equal to depth, break */
+        if (value[q] > depth) {
+          result = NOTCONVERGED;
+          break;
+        }
+        /* Save the value of the popped state for comparison with minToBeValid_ */
+        double lastValue = value[q];
+        /* loop over each input */
+        for(abs_type j=0; j<M; j++) {
+          /* loop over pre's associated with this input */
+          for(abs_ptr_type v=0; v<trans_function.m_no_pre[q*M+j]; v++) {
+            abs_type i=trans_function.m_pre[trans_function.m_pre_ptr[q*M+j]+v];
+            if(avoid(i))
+              continue;
+            /* (i,j,q) is a transition */
+            /* update the number of processed posts */
+            K[i*M+j]--;
+            /* update the max value of processed posts */
+            edge_val[i*M+j]=(edge_val[i*M+j]>=1+value[q] ? edge_val[i*M+j] : 1+value[q]);
+            /* check if for node i and input j all posts are processed */
+            if(!K[i*M+j] && value[i]>edge_val[i*M+j]) {
+              fifo.push(i);
+              value[i]=edge_val[i*M+j];
+              win_domain[i]=j;
+            }
+          }  /* end loop over all pres of state i under input j */
+        }  /* end loop over all input j */
+      }  /* fifo is empty */
+      if (result != NOTCONVERGED && lastValue >= minToBeValid_) {
+        /* if fifo is empty and the depth reached is greater than minToBeValid_ */
+        result = CONVERGEDVALID;
+      }
+      /* if the default value function was used, free the memory of the static object*/
+      if(value == scots::params::value){
+          value.clear();
+          value.shrink_to_fit();
+      }
+
+      return WinningDomain(N,M,std::move(win_domain),std::vector<bool>{},loosing,result);
+    }
+
+
+
 //
 //    // testing computeAbstraction
 //    void test() {
@@ -449,7 +533,7 @@ public:
     //    // {(x,u)} with no posts outside of winning set
     //    BDD nF = !Fbdd;
     //    // get rid of junk
-    //    BDD preF = TTs_[curAbs]->symbolicSet_.AndAbstract(nF, *notXUvars_[curAbs]);        
+    //    BDD preF = TTs_[curAbs]->symbolicSet_.AndAbstract(nF, *notXUvars_[curAbs]);
     //    return preF;
     //}
 
