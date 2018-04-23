@@ -56,17 +56,17 @@ private:
    */
   std::vector<bool> m_inputs;
   /*
-   * constant that is used to indicate that a sate is not in
-   * the winning domain; not intended to be chaned
-   */
-  abs_type m_loosing;
-  /*
    * outcome of the fixpoint iteration
    * NOTCONVERGED - the fixpoint did not converge but reached the maximum allowed depth
    * CONVERGEDVALID - the fixpoint converged and reached the minimum required depth
    * CONVERGEDINVALID - the fixpoint converged but did not reach the minimum required depth
    */
    ReachResult result;
+  /*
+   * constant that is used to indicate that a sate is not in
+   * the winning domain; not intended to be chaned
+   */
+  abs_type m_loosing;
 
 public:
   /** @cond  EXCLUDE from doxygen **/
@@ -75,8 +75,8 @@ public:
                     m_no_inputs(0),
                     m_winning_domain {},
                     m_inputs {},
-                    m_loosing(std::numeric_limits<abs_type>::max()) {},
-                    result(UNDEF)
+                    result(UNDEF),
+                    m_loosing(std::numeric_limits<abs_type>::max()) {}//,
   /* destructor */
   ~WinningDomain()=default;
   /* copy constructor  */
@@ -95,8 +95,8 @@ public:
                 abs_type loosing=std::numeric_limits<abs_type>::max()) :
                 m_no_states(no_states),
                 m_no_inputs(no_inputs),
-                m_loosing(loosing) {},
-                result(UNDEF)
+                result(UNDEF),
+                m_loosing(loosing) {}
 
   /** @brief construct WinningDomain with array of winning states **/
   WinningDomain(abs_type no_states,
@@ -106,8 +106,8 @@ public:
                 m_no_states(no_states),
                 m_no_inputs(no_inputs),
                 m_winning_domain(std::move(winning_domain)),
-                m_loosing(loosing) {},
-                result(UNDEF)
+                result(UNDEF),
+                m_loosing(loosing) {}
 
   /** @brief construct WinningDomain with array of winning states and valid inputs **/
   WinningDomain(abs_type no_states,
@@ -119,8 +119,22 @@ public:
                 m_no_inputs(no_inputs),
                 m_winning_domain(std::move(winning_domain)),
                 m_inputs(std::move(inputs)),
-                m_loosing(loosing) {},
-                result(UNDEF)
+                result(UNDEF),
+                m_loosing(loosing) {}
+
+  /** @brief construct WinningDomain with array of winning states and valid inputs **/
+  WinningDomain(abs_type no_states,
+                abs_type no_inputs,
+                std::vector<abs_type>&& winning_domain,
+                std::vector<bool>&& inputs,
+                ReachResult result_,
+                abs_type loosing=std::numeric_limits<abs_type>::max()):
+                m_no_states(no_states),
+                m_no_inputs(no_inputs),
+                m_winning_domain(std::move(winning_domain)),
+                m_inputs(std::move(inputs)),
+                result(result_),
+                m_loosing(loosing) {}
 
   /** @brief return the outcome of the fixpoint (UNDEF in case the object was initialized outside a fixpoint) **/
   ReachResult get_result() const {

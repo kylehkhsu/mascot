@@ -18,7 +18,7 @@
 #include "UniformGrid.hh"
 #include "TransitionFunction.hh"
 
-/** @namespace scots **/ 
+/** @namespace scots **/
 namespace scots {
 
 /** @cond **/
@@ -31,7 +31,7 @@ namespace params {
 
 /**
  * @class Abstraction
- * 
+ *
  * @brief Computation of the transition function of symbolic model/abstraction
  *
  * It implements in compute_gb the computation of the transition function based
@@ -39,9 +39,9 @@ namespace params {
  * print_post_gb to print the center of the cells that cover the attainable set
  * which is computed from the growth bound.
  *
- * See 
+ * See
  * - the manual in <a href="./../../manual/manual.pdf">manual.pdf</a>
- * - http://arxiv.org/abs/1503.03715 for theoretical background 
+ * - http://arxiv.org/abs/1503.03715 for theoretical background
  *
  **/
 template<class state_type, class input_type>
@@ -62,11 +62,11 @@ private:
     if(((double)i/(double)N*100)>=counter){
       if((counter%10)==0)
         std::cout << counter;
-      else if((counter%2)==0) 
+      else if((counter%2)==0)
         std::cout << ".";
       counter++;
     }
-    std::flush(std::cout); 
+    std::flush(std::cout);
     if(i==(N-1))
       std::cout << "100\n";
   }
@@ -92,20 +92,20 @@ public:
               m_state_alphabet(state_alphabet),
               m_input_alphabet(input_alphabet),
               m_z(new double[state_alphabet.get_dim()]()) {
-  /* default value of the measurement error 
+  /* default value of the measurement error
      * (heurisitc to prevent rounding errors)*/
     for(int i=0; i<m_state_alphabet.get_dim(); i++)
       m_z[i]=m_state_alphabet.get_eta()[i]/1e10;
   }
 
-  /** 
+  /**
    * @brief computes the transition function
    *
    * @param[out] transition_function - the result of the computation
    *
    * @param[in] system_post - lambda expression of the form
    *                          \verbatim [] (state_type &x, const input_type &u) ->  void  \endverbatim
-   *                          system_post(x,u) provides a numerical approximation of ODE 
+   *                          system_post(x,u) provides a numerical approximation of ODE
    *                          solution at time tau with initial state x and input u \n
    *                          the result is stored in x
    *
@@ -116,7 +116,7 @@ public:
    *                          the result is stored in r
    *
    * @param[in] avoid  - OPTIONALLY provide lambda expression of the form
-   *                     \verbatim [] (const abs_type &i) -> bool \endverbatim
+   *                     \verbatim [] (const abs_type &i, const UniformGrid &ss) -> bool \endverbatim
    *                     returns true if the abstract state i is in the avoid
    *                     set; otherwise returns false
    *
@@ -128,22 +128,22 @@ public:
    * \verbatim corner_IDs[i*M+j+1] \endverbatim = upper-right  of the
    * integer hyper-interval of cell IDs that cover the over-approximation of the
    * attainable set of cell with ID=i under input ID=j
-   * 
+   *
    * In the second loop the data members of the TransitionFunction are computed.
-   * 
+   *
    **/
   template<class F1, class F2, class F3=decltype(params::avoid_abs)>
-  void compute_gb(TransitionFunction& transition_function, 
-                  F1& system_post, 
-                  F2& radius_post, 
-				  OdeSolver solver,
+  void compute_gb(TransitionFunction& transition_function,
+                  F1& system_post,
+                  F2& radius_post,
+				          OdeSolver solver,
                   F3& avoid=params::avoid_abs) {
     /* number of cells */
-    abs_type N=m_state_alphabet.size(); 
+    abs_type N=m_state_alphabet.size();
     /* number of inputs */
     abs_type M=m_input_alphabet.size();
     /* number of transitions (to be computed) */
-    abs_ptr_type T=0; 
+    abs_ptr_type T=0;
     /* state space dimension */
     int dim=m_state_alphabet.get_dim();
     /* for display purpose */
@@ -170,7 +170,7 @@ public:
       lower_left[i]=m_state_alphabet.get_lower_left()[i];
       upper_right[i]=m_state_alphabet.get_upper_right()[i];
     }
-    /* init in transition_function the members no_pre, no_post, pre_ptr */ 
+    /* init in transition_function the members no_pre, no_post, pre_ptr */
     transition_function.init_infrastructure(N,M);
     /* lower-left & upper-right corners of hyper rectangle of cells that cover attainable set */
     std::unique_ptr<abs_type[]> corner_IDs(new abs_type[N*M*2]());
@@ -178,8 +178,8 @@ public:
     std::unique_ptr<bool[]> out_of_domain(new bool[N*M]());
     /*
      * first loop: compute corner_IDs:
-     * corner_IDs[i*M+j][0] = lower-left cell index of over-approximation of attainable set 
-     * corner_IDs[i*M+j][1] = upper-right cell index of over-approximation of attainable set 
+     * corner_IDs[i*M+j][0] = lower-left cell index of over-approximation of attainable set
+     * corner_IDs[i*M+j][1] = upper-right cell index of over-approximation of attainable set
      */
     /* loop over all cells */
     for(abs_type i=0; i<N; i++) {
@@ -215,10 +215,10 @@ public:
     system_post(x,u,solver.tau_,solver);
 	//tt.toc();
 	///* by kaushik: profiling ends here */
-        /* determine the cells which intersect with the attainable set: 
-         * discrete hyper interval of cell indices 
+        /* determine the cells which intersect with the attainable set:
+         * discrete hyper interval of cell indices
          * [lb[0]; ub[0]] x .... x [lb[dim-1]; ub[dim-1]]
-         * covers attainable set 
+         * covers attainable set
          */
         abs_type npost=1;
         for(int k=0; k<dim; k++) {
@@ -228,7 +228,7 @@ public:
           if(left <= lower_left[k]-eta[k]/2.0  || right >= upper_right[k]+eta[k]/2.0)  {
             out_of_domain[i*M+j]=true;
             break;
-          } 
+          }
 
           /* integer coordinate of lower left corner of post */
           lb[k] = static_cast<abs_type>((left-lower_left[k]+eta[k]/2.0)/eta[k]);
@@ -242,13 +242,13 @@ public:
         }
         corner_IDs[i*(2*M)+2*j]=0;
         corner_IDs[i*(2*M)+2*j+1]=0;
-        if(out_of_domain[i*M+j]) 
+        if(out_of_domain[i*M+j])
           continue;
 
         /* compute indices of post */
         for(abs_type k=0; k<npost; k++) {
           abs_type q=0;
-          for(int l=0; l<dim; l++) 
+          for(int l=0; l<dim; l++)
             q+=(lb[l]+cc[l])*NN[l];
           cc[0]++;
           for(int l=0; l<dim-1; l++) {
@@ -257,8 +257,8 @@ public:
               cc[l+1]++;
             }
           }
-          /* (i,j,q) is a transition */    
-          /* increment number of pres for (q,j) */ 
+          /* (i,j,q) is a transition */
+          /* increment number of pres for (q,j) */
           transition_function.m_no_pre[q*M+j]++;
           /* store id's of lower-left and upper-right cell */
           if(k==0)
@@ -295,7 +295,7 @@ public:
       /* loop over all inputs */
       for(abs_type j=0; j<M; j++) {
       /* is x an element of the overflow symbols ? */
-        if(out_of_domain[i*M+j]) 
+        if(out_of_domain[i*M+j])
           continue;
         /* extract lower-left and upper-bound points */
         abs_type k_lb=corner_IDs[i*2*M+2*j];
@@ -320,7 +320,7 @@ public:
 
         for(abs_type k=0; k<npost; k++) {
           abs_type q=0;
-          for(int l=0; l<dim; l++) 
+          for(int l=0; l<dim; l++)
             q+=(lb[l]+cc[l])*NN[l];
           cc[0]++;
           for(int l=0; l<dim-1; l++) {
@@ -341,14 +341,14 @@ public:
       progress(i,N,counter);
     }
   }
- 
+
   /** @brief get the center of cells that are used to over-approximated the
    *  attainable set associated with cell (with center x) and input u
    *
    *  @returns std::vector<abs_type>
    *  @param system_post - lambda expression as in compute_gb
    *  @param radius_post - lambda expression as in compute_gb
-   *  @param x - center of cell 
+   *  @param x - center of cell
    *  @param u - input
    **/
   template<class F1, class F2>
@@ -391,7 +391,7 @@ public:
       double right = xx[k]+r[k]+m_z[k];
       if(left <= lower_left[k]-eta[k]/2.0  || right >= upper_right[k]+eta[k]/2.0) {
         return post;
-      } 
+      }
       /* integer coordinate of lower left corner of post */
       lb[k] = static_cast<abs_type>((left-lower_left[k]+eta[k]/2.0)/eta[k]);
       /* integer coordinate of upper right corner of post */
@@ -415,7 +415,7 @@ public:
           cc[l+1]++;
         }
       }
-      /* (i,j,q) is a transition */    
+      /* (i,j,q) is a transition */
       m_state_alphabet.itox(q,xx);
       post.push_back(xx);
     }
@@ -427,7 +427,7 @@ public:
    *  function as post of the cell with center x and input u
    *
    *  @param transition_function - the transition function of the abstraction
-   *  @param x - center of cell 
+   *  @param x - center of cell
    *  @param u - input
    **/
   void print_post(const TransitionFunction& transition_function,
@@ -452,7 +452,7 @@ public:
    *
    *  @param system_post - lambda expression as in compute_gb
    *  @param radius_post - lambda expression as in compute_gb
-   *  @param x - center of cell 
+   *  @param x - center of cell
    *  @param u - input
    **/
   template<class F1, class F2>

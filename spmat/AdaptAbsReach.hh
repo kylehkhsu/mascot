@@ -3,6 +3,10 @@
 
 #include <cstdio>
 #include <vector>
+#include <queue>
+#include <memory>
+#include <climits>
+#include <utility>
 #include <iostream>
 #include <stdexcept>
 
@@ -13,6 +17,7 @@
 #include "TransitionFunction.hh"
 #include "TicToc.hh"
 #include "Abstraction.hh"
+#include "WinningDomain.hh"
 
 using std::clog;
 using std::freopen;
@@ -22,7 +27,14 @@ using namespace helper;
 
 namespace scots {
 
-enum ReachResult {CONVERGEDVALID, CONVERGEDINVALID, NOTCONVERGED};
+/** @cond **/
+/* default parameters for the solve_reachability_game */
+namespace params {
+  auto avoid = [](const abs_type&, const UniformGrid ss) noexcept {return false;};
+  static std::vector<double> value {};
+}
+
+// enum ReachResult {CONVERGEDVALID, CONVERGEDINVALID, NOTCONVERGED};
 
 class AdaptAbsReach {
 public:
@@ -30,8 +42,8 @@ public:
     vector<double*> etaXs_; /*!< *system_->numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
     vector<double*> tau_; /*!< *system_->numAbs_ x 1 matrix of time steps. */
     vector<UniformGrid*> Xs_; /*!< The *system_->numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
-	std::function<bool(const int, const abs_type&)> obstacle; /*!< Function which evaluates to true for unsafe (obstacle) states of a given layer. */
-	std::function<bool(const int, const abs_type&)> winning; /*!< Function which evaluates to true for winning states of a given layer. */
+	std::function<bool(const int, const UniformGrid&)> avoid; /*!< Function which evaluates to true for unsafe (obstacle) states of a given layer. */
+	std::function<bool(const int, const UniformGrid&)> target; /*!< Function which evaluates to true for winning states of a given layer. */
 	//vector<UniformGrid*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
     vector<UniformGrid*> X2s_; /*!< The *system_->numAbs_ "post" state space abstractions, coarsest (0) to finest. */
 	UniformGrid* U_; /*!< The single input space abstraction. */
@@ -157,10 +169,17 @@ public:
 		Abstraction<X_type, U_type> abs(*Ds_[0], *U_); // coarsest state gridding
 		abs.compute_gb(*Ts_[0], sysNext, radNext, *solvers_[0], isO);
 
+    // Non-lazy trial version : pre-compute all transitions
+    for (int ab=1; ab < *system_->numAbs_; ab++) {
+      Abstraction<X_type, U_type> abs(*Ds_[ab], *U_); // coarsest state gridding
+  		abs.compute_gb(*Ts_[ab], sysNext, radNext, *solvers_[ab], isO);
+    }
+    //  end of non-lazy trial version
 
-        //// begin on-the-fly reachability synthesis
-        //int ab = 0;
-        //onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
+
+        // begin on-the-fly reachability synthesis
+        int ab = 0;
+        // onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
 
         //clog << "controllers: " << finalCs_.size() << '\n';
 
@@ -192,112 +211,102 @@ public:
 		cout << "Finished computation of auxiliary abstractions.\n\n";
     }
 
-//    template<class sys_type, class rad_type, class X_type, class U_type>
-//    void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u, int print = 0) {
-//        clog << '\n';
-//        clog << "current abstraction: " << ab << '\n';
-//        clog << "controllers: " << finalCs_.size() << '\n';
-//
-//        if (print) {
-//            cout << '\n';
-//            cout << "current abstraction: " << ab << '\n';
-//            cout << "controllers: " << finalCs_.size() << '\n';
-//        }
-//
-//        ReachResult result;
-//        if (ab == 0) {
-//            TicToc timer;
-//            timer.tic();
-//            result = reach(ab);
-//            synTime_ += timer.toc();
-//        }
-//        else {
-//            TicToc timer;
-//            timer.tic();
-//            result = reach(ab, m_);
-//            synTime_ += timer.toc();
-//        }
-//        if (result == CONVERGEDVALID) {
-//            clog << "result: converged valid\n";
-//            if (print)
-//                cout << "result: converged valid\n";
-//        }
-//        else if (result == CONVERGEDINVALID) {
-//            clog << "result: converged invalid\n";
-//            if (print)
-//                cout << "result: converged invalid\n";
-//        }
-//        else {
-//            clog << "result: not converged\n";
-//            if (print)
-//                cout << "result: not converged\n";
-//        }
-//
-//        if (result != CONVERGEDINVALID) {
-////            if (finalCs_.size() > 0) { // merge controllers if possible; completely optional and in fact might be more informative to not
-////                if (finalAbs_.back() == ab) {
-////                    SymbolicSet* C = finalCs_.back();
-////                    finalCs_.pop_back();
-////                    delete(C);
-////                    SymbolicSet* Z = finalZs_.back();
-////                    finalZs_.pop_back();
-////                    delete(Z);
-////                    finalAbs_.pop_back();
-////                }
-////            }
-//            saveCZ(ab);
-//            validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
-//            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
-//            clog << "saved as snapshot, saved to valids\n";
-//            if (print)
-//                cout << "saved as snapshot, saved to valids\n";
-//        }
-//        else { // result is CONVERGEDINVALID
-//            Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
-//            Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
-//            clog << "reset to valids\n";
-//            if (print)
-//                cout << "reset to valids\n";
-//        }
-//
-//        if (result != NOTCONVERGED) { // ab = 0 always converges
-//            if (ab == *system_->numAbs_ - 1) {
-//                return;
-//            }
-//            else { // go finer
-//                clog << "Going finer\n";
-//                if (print)
-//                    cout << "Going finer\n";
-//                int nextAb = ab + 1;
-//                TicToc timer;
-//                timer.tic();
-//                eightToTen(ab, nextAb, sysNext, radNext, x, u);
-//                abTime_ += timer.toc();
-//                finer(Zs_[ab], Zs_[nextAb], ab);
-//                Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
-//                validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-//                onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
-//                return;
-//            }
-//        }
-//        else { // not converged, go coarser
-//            clog << "Going coarser\n";
-//            if (print)
-//                cout << "Going coarser\n";
-//            int nextAb = ab - 1;
-//            if (nextAb != 0) { // pointless to do for coarsest layer
-//                TicToc timer;
-//                timer.tic();
-//                eightToTen(ab, nextAb, sysNext, radNext, x, u);
-//                abTime_ += timer.toc();
-//            }
-//            coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
-//            Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
-//            validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-//            onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
-//            return;
-//        }
-//    }
+   template<class sys_type, class rad_type, class X_type, class U_type>
+   void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u, int print = 0) {
+       clog << '\n';
+       clog << "current abstraction: " << ab << '\n';
+       clog << "controllers: " << finalCs_.size() << '\n';
+
+       if (print) {
+           cout << '\n';
+           cout << "current abstraction: " << ab << '\n';
+           cout << "controllers: " << finalCs_.size() << '\n';
+       }
+
+       WinningDomain w;
+       if (ab == 0) {
+           TicToc timer;
+           timer.tic();
+           w = reach(ab);
+           synTime_ += timer.toc();
+       }
+       else {
+           TicToc timer;
+           timer.tic();
+           w = reach(ab, m_);
+           synTime_ += timer.toc();
+       }
+       ReachResult result = w.get_result();
+       if (result == CONVERGEDVALID) {
+           clog << "result: converged valid\n";
+           if (print)
+               cout << "result: converged valid\n";
+       }
+       else if (result == CONVERGEDINVALID) {
+           clog << "result: converged invalid\n";
+           if (print)
+               cout << "result: converged invalid\n";
+       }
+       else {
+           clog << "result: not converged\n";
+           if (print)
+               cout << "result: not converged\n";
+       }
+
+       // if (result != CONVERGEDINVALID) {
+       //     saveCZ(ab);
+       //     validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+       //     validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
+       //     clog << "saved as snapshot, saved to valids\n";
+       //     if (print)
+       //         cout << "saved as snapshot, saved to valids\n";
+       // }
+       // else { // result is CONVERGEDINVALID
+       //     Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
+       //     Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
+       //     clog << "reset to valids\n";
+       //     if (print)
+       //         cout << "reset to valids\n";
+       // }
+       //
+       // if (result != NOTCONVERGED) { // ab = 0 always converges
+       //     if (ab == *system_->numAbs_ - 1) {
+       //         return;
+       //     }
+       //     else { // go finer
+       //         clog << "Going finer\n";
+       //         if (print)
+       //             cout << "Going finer\n";
+       //         int nextAb = ab + 1;
+       //         TicToc timer;
+       //         timer.tic();
+       //         eightToTen(ab, nextAb, sysNext, radNext, x, u);
+       //         abTime_ += timer.toc();
+       //         finer(Zs_[ab], Zs_[nextAb], ab);
+       //         Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+       //         validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+       //         onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+       //         return;
+       //     }
+       // }
+       // else { // not converged, go coarser
+       //     clog << "Going coarser\n";
+       //     if (print)
+       //         cout << "Going coarser\n";
+       //     int nextAb = ab - 1;
+       //     if (nextAb != 0) { // pointless to do for coarsest layer
+       //         TicToc timer;
+       //         timer.tic();
+       //         eightToTen(ab, nextAb, sysNext, radNext, x, u);
+       //         abTime_ += timer.toc();
+       //     }
+       //     coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
+       //     Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+       //     validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+       //     onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+       //     return;
+       // }
+   }
 //
 //    template<class sys_type, class rad_type, class X_type, class U_type>
 //    void eightToTen(int curAb, int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
@@ -317,7 +326,7 @@ public:
 //
 
     /**
-     * fucntion: solve_reachability_game
+     * fucntion: reach
      * @brief solve reachability game according to Algorithm 2 in  <a href="./../../manual/manual.pdf">manual</a>
      *
      * @param[in] trans_function - TransitionFunction of the symbolic model
@@ -326,23 +335,31 @@ public:
      *                      returns true if state i is in target set and false otherwise
      *
      * @param[in] avoid  - OPTIONALLY provide lambda expression of the form
-     *                      \verbatim [] (const abs_type &i) -> bool \endverbatim
+     *                      \verbatim [] (const abs_type &i, const UniformGrid ss) -> bool \endverbatim
      *                      returns true if state i is in avoid set and false otherwise
      *
-     * @param[in] depth - OPTIONALLY provide maximum depth of search for the reachability fix point.
-     *                    Use depth = -1 for the normal algorithm which runs until convergence.
+     * @param[in] m - OPTIONALLY provide maximum m of search for the reachability fix point.
+     *                    Use m = -1 for the normal algorithm which runs until convergence.
      *                    The default value is -1
      *
      * @param[out] value - OPTIONALLY provide std::vector<double> value to obtain the value function
      *
      * @return -  WinningDomain that contains the set of winning states and valid inputs
      **/
-    template<class F1, class F2=decltype(params::avoid)>
-    WinningDomain solve_reachability_game(const TransitionFunction& trans_function,
-                                          F1& target,
-                                          F2& avoid = params::avoid,
-                                          const double depth = -1,
+    // template<class F1, class F2=decltype(params::avoid)>
+    WinningDomain reach(//const TransitionFunction& trans_function,
+                                          const int ab,
+                                          // F1& target,
+                                          // F2& avoid = params::avoid,
+                                          const double m = -1,
                                           std::vector<double> & value = params::value ) {
+      /* transition function of layer ab */
+      TransitionFunction& trans_function = *Ts_[ab];
+      /* state space of layer ab */
+      UniformGrid ss = *Xs_[ab];
+      /* target and obstacle regions */
+      // F1& target = winning;
+      // F2& avoid = obstacle;
       /* size of state alphabet */
       abs_type N=trans_function.m_no_states;
       /* size of input alphabet */
@@ -351,7 +368,7 @@ public:
       /* used to encode that a state is not in the winning domain */
       abs_type loosing = std::numeric_limits<abs_type>::max();
       if(M > loosing-1) {
-        throw std::runtime_error("scots::solve_reachability_game: Number of inputs exceeds maximum supported value");
+        throw std::runtime_error("scots::reach: Number of inputs exceeds maximum supported value");
       }
       /* win_domain[i] = j
        * contains the input j associated with state i
@@ -370,7 +387,7 @@ public:
       /* init fifo */
       std::queue<abs_type> fifo;
       for(abs_type i=0; i<N; i++) {
-        if(target(i) && !avoid(i)) {
+        if(target(i, ss) && !avoid(i, ss)) {
           win_domain[i]=loosing;
           /* value is zero */
           value[i]=0;
@@ -384,24 +401,25 @@ public:
       }
 
       ReachResult result = CONVERGEDINVALID;
+      double lastValue;
       /* main loop */
       while(!fifo.empty()) {
         /* get state to be processed */
         abs_type q=fifo.front();
         fifo.pop();
-        /* If the value of the popped state is greater or equal to depth, break */
-        if (value[q] > depth) {
+        /* If the value of the popped state is greater or equal to m, break */
+        if (value[q] > m && m != -1) {
           result = NOTCONVERGED;
           break;
         }
         /* Save the value of the popped state for comparison with minToBeValid_ */
-        double lastValue = value[q];
+        lastValue = value[q];
         /* loop over each input */
         for(abs_type j=0; j<M; j++) {
           /* loop over pre's associated with this input */
           for(abs_ptr_type v=0; v<trans_function.m_no_pre[q*M+j]; v++) {
             abs_type i=trans_function.m_pre[trans_function.m_pre_ptr[q*M+j]+v];
-            if(avoid(i))
+            if(avoid(i, ss))
               continue;
             /* (i,j,q) is a transition */
             /* update the number of processed posts */
@@ -418,7 +436,7 @@ public:
         }  /* end loop over all input j */
       }  /* fifo is empty */
       if (result != NOTCONVERGED && lastValue >= minToBeValid_) {
-        /* if fifo is empty and the depth reached is greater than minToBeValid_ */
+        /* if fifo is empty and the m reached is greater than minToBeValid_ */
         result = CONVERGEDVALID;
       }
       /* if the default value function was used, free the memory of the static object*/
@@ -427,7 +445,7 @@ public:
           value.shrink_to_fit();
       }
 
-      return WinningDomain(N,M,std::move(win_domain),std::vector<bool>{},loosing,result);
+      return WinningDomain(N,M,std::move(win_domain),std::vector<bool>{},result,loosing);
     }
 
 

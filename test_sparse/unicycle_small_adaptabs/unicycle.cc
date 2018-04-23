@@ -38,7 +38,7 @@ auto radNext = [](X_type &x, X_type &r, U_type &u, double tau, OdeSolver solver)
     r[1] = r[1] + (r[2]*std::abs(u[0]) + w[1]) * tau;
 };
 
-auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid ss) {
+auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss) {
 	X_type t_lb = { { 10.79, 0.1, -M_PI - 0.4 } };
 	X_type t_ub = { { 11.3, 0.61, M_PI + 0.4 } };
 	X_type c_lb;
@@ -63,7 +63,7 @@ auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid ss) 
 
 };
 
-auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid ss) {
+auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss) {
 	X_type t_lb = { { 2.1, 0, -M_PI - 0.4 } };
 	X_type t_ub = { { 2.3, 1.2, M_PI + 0.4 } };
 	X_type c_lb;
@@ -129,7 +129,7 @@ int main() {
     abs.onTheFlyReach(p_, sysNext, radNext, x, u, target, obstacle);
     clog << "------------------------------------Total time:";
     tt_tot.toc();
-    
+
 //    int startAbs = 0;
 //    int minToGoCoarser = 1;
 //    int minToBeValid = 2;
@@ -142,6 +142,3 @@ int main() {
 //
 //    abs.reach(startAbs, minToGoCoarser, minToBeValid, earlyBreak);
 }
-
-
-
