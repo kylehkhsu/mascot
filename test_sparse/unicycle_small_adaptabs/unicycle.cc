@@ -39,8 +39,8 @@ auto radNext = [](X_type &x, X_type &r, U_type &u, double tau, OdeSolver solver)
 };
 
 auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss) {
-	X_type t_lb = { { 10.79, 0.1, -M_PI - 0.4 } };
-	X_type t_ub = { { 11.3, 0.61, M_PI + 0.4 } };
+	X_type t_lb = { { 4.5, 0.1, -M_PI - 0.8 } }; // 0.8 offset is made up
+	X_type t_ub = { { 6.0, 0.61, M_PI + 0.8 } }; // 0.8 offset is made up
 	X_type c_lb;
 	X_type c_ub;
 	X_type z = { {0, 0, 0} }; // assume no measurement error
@@ -64,7 +64,7 @@ auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss)
 };
 
 auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss) {
-	X_type t_lb = { { 2.1, 0, -M_PI - 0.4 } };
+	X_type t_lb = { { 1.9, 0, -M_PI - 0.4 } };
 	X_type t_ub = { { 2.3, 1.2, M_PI + 0.4 } };
 	X_type c_lb;
 	X_type c_ub;
@@ -80,8 +80,8 @@ auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid &s
 		c_ub[i] = x[i] + etaX[i] / 2.0 + z[i];
 	}
 	if (t_lb[0] <= c_lb[0] && c_ub[0] <= t_ub[0] &&
-		t_lb[1] <= c_lb[1] && c_ub[1] <= t_ub[1] &&
-		t_lb[2] <= c_lb[2] && c_ub[2] <= t_ub[2]) {
+		t_lb[1] <= c_lb[1] && c_ub[1] <= t_ub[1]) { //&&
+		//t_lb[2] <= c_lb[2] && c_ub[2] <= t_ub[2]) {
 		return true;
 	}
 	return false;
@@ -104,13 +104,13 @@ int main() {
 
     int nSubInt = 5;
 
-    double etaX[dimX] = {0.6, 0.6, 0.3};
+    double etaX[dimX] = {0.6/2/2, 0.6/2/2, 0.3/2/2};
     double tau = 0.9;
 
     double etaRatio[dimX] = {2, 2, 2};
     double tauRatio = 2;
 
-    int numAbs = 3;
+    int numAbs = 1;
     int readAbs = 0;
 	int p_ = 2;
 
@@ -122,11 +122,11 @@ int main() {
                     etaRatio, tauRatio, nSubInt, numAbs);
 
     AdaptAbsReach abs("unicycle3A.log");
-    abs.initialize(&unicycle);
+    abs.initialize(&unicycle, target, obstacle);
 
     TicToc tt_tot;
     tt_tot.tic();
-    abs.onTheFlyReach(p_, sysNext, radNext, x, u, target, obstacle);
+    abs.onTheFlyReach(p_, sysNext, radNext, x, u);
     clog << "------------------------------------Total time:";
     tt_tot.toc();
 

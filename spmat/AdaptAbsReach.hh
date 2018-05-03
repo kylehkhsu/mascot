@@ -139,8 +139,8 @@ public:
         /*delete ddmgr_;*/
     }
 
-    template<class sys_type, class rad_type, class X_type, class U_type, class G_type, class O_type>
-    void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u, G_type isG, O_type isO) {
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
         p_ = p; // coarsest layer uncontrollable-pred. parameter
         minToBeValid_ = 2;
@@ -167,19 +167,36 @@ public:
         // Ts_[0] is uTs_[0] with obstacles removed
 		cout << "Starting computation of transition relation of layer 0: \n";
 		Abstraction<X_type, U_type> abs(*Ds_[0], *U_); // coarsest state gridding
-		abs.compute_gb(*Ts_[0], sysNext, radNext, *solvers_[0], isO);
+		abs.compute_gb(*Ts_[0], sysNext, radNext, *solvers_[0], avoid);
 
     // Non-lazy trial version : pre-compute all transitions
     for (int ab=1; ab < *system_->numAbs_; ab++) {
+      UniformGrid* D = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[ab]);
+  		Ds_[ab] = D;
       Abstraction<X_type, U_type> abs(*Ds_[ab], *U_); // coarsest state gridding
-  		abs.compute_gb(*Ts_[ab], sysNext, radNext, *solvers_[ab], isO);
+  		abs.compute_gb(*Ts_[ab], sysNext, radNext, *solvers_[ab], avoid);
     }
-    //  end of non-lazy trial version
+    // end
+    // debug: testing reach
+    WinningDomain w;
+    w = reach(0, m_);
+    ReachResult result = w.get_result();
+    if (result == CONVERGEDVALID) {
+      cout << "result: converged valid\n";
+    }
+    else if (result == CONVERGEDINVALID) {
+      cout << "result: converged invalid\n";
+    }
+    else {
+      cout << "result: not converged\n";
+    }
+    //  end
 
 
         // begin on-the-fly reachability synthesis
         int ab = 0;
-        // onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
+        int print = 1;
+        // onTheFlyReachRecurse(ab, sysNext, radNext, x, u, print);
 
         //clog << "controllers: " << finalCs_.size() << '\n';
 
@@ -387,6 +404,22 @@ public:
       /* init fifo */
       std::queue<abs_type> fifo;
       for(abs_type i=0; i<N; i++) {
+        // debug code begin
+        std::cout << "state = " << i << ": ";
+        std::array<double, 3> x;
+        ss.itox(i, x);
+        std::cout << "{ " << x[0] << ", " << x[1] << ", " << x[2] << " }" << " = ";
+        if(target(i,ss))
+          std::cout << "1, ";
+        else
+          std::cout << "0, ";
+
+        if(avoid(i,ss))
+          std::cout << "1" << '\n';
+        else
+          std::cout << "0" << '\n';
+        // debug code end
+
         if(target(i, ss) && !avoid(i, ss)) {
           win_domain[i]=loosing;
           /* value is zero */
@@ -581,13 +614,15 @@ public:
      *  \param[in]  system      Contains abstraction parameters.
      *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
      */
-    void initialize(System* system) {
+    template<class isG, class isO>
+    void initialize(System* system, isG G, isO O) {
         //ddmgr_ = new Cudd;
         system_ = system;
 
         TicToc timer;
         timer.tic();
 
+        initializeFunctions(G, O);
         initializeEtaTau();
         initializeSolvers();
         initializeSymbolicSets();
@@ -599,6 +634,11 @@ public:
         //verifySave();
 
         abTime_ += timer.toc();
+    }
+    template<class isG, class isO>
+    void initializeFunctions(isG G, isO O) {
+      target = G;
+      avoid = O;
     }
 
     /*! Initializes SymbolicSet data members.
