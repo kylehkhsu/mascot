@@ -1,0 +1,125 @@
+\documentclass[a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{paralist}
+\usepackage{xspace}
+\usepackage{fullpage}
+\usepackage{color}
+
+\newcommand{\mascot}{\textsf{MASCOT}\xspace}
+\newcommand{\scots}{\textsf{SCOTS}\xspace}
+
+\begin{document}
+%	\section{Scope of the Repeatability Evaluation}
+%		The following elements of the paper can be evaluated using the provided REP package:
+%		\begin{compactitem}
+%			\item Table~1
+%			\item Table~2
+%			\item Table~3
+%			\item Figure~4
+%			\item Figure~5
+%		\end{compactitem}
+	\section{System Requirements}
+		We have built \mascot on top of \scots \cite{Scots}. Therefore, the system requirements and the installation procedure for our software are the same as for \scots. As for \scots, you need a working C++ developer environment, the CUDD library \cite{somenzi2009cudd}, and a working installation of a recent version of MATLAB (the latter is only used for the visualization of some results). Following are the requirements as detailed in the manual of \scots:
+		\begin{enumerate}
+			\item A working C++ developer environment:
+				\begin{itemize}
+					\item Mac OS: Install the latest version of Xcode.app including the command line tools.
+					\item Linux: Most Linux OS distributions already include all the necessary tools already. We used the compiler GCC 4.9.x.
+					\item Windows: \scots has not been tested on a Windows machine.
+				\end{itemize}
+			\item A working installation of the CUDD library with
+				\begin{itemize}
+					\item the C++ object oriented wrapper,
+					\item the dddmp library, and
+					\item the shared library
+				\end{itemize}
+				option enabled. The package follows the usual configure, make and make install installation routine. We use cudd-3.0.0, with the configuration
+				\begin{verbatim}
+					$ ./configure --enable-shared --enable-obj --enable-dddmp --prefix=/opt/local/
+				\end{verbatim}
+				The BDD installation can be tested by compiling a dummy program, e.g. test.cc
+				%\hline
+				\begin{verbatim}
+					#include<iostream>
+					#include "cuddObj.hh"
+					#include "dddmp.h"
+					int main () {
+						Cudd mgr(0,0);
+						BDD x = mgr.bddVar();
+					}
+				\end{verbatim}
+				%\hline
+				by running
+				\begin{verbatim}
+					$ g++ test.cc -I/opt/local/include -L/opt/local/lib -lcudd
+				\end{verbatim}
+				It has been reported that on some linux machines, the header files \texttt{util.h} and \texttt{config.h} were missing in \texttt{/opt/local}, and the fix is to manually copy the files to \texttt{/opt/local/include} by running
+				\begin{verbatim}
+					 $ sudo cp ./util/util.h /opt/local/include/
+					 $ sudo cp ./config.h /opt/local/include/
+				\end{verbatim}
+			\item A working installation of a recent version of MATLAB. We conducted our experiments with version R2016a (9.0.0.341360) 64-bit. To compile the mex files:
+				\begin{enumerate}[(a)]
+					\item open MATLAB and setup the mex compiler by
+						\begin{verbatim}
+							>> mex -setup C++
+						\end{verbatim}
+					\item Open a terminal and go to \texttt{./mfiles/mexfiles/} (within the \mascot directory, see below). Edit the \texttt{Makefile} and adjust the variables
+						\begin{verbatim}
+							MATLABROOT and CUDDPATH
+						\end{verbatim}
+						and run 
+						\begin{verbatim}
+						$ make
+						\end{verbatim}
+						(The MATLAB root directory is returned when typing \texttt{matlabroot} in the command window of MATLAB.)
+				\end{enumerate}
+		\end{enumerate}
+	\section{Directory Structure}
+	After you unzip \mascot, you will see the following directory structure:
+		\begin{itemize}
+			\item \texttt{./bdd/} Contains the C++ source code for the \scots and \mascot classes which use Binary Decision Diagrams as the underlying data structure
+			\item \texttt{./doxygen/} C++ Class documentation directory
+			\item \texttt{./manual/} Both \scots and \mascot manuals
+			\item \texttt{./mascot\_examples/} Examples which were used in the papers \cite{hsu2018lazy1, hsu2018lazy2} demonstrating the usage and performance of \mascot 
+			\item \texttt{./mfiles} Contains an mfile as a wrapper to the mex-file functions
+			\item \texttt{./mfiles/mexfiles/} mex-file to read the C++ output from file
+			\item \texttt{./scots\_examples/} Some C++/Matlab programs demonstrating the usage of basic \scots
+			\item \texttt{./test/} Some C++/Matlab test programs
+			\item \texttt{./utils/} Some C++ header files used by the source codes in \texttt{./bdd/}
+		\end{itemize}
+	\section{Getting Started}
+	 	For validating any of the tables/figures presented in the paper
+	 		\begin{enumerate}
+%	 			\item go to the corresponding sub-directory in \texttt{./REP\_examples/}. For example, for validating the data in Table 1 of the paper, go to \texttt{./REP\_examples/Table1}.
+%	 			\item Inside you will find different sub-directories containing different test cases as presented in the corresponding table/figure. The names of the sub-directories are self-explanatory. For example, inside \texttt{./REP\_examples/Table1}, you will find \texttt{./REP\_examples/Table1/unicycle1A}, \texttt{./REP\_examples/Table1/unicycle2A} and \texttt{./REP\_examples/Table1/unicycle3A}, representing the 1-layered (normal \scots), 2-layered and 3-layered reachability algorithms respectively.
+				\item Go to a sub-directory in one of the example folders.
+	 			\item Edit the \texttt{Makefile}:
+	 				\begin{enumerate}[(a)]
+	 					\item adjust the compiler, and
+	 					\item adjust the directories of the CUDD library.
+	 				\end{enumerate}
+	 			\item Compile and run the executable, for example in \texttt{./mascot\_examples/safety/dcdc/LazySafe/dcdc3A/} run
+	 				\begin{verbatim}
+	 					$ make
+	 					$ ./dcdc
+	 				\end{verbatim}
+	 			%\item Use the .m files to plot results. \textcolor{red}{todo: discuss different modes}
+	 		\end{enumerate}
+%	 	For Figure 4, you need to perform one more step to plot the trajectory of the unicycle:
+%	 	\begin{enumerate}
+%	 		\item Open \texttt{MATLAB} and change the working directory to\linebreak \texttt{./REP\_examples/Figure4/unicycle3A}.
+%	 		\item In the command window, run
+%	 			\begin{verbatim}
+%	 				>> unicyclePlot(`plot',3,C)
+%	 			\end{verbatim}
+%	 			by replacing \texttt{C} with the highest controller number saved in the folder \linebreak \texttt{./REP\_examples/Figure4/unicycle3A/C} (after the executable is run). E.g., if this folder contains files \texttt{C1.bdd} to \texttt{C15.bdd}, replace \texttt{C} by $15$.
+%	 	\end{enumerate}
+%	 	For Figure~5, Table~1, Table~2 and Table~3, the abstraction and the synthesis times for different number of layers can be found in the log files (\texttt{.txt}-file) stored in the corresponding folders. 
+	 	
+	 	\bibliographystyle{plain}
+	 	\bibliography{reportbib}
+\end{document}
