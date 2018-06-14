@@ -16,7 +16,9 @@
  #include "TicToc.hh"
 
  /* to get abs_type alias */
- #include <UnifromGrid.hh>
+ #include "UniformGrid.hh"
+
+ #include "StateTreeNode.hh"
 
  using std::clog;
  using std::freopen;
@@ -34,17 +36,19 @@
      class StateTree {
      private:
        /* number of layers */
-       const int numAbs_;
+       int numAbs_;
        /* array containing number of abstract states/cells in different layers */
-       std::array<abs_type> no_states_;
+       // std::array<abs_type> no_states_;
+       abs_type* no_states_;
        /* array[numAbs_] containing pointers to arrays containing pointers to StateTreeNodes */
-       std::array<std::array<StateTreeNode*>*> db_;
+       // std::array<std::array<StateTreeNode*>*> db_;
+       StateTreeNode*** db_;
      public:
        /* constructor */
        StateTree(const int numbAbs,
-                 const std::vector<UnifromGrid*> ss,
-                 const std::array<int> eta_ratio) :
-              numAbs_(numAbs) {
+                 const std::vector<UniformGrid*> ss,
+                 const double* eta_ratio) :
+              numAbs_(numAbs_) {
                 /* number of cells in different layers */
                 abs_type no_states_[numAbs_];
                 for (int ab = 0; ab < numAbs_; ab++)
@@ -57,11 +61,11 @@
                   }
                 }
                 /* second pass: mapping of tree nodes across layers */
-                int dim = ss[0].get_dim(); /* the dimension is same in all layers */
+                int dim = ss[0]->get_dim(); /* the dimension is same in all layers */
                 int no_child = 1;
                 for (int d = 0; d < dim; d++) {
                   // for (int j = 0; j < eta_ratio[d]; j++)
-                  no_child = no_child * eta_ratio;
+                  no_child = no_child * eta_ratio[d];
                 }
                 /* loop over layers 0 to numAbs_ -1
                  * map each state of present state to no_child of consecutive
@@ -90,13 +94,28 @@
               }
             // }
 
+    // /* copy constructor */
+    // StateTree(const StateTree& other) : StateTree() {
+    //   *this = other;
+    // }
+
+    /* copy assignment operator */
+    StateTree& operator=(const StateTree &other) {
+      numAbs_ = other.numAbs_;
+      no_states_ = other.no_states_;
+      db_ = other.db_;
+
+      return *this;
+    }
+
           /** @brief update the marking of the tree **/
-          void update(int curAb, StateTreeNode* node) {
+          void markNode(const int curAb, const abs_type state) {
             /* inputs: the node <node> in layer <curAb> which was marked with 2
              * by the fixpoint algorithm */
             /* action: mark all the descendants with 2
              * mark all the ancestors with either 2 or 1, depending on whether
              * all the children of one particular ancestor are marked 2 or not, respectively */
+            StateTreeNode* node = getNode(curAb, state);
             updateParent(curAb, node, 2);
             updateChildren(curAb, node);
           }
@@ -125,11 +144,24 @@
           void  updateChildren(int curAb, StateTreeNode* node) {
             if (curAb != numAbs_) {
               for (int n = 0; n < node->no_child_; n++) {
-                (node->child_[n])->marking = 2;
+                (node->child_[n])->marking_ = 2;
                 updateChildren(curAb+1, node->child_[n]);
               }
             }
             else return;
           }
-     }
-  }
+
+          /* return the corresponding node in the tree */
+          StateTreeNode* getNode(const int ab, const abs_type state) {
+            return db_[ab][state];
+          }
+
+          /* return the marking status of a state in the tree */
+          int getMarkingStatus(const int ab, const abs_type state) {
+            return db_[ab][state]->marking_;
+          }
+
+     }; /* close class definitioin */
+  } /* close namespace */
+
+  #endif /* STATETREE_HH_ */

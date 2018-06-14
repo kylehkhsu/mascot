@@ -38,7 +38,7 @@ auto radNext = [](X_type &x, X_type &r, U_type &u, double tau, OdeSolver solver)
     r[1] = r[1] + (r[2]*std::abs(u[0]) + w[1]) * tau;
 };
 
-auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss) {
+auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss) {
 	X_type t_lb = { { 4.5, 0.1, -M_PI - 0.8 } }; // 0.8 offset is made up
 	X_type t_ub = { { 6.0, 0.61, M_PI + 0.8 } }; // 0.8 offset is made up
 	X_type c_lb;
@@ -46,10 +46,10 @@ auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss)
 	X_type z = { {0, 0, 0} }; // assume no measurement error
 	/* center of cell associated with abs_state is stored in x */
 	X_type x;
-	ss.itox(abs_state, x);
+	ss->itox(abs_state, x);
 	/* hyper-interval of the quantizer symbol with perturbation */
-	int dim = ss.get_dim();
-	std::vector<double> etaX = ss.get_eta();
+	int dim = ss->get_dim();
+	std::vector<double> etaX = ss->get_eta();
 	for (int i = 0; i<dim; i++) {
 		c_lb[i] = x[i] - etaX[i] / 2.0 - z[i];
 		c_ub[i] = x[i] + etaX[i] / 2.0 + z[i];

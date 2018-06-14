@@ -21,7 +21,7 @@
  using std::vector;
 
  /* to get abs_type alias */
- #include <UnifromGrid.hh>
+ #include "UniformGrid.hh"
 
  /** @namespace scots **/
  namespace scots {
@@ -38,11 +38,11 @@
       /* state */
       const abs_type state_;
       /* number of children, 0 if leaf */
-      const int no_child_;
+      int no_child_;
       /* pointer to children, null if leaf */
-      const vector<StateTreeNode*> child_;
+      vector<StateTreeNode*> child_;
       /* pointer to parent, null if root */
-      const StateTreeNode* parent_;
+      StateTreeNode* parent_;
       /* marking status
        *  2: fully marked, which causes all children to be fully marked (recursively),
        *  1: some children have marking >= 1, and there is at least one child with marking <= 1,
@@ -53,46 +53,48 @@
       friend class StateTree;
     public:
       /* @cond EXCLUDE from doxygen */
-      /* default constructor (must contain an state) */
+      /* default constructor (must contain a state) */
       StateTreeNode(const int layer, const abs_type state) :  layer_(layer),
                                                       state_(state),
                                                       no_child_(0),
                                                       parent_(nullptr),
                                                       marking_(0),
                                                       no_m_child_(0) {}
-      /* move constructor */
-      StateTreeNode(StateTreeNode&& other) {
-        *this = std::move(other);
-      }
-      /* move assignment operator */
-      StateTreeNode& operator = (StateTreeNode&& other) {
-        layer_ = std::move(other.layer_);
-        state_ = std::move(other.state_);
-        no_child = std::move(other.no_child);
-        child = std::move(other.child);
-        parent = std::move(other.parent);
-        marking_ = std::move(other.marking_);
-        no_m_child = std::move(other.no_m_child);
-
-        return *this;
-      }
+      // /* move constructor */
+      // StateTreeNode(StateTreeNode&& other) {
+      //   *this = std::move(other);
+      // }
+      // /* move assignment operator */
+      // StateTreeNode& operator = (StateTreeNode&& other) {
+      //   layer_ = std::move(other.layer_);
+      //   state_ = std::move(other.state_);
+      //   no_child_ = std::move(other.no_child_);
+      //   child_ = std::move(other.child_);
+      //   parent_ = std::move(other.parent_);
+      //   marking_ = std::move(other.marking_);
+      //   no_m_child_ = std::move(other.no_m_child_);
+      //
+      //   return *this;
+      // }
       /* Destructor */
       ~StateTreeNode() {
-        delete layer_;
-        delete state_;
-        delete no_child;
-        deleteVec(child);
-        delete parent;
-        delete marking_;
-        delete no_m_child;
+        // delete layer_;
+        // delete state_;
+        // delete no_child;
+        deleteVec(child_);
+        delete parent_;
+        // delete marking_;
+        // delete no_m_child;
       }
       /* @endcond */
       /* constructor */
       StateTreeNode(const int layer,
                     const abs_type state,
-                    const int no_child,
-                    const vector<StateTreeNode*> child,
-                    const StateTreeNode* parent):
+                    int no_child,
+                    vector<StateTreeNode*> child,
+                    StateTreeNode* parent):
               layer_(layer), state_(state), no_child_(no_child), child_(child), parent_(parent), marking_(0), no_m_child_(0) {}
-  }
-}
+  }; /* end of class definition */
+} /* end of namespace */
+
+#endif /* STATETREENODE_HH_ */

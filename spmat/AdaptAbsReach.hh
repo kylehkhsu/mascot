@@ -18,6 +18,8 @@
 #include "TicToc.hh"
 #include "Abstraction.hh"
 #include "WinningDomain.hh"
+#include "StateTree.hh"
+#include "InputOutput.hh"
 
 using std::clog;
 using std::freopen;
@@ -42,9 +44,12 @@ public:
     vector<double*> etaXs_; /*!< *system_->numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
     vector<double*> tau_; /*!< *system_->numAbs_ x 1 matrix of time steps. */
     vector<UniformGrid*> Xs_; /*!< The *system_->numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
-	std::function<bool(const int, const UniformGrid&)> avoid; /*!< Function which evaluates to true for unsafe (obstacle) states of a given layer. */
-	std::function<bool(const int, const UniformGrid&)> target; /*!< Function which evaluates to true for winning states of a given layer. */
-	//vector<UniformGrid*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
+    StateTree* tree; /*!< The data structure that maps states across layers, and takes care of the projection of winning states. */
+
+  std::function<bool(const int, const UniformGrid&)> avoid; /*!< Function which evaluates to true for unsafe (obstacle) states of a given layer. */
+	// std::function<bool(const int, const UniformGrid&)> target; /*!< Function which evaluates to true for winning states of a given layer. */
+  std::function<bool(const abs_type, const int)> target; /*!< Function which evaluates to true for winning states of a given layer. First argument: state, second argument: layer. */
+  //vector<UniformGrid*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
     vector<UniformGrid*> X2s_; /*!< The *system_->numAbs_ "post" state space abstractions, coarsest (0) to finest. */
 	UniformGrid* U_; /*!< The single input space abstraction. */
     vector<UniformGrid*> Cs_; /*!< Controller \subseteq *Xs_[i] x *U_. */
@@ -86,6 +91,7 @@ public:
 
     double abTime_;
     double synTime_;
+    int rec_depth;
 
 
     /*!	Constructor for an AdaptAbsReach object.
@@ -97,6 +103,7 @@ public:
 
         abTime_ = 0;
         synTime_ = 0;
+        rec_depth = 0;
     }
     /*! Destructor for an AdaptAbsReach object. */
     ~AdaptAbsReach() {
@@ -178,25 +185,25 @@ public:
     }
     // end
     // debug: testing reach
-    WinningDomain w;
-    w = reach(0, m_);
-    ReachResult result = w.get_result();
-    if (result == CONVERGEDVALID) {
-      cout << "result: converged valid\n";
-    }
-    else if (result == CONVERGEDINVALID) {
-      cout << "result: converged invalid\n";
-    }
-    else {
-      cout << "result: not converged\n";
-    }
+    // WinningDomain w;
+    // w = reach(0, m_);
+    // ReachResult result = w.get_result();
+    // if (result == CONVERGEDVALID) {
+    //   cout << "result: converged valid\n";
+    // }
+    // else if (result == CONVERGEDINVALID) {
+    //   cout << "result: converged invalid\n";
+    // }
+    // else {
+    //   cout << "result: not converged\n";
+    // }
     //  end
 
 
         // begin on-the-fly reachability synthesis
         int ab = 0;
         int print = 1;
-        // onTheFlyReachRecurse(ab, sysNext, radNext, x, u, print);
+        onTheFlyReachRecurse(ab, sysNext, radNext, x, u, print);
 
         //clog << "controllers: " << finalCs_.size() << '\n';
 
@@ -230,7 +237,9 @@ public:
 
    template<class sys_type, class rad_type, class X_type, class U_type>
    void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u, int print = 0) {
+       rec_depth += 1;
        clog << '\n';
+       clog << "current recursion depth: " << rec_depth << '\n';
        clog << "current abstraction: " << ab << '\n';
        clog << "controllers: " << finalCs_.size() << '\n';
 
@@ -264,65 +273,70 @@ public:
            if (print)
                cout << "result: converged invalid\n";
        }
-       else {
+       else if (result == NOTCONVERGED) {
            clog << "result: not converged\n";
            if (print)
                cout << "result: not converged\n";
        }
 
-       // if (result != CONVERGEDINVALID) {
-       //     saveCZ(ab);
-       //     validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
-       //     validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
-       //     clog << "saved as snapshot, saved to valids\n";
-       //     if (print)
-       //         cout << "saved as snapshot, saved to valids\n";
-       // }
-       // else { // result is CONVERGEDINVALID
-       //     Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
-       //     Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
-       //     clog << "reset to valids\n";
-       //     if (print)
-       //         cout << "reset to valids\n";
-       // }
+       if (result != CONVERGEDINVALID) {
+           std::string file = "C/C" + std::to_string(rec_depth);
+           write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
+           // validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+           // validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
+           std::vector<abs_type> dom = w.get_winning_domain();
+           for (abs_type i = 0; i < dom.size(); i++) {
+             tree->markNode(ab, dom[i]);
+           }
+           clog << "saved as snapshot\n";
+           if (print)
+               cout << "saved as snapshot\n";
+       }
+       else { // result is CONVERGEDINVALID
+           // Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
+           // Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
+           clog << "reset to valids\n";
+           if (print)
+               cout << "reset to valids\n";
+       }
        //
-       // if (result != NOTCONVERGED) { // ab = 0 always converges
-       //     if (ab == *system_->numAbs_ - 1) {
-       //         return;
-       //     }
-       //     else { // go finer
-       //         clog << "Going finer\n";
-       //         if (print)
-       //             cout << "Going finer\n";
-       //         int nextAb = ab + 1;
-       //         TicToc timer;
-       //         timer.tic();
-       //         eightToTen(ab, nextAb, sysNext, radNext, x, u);
-       //         abTime_ += timer.toc();
-       //         finer(Zs_[ab], Zs_[nextAb], ab);
-       //         Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
-       //         validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-       //         onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
-       //         return;
-       //     }
-       // }
-       // else { // not converged, go coarser
-       //     clog << "Going coarser\n";
-       //     if (print)
-       //         cout << "Going coarser\n";
-       //     int nextAb = ab - 1;
-       //     if (nextAb != 0) { // pointless to do for coarsest layer
-       //         TicToc timer;
-       //         timer.tic();
-       //         eightToTen(ab, nextAb, sysNext, radNext, x, u);
-       //         abTime_ += timer.toc();
-       //     }
-       //     coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
-       //     Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
-       //     validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-       //     onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
-       //     return;
-       // }
+       if (result != NOTCONVERGED) { // ab = 0 always converges
+           if (ab == *system_->numAbs_ - 1) {
+               return;
+           }
+           else { // go finer
+               clog << "Going finer\n";
+               if (print)
+                   cout << "Going finer\n";
+               int nextAb = ab + 1;
+               TicToc timer;
+               // timer.tic();
+               // eightToTen(ab, nextAb, sysNext, radNext, x, u);
+               // abTime_ += timer.toc();
+               // finer(Zs_[ab], Zs_[nextAb], ab);
+               // Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+               // validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+               onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+               return;
+           }
+       }
+       else { // not converged, go coarser
+           clog << "Going coarser\n";
+           if (print)
+               cout << "Going coarser\n";
+           int nextAb = ab - 1;
+           // if (nextAb != 0) { // pointless to do for coarsest layer
+           //     TicToc timer;
+           //     timer.tic();
+           //     eightToTen(ab, nextAb, sysNext, radNext, x, u);
+           //     abTime_ += timer.toc();
+           // }
+           // coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
+           // Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+           // validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+           onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+           return;
+       }
    }
 //
 //    template<class sys_type, class rad_type, class X_type, class U_type>
@@ -409,7 +423,7 @@ public:
         std::array<double, 3> x;
         ss.itox(i, x);
         std::cout << "{ " << x[0] << ", " << x[1] << ", " << x[2] << " }" << " = ";
-        if(target(i,ss))
+        if(target(i,ab))
           std::cout << "1, ";
         else
           std::cout << "0, ";
@@ -420,7 +434,7 @@ public:
           std::cout << "0" << '\n';
         // debug code end
 
-        if(target(i, ss) && !avoid(i, ss)) {
+        if(target(i, ab) && !avoid(i, ss)) {
           win_domain[i]=loosing;
           /* value is zero */
           value[i]=0;
@@ -622,10 +636,10 @@ public:
         TicToc timer;
         timer.tic();
 
-        initializeFunctions(G, O);
         initializeEtaTau();
         initializeSolvers();
         initializeSymbolicSets();
+        initializeFunctions(G, O);
         /*initializeNumBDDVars();
         initializePermutes();
         initializeCubes();
@@ -637,8 +651,21 @@ public:
     }
     template<class isG, class isO>
     void initializeFunctions(isG G, isO O) {
-      target = G;
+      // target = G;
       avoid = O;
+      int numAbs = *system_->numAbs_;
+      abs_type N = Xs_[numAbs-1]->size();
+      for (abs_type i = 0; i < N; i++) {
+        if (G(i, Xs_[numAbs-1])) {
+          tree->markNode(numAbs-1, i);
+        }
+      }
+      auto target = [&](const abs_type &abs_state, const int ab) {
+        if (tree->getMarkingStatus(ab, abs_state))
+          return true;
+        else
+          return false;
+      };
     }
 
     /*! Initializes SymbolicSet data members.
@@ -652,6 +679,8 @@ public:
 			//X2s_.push_back(X);
         }
 		clog << "Xs_ and X2s_ initialized with full domain.\n";
+
+      StateTree* tree = new StateTree(*system_->numAbs_, Xs_, system_->etaRatio_);
 
         U_ = new UniformGrid(*system_->dimU_, system_->lbU_, system_->ubU_, system_->etaU_);
         clog << "U_ initialized with full domain.\n";
