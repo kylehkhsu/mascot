@@ -59,7 +59,9 @@
                                                       no_child_(0),
                                                       parent_(nullptr),
                                                       marking_(0),
-                                                      no_m_child_(0) {}
+                                                      no_m_child_(0) {
+                                                        std::vector<StateTreeNode*> child_;
+                                                      }
       // /* move constructor */
       // StateTreeNode(StateTreeNode&& other) {
       //   *this = std::move(other);

@@ -203,6 +203,7 @@ public:
         // begin on-the-fly reachability synthesis
         int ab = 0;
         int print = 1;
+        checkMakeDir("C");
         onTheFlyReachRecurse(ab, sysNext, radNext, x, u, print);
 
         //clog << "controllers: " << finalCs_.size() << '\n';
@@ -680,7 +681,7 @@ public:
         }
 		clog << "Xs_ and X2s_ initialized with full domain.\n";
 
-      StateTree* tree = new StateTree(*system_->numAbs_, Xs_, system_->etaRatio_);
+      tree = new StateTree(*system_->numAbs_, Xs_, system_->etaRatio_);
 
         U_ = new UniformGrid(*system_->dimU_, system_->lbU_, system_->ubU_, system_->etaU_);
         clog << "U_ initialized with full domain.\n";

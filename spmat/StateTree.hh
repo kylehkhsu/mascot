@@ -34,7 +34,7 @@
      *
      **/
      class StateTree {
-     private:
+     protected:
        /* number of layers */
        int numAbs_;
        /* array containing number of abstract states/cells in different layers */
@@ -42,23 +42,33 @@
        abs_type* no_states_;
        /* array[numAbs_] containing pointers to arrays containing pointers to StateTreeNodes */
        // std::array<std::array<StateTreeNode*>*> db_;
-       StateTreeNode*** db_;
+       vector<StateTreeNode**> db_;
      public:
        /* constructor */
-       StateTree(const int numbAbs,
+       StateTree(const int numAbs,
                  const std::vector<UniformGrid*> ss,
                  const double* eta_ratio) :
-              numAbs_(numAbs_) {
+              numAbs_(numAbs) {
                 /* number of cells in different layers */
                 abs_type no_states_[numAbs_];
                 for (int ab = 0; ab < numAbs_; ab++)
                   no_states_[ab] = ss[ab]->size();
+
+                  /* debug purpose */
+                  std::cout << "no. of states in different layers: " << no_states_[0] << ", " << no_states_[1] << ", " << no_states_[2] << '\n';
                 /* first pass: initialization of tree nodes */
+                StateTreeNode** nodePtrArray = nullptr;
                 for (int ab = 0; ab < numAbs_; ab++) {
+                  // StateTreeNode* nodePtrArray[no_states_[ab]];
+                  nodePtrArray = new StateTreeNode*[no_states_[ab]];
                   for (abs_type i = 0; i < no_states_[ab]; i++) {
-                    StateTreeNode node(ab, i);
-                    db_[ab][i] = &node;
+                    // StateTreeNode node(ab, i);
+                    // nodePtrArray[i] = &node;
+                    StateTreeNode* node = new StateTreeNode(ab, i);
+                    nodePtrArray[i] = node;
                   }
+                  // db_[ab] = nodePtrArray;
+                  db_.push_back(nodePtrArray);
                 }
                 /* second pass: mapping of tree nodes across layers */
                 int dim = ss[0]->get_dim(); /* the dimension is same in all layers */
@@ -82,8 +92,8 @@
                     //   db_[ab][i]->no_child = 0;
                     // }
                     // else {
+                    db_[ab][i]->no_child_ = no_child;
                     for (int j = 0; j < no_child; j++) {
-                      db_[ab][i]->no_child_ = no_child;
                       db_[ab][i]->child_.push_back(db_[ab+1][head+j]);
                       db_[ab+1][head+j]->parent_ = db_[ab][i];
                     }

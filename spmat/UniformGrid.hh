@@ -20,32 +20,32 @@
 #include <climits>
 #include <memory>
 
-/** @namespace scots **/ 
+/** @namespace scots **/
 namespace scots {
 
 /**
- * @brief abs_type defines type of abstract states (default = uint32_t) 
+ * @brief abs_type defines type of abstract states (default = uint32_t)
  *
  * It is required to be an integer type. It determines implicitly an upper
- * bound on the number of abstract states (default = 2^32-1). 
+ * bound on the number of abstract states (default = 2^32-1).
  **/
 #ifndef SCOTS_BDD
 using abs_type=std::uint32_t;
-#else 
+#else
 using abs_type=std::uint64_t;
-#endif 
+#endif
 
 /**
- * @class UniformGrid 
+ * @class UniformGrid
  *
  * @brief Holds the information of a uniform grid confined by the hyper-interval
  * [lb, ub]
  *
  *
- * Grid point alignment: 
- * - the grid points are distributed uniformly in each dimension 
- * - the origin is a grid point (not necessarily contained in the set) 
- * - the distance of the grid points in each dimension i is defined by eta[i] 
+ * Grid point alignment:
+ * - the grid points are distributed uniformly in each dimension
+ * - the origin is a grid point (not necessarily contained in the set)
+ * - the distance of the grid points in each dimension i is defined by eta[i]
  *
  * Each grid point is associated with an ID of type abs_type (default
  * abs_type=uint32_t). The abs_type need to be an integral type and implicitly determines an upper bound on the number of
@@ -55,33 +55,33 @@ using abs_type=std::uint64_t;
  * A UniformGrid is often used to encode the state alphabet (or real quantizer
  * symbols) of an abstraction. In that context, we interpret the grid points as
  * centers of cells and the grid point IDs as cell IDs. The radius of the cells
- * is given by \f$\eta/2\f$. 
+ * is given by \f$\eta/2\f$.
  *
  * The member functions itox and xtoi are used to map between the IDs and the
  * grid points/center of the cells.
  *
- * See 
+ * See
  * - the manual in <a href="./../../manual/manual.pdf">manual</a>
- * - http://arxiv.org/abs/1503.03715 for theoretical background 
+ * - http://arxiv.org/abs/1503.03715 for theoretical background
  **/
 class UniformGrid {
 protected:
   /** @brief dimension of the Eucleadian space **/
-  int m_dim;                
+  int m_dim;
   /** @brief m_dim-dimensional vector containing the grid node distances **/
-  std::unique_ptr<double[]> m_eta;                      
+  std::unique_ptr<double[]> m_eta;
   /** @brief m_dim-dimensional vector containing the real values of the first grid point **/
-  std::unique_ptr<double[]> m_first;        
+  std::unique_ptr<double[]> m_first;
   /** @brief scots::abs_type array[m_dim] containing the number of grid points in each dimension **/
-  std::unique_ptr<abs_type[]> m_no_grid_points;        
+  std::unique_ptr<abs_type[]> m_no_grid_points;
   /** @brief array recursively defined by: m_NN[0]=1; m_NN[i]=m_NN[i-1}*no_grid_points[i-1]; **/
-  std::unique_ptr<abs_type[]> m_NN;                       
+  std::unique_ptr<abs_type[]> m_NN;
 
 public:
   /* @cond  EXCLUDE from doxygen */
   /* default constructor */
   UniformGrid() : m_dim(0),
-                  m_eta(nullptr), 
+                  m_eta(nullptr),
                   m_first(nullptr),
                   m_no_grid_points(nullptr),
                   m_NN(nullptr) { }
@@ -112,7 +112,7 @@ public:
         m_no_grid_points[i]  = other.m_no_grid_points[i];
         m_NN[i]  = other.m_NN[i];
       }
-    } 
+    }
     return *this;
   }
   /* create UniformGrid from other by projection on the dimension specified in dim */
@@ -129,7 +129,7 @@ public:
         m_no_grid_points[i]  = other.m_no_grid_points[dim[i]];
       }
       calc_nn();
-    } 
+    }
   }
   /* move assignment operator */
   UniformGrid& operator=(UniformGrid&& other) {
@@ -139,12 +139,12 @@ public:
     m_no_grid_points=std::move(other.m_no_grid_points);
     m_NN=std::move(other.m_NN);
     return *this;
-  } 
+  }
   /* @endcond */
 
   /**
-   * @brief provide uniform grid parameters and domain defining hyper-interval 
-   * 
+   * @brief provide uniform grid parameters and domain defining hyper-interval
+   *
    * @param dim   - dimension of the real space
    * @param lb    - lower-left corner of the hyper-interval confining the uniform grid
    * @param ub    - upper-right corner of the hyper-interval confining the uniform grid
@@ -159,9 +159,9 @@ public:
     if(m_dim != 0) {
       /* check inut arguments */
       for(int index=0; index<dim; index++) {
-        if(eta[index] <= 0) 
+        if(eta[index] <= 0)
           throw std::runtime_error("\nscots::UniformGrid: eta must have positive entries.");
-        if(lb[index] > ub[index]) 
+        if(lb[index] > ub[index])
           throw std::runtime_error("\nscots::UniformGrid: lower-left bound must be less than or equal to upper-right bound.");
       }
       m_eta.reset(new double[m_dim]);
@@ -197,14 +197,26 @@ public:
           throw std::runtime_error(os.str().c_str());
         }
         /* check if number of grid points in dimension index does not exceed max representable by abs_type  */
-        if((sign_u*no_u-sign_l*no_l+1) > std::numeric_limits<abs_type>::max()) {
+        // if((sign_u*no_u-sign_l*no_l+1) > std::numeric_limits<abs_type>::max()) {
+        if((sign_u*no_u-sign_l*no_l) > std::numeric_limits<abs_type>::max()) {
           std::ostringstream os;
           throw std::runtime_error("\nscots::UniformGrid: number of grid points exceeds maximum value of abs_type.");
         }
-        m_no_grid_points[index] = sign_u*no_u-sign_l*no_l+1;
+        // m_no_grid_points[index] = sign_u*no_u-sign_l*no_l+1;
+        /* kaushik */
+        m_no_grid_points[index] = sign_u*no_u-sign_l*no_l;
+        /* kaushik end */
         /* first grid point coordinates */
-        m_first[index]= (double)sign_l*(double)no_l*eta[index];
+        // m_first[index]= (double)sign_l*(double)no_l*eta[index];
+        /* kaushik */
+        if (sign_l==0)
+          m_first[index]= eta[index]/2;
+        else
+          m_first[index]= (double)sign_l*((double)no_l-1)*eta[index] + (double)sign_l*(double)eta[index]/2;
+        /* kaushik end */
       }
+      /* debug purpose */
+      std::cout << "first grid point of :" << m_first[0] << ", " << m_first[1] << ", "  << m_first[2] << '\n';
       calc_nn();
     } else {
       throw std::runtime_error("\nscots::UniformGrid: grid dimension has to be greater than zero (using non-default constructor)");

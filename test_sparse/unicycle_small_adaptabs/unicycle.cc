@@ -95,8 +95,12 @@ auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid &s
 
 int main() {
 
-    double lbX[dimX] = {0, 0, -M_PI-0.4};
-    double ubX[dimX] = {6.0, 1.8, M_PI+0.4};
+    // double lbX[dimX] = {0, 0, -M_PI-0.4};
+    // double ubX[dimX] = {6.0, 1.8, M_PI+0.4};
+    // double lbX[dimX] = {0, 0, -3};
+    // double ubX[dimX] = {6.0, 1.8, 3};
+    double lbX[dimX] = {0, 0, -0.3};
+    double ubX[dimX] = {0.6, 0.6, 0.3};
 
     double lbU[dimU] = {-1.2, -1.6};
     double ubU[dimU] = {1.2, 1.6};
@@ -104,13 +108,13 @@ int main() {
 
     int nSubInt = 5;
 
-    double etaX[dimX] = {0.6/2/2, 0.6/2/2, 0.3/2/2};
+    double etaX[dimX] = {0.6, 0.6, 0.3};
     double tau = 0.9;
 
     double etaRatio[dimX] = {2, 2, 2};
     double tauRatio = 2;
 
-    int numAbs = 1;
+    int numAbs = 3;
     int readAbs = 0;
 	int p_ = 2;
 
