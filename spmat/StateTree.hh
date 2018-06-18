@@ -126,6 +126,7 @@
              * mark all the ancestors with either 2 or 1, depending on whether
              * all the children of one particular ancestor are marked 2 or not, respectively */
             StateTreeNode* node = getNode(curAb, state);
+            node->marking_ = 2;
             updateParent(curAb, node, 2);
             updateChildren(curAb, node);
           }

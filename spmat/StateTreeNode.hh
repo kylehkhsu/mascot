@@ -32,7 +32,7 @@
     *
     **/
     class StateTreeNode {
-    private:
+    protected:
       /* layer */
       const int layer_;
       /* state */

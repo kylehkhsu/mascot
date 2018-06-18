@@ -48,7 +48,7 @@ public:
 
   std::function<bool(const int, const UniformGrid&)> avoid; /*!< Function which evaluates to true for unsafe (obstacle) states of a given layer. */
 	// std::function<bool(const int, const UniformGrid&)> target; /*!< Function which evaluates to true for winning states of a given layer. */
-  std::function<bool(const abs_type, const int)> target; /*!< Function which evaluates to true for winning states of a given layer. First argument: state, second argument: layer. */
+  // std::function<bool(const abs_type, const int)> target; /*!< Function which evaluates to true for winning states of a given layer. First argument: state, second argument: layer. */
   //vector<UniformGrid*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
     vector<UniformGrid*> X2s_; /*!< The *system_->numAbs_ "post" state space abstractions, coarsest (0) to finest. */
 	UniformGrid* U_; /*!< The single input space abstraction. */
@@ -147,7 +147,7 @@ public:
     }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
-    void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+    void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u, int readAbs=0) {
         m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
         p_ = p; // coarsest layer uncontrollable-pred. parameter
         minToBeValid_ = 2;
@@ -162,26 +162,50 @@ public:
 		//delete D;
 
 
-        TicToc timer;
-        timer.tic();
-        computeExplorationAbstractions(sysNext, radNext, x, u);
-        abTime_ += timer.toc();
-		clog << "Exploration abstractions computed";
+    //     TicToc timer;
+    //     timer.tic();
+    //     computeExplorationAbstractions(sysNext, radNext, x, u);
+    //     abTime_ += timer.toc();
+		// clog << "Exploration abstractions computed";
 
 		checkMakeDir("uTs");
 		saveVec(uTs_, "uTs/uTs");
 
         // Ts_[0] is uTs_[0] with obstacles removed
-		cout << "Starting computation of transition relation of layer 0: \n";
-		Abstraction<X_type, U_type> abs(*Ds_[0], *U_); // coarsest state gridding
-		abs.compute_gb(*Ts_[0], sysNext, radNext, *solvers_[0], avoid);
+    checkMakeDir("T");
+    Abstraction<X_type, U_type> abs(*Ds_[0], *U_); // coarsest state gridding
+    if (readAbs==0) {
+      cout << "Starting computation of transition relation of layer 0: \n";
+      abs.compute_gb(*Ts_[0], sysNext, radNext, *solvers_[0], avoid);
+      write_to_file(*Ts_[0], "T/T0");
+    }
+	  else {
+      bool flag = read_from_file(*Ts_[0], "T/T0");
+      if (!flag)
+        throw std::runtime_error("\nAdaptAbsReach: could not read transition function from file");
+      else
+        std::cout << "Read transition of layer 0 from file." << '\n';
+    }
 
     // Non-lazy trial version : pre-compute all transitions
     for (int ab=1; ab < *system_->numAbs_; ab++) {
       UniformGrid* D = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[ab]);
   		Ds_[ab] = D;
       Abstraction<X_type, U_type> abs(*Ds_[ab], *U_); // coarsest state gridding
-  		abs.compute_gb(*Ts_[ab], sysNext, radNext, *solvers_[ab], avoid);
+      if (readAbs==0) {
+        cout << "Starting computation of transition relation of layer " << ab << ": \n";
+        abs.compute_gb(*Ts_[ab], sysNext, radNext, *solvers_[ab], avoid);
+        std::string file = "T/T" + std::to_string(ab);
+        write_to_file(*Ts_[ab], file);
+      }
+  	  else {
+        std::string file = "T/T" + std::to_string(ab);
+        bool flag = read_from_file(*Ts_[ab], file);
+        if (!flag)
+          throw std::runtime_error("\nAdaptAbsReach: could not read transition function from file");
+        else
+          std::cout << "Read transition of layer " << ab << " from file." << '\n';
+      }
     }
     // end
     // debug: testing reach
@@ -281,14 +305,15 @@ public:
        }
 
        if (result != CONVERGEDINVALID) {
-           std::string file = "C/C" + std::to_string(rec_depth);
-           write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
            // validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
            // validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
            std::vector<abs_type> dom = w.get_winning_domain();
            for (abs_type i = 0; i < dom.size(); i++) {
              tree->markNode(ab, dom[i]);
            }
+           std::cout << "Winning domain size: " << w.get_size() << std::endl;
+           std::string file = "C/C" + std::to_string(rec_depth);
+           write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
            clog << "saved as snapshot\n";
            if (print)
                cout << "saved as snapshot\n";
@@ -317,7 +342,7 @@ public:
                // finer(Zs_[ab], Zs_[nextAb], ab);
                // Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                // validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-               onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+               onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u, 1);
                return;
            }
        }
@@ -335,7 +360,7 @@ public:
            // coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
            // Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
            // validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-           onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+           onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u, 1);
            return;
        }
    }
@@ -356,6 +381,19 @@ public:
 //        computeAbstraction(nextAb, sysNext, radNext, x, u);
 //    }
 //
+    /**
+     * function: target
+     * @brief check if a state is in the target or not
+     *
+     * @param[in] abs_state - the symbolic state
+     * @param[in] ab - the abstraction layer
+     **/
+     bool target(const abs_type abs_state, const int ab) {
+       if (tree->getMarkingStatus(ab, abs_state)==2)
+         return true;
+       else
+         return false;
+     }
 
     /**
      * fucntion: reach
@@ -420,19 +458,19 @@ public:
       std::queue<abs_type> fifo;
       for(abs_type i=0; i<N; i++) {
         // debug code begin
-        std::cout << "state = " << i << ": ";
-        std::array<double, 3> x;
-        ss.itox(i, x);
-        std::cout << "{ " << x[0] << ", " << x[1] << ", " << x[2] << " }" << " = ";
-        if(target(i,ab))
-          std::cout << "1, ";
-        else
-          std::cout << "0, ";
-
-        if(avoid(i,ss))
-          std::cout << "1" << '\n';
-        else
-          std::cout << "0" << '\n';
+        // std::cout << "state = " << i << ": ";
+        // std::array<double, 3> x;
+        // ss.itox(i, x);
+        // std::cout << "{ " << x[0] << ", " << x[1] << ", " << x[2] << " }" << " = ";
+        // if(target(i,ab))
+        //   std::cout << "1, ";
+        // else
+        //   std::cout << "0, ";
+        //
+        // if(avoid(i,ss))
+        //   std::cout << "1" << '\n';
+        // else
+        //   std::cout << "0" << '\n';
         // debug code end
 
         if(target(i, ab) && !avoid(i, ss)) {
@@ -661,12 +699,12 @@ public:
           tree->markNode(numAbs-1, i);
         }
       }
-      auto target = [&](const abs_type &abs_state, const int ab) {
-        if (tree->getMarkingStatus(ab, abs_state))
-          return true;
-        else
-          return false;
-      };
+      // auto target = [&](const abs_type &abs_state, const int ab) {
+      //   if (tree->getMarkingStatus(ab, abs_state))
+      //     return true;
+      //   else
+      //     return false;
+      // };
     }
 
     /*! Initializes SymbolicSet data members.

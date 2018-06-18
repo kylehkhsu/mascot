@@ -39,8 +39,10 @@ auto radNext = [](X_type &x, X_type &r, U_type &u, double tau, OdeSolver solver)
 };
 
 auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss) {
-	X_type t_lb = { { 4.5, 0.1, -M_PI - 0.8 } }; // 0.8 offset is made up
-	X_type t_ub = { { 6.0, 0.61, M_PI + 0.8 } }; // 0.8 offset is made up
+	// X_type t_lb = { { 4.5, 0.1, -M_PI - 0.8 } }; // 0.8 offset is made up
+	// X_type t_ub = { { 6.0, 0.61, M_PI + 0.8 } }; // 0.8 offset is made up
+  X_type t_lb = { { 4.5, 0.1, -3.3 } }; // 0.8 offset is made up
+	X_type t_ub = { { 6.0, 0.61, 3.3 } }; // 0.8 offset is made up
 	X_type c_lb;
 	X_type c_ub;
 	X_type z = { {0, 0, 0} }; // assume no measurement error
@@ -64,8 +66,10 @@ auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss)
 };
 
 auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss) {
-	X_type t_lb = { { 1.9, 0, -M_PI - 0.4 } };
-	X_type t_ub = { { 2.3, 1.2, M_PI + 0.4 } };
+	// X_type t_lb = { { 1.9, 0, -M_PI - 0.4 } };
+	// X_type t_ub = { { 2.3, 1.2, M_PI + 0.4 } };
+  X_type t_lb = { { 1.9, 0, -3.3 } };
+	X_type t_ub = { { 2.3, 1.2, 3.3 } };
 	X_type c_lb;
 	X_type c_ub;
 	X_type z = { { 0, 0, 0 } }; // assume no measurement error
@@ -97,10 +101,10 @@ int main() {
 
     // double lbX[dimX] = {0, 0, -M_PI-0.4};
     // double ubX[dimX] = {6.0, 1.8, M_PI+0.4};
-    // double lbX[dimX] = {0, 0, -3};
-    // double ubX[dimX] = {6.0, 1.8, 3};
-    double lbX[dimX] = {0, 0, -0.3};
-    double ubX[dimX] = {0.6, 0.6, 0.3};
+    double lbX[dimX] = {0, 0, -3.3};
+    double ubX[dimX] = {6.0, 1.8, 3.3};
+    // double lbX[dimX] = {0, 0, -0.3};
+    // double ubX[dimX] = {0.6, 0.6, 0.3};
 
     double lbU[dimU] = {-1.2, -1.6};
     double ubU[dimU] = {1.2, 1.6};
