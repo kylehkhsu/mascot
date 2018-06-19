@@ -304,26 +304,27 @@ public:
                cout << "result: not converged\n";
        }
 
-       if (result != CONVERGEDINVALID) {
-           // validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
-           // validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
-           std::vector<abs_type> dom = w.get_winning_domain();
-           for (abs_type i = 0; i < dom.size(); i++) {
-             tree->markNode(ab, dom[i]);
-           }
-           std::cout << "Winning domain size: " << w.get_size() << std::endl;
-           std::string file = "C/C" + std::to_string(rec_depth);
-           write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
-           clog << "saved as snapshot\n";
-           if (print)
-               cout << "saved as snapshot\n";
+       if (((result != CONVERGEDINVALID) && (ab!=*system_->numAbs_-1))
+           || ((result == CONVERGEDINVALID) && (ab==*system_->numAbs_-1))) {
+         // validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+         // validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
+         std::vector<abs_type> dom = w.get_winning_domain();
+         for (abs_type i = 0; i < dom.size(); i++) {
+           tree->markNode(ab, dom[i]);
+         }
+         std::cout << "Winning domain size: " << w.get_size() << std::endl;
+         std::string file = "C/C" + std::to_string(rec_depth);
+         write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
+         clog << "saved as snapshot\n";
+         if (print)
+             cout << "saved as snapshot\n";
        }
        else { // result is CONVERGEDINVALID
-           // Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
-           // Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
-           clog << "reset to valids\n";
-           if (print)
-               cout << "reset to valids\n";
+         // Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
+         // Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
+         clog << "reset to valids\n";
+         if (print)
+             cout << "reset to valids\n";
        }
        //
        if (result != NOTCONVERGED) { // ab = 0 always converges

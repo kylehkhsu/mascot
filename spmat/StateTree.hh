@@ -127,13 +127,18 @@
              * all the children of one particular ancestor are marked 2 or not, respectively */
             StateTreeNode* node = getNode(curAb, state);
             node->marking_ = 2;
-            updateParent(curAb, node, 2);
-            updateChildren(curAb, node);
+            updateParent(node, node->marking_);
+            updateChildren(node);
           }
 
-          /* recursively update the ancestors */
-          void  updateParent(int curAb, StateTreeNode* node, int val) {
-            if (curAb != 0) {
+          /* recursively update the ancestors
+           * node is the child with marking = val, whose parent has to be updated
+           * the input parameter val can never be 0 */
+          // void  updateParent(int curAb, StateTreeNode* node, int val) {
+          void  updateParent(StateTreeNode* node, int val) {
+            // if (curAb != 0) {
+            if (node->parent_ != nullptr) {
+              int oldMarking = (node->parent_)->marking_;
               if (val==2) {
                 (node->parent_)->no_m_child_ += 1;
                 if ((node->parent_)->no_m_child_ = (node->parent_)->no_child_) {
@@ -143,23 +148,28 @@
                   (node->parent_)->marking_ = 1;
                 }
               }
-              else {
+              else { // val = 1
                 (node->parent_)->marking_ = 1;
               }
-              updateParent(curAb-1, node->parent_, (node->parent_)->marking_);
+              if (oldMarking != (node->parent_)->marking_) { // parent changed marking status
+                updateParent(node->parent_, (node->parent_)->marking_);
+              }
             }
-            else return;
+            return;
           }
 
           /* recursively update the descendants */
-          void  updateChildren(int curAb, StateTreeNode* node) {
-            if (curAb != numAbs_) {
+          void  updateChildren(StateTreeNode* node) {
+            node->no_m_child_ = node->no_child_;
+            if (node->no_child_ != 0) {
               for (int n = 0; n < node->no_child_; n++) {
+                int oldMarking = (node->child_[n])->marking_;
                 (node->child_[n])->marking_ = 2;
-                updateChildren(curAb+1, node->child_[n]);
+                if (oldMarking != (node->child_[n])->marking_)
+                  updateChildren(node->child_[n]);
               }
             }
-            else return;
+            return;
           }
 
           /* return the corresponding node in the tree */
