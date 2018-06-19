@@ -96,6 +96,20 @@
                     vector<StateTreeNode*> child,
                     StateTreeNode* parent):
               layer_(layer), state_(state), no_child_(no_child), child_(child), parent_(parent), marking_(0), no_m_child_(0) {}
+
+
+      abs_type getState() {
+        return state_;
+      }
+
+      int get_no_child() {
+        return no_child_;
+      }
+
+      StateTreeNode* getChild(int k) {
+        return child_[k];
+      }
+
   }; /* end of class definition */
 } /* end of namespace */
 

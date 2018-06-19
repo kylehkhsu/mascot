@@ -162,11 +162,11 @@ public:
 		//delete D;
 
 
-    //     TicToc timer;
-    //     timer.tic();
-    //     computeExplorationAbstractions(sysNext, radNext, x, u);
-    //     abTime_ += timer.toc();
-		// clog << "Exploration abstractions computed";
+        TicToc timer;
+        timer.tic();
+        computeExplorationAbstractions(sysNext, radNext, x, u);
+        abTime_ += timer.toc();
+		clog << "Exploration abstractions computed";
 
 		checkMakeDir("uTs");
 		saveVec(uTs_, "uTs/uTs");
@@ -188,25 +188,25 @@ public:
     }
 
     // Non-lazy trial version : pre-compute all transitions
-    for (int ab=1; ab < *system_->numAbs_; ab++) {
-      UniformGrid* D = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[ab]);
-  		Ds_[ab] = D;
-      Abstraction<X_type, U_type> abs(*Ds_[ab], *U_); // coarsest state gridding
-      if (readAbs==0) {
-        cout << "Starting computation of transition relation of layer " << ab << ": \n";
-        abs.compute_gb(*Ts_[ab], sysNext, radNext, *solvers_[ab], avoid);
-        std::string file = "T/T" + std::to_string(ab);
-        write_to_file(*Ts_[ab], file);
-      }
-  	  else {
-        std::string file = "T/T" + std::to_string(ab);
-        bool flag = read_from_file(*Ts_[ab], file);
-        if (!flag)
-          throw std::runtime_error("\nAdaptAbsReach: could not read transition function from file");
-        else
-          std::cout << "Read transition of layer " << ab << " from file." << '\n';
-      }
-    }
+    // for (int ab=1; ab < *system_->numAbs_; ab++) {
+    //   UniformGrid* D = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[ab]);
+  	// 	Ds_[ab] = D;
+    //   Abstraction<X_type, U_type> abs(*Ds_[ab], *U_); // coarsest state gridding
+    //   if (readAbs==0) {
+    //     cout << "Starting computation of transition relation of layer " << ab << ": \n";
+    //     abs.compute_gb(*Ts_[ab], sysNext, radNext, *solvers_[ab], avoid);
+    //     std::string file = "T/T" + std::to_string(ab);
+    //     write_to_file(*Ts_[ab], file);
+    //   }
+  	//   else {
+    //     std::string file = "T/T" + std::to_string(ab);
+    //     bool flag = read_from_file(*Ts_[ab], file);
+    //     if (!flag)
+    //       throw std::runtime_error("\nAdaptAbsReach: could not read transition function from file");
+    //     else
+    //       std::cout << "Read transition of layer " << ab << " from file." << '\n';
+    //   }
+    // }
     // end
     // debug: testing reach
     // WinningDomain w;
@@ -266,7 +266,7 @@ public:
        clog << '\n';
        clog << "current recursion depth: " << rec_depth << '\n';
        clog << "current abstraction: " << ab << '\n';
-       clog << "controllers: " << finalCs_.size() << '\n';
+       // clog << "controllers: " << finalCs_.size() << '\n';
 
        if (print) {
            cout << '\n';
@@ -304,8 +304,9 @@ public:
                cout << "result: not converged\n";
        }
 
-       if (((result != CONVERGEDINVALID) && (ab!=*system_->numAbs_-1))
-           || ((result == CONVERGEDINVALID) && (ab==*system_->numAbs_-1))) {
+       // if (((result != CONVERGEDINVALID) && (ab!=*system_->numAbs_-1))
+       //     || ((result == CONVERGEDINVALID) && (ab==*system_->numAbs_-1))) {
+       if ((result != CONVERGEDINVALID) && (ab!=*system_->numAbs_-1)) {
          // validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
          // validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
          std::vector<abs_type> dom = w.get_winning_domain();
@@ -336,13 +337,18 @@ public:
                if (print)
                    cout << "Going finer\n";
                int nextAb = ab + 1;
-               TicToc timer;
+               // TicToc timer;
                // timer.tic();
                // eightToTen(ab, nextAb, sysNext, radNext, x, u);
                // abTime_ += timer.toc();
                // finer(Zs_[ab], Zs_[nextAb], ab);
                // Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                // validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+
+               TicToc timer;
+               timer.tic();
+               explore(nextAb, x, u, sysNext, radNext);
+               abTime_ += timer.toc();
                onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u, 1);
                return;
            }
@@ -361,6 +367,11 @@ public:
            // coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
            // Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
            // validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+
+           TicToc timer;
+           timer.tic();
+           explore(nextAb, x, u, sysNext, radNext);
+           abTime_ += timer.toc();
            onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u, 1);
            return;
        }
@@ -535,7 +546,96 @@ public:
       return WinningDomain(N,M,std::move(win_domain),std::vector<bool>{},result,loosing);
     }
 
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void explore(int ab, X_type x, U_type u, sys_type sysNext, rad_type radNext) {
+      /* auxiliary transition function of layer ab */
+      TransitionFunction& aux_trans_function = *uTs_[ab];
+      /* transition function of layer ab */
+      TransitionFunction& trans_function = *Ts_[ab];
+      /* state space of layer ab */
+      UniformGrid ss = *Xs_[ab];
+      /* size of input alphabet */
+      abs_type M=aux_trans_function.m_no_inputs;
+      // int infinity = std::numeric_limits<int>::max();
+      int infinity = -1;
 
+      // int* val = NULL;
+      // val = new int[Xs_[0]->size()];
+      std::vector<int> val;
+      for (abs_type i = 0; i < Xs_[0]->size(); i++) {
+        val.push_back(infinity);
+      }
+      // std::vector<abs_type> states_to_explore;
+      // abs_type states_to_explore[Xs_[0]->size()];
+      for (abs_type q = 0; q < Xs_[0]->size(); q++) {
+        if (tree->getMarkingStatus(0, q) > 0) {
+          val[q] = 0;
+          // for(abs_type j=0; j<M; j++) {
+          //   /* loop over pre's associated with this input */
+          //   for(abs_ptr_type v=0; v<aux_trans_function.m_no_pre[q*M+j]; v++) {
+          //     abs_type i=aux_trans_function.m_pre[aux_trans_function.m_pre_ptr[q*M+j]+v];
+          //     // states_to_explore.push_back(i);
+          //     val[i] = 1;
+          //   }
+          // }
+        }
+      }
+
+      /* cooperative predecessor */
+      for (int i = 0; i < p_; i++) {
+        for (abs_type q = 0; q < Xs_[0]->size(); q++) {
+          for (abs_type j=0; j<M; j++) {
+            /* loop over pre's associated with this input */
+            for(abs_ptr_type v=0; v<aux_trans_function.m_no_pre[q*M+j]; v++) {
+              abs_type r=aux_trans_function.m_pre[aux_trans_function.m_pre_ptr[q*M+j]+v];
+              // states_to_explore.push_back(i);
+              val[r] = (val[r] > val[q] + 1) ? (val[q] + 1) : (val[r] == -1 ? (val[q]+1) : val[r]);
+            }
+          }
+        }
+      }
+
+
+      // int index = 0;
+      // while ((val[states_to_explore[index]] <= p_)
+      //         || (index < states_to_explore.size())) {
+      //   abs_type q = states_to_explore[index];
+      //   for(abs_type j=0; j<M; j++) {
+      //     /* loop over pre's associated with this input */
+      //     for(abs_ptr_type v=0; v<aux_trans_function.m_no_pre[q*M+j]; v++) {
+      //       abs_type i=aux_trans_function.m_pre[aux_trans_function.m_pre_ptr[q*M+j]+v];
+      //       states_to_explore.push_back(i);
+      //       val[i] = val[q] + 1;
+      //     }
+      //   }
+      //   index += 1;
+      // }
+
+        /* projecting down */
+      std::vector<abs_type> states_to_explore;
+      for (abs_type i = 0; i < Xs_[0]->size(); i++) {
+        if (val[i] > 0 && val[i] <= p_)
+          states_to_explore.push_back(i);
+      }
+      std::vector<abs_type> temp;
+      for (int i = 0; i < ab; i++) {
+        for (int j = 0; j < states_to_explore.size(); j++) {
+          StateTreeNode* node = tree->getNode(i, states_to_explore[j]);
+          for (int k = 0; k < node->get_no_child(); k++) {
+            abs_type l = (node->getChild(k))->getState();
+            temp.push_back(l);
+          }
+        }
+        states_to_explore = temp;
+        temp.clear();
+      }
+
+      Abstraction<X_type, U_type> abs(*Xs_[ab], *U_);
+      // cout << "Starting computation of transition relation of layer " << ab << ": \n";
+      abs.compute_gb_partial(*Ts_[ab], states_to_explore, sysNext, radNext, *solvers_[ab], avoid);
+
+      // delete[] val;
+    }
 
 //
 //    // testing computeAbstraction
@@ -615,12 +715,12 @@ public:
      *  \param[in]  Z       The given set.
      *  \return     BDD containing {x} for which there exists a u s.t. there exists a post state of (x,u) in Z.
      */
-    /*BDD uPre(BDD Z, int ab) {
-        BDD Z2 = Z.Permute(permutesXtoX2_[0]);
-        BDD uPreZ = uTs_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[0]);
-        uPreZ = uPreZ.ExistAbstract(*notXvars_[0]);
-        return uPreZ;
-    }*/
+    // BDD uPre(BDD Z, int ab) {
+    //     BDD Z2 = Z.Permute(permutesXtoX2_[0]);
+    //     BDD uPreZ = uTs_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[0]);
+    //     uPreZ = uPreZ.ExistAbstract(*notXvars_[0]);
+    //     return uPreZ;
+    // }
 
 
     /*! Calculates the enforceable predecessor of the given set with respect to the transition relation at the specified level of abstraction.
