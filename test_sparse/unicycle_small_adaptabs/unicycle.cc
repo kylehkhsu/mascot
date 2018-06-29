@@ -121,6 +121,7 @@ int main() {
     int numAbs = 3;
     int readAbs = 0;
 	int p_ = 2;
+    bool lazy = false;
 
     X_type x;
     U_type u;
@@ -134,7 +135,7 @@ int main() {
 
     TicToc tt_tot;
     tt_tot.tic();
-    abs.onTheFlyReach(p_, sysNext, radNext, x, u);
+    abs.onTheFlyReach(p_, sysNext, radNext, x, u, lazy);
     clog << "------------------------------------Total time:";
     tt_tot.toc();
 

@@ -84,7 +84,7 @@ public:
     int minToGoCoarser_;
     int minToBeValid_;
     int earlyBreak_;
-    int verbose_;
+    bool verbose_;
 
     int m_;
     int p_;
@@ -147,66 +147,100 @@ public:
     }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
-    void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u, int readAbs=0) {
+    void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u, bool lazy=true, int readAbs=0) {
         m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
         p_ = p; // coarsest layer uncontrollable-pred. parameter
         minToBeValid_ = 2;
         clog << "m: " << m_ << '\n';
         clog << "p: " << p_ << '\n';
 
-        // start by synthesizing all uTs_
-		UniformGrid* D = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[0]);
-		Ds_[0] = D;
-		//Ds_[0] = UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[0]);
-		clog << "Ds_[0] initialized";
-		//delete D;
 
-
-        TicToc timer;
-        timer.tic();
-        computeExplorationAbstractions(sysNext, radNext, x, u);
-        abTime_ += timer.toc();
-		clog << "Exploration abstractions computed";
-
-		checkMakeDir("uTs");
-		saveVec(uTs_, "uTs/uTs");
-
+        UniformGrid* D = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[0]);
+        Ds_[0] = D;
+        //Ds_[0] = UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[0]);
+        clog << "Ds_[0] initialized";
+        //delete D;
         // Ts_[0] is uTs_[0] with obstacles removed
-    checkMakeDir("T");
-    Abstraction<X_type, U_type> abs(*Ds_[0], *U_); // coarsest state gridding
-    if (readAbs==0) {
-      cout << "Starting computation of transition relation of layer 0: \n";
-      abs.compute_gb(*Ts_[0], sysNext, radNext, *solvers_[0], avoid);
-      write_to_file(*Ts_[0], "T/T0");
-    }
-	  else {
-      bool flag = read_from_file(*Ts_[0], "T/T0");
-      if (!flag)
-        throw std::runtime_error("\nAdaptAbsReach: could not read transition function from file");
-      else
-        std::cout << "Read transition of layer 0 from file." << '\n';
-    }
+        checkMakeDir("T");
+        Abstraction<X_type, U_type> abs(*Ds_[0], *U_); // coarsest state gridding
+        if (readAbs==0) {
+          cout << "Starting computation of transition relation of layer 0: \n";
+          abs.compute_gb(*Ts_[0], sysNext, radNext, *solvers_[0], avoid);
+          write_to_file(*Ts_[0], "T/T0", true);
+          if (verbose_)
+            Ts_[0]->print_info();
+        }
+        else {
+          bool flag = read_from_file(*Ts_[0], "T/T0");
+          if (!flag)
+            throw std::runtime_error("\nAdaptAbsReach: could not read transition function from file");
+          else {
+            std::cout << "Read transition of layer 0 from file." << '\n';
+            if (verbose_)
+              Ts_[0]->print_info();
+          }
+        }
 
-    // Non-lazy trial version : pre-compute all transitions
-    // for (int ab=1; ab < *system_->numAbs_; ab++) {
-    //   UniformGrid* D = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[ab]);
-  	// 	Ds_[ab] = D;
-    //   Abstraction<X_type, U_type> abs(*Ds_[ab], *U_); // coarsest state gridding
-    //   if (readAbs==0) {
-    //     cout << "Starting computation of transition relation of layer " << ab << ": \n";
-    //     abs.compute_gb(*Ts_[ab], sysNext, radNext, *solvers_[ab], avoid);
-    //     std::string file = "T/T" + std::to_string(ab);
-    //     write_to_file(*Ts_[ab], file);
-    //   }
-  	//   else {
-    //     std::string file = "T/T" + std::to_string(ab);
-    //     bool flag = read_from_file(*Ts_[ab], file);
-    //     if (!flag)
-    //       throw std::runtime_error("\nAdaptAbsReach: could not read transition function from file");
-    //     else
-    //       std::cout << "Read transition of layer " << ab << " from file." << '\n';
-    //   }
-    // }
+        /* debug purpose: printing the transition matrix */
+        Ts_[0]->print_domain(Xs_[0], U_);
+        // const abs_ptr_type ntr = Ts_[0]->get_no_transitions();
+        // double** tr_domain = new double*[ntr];
+        // for(int i = 0; i < ntr; ++i)
+        //     tr_domain[i] = new double[2*(*system_->dimX_)+ (*system_->dimU_)];
+        //
+        // Ts_[0]->get_domain(Xs_[0], U_, tr_domain);
+        // printVecVec(tr_domain, "transition");
+        //
+        // delete[] tr_domain;
+
+        // start by synthesizing all uTs_
+        if (lazy) {
+          TicToc timer;
+          timer.tic();
+          computeExplorationAbstractions(sysNext, radNext, x, u);
+          abTime_ += timer.toc();
+          clog << "Exploration abstractions computed";
+
+          checkMakeDir("uTs");
+          saveVec(uTs_, "uTs/uTs");
+        }
+        // Non-lazy trial version : pre-compute all transitions
+        else {
+          for (int ab=1; ab < *system_->numAbs_; ab++) {
+            UniformGrid* D = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[ab]);
+        		Ds_[ab] = D;
+            Abstraction<X_type, U_type> abs(*Ds_[ab], *U_); // coarsest state gridding
+            if (readAbs==0) {
+              cout << "Starting computation of transition relation of layer " << ab << ": \n";
+              abs.compute_gb(*Ts_[ab], sysNext, radNext, *solvers_[ab], avoid);
+              std::string file = "T/T" + std::to_string(ab);
+              write_to_file(*Ts_[ab], file);
+              if (verbose_)
+                Ts_[ab]->print_info();
+            }
+        	  else {
+              std::string file = "T/T" + std::to_string(ab);
+              bool flag = read_from_file(*Ts_[ab], file);
+              if (!flag)
+                throw std::runtime_error("\nAdaptAbsReach: could not read transition function from file");
+              else {
+                std::cout << "Read transition of layer " << ab << " from file." << '\n';
+                if (verbose_)
+                  Ts_[ab]->print_info();
+              }
+            }
+          }
+          /* debug purpose: use the game solver of scots v0.2 to synthesize controller for the finest layer */
+          // WinningDomain win=solve_reachability_game(*system_->numAbs_-1);
+          // std::cout << "Winning domain size: " << win.get_size() << std::endl;
+          //
+          // std::cout << "\nWrite controller to controller.scs \n";
+          // if(write_to_file(scots::StaticController(*Xs_[*system_->numAbs_-1],*U_,std::move(win)),"controller"))
+          // std::cout << "Done. \n";
+          // return;
+        }
+
+
     // end
     // debug: testing reach
     // WinningDomain w;
@@ -228,7 +262,7 @@ public:
         int ab = 0;
         int print = 1;
         checkMakeDir("C");
-        onTheFlyReachRecurse(ab, sysNext, radNext, x, u, print);
+        onTheFlyReachRecurse(ab, sysNext, radNext, x, u, lazy, print);
 
         //clog << "controllers: " << finalCs_.size() << '\n';
 
@@ -261,7 +295,7 @@ public:
     }
 
    template<class sys_type, class rad_type, class X_type, class U_type>
-   void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u, int print = 0) {
+   void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u, bool lazy = true, int print = 0) {
        rec_depth += 1;
        clog << '\n';
        clog << "current recursion depth: " << rec_depth << '\n';
@@ -330,7 +364,14 @@ public:
        //
        if (result != NOTCONVERGED) { // ab = 0 always converges
            if (ab == *system_->numAbs_ - 1) {
-               return;
+             std::vector<abs_type> dom = w.get_winning_domain();
+             for (abs_type i = 0; i < dom.size(); i++) {
+               tree->markNode(ab, dom[i]);
+             }
+             std::cout << "Winning domain size: " << w.get_size() << std::endl;
+             std::string file = "C/C" + std::to_string(rec_depth);
+             write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
+             return;
            }
            else { // go finer
                clog << "Going finer\n";
@@ -345,11 +386,13 @@ public:
                // Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                // validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
 
-               TicToc timer;
-               timer.tic();
-               explore(nextAb, x, u, sysNext, radNext);
-               abTime_ += timer.toc();
-               onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u, 1);
+               if (lazy) {
+                 TicToc timer;
+                 timer.tic();
+                 explore(nextAb, x, u, sysNext, radNext);
+                 abTime_ += timer.toc();
+               }
+               onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u, lazy, 1);
                return;
            }
        }
@@ -368,11 +411,13 @@ public:
            // Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
            // validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
 
-           TicToc timer;
-           timer.tic();
-           explore(nextAb, x, u, sysNext, radNext);
-           abTime_ += timer.toc();
-           onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u, 1);
+           if (lazy) {
+             TicToc timer;
+             timer.tic();
+             explore(nextAb, x, u, sysNext, radNext);
+             abTime_ += timer.toc();
+           }
+           onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u, lazy, 1);
            return;
        }
    }
@@ -437,6 +482,7 @@ public:
                                           std::vector<double> & value = params::value ) {
       /* transition function of layer ab */
       TransitionFunction& trans_function = *Ts_[ab];
+      abs_ptr_type no_trans = trans_function.get_no_transitions();
       /* state space of layer ab */
       UniformGrid ss = *Xs_[ab];
       /* target and obstacle regions */
@@ -516,6 +562,7 @@ public:
         for(abs_type j=0; j<M; j++) {
           /* loop over pre's associated with this input */
           for(abs_ptr_type v=0; v<trans_function.m_no_pre[q*M+j]; v++) {
+            std::vector<abs_type> debug = trans_function.get_pre(q, j);
             abs_type i=trans_function.m_pre[trans_function.m_pre_ptr[q*M+j]+v];
             if(avoid(i, ss))
               continue;
@@ -769,9 +816,10 @@ public:
      *  \param[in]	addO	Function pointer specifying the points that should be added to the obstacle set.
      */
     template<class isG, class isO>
-    void initialize(System* system, isG G, isO O) {
+    void initialize(System* system, isG G, isO O, bool verbose=false) {
         //ddmgr_ = new Cudd;
         system_ = system;
+        verbose_ = verbose;
 
         TicToc timer;
         timer.tic();
@@ -813,18 +861,31 @@ public:
      *  \param[in]	addG	Function pointer specifying the points that should be added to the goal set.
      */
     void initializeSymbolicSets() {
+      checkMakeDir("X");
         for (int i = 0; i < *system_->numAbs_; i++) {
-			UniformGrid* X = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[i]);
-			Xs_.push_back(X);
-			//X2s_.push_back(X);
+    			UniformGrid* X = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[i]);
+    			Xs_.push_back(X);
+    			//X2s_.push_back(X);
+          std::string file = "X/X" + std::to_string(i);
+          write_to_file(*X, file);
         }
 		clog << "Xs_ and X2s_ initialized with full domain.\n";
 
       tree = new StateTree(*system_->numAbs_, Xs_, system_->etaRatio_);
 
         U_ = new UniformGrid(*system_->dimU_, system_->lbU_, system_->ubU_, system_->etaU_);
+        write_to_file(*U_, "U");
         clog << "U_ initialized with full domain.\n";
 		//delete U;
+
+      if (verbose_) {
+        for (int i=0; i<*system_->numAbs_; i++) {
+          std::cout << "State space of layer " << i << ":" << '\n';
+          Xs_[i]->print_info();
+        }
+        std::cout << "Input space:" << '\n';
+        U_->print_info();
+      }
 
 		/*O_type obstacle = isO;
 		G_type winning = isG;*/
@@ -1162,6 +1223,105 @@ public:
         checkMakeDir("G");
         saveVec(Gs_, "G/G");*/
     }
+
+    /* copied from GameSolver.hh of SCOTSv0.2 (while suitably adapting the functions target and obstacle)
+     * @brief solve reachability game according to Algorithm 2 in  <a href="./../../manual/manual.pdf">manual</a>
+     *
+     * @param[in] trans_function - TransitionFunction of the symbolic model
+     * @param[in] target - lambda expression of the form
+     *                      \verbatim [] (const abs_type &i) -> bool \endverbatim
+     *                      returns true if state i is in target set and false otherwise
+     *
+     * @param[in] avoid  - OPTIONALLY provide lambda expression of the form
+     *                      \verbatim [] (const abs_type &i) -> bool \endverbatim
+     *                      returns true if state i is in avoid set and false otherwise
+     *
+     * @param[out] value - OPTIONALLY provide std::vector<double> value to obtain the value function
+     *
+     * @return -  WinningDomain that contains the set of winning states and valid inputs
+     **/
+    // template<class F1, class F2=decltype(params::avoid)>
+    WinningDomain solve_reachability_game(int ab,
+                                          std::vector<double> & value = params::value ) {
+      TransitionFunction& trans_function = *Ts_[ab];
+      const UniformGrid ss = *Xs_[ab];
+      /* size of state alphabet */
+      abs_type N=trans_function.m_no_states;
+      /* size of input alphabet */
+      abs_type M=trans_function.m_no_inputs;
+
+      /* used to encode that a state is not in the winning domain */
+      abs_type loosing = std::numeric_limits<abs_type>::max();
+      if(M > loosing-1) {
+        throw std::runtime_error("scots::solve_reachability_game: Number of inputs exceeds maximum supported value");
+      }
+      /* win_domain[i] = j
+       * contains the input j associated with state i
+       *
+       * j = loosing if the target is not reachable from i
+       *
+       * initialize all states to loosing (win_domain[i]=loosing) */
+      std::vector<abs_type> win_domain(N,loosing);
+      /* initialize value */
+      value.resize(N,std::numeric_limits<double>::infinity());
+      /* keep track of the number of processed post */
+      std::unique_ptr<abs_type[]> K(new abs_type[N*M]);
+      /* keep track of the values (corresponds to M in Alg.2)*/
+      std::unique_ptr<double[]>  edge_val(new double[N*M]);
+
+      /* init fifo */
+      std::queue<abs_type> fifo;
+      for(abs_type i=0; i<N; i++) {
+        if(target(i,ab) && !avoid(i,ss)) {
+          win_domain[i]=loosing;
+          /* value is zero */
+          value[i]=0;
+          /* states in the target are added to the fifo */
+          fifo.push(i);
+        }
+        for(abs_type j=0; j<M; j++) {
+          edge_val[i*M+j]=0;
+          K[i*M+j]=trans_function.m_no_post[i*M+j];
+        }
+      }
+
+      /* main loop */
+      while(!fifo.empty()) {
+        /* get state to be processed */
+        abs_type q=fifo.front();
+        fifo.pop();
+        /* loop over each input */
+        for(abs_type j=0; j<M; j++) {
+          /* loop over pre's associated with this input */
+          for(abs_ptr_type v=0; v<trans_function.m_no_pre[q*M+j]; v++) {
+    	std::vector<abs_type> debug = trans_function.get_pre(q, j);
+    	abs_type i=trans_function.m_pre[trans_function.m_pre_ptr[q*M+j]+v];
+            if(avoid(i,ss))
+              continue;
+            /* (i,j,q) is a transition */
+            /* update the number of processed posts */
+            K[i*M+j]--;
+            /* update the max value of processed posts */
+            edge_val[i*M+j]=(edge_val[i*M+j]>=1+value[q] ? edge_val[i*M+j] : 1+value[q]);
+            /* check if for node i and input j all posts are processed */
+            if(!K[i*M+j] && value[i]>edge_val[i*M+j]) {
+              fifo.push(i);
+              value[i]=edge_val[i*M+j];
+              win_domain[i]=j;
+            }
+          }  /* end loop over all pres of state i under input j */
+        }  /* end loop over all input j */
+      }  /* fifo is empty */
+
+      /* if the default value function was used, free the memory of the static object*/
+      if(value == scots::params::value){
+          value.clear();
+          value.shrink_to_fit();
+      }
+
+      return WinningDomain(N,M,std::move(win_domain),std::vector<bool>{},loosing);
+    }
+
 
     ///*! Saves a snapshot of a controller and its domain into the sequence of final controllers and controller domains.
     //    \param[in] ab	0-index of the abstraction which the controller and controller domain that should be saved belong to.

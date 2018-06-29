@@ -13,10 +13,11 @@
 #include <cstring>
 #include <memory>
 #include <vector>
-#include "TicToc.hh"
+//#include "TicToc.hh"
 
 #include "UniformGrid.hh"
 #include "TransitionFunction.hh"
+#include "RungeKutta4.hh"
 
 /** @namespace scots **/
 namespace scots {

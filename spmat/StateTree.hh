@@ -55,7 +55,8 @@
                   no_states_[ab] = ss[ab]->size();
 
                   /* debug purpose */
-                  std::cout << "no. of states in different layers: " << no_states_[0] << ", " << no_states_[1] << ", " << no_states_[2] << '\n';
+                  for (int i=0; i<numAbs_; i++)
+                    std::cout << "no. of states in layer " << i  << ": "<< no_states_[i] << '\n';
                 /* first pass: initialization of tree nodes */
                 StateTreeNode** nodePtrArray = nullptr;
                 for (int ab = 0; ab < numAbs_; ab++) {
@@ -94,8 +95,8 @@
                     // else {
                     db_[ab][i]->no_child_ = no_child;
                     for (int j = 0; j < no_child; j++) {
-                      db_[ab][i]->child_.push_back(db_[ab+1][head+j]);
-                      db_[ab+1][head+j]->parent_ = db_[ab][i];
+                        db_[ab][i]->child_.push_back(db_[ab+1][head+j]);
+                        db_[ab+1][head+j]->parent_ = db_[ab][i];
                     }
                     head += no_child;
                     // }

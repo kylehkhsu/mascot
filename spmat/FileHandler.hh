@@ -40,8 +40,8 @@
 #define SCOTS_FH_END        "#END"
 
 namespace scots {
-  
-  
+
+
 /** @cond **/
 
 /* The FileHandler class stores the filename */
@@ -133,7 +133,23 @@ public:
     return false;
   }
   template<class T>
-  bool add_WINNINGDOMAIN(const std::string& name, 
+  bool add_MATRIX(const std::string& name, T&& array, size_t row_size, size_t col_size) {
+    if(m_file.is_open()) {
+      m_file << SCOTS_FH_ARRAY << name << "\n";
+      m_file << SCOTS_FH_BEGIN << row_size << " x " << col_size << "\n";
+      for (size_t i=0; i<row_size; i++) {
+        for(size_t j = 0; j < col_size; j++) {
+          m_file << array[i][j] << ", ";
+        }
+        m_file << "\n";
+      }
+      m_file << SCOTS_FH_END << "\n";
+      return true;
+    }
+    return false;
+  }
+  template<class T>
+  bool add_WINNINGDOMAIN(const std::string& name,
                          const std::vector<T>& vector,
                          const std::vector<bool>& matrix,
                          size_t row, size_t col) {
@@ -168,8 +184,8 @@ public:
     }
     return false;
   }
-#ifdef SCOTS_BDD 
-  /* functions are only availabe if BDD support is activated */  
+#ifdef SCOTS_BDD
+  /* functions are only availabe if BDD support is activated */
   bool add_BDD(const Cudd& manager, const BDD& bdd, char** varnames, char mode='B') {
     /* disable reordering (if enabled) */
     Cudd_ReorderingType *method=nullptr;
@@ -178,14 +194,14 @@ public:
     /* open filename */
     std::string filename = m_filename.append(SCOTS_FH_BDD_EXTENSION);
     FILE *file = fopen (filename.c_str(),"w");
-    if(!file) 
+    if(!file)
       return false;
     int store = Dddmp_cuddBddStore(bdd.manager(),NULL,
                                    bdd.getNode(),varnames,NULL,
                                    (int)mode,DDDMP_VARIDS,NULL,file);
     if(fclose(file))
       return false;
-    if (store!=DDDMP_SUCCESS)  
+    if (store!=DDDMP_SUCCESS)
       return false;
     /* reactivate reordering if it was enabled */
     if(method!=nullptr)
@@ -357,7 +373,7 @@ public:
               stream >> size;
               counter++;
               break;
-            } 
+            }
           }
         }
       }
@@ -384,10 +400,10 @@ public:
     return 0;
   }
   template<class T>
-  bool get_WINNINGDOMAIN(const std::string& name, 
+  bool get_WINNINGDOMAIN(const std::string& name,
                          std::vector<T>& vector,
                          std::vector<bool>& matrix,
-                         T& row, 
+                         T& row,
                          T& col,
                          size_t offset=0) {
     back_to_first_line();
@@ -442,8 +458,8 @@ public:
     }
     return 0;
   }
-#ifdef SCOTS_BDD 
-  /* functions are only availabe if BDD support is activated */  
+#ifdef SCOTS_BDD
+  /* functions are only availabe if BDD support is activated */
   bool get_BDD(const Cudd& manager, BDD& bdd, char mode='B') {
     /* disable reordering (if enabled) */
     Cudd_ReorderingType *method=nullptr;
@@ -453,7 +469,7 @@ public:
     /* open file1name */
     std::string filename = m_filename.append(SCOTS_FH_BDD_EXTENSION);
     FILE *file = fopen(filename.c_str(),"r");
-    if(!file) 
+    if(!file)
       return false;
 
 
@@ -462,7 +478,7 @@ public:
                       DDDMP_VAR_MATCHIDS,NULL,NULL,
                       NULL,(int)mode,NULL,file);
     fclose(file);
-    if(!node) 
+    if(!node)
       return false;
     bdd=BDD(manager,node);
     /* reactivate reordering if it was enabled */

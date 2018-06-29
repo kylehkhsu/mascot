@@ -20,7 +20,7 @@
 
 #ifdef SCOTS_BDD
 #include "SymbolicSet.hh"
-#endif 
+#endif
 
 /* StaticController definitions */
 #define  SCOTS_SC_TYPE          "STATICCONTROLLER"
@@ -54,7 +54,7 @@
 #define  SCOTS_GP_TYPE        "SET_OF_GRIDPOINTS"
 #define  SCOTS_GP_DATA        "GRIDPOINTS"
 
-/** @namespace scots **/ 
+/** @namespace scots **/
 namespace scots {
 
 /** @brief write WinningDomain to a file via a FileWriter **/
@@ -121,7 +121,8 @@ bool write_to_file(const StaticController& sc, const std::string& filename, bool
 
 /** @brief write TransitionFunction to a file via a FileWriter **/
 inline
-bool write_to_file(const TransitionFunction& tf, const std::string& filename) {
+bool write_to_file(const TransitionFunction& tf, const std::string& filename, bool matrix=false) {
+  if (!matrix){
     FileWriter writer(filename);
     if(writer.create()) {
         abs_type N=tf.m_no_states;
@@ -142,6 +143,48 @@ bool write_to_file(const TransitionFunction& tf, const std::string& filename) {
         return true;
     }
     return false;
+  }
+  // else {
+  //   FileWriter writer(filename);
+  //   if(writer.create()) {
+  //       abs_type N=tf.m_no_states;
+  //       abs_type M=tf.m_no_inputs;
+  //       abs_type T=tf.m_no_transitions;
+  //
+  //       writer.add_VERSION();
+  //       writer.add_TYPE(SCOTS_TF_TYPE);
+  //       writer.add_MEMBER(SCOTS_TF_NO_STATES,N);
+  //       writer.add_MEMBER(SCOTS_TF_NO_INPUTS,M);
+  //       writer.add_MEMBER(SCOTS_TF_NO_TRANS,T);
+  //
+  //       UniformGrid* ss, is;
+  //       // int ab = prhs[1];
+  //       int ab = 0;
+  //       std::string file = "X/X" + std::to_string(ab);
+  //       bool readFlag = scots::read_from_file(*ss, file);
+  //       if (!readFlag)
+  //         error("runtime error: could not read the state space from file");
+  //       else
+  //         int sdim = ss->get_dim();
+  //       bool readFlag = scots::read_from_file(*is, file);
+  //       if (!readFlag)
+  //         error("runtime_error: could not read the input space from file");
+  //       else
+  //         int idim = is->get_dim();
+  //
+  //       abs_ptr_type ntr = tf->get_no_transitions();
+  //       double** domain = nullptr;
+  //       domain = new double[ntr][2*sdim+idim];
+  //
+  //       tf->get_domain(ss, is, domain);
+  //
+  //       writer.add_MATRIX(SCOTS_TF_MATRIX, domain, nrr, 2*sdim+idim);
+  //
+  //       writer.close();
+  //       return true;
+  //   }
+  //   return false;
+  // }
 }
 
 /** @brief write UniformGrid to a file via a FileWriter **/
@@ -222,7 +265,7 @@ bool write_to_file(const SymbolicSet& set, const std::string& filename) {
     return false;
 }
 
-/** 
+/**
  * @brief write BDD with its SymbolicSet information to a file via a FileWriter
  * The BDD is stored in filename.bdd\n
  * The SymbolicSet is stored in filename.scs\n
@@ -234,19 +277,19 @@ bool write_to_file(const Cudd& manager, const SymbolicSet& set, const BDD& bdd, 
     if(!write_to_file(set,filename)) {
         return false;
     }
-   
+
    /* check if we should write slugs variable names */
    if(set.get_slugs_var_names().size()) {
     /* create data structure for variable names of the BDD variables */
     char** varnames = new char*[manager.ReadSize()];
-    for(int i=0; i<manager.ReadSize(); i++) 
+    for(int i=0; i<manager.ReadSize(); i++)
       varnames[i]=nullptr;
     /* create marker to keep track which variable names are allocated here */
     std::unique_ptr<bool[]> marker(new bool[manager.ReadSize()]());
      /* fill varnames with slugs variable names */
     auto slugs_names = set.get_slugs_var_names();
     auto bdd_ids = set.get_bdd_var_ids();
-    for(size_t i=0; i<slugs_names.size(); i++) 
+    for(size_t i=0; i<slugs_names.size(); i++)
       varnames[bdd_ids[i]]=&slugs_names[i][0];
     for(int i=0; i<manager.ReadSize(); i++) {
       if(varnames[i]==nullptr) {
@@ -451,7 +494,7 @@ bool read_from_file(const Cudd& manager, SymbolicSet& set, const std::string& fi
     return true;
 }
 
-/** 
+/**
  * @brief read BDD with its SymbolicSet information from file
  * The SymbolicSet is read from filename.scs\n
  * The BDD is read from filename.bdd\n

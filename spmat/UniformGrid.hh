@@ -215,8 +215,6 @@ public:
           m_first[index]= (double)sign_l*((double)no_l-1)*eta[index] + (double)sign_l*(double)eta[index]/2;
         /* kaushik end */
       }
-      /* debug purpose */
-      std::cout << "first grid point of :" << m_first[0] << ", " << m_first[1] << ", "  << m_first[2] << '\n';
       calc_nn();
     } else {
       throw std::runtime_error("\nscots::UniformGrid: grid dimension has to be greater than zero (using non-default constructor)");
