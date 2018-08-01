@@ -1,0 +1,10 @@
+
+To run simulations in matlab with SCOTS you need compile the mexfile
+
+1. set up the mex compiler in MATLAB:
+  >> mex -setup C++
+
+2. edit the Makefile and adjust the it to your programming environment; 
+   edit the variable MATLABROOT and compile the mexfile by running
+  $ make sparse 
+  in a terminal
