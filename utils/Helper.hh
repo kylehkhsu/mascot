@@ -9,11 +9,12 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string>
-//#include "SymbolicSet.hh"
+#include "InputOutput.hh"
 
 using std::clog;
 using std::cout;
 using std::string;
+using namespace scots;
 
 namespace helper {
 
@@ -44,8 +45,8 @@ namespace helper {
         clog << '\n';
     }
 
-    /*! Writes a vector of SymbolicSets into a subdirectory.
-     *  \param[in] vec       Vector of SymbolicSets.
+    /*! Writes a vector of UniformGrids/WinningDomains/TransitionFunctions into a subdirectory.
+     *  \param[in] vec       Vector of pointers to UniformGrids/WinningDomains/TransitionFunctions.
      *  \param[in] vecPrefix Subdirectory name + '/' + filename prefix.
      */
     template <class vec_type, class prefix_type>
@@ -54,12 +55,13 @@ namespace helper {
             string Str = "";
             Str += vecPrefix;
             Str += std::to_string(i+1);
-            Str += ".bdd";
+            // Str += ".bdd";
             char Char[20];
             size_t Length = Str.copy(Char, Str.length() + 1);
             Char[Length] = '\0';
             //            cout << Char << '\n';
-            //vec[i]->writeToFile(Char);
+            // vec[i]->writeToFile(Char); // TransitionFunction does not have any member called writeToFile
+            write_to_file(*vec[i], Char);
         }
     }
 

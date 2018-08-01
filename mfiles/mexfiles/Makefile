@@ -1,7 +1,7 @@
 #
 # matlab root 
 #
-MATLABROOT	= /usr/local/MATLAB/R2017a/
+MATLABROOT	= /usr/lib/matlab-9.4/
 
 #
 # compiler
@@ -14,13 +14,13 @@ CXXFLAGS 		= -g -Wall -Wextra -std=c++11 -O3
 # scots
 #
 SCOTSROOT   = ../..
-SCOTSINC		= -I$(SCOTSROOT)/bdd
+SCOTSINC		= -I$(SCOTSROOT)/bdd -I$(SCOTSROOT)/utils
 
 #
 # cudd 
 #
 CUDDPATH		=  /opt/local
-CUDDINC 		= -I$(CUDDPATH)/include
+CUDDINC 		= -I$(CUDDPATH)/include -I$(CUDDPATH)/include/cudd
 CUDDLIBS		= -lcudd 
 CUDDLPATH   = -L$(CUDDPATH)/lib
 

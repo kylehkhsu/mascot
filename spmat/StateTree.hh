@@ -41,8 +41,8 @@
        // std::array<abs_type> no_states_;
        abs_type* no_states_;
        /* array[numAbs_] containing pointers to arrays containing pointers to StateTreeNodes */
-       // std::array<std::array<StateTreeNode*>*> db_;
-       vector<StateTreeNode**> db_;
+       StateTreeNode*** db_;
+       // vector<StateTreeNode**> db_;
      public:
        /* constructor */
        StateTree(const int numAbs,
@@ -50,10 +50,15 @@
                  const double* eta_ratio) :
               numAbs_(numAbs) {
                 /* number of cells in different layers */
-                abs_type no_states_[numAbs_];
+                no_states_ = new abs_type[numAbs_];
                 for (int ab = 0; ab < numAbs_; ab++)
                   no_states_[ab] = ss[ab]->size();
 
+                /* initialize db_ */
+                db_ = new StateTreeNode**[numAbs_];
+                for (size_t i = 0; i < numAbs_; i++) {
+                  db_[i] = new StateTreeNode*[no_states_[i]];
+                }
                   /* debug purpose */
                   for (int i=0; i<numAbs_; i++)
                     std::cout << "no. of states in layer " << i  << ": "<< no_states_[i] << '\n';
@@ -68,8 +73,8 @@
                     StateTreeNode* node = new StateTreeNode(ab, i);
                     nodePtrArray[i] = node;
                   }
-                  // db_[ab] = nodePtrArray;
-                  db_.push_back(nodePtrArray);
+                  db_[ab] = nodePtrArray;
+                  // db_.push_back(nodePtrArray);
                 }
                 /* second pass: mapping of tree nodes across layers */
                 int dim = ss[0]->get_dim(); /* the dimension is same in all layers */
@@ -180,7 +185,37 @@
 
           /* return the marking status of a state in the tree */
           int getMarkingStatus(const int ab, const abs_type state) {
+            if (state >= no_states_[ab]) {
+              std::ostringstream os;
+              os << "\nscots::StateTree: the state " << state << " is outside the state space of layer " << ab ;
+              throw std::runtime_error(os.str().c_str());
+            }
             return db_[ab][state]->marking_;
+          }
+
+          /* construct a vector of states in a given layer which are marked with 2 */
+          bool getMarkedStates(const int ab, std::vector<abs_type>& marked) {
+            bool flag = false; // flag = false iff no state is marked with 2
+            for (size_t i = 0; i < no_states_[ab]; i++) {
+              if (getMarkingStatus(ab, i)==2) {
+                marked.push_back(i);
+                flag = true;
+                // debug purpose
+                // std::cout << "marked state: " << i << '\n';
+              }
+            }
+            return flag;
+          }
+
+          /* prints some information */
+          void print_info() {
+            std::cout << "\n State Tree:" << '\n';
+            std::cout << "No. of layers:  " << numAbs_ << '\n';
+            std::cout << "No. of states in each layer:  ";
+            for (size_t i = 0; i < numAbs_; i++) {
+              std::cout << no_states_[i];
+            }
+            std::cout << '\n';
           }
 
      }; /* close class definitioin */

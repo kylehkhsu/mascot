@@ -12,7 +12,7 @@
 
 #include "UniformGrid.hh"
 #include "System.hh"
-#include "Helper.hh"
+#include "Helper_BDD.hh"
 #include "RungeKutta4.hh"
 #include "TransitionFunction.hh"
 #include "TicToc.hh"
@@ -20,6 +20,7 @@
 #include "WinningDomain.hh"
 #include "StateTree.hh"
 #include "InputOutput.hh"
+#include "Goal.hh"
 
 using std::clog;
 using std::freopen;
@@ -44,7 +45,7 @@ public:
     vector<double*> etaXs_; /*!< *system_->numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
     vector<double*> tau_; /*!< *system_->numAbs_ x 1 matrix of time steps. */
     vector<UniformGrid*> Xs_; /*!< The *system_->numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
-    StateTree* tree; /*!< The data structure that maps states across layers, and takes care of the projection of winning states. */
+    StateTree* tree_; /*!< The data structure that maps states across layers, and takes care of the projection of winning states. */
 
   std::function<bool(const int, const UniformGrid&)> avoid; /*!< Function which evaluates to true for unsafe (obstacle) states of a given layer. */
 	// std::function<bool(const int, const UniformGrid&)> target; /*!< Function which evaluates to true for winning states of a given layer. */
@@ -68,11 +69,12 @@ public:
     //vector<int*> permutesFiner_;
     vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
 
-    vector<UniformGrid*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
+    vector<Goal*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
     vector<UniformGrid*> validZs_; /*!< Contains winning states that act as savepoints. */
     vector<UniformGrid*> validCs_; /*!< Controllers that act as savepoints. */
-    vector<UniformGrid*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
-    vector<UniformGrid*> finalZs_; /*!< Sequence of domains of finalCs_. */
+    vector<StaticController*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
+    // vector<vector<abs_type>*> finalZs_; /*!< Sequence of domains of finalCs_. */
+    vector<Goal*> finalZs_; /*!< Sequence of domains of finalCs_. */
     vector<int> finalAbs_; /*!< Sequence of abstraction layer indices of finalCs_. */
     vector<UniformGrid*> Ds_; /*!< Instance of *Xs_[i] containing possible winning states. */
     vector<UniformGrid*> innerDs_;
@@ -133,10 +135,18 @@ public:
         deleteVecArray(permutesFiner_);*/
         deleteVec(solvers_);
         deleteVec(Gs_);
+        // for (size_t i = 0; i < Gs_.size(); i++) {
+        //   Gs_[i]->clear();
+        // }
+        // Gs_.clear();
         deleteVec(validZs_);
         deleteVec(validCs_);
         deleteVec(finalCs_);
         deleteVec(finalZs_);
+        // for (size_t i = 0; i < finalZs_.size(); i++) {
+        //   finalZs_[i]->clear();
+        // }
+        // finalZs_.clear();
         deleteVec(Ds_);
         deleteVec(innerDs_);
         deleteVec(computedDs_);
@@ -154,7 +164,6 @@ public:
         clog << "m: " << m_ << '\n';
         clog << "p: " << p_ << '\n';
 
-
         UniformGrid* D = new UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[0]);
         Ds_[0] = D;
         //Ds_[0] = UniformGrid(*system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[0]);
@@ -167,8 +176,10 @@ public:
           cout << "Starting computation of transition relation of layer 0: \n";
           abs.compute_gb(*Ts_[0], sysNext, radNext, *solvers_[0], avoid);
           write_to_file(*Ts_[0], "T/T0", true);
-          if (verbose_)
+          if (verbose_) {
             Ts_[0]->print_info();
+            tree_->print_info();
+          }
         }
         else {
           bool flag = read_from_file(*Ts_[0], "T/T0");
@@ -182,7 +193,7 @@ public:
         }
 
         /* debug purpose: printing the transition matrix */
-        Ts_[0]->print_domain(Xs_[0], U_);
+        // Ts_[0]->print_domain(Xs_[0], U_);
         // const abs_ptr_type ntr = Ts_[0]->get_no_transitions();
         // double** tr_domain = new double*[ntr];
         // for(int i = 0; i < ntr; ++i)
@@ -264,21 +275,36 @@ public:
         checkMakeDir("C");
         onTheFlyReachRecurse(ab, sysNext, radNext, x, u, lazy, print);
 
-        //clog << "controllers: " << finalCs_.size() << '\n';
+        // debug purpose: reading controller from file
+        // scots::StaticController *controller = new scots::StaticController;
+        // if(!scots::read_from_file(*controller,"C/C1.scs")) {
+        //   bool debug = false;
+        // }
 
-        //checkMakeDir("C");
-        //saveVec(finalCs_, "C/C");
-        //checkMakeDir("Z");
-        //saveVec(finalZs_, "Z/Z");
-        //checkMakeDir("T");
-        //saveVec(Ts_, "T/T");
-        //clog << "Wrote Ts_ to file.\n";
+        clog << "controllers: " << finalCs_.size() << '\n';
+
+        checkMakeDir("G");
+        saveVec(Gs_, "G/G");
+        checkMakeDir("C");
+        saveVec(finalCs_, "C/C");
+        checkMakeDir("Z");
+        saveVec(finalZs_, "Z/Z");
+        checkMakeDir("T");
+        saveVec(Ts_, "T/T");
+        clog << "Wrote Ts_ to file.\n";
+
+        /* debug purpose */
+        // Goal* debug;
+        // bool  flag = read_from_file(*debug, "Z/Z1");
+        // StaticController* debug2;
+        // bool flag = read_from_file(*debug2, "C/C1");
+
         return;
     }
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void computeExplorationAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
-		cout << "Starting computation of auxiliary abstractions:\n";
+		    cout << "Starting computation of auxiliary abstractions:\n";
         for (int ab = 0; ab < *system_->numAbs_; ab++) {
 			/*TransitionFunction	uTs_[ab];*/
 			//// debug purpose
@@ -338,18 +364,19 @@ public:
                cout << "result: not converged\n";
        }
 
-       // if (((result != CONVERGEDINVALID) && (ab!=*system_->numAbs_-1))
-       //     || ((result == CONVERGEDINVALID) && (ab==*system_->numAbs_-1))) {
-       if ((result != CONVERGEDINVALID) && (ab!=*system_->numAbs_-1)) {
+       // if ((result != CONVERGEDINVALID) && (ab!=*system_->numAbs_-1)) {
+        if ((result != CONVERGEDINVALID) || (ab==*system_->numAbs_-1)) {
+       // if (result != CONVERGEDINVALID) {
          // validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
          // validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
          std::vector<abs_type> dom = w.get_winning_domain();
          for (abs_type i = 0; i < dom.size(); i++) {
-           tree->markNode(ab, dom[i]);
+           tree_->markNode(ab, dom[i]);
          }
-         std::cout << "Winning domain size: " << w.get_size() << std::endl;
-         std::string file = "C/C" + std::to_string(rec_depth);
-         write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
+         saveCZ(ab, w);
+         // std::cout << "Winning domain size: " << w.get_size() << std::endl;
+         // std::string file = "C/C" + std::to_string(rec_depth);
+         // write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
          clog << "saved as snapshot\n";
          if (print)
              cout << "saved as snapshot\n";
@@ -357,20 +384,21 @@ public:
        else { // result is CONVERGEDINVALID
          // Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
          // Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
-         clog << "reset to valids\n";
+         clog << "reset to valids\n"; // reset by not marking any new node in tree_
          if (print)
              cout << "reset to valids\n";
        }
        //
        if (result != NOTCONVERGED) { // ab = 0 always converges
            if (ab == *system_->numAbs_ - 1) {
-             std::vector<abs_type> dom = w.get_winning_domain();
-             for (abs_type i = 0; i < dom.size(); i++) {
-               tree->markNode(ab, dom[i]);
-             }
-             std::cout << "Winning domain size: " << w.get_size() << std::endl;
-             std::string file = "C/C" + std::to_string(rec_depth);
-             write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
+             // std::vector<abs_type> dom = w.get_winning_domain();
+             // saveCZ(ab, w);
+             // for (abs_type i = 0; i < dom.size(); i++) {
+             //   tree_->markNode(ab, dom[i]);
+             // }
+             // std::cout << "Winning domain size: " << w.get_size() << std::endl;
+             // std::string file = "C/C" + std::to_string(rec_depth);
+             // write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
              return;
            }
            else { // go finer
@@ -446,7 +474,7 @@ public:
      * @param[in] ab - the abstraction layer
      **/
      bool target(const abs_type abs_state, const int ab) {
-       if (tree->getMarkingStatus(ab, abs_state)==2)
+       if (tree_->getMarkingStatus(ab, abs_state)==2)
          return true;
        else
          return false;
@@ -615,7 +643,7 @@ public:
       // std::vector<abs_type> states_to_explore;
       // abs_type states_to_explore[Xs_[0]->size()];
       for (abs_type q = 0; q < Xs_[0]->size(); q++) {
-        if (tree->getMarkingStatus(0, q) > 0) {
+        if (tree_->getMarkingStatus(0, q) > 0) {
           val[q] = 0;
           // for(abs_type j=0; j<M; j++) {
           //   /* loop over pre's associated with this input */
@@ -667,7 +695,7 @@ public:
       std::vector<abs_type> temp;
       for (int i = 0; i < ab; i++) {
         for (int j = 0; j < states_to_explore.size(); j++) {
-          StateTreeNode* node = tree->getNode(i, states_to_explore[j]);
+          StateTreeNode* node = tree_->getNode(i, states_to_explore[j]);
           for (int k = 0; k < node->get_no_child(); k++) {
             abs_type l = (node->getChild(k))->getState();
             temp.push_back(l);
@@ -833,7 +861,7 @@ public:
         initializeCubes();
         initializeNotVars();
         initializeProjs();*/
-        //verifySave();
+        verifySave();
 
         abTime_ += timer.toc();
     }
@@ -845,11 +873,16 @@ public:
       abs_type N = Xs_[numAbs-1]->size();
       for (abs_type i = 0; i < N; i++) {
         if (G(i, Xs_[numAbs-1])) {
-          tree->markNode(numAbs-1, i);
+          tree_->markNode(numAbs-1, i);
+          // debug purpose
+          // std::array<double, 2> x;
+          // Xs_[numAbs-1]->itox(i, x);
+          // std::cout << "goal: " << i << " : " << x[0] << ", " << x[1] << '\n';
         }
       }
+      saveGO();
       // auto target = [&](const abs_type &abs_state, const int ab) {
-      //   if (tree->getMarkingStatus(ab, abs_state))
+      //   if (tree_->getMarkingStatus(ab, abs_state))
       //     return true;
       //   else
       //     return false;
@@ -871,11 +904,14 @@ public:
         }
 		clog << "Xs_ and X2s_ initialized with full domain.\n";
 
-      tree = new StateTree(*system_->numAbs_, Xs_, system_->etaRatio_);
+      tree_ = new StateTree(*system_->numAbs_, Xs_, system_->etaRatio_);
 
         U_ = new UniformGrid(*system_->dimU_, system_->lbU_, system_->ubU_, system_->etaU_);
         write_to_file(*U_, "U");
         clog << "U_ initialized with full domain.\n";
+
+        Xs_[0]->print_info();
+
 		//delete U;
 
       if (verbose_) {
@@ -973,40 +1009,6 @@ public:
 		//delete uT;
     }
 
-    ///*! Initializes a vector of SymbolicSets that is an instance of Xs_ containing points as specified by addSpec.
-    // *  \param[in] vec      Vector of SymbolicSets to initialize.
-    // *  \param[in] addSpec  Function pointer specifying the points to add to each element of vec.
-    // */
-    //template<class vec_type, class spec_type>
-    //void initializeSpec(vec_type* vec, spec_type addSpec) {
-    //    for (int i = 0; i < *system_->numAbs_; i++) {
-    //        SymbolicSet* Xinstance = new SymbolicSet(*Xs_[i]);
-    //        addSpec(Xinstance);
-    //        vec->push_back(Xinstance);
-    //    }
-    //}
-
-    ///*! Initializes the BDDs useful for existential abstraction. Must be called only after initializing Xs, U, and X2s. */
-    //void initializeNotVars() {
-    //    for (int i = 0; i < *system_->numAbs_; i++) {
-    //        BDD* notXUvars = new BDD;
-    //        BDD* notXvars = new BDD;
-    //        *notXUvars = ddmgr_->bddOne();
-    //        for (int j = 0; j < *system_->numAbs_; j++) {
-    //            *notXUvars &= *cubesX2_[j];
-    //            if (i != j) {
-    //                *notXUvars &= *cubesX_[j];
-    //            }
-    //        }
-    //        *notXvars = *notXUvars & *cubeU_;
-
-    //        notXUvars_.push_back(notXUvars);
-    //        notXvars_.push_back(notXvars);
-    //    }
-
-    //    clog << "Initialized notVars.\n";
-    //}
-
     /*! Initializes the abstractions' state space grid parameters and time sampling parameters. */
     void initializeEtaTau() {
         for (int i = 0; i < *system_->dimX_; i++) {
@@ -1054,146 +1056,6 @@ public:
         clog << "Initialized solvers.\n";
     }
 
-    ///*! Initializes the number of total distinct BDD variables in use. */
-    //void initializeNumBDDVars() {
-    //    numBDDVars_ = 0;
-    //    for (int i = 0; i < *system_->numAbs_; i++) {
-    //        numBDDVars_ += Xs_[i]->nvars_;
-    //        numBDDVars_ += X2s_[i]->nvars_;
-    //    }
-    //    numBDDVars_ += U_->nvars_;
-
-    //    clog << "Number of BDD variables: " << numBDDVars_ << '\n';
-    //}
-
-    //void initializeProjs() {
-    //    int ones = 0;
-    //    for (int i = 0; i < *system_->dimX_; i++) {
-    //        if (system_->etaRatio_[i] == 1) {
-    //            ones++;
-    //        }
-    //    }
-
-    //    for (int i = 1; i < *system_->numAbs_; i++) {
-    //        BDD* varsCoarser = new BDD[*system_->dimX_ - ones];
-    //        int ind = 0;
-    //        for (int j = 0; j < *system_->dimX_; j++) {
-    //            if (system_->etaRatio_[j] == 2) {
-    //                varsCoarser[ind] = ddmgr_->bddVar(Xs_[i]->indBddVars_[j][0]);
-    //                ind++;
-    //            }
-    //        }
-    //        BDD* cubeCoarser = new BDD;
-    //        *cubeCoarser = ddmgr_->bddComputeCube(varsCoarser, NULL, *system_->dimX_ - ones);
-    //        cubesCoarser_.push_back(cubeCoarser);
-    //        delete[] varsCoarser;
-    //    }
-
-    //    for (int i = 1; i < *system_->numAbs_; i++) {
-    //        int* permuteCoarser = new int[numBDDVars_];
-    //        for (int ind = 0; ind < numBDDVars_; ind++) {
-    //            permuteCoarser[ind] = 0;
-    //        }
-
-    //        for (int dim = 0; dim < *system_->dimX_; dim++) {
-    //            if (system_->etaRatio_[dim] == 2) {
-    //                for (size_t projInd = 1; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
-    //                    permuteCoarser[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i-1]->indBddVars_[dim][projInd-1];
-    //                }
-    //            }
-    //            else if (system_->etaRatio_[dim] == 1){
-    //                for (size_t projInd = 0; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
-    //                    permuteCoarser[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i-1]->indBddVars_[dim][projInd];
-    //                }
-    //            }
-    //        }
-    //        permutesCoarser_.push_back(permuteCoarser);
-
-    //        clog << "permuteCoarser " << i << " to " << i-1 << ": ";
-    //        printArray(permuteCoarser, numBDDVars_);
-    //    }
-
-    //    for (int i = 0; i < *system_->numAbs_ - 1; i++) {
-    //        int* permuteFiner = new int[numBDDVars_];
-    //        for (int ind = 0; ind < numBDDVars_; ind++) {
-    //            permuteFiner[ind] = 0;
-    //        }
-
-    //        for (int dim = 0; dim < *system_->dimX_; dim++) {
-    //            if (system_->etaRatio_[dim] == 2) {
-    //                for (size_t projInd = 0; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
-    //                    permuteFiner[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i+1]->indBddVars_[dim][projInd+1];
-    //                }
-    //            }
-    //            else if (system_->etaRatio_[dim] == 1) {
-    //                for (size_t projInd = 0; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
-    //                    permuteFiner[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i+1]->indBddVars_[dim][projInd];
-    //                }
-    //            }
-    //        }
-    //        permutesFiner_.push_back(permuteFiner);
-
-    //        clog << "permuteFiner " << i << " to " << i+1 << ": ";
-    //        printArray(permuteFiner, numBDDVars_);
-    //    }
-    //}
-
-    ///*! Initializes the BDDs that are the precursors to notXvars_ and notXUvars_ */
-    //void initializeCubes() {
-    //    for (int i = 0; i < *system_->numAbs_; i++) {
-    //        BDD* cubeX = new BDD;
-    //        BDD* cubeX2 = new BDD;
-
-    //        BDD* varsX = new BDD[Xs_[i]->nvars_];
-    //        BDD* varsX2 = new BDD[X2s_[i]->nvars_];
-
-    //        for (size_t j = 0; j < Xs_[i]->nvars_; j++) {
-    //            varsX[j] = ddmgr_->bddVar(Xs_[i]->idBddVars_[j]);
-    //        }
-
-    //        for (size_t j = 0; j < X2s_[i]->nvars_; j++) {
-    //            varsX2[j] = ddmgr_->bddVar(X2s_[i]->idBddVars_[j]);
-    //        }
-
-    //        *cubeX = ddmgr_->bddComputeCube(varsX, NULL, Xs_[i]->nvars_);
-    //        *cubeX2 = ddmgr_->bddComputeCube(varsX2, NULL, X2s_[i]->nvars_);
-
-
-    //        cubesX_.push_back(cubeX);
-    //        cubesX2_.push_back(cubeX2);
-
-    //        delete[] varsX;
-    //        delete[] varsX2;
-    //    }
-
-    //    cubeU_ = new BDD;
-    //    *cubeU_ = U_->getCube();
-
-    //    clog << "Initialized cubes.\n";
-    //}
-
-    ///*! Initializes the arrays of BDD variable IDs that allow a BDD over an X domain to be projected to the identical BDD over the corresponding X2 domain.
-    // */
-    //void initializePermutes() {
-    //    for (int i = 0; i < *system_->numAbs_; i++) {
-    //        int* permuteXtoX2 = new int[numBDDVars_];
-    //        int* permuteX2toX = new int[numBDDVars_];
-    //        for (int j = 0; j < numBDDVars_; j++) {
-    //            permuteXtoX2[j] = 0;
-    //            permuteX2toX[j] = 0;
-    //        }
-
-    //        for (size_t j = 0; j < Xs_[i]->nvars_; j++) {
-    //            permuteXtoX2[Xs_[i]->idBddVars_[j]] = X2s_[i]->idBddVars_[j];
-    //            permuteX2toX[X2s_[i]->idBddVars_[j]] = Xs_[i]->idBddVars_[j];
-    //        }
-
-    //        permutesXtoX2_.push_back(permuteXtoX2);
-    //        permutesX2toX_.push_back(permuteX2toX);
-    //    }
-
-    //    clog << "Initialized permutes.\n";
-    //}
     /*! Saves and prints to log file some information related to the reachability/always-eventually specification. */
     void verifySave() {
         clog << "etaXs_:\n";
@@ -1215,13 +1077,13 @@ public:
         /*printVec(Gs_, "G");*/
 
         checkMakeDir("plotting");
-        //Xs_[0]->writeToFile("plotting/X.bdd");
-        /*Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
-        Gs_[*system_->numAbs_-1]->writeToFile("plotting/G.bdd");
-        checkMakeDir("O");
-        saveVec(Os_, "O/O");
-        checkMakeDir("G");
-        saveVec(Gs_, "G/G");*/
+        write_to_file(*Xs_[0], "plotting/X");
+        // write_to_file(*Os_[*system_->numAbs_-1], "plotting/O");
+        // write_to_file(*Gs_[*system_->numAbs_-1], "plotting/G");
+        // checkMakeDir("O");
+        // saveVec(Os_, "O/O");
+        // checkMakeDir("G");
+        // saveVec(Gs_, "G/G");
     }
 
     /* copied from GameSolver.hh of SCOTSv0.2 (while suitably adapting the functions target and obstacle)
@@ -1323,22 +1185,51 @@ public:
     }
 
 
-    ///*! Saves a snapshot of a controller and its domain into the sequence of final controllers and controller domains.
-    //    \param[in] ab	0-index of the abstraction which the controller and controller domain that should be saved belong to.
-    //*/
-    //void saveCZ(int ab) {
-    //    if (Zs_[ab]->symbolicSet_ == ddmgr_->bddZero()) {
-    //        return;
-    //    }
+    /*! Saves a snapshot of a controller and its domain into the sequence of final controllers and controller domains.
+       \param[in] ab	0-index of the abstraction which the controller and controller domain that should be saved belong to.
+       \param[in] w   1-winning domain of the controller.
+    */
+    void saveCZ(const int ab, WinningDomain& w) {
+       std::vector<abs_type>* Z = new std::vector<abs_type>();
+       if (!tree_->getMarkedStates(ab, *Z))
+        return;
 
-    //    SymbolicSet* C = new SymbolicSet(*Cs_[ab]);
-    //    C->symbolicSet_ = Cs_[ab]->symbolicSet_;
-    //    finalCs_.push_back(C);
-    //    SymbolicSet* Z = new SymbolicSet(*Xs_[ab]);
-    //    Z->symbolicSet_ = Zs_[ab]->symbolicSet_;
-    //    finalZs_.push_back(Z);
-    //    finalAbs_.push_back(ab);
-    //}
+       Goal* Zg = new Goal(*Xs_[ab], *Z);
+       finalZs_.push_back(Zg);
+
+       StaticController* C = new StaticController(*Xs_[ab], *U_, std::move(w));
+       finalCs_.push_back(C);
+       finalAbs_.push_back(ab);
+    }
+
+    /*! Saves the goal and obstacle states
+       \param[in] ab	0-index of the abstraction which the controller and controller domain that should be saved belong to.
+       \param[in] w   1-winning domain of the controller.
+    */
+    void saveGO() {
+      for (size_t i = 0; i < *system_->numAbs_; i++) {
+        std::vector<abs_type>* G = new std::vector<abs_type>();
+        bool flag = tree_->getMarkedStates(i, *G);
+
+        Goal* Gg = new Goal(*Xs_[i], *G);
+        Gs_.push_back(Gg);
+
+        //debug purpose
+        // for (size_t j = 0; j < Gg->points.size(); j++) {
+        //   std::cout << "marked goal: " << Gg->points[j] << '\n';
+        // }
+        std::cout << "debug\n\n";
+        Gg->state_grid.print_info();
+        abs_type id = 57;
+        std::vector<double> x;
+        Gg->state_grid.itox(id,x);
+      }
+       //
+       //
+       // StaticController* C = new StaticController(*Xs_[ab], *U_, std::move(w));
+       // finalCs_.push_back(C);
+       // finalAbs_.push_back(ab);
+    }
 };
 }
 

@@ -9,6 +9,8 @@
 using namespace std;
 using namespace scots;
 
+
+
 /* state space dim */
 #define dimX 2
 #define dimU 2
@@ -56,7 +58,7 @@ auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss)
   std::vector<double> s_eta = ss->get_eta();
   /* function returns 1 if cell associated with x is in target set  */
   if (2.5 <= (x[0]) && (x[0]) <= 3.5 &&
-      -0.7 <= (x[1]) && (x[1]) <= 0.7)
+      0 <= (x[1]) && (x[1]) <= 0.7)
     return true;
   return false;
 };
@@ -102,12 +104,19 @@ int main() {
     double tauRatio = 2;
     int nSubInt = 5;
 
+    /* 1 layer */
+    // double etaX[dimX]= {0.6/2/2, 0.6/2/2};
+    // double tau = 0.9/2/2;
+    // int numAbs = 1;
+
+    /* 3 layers */
     double etaX[dimX]= {0.6, 0.6};
     double tau = 0.9;
-    int numAbs = 1;
-    bool lazy = true;
+    int numAbs = 3;
+
+    bool lazy = false;
     int readAbs = 0;
-    int p_ = 2;
+    int p_ = 4;
     bool verbose = true;
 
     System system(dimX, lbX, ubX, etaX, tau,

@@ -181,7 +181,7 @@ if (strcmp(mode,'R'))
     %     I = SymbolicSet('plotting/I.bdd');
     %     x = I.points();
     %     x = x(1,:);
-    x = [1.5 10.5];
+    x = [1 0];
     
     v = [];
     

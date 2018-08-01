@@ -17,6 +17,7 @@
 #include "TransitionFunction.hh"
 #include "StaticController.hh"
 #include "WinningDomain.hh"
+#include "Goal.hh"
 
 #ifdef SCOTS_BDD
 #include "SymbolicSet.hh"
@@ -53,6 +54,9 @@
 /* Grid points definitions */
 #define  SCOTS_GP_TYPE        "SET_OF_GRIDPOINTS"
 #define  SCOTS_GP_DATA        "GRIDPOINTS"
+
+/* Target states defintion */
+#define MASCOT_TARGET_STATES  "TARGET_STATES"
 
 /** @namespace scots **/
 namespace scots {
@@ -240,6 +244,31 @@ bool write_to_file(const UniformGrid& grid, const F& atomic_prop, const std::str
     return true;
 }
 
+/* write the set of target states in a file */
+bool write_to_file(const Goal& target, const std::string& filename) {
+    FileWriter writer(filename);
+    if(!writer.create()){
+        return false;
+    }
+
+    writer.add_VERSION();
+
+    /* write UniformGrid information of the state space */
+    writer.add_TEXT("STATE_SPACE");
+    writer.add_TYPE(SCOTS_UG_TYPE);
+    writer.add_MEMBER(SCOTS_UG_DIM,target.state_grid.get_dim());
+    writer.add_VECTOR(SCOTS_UG_ETA,target.state_grid.get_eta());
+    writer.add_VECTOR(SCOTS_UG_LOWER_LEFT,target.state_grid.get_lower_left());
+    writer.add_VECTOR(SCOTS_UG_UPPER_RIGHT,target.state_grid.get_upper_right());
+
+    /* write target states */
+    // writer.add_TYPE(MASCOT_TARGET_STATES);
+    writer.add_TEXT("TARGET");
+    writer.add_VECTOR(MASCOT_TARGET_STATES, target.points);
+    writer.close();
+    return true;
+}
+
 #ifdef SCOTS_BDD
 /** @brief write SymbolicSet to file **/
 inline
@@ -366,8 +395,10 @@ bool read_from_file(UniformGrid& grid, const std::string& filename, size_t offse
     reader.close();
     /* make sure that rounding in the UniformGrid constructor works correctly */
     for(int i=0; i<dim; i++) {
-        lb[i]-=eta[i]/4.0;
-        ub[i]+=eta[i]/4.0;
+        // lb[i]-=eta[i]/4.0;
+        // ub[i]+=eta[i]/4.0;
+        lb[i]-=eta[i]/2.0;
+        ub[i]+=eta[i]/2.0;
     }
     grid = UniformGrid(dim,lb,ub,eta);
     return true;
@@ -462,6 +493,34 @@ bool read_from_file(TransitionFunction& tf, const std::string& filename) {
     reader.close();
     return true;
 }
+
+/** @brief read goal from a file via a FileReader **/
+inline
+bool read_from_file(Goal& target, const std::string& filename, size_t offset = 0) {
+    FileReader reader(filename);
+    if(!reader.open()) {
+      // int h = mexPrintf("Could not open the reader \n");
+        return false;
+    }
+    std::vector<abs_type> points;
+    if(!reader.get_VECTOR(MASCOT_TARGET_STATES, points)) {
+      return false;
+    }
+    reader.close();
+    UniformGrid ss;
+    if(!read_from_file(ss,filename)) {
+        return false;
+    }
+    // debug purpose
+    // ss.print_info();
+    // UniformGrid ss2;
+    // read_from_file(ss2, "X/X0");
+    // ss2.print_info();
+    // end
+    target = Goal(ss,points);
+    return true;
+}
+
 
 #ifdef SCOTS_BDD
 /** @brief read SymbolicSet to file **/

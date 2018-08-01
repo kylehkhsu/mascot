@@ -123,6 +123,9 @@ public:
                 progress();
             minterm=currentMinterm();
 
+            // debug purpose
+            // std::cout << "iter = " << iter << '\n';
+
             /* current state */
             stateType_ x;
             stateSpace_->mintermToElement(minterm,&x[0]);
@@ -156,6 +159,9 @@ public:
                 }
                 post &= zz;
             }
+            // if (!(post<=constraints)) // debug purpose: to see if this condition is needed
+            //   ;
+            // if(!(post==ddmgr_->bddZero())) {
             if(!(post==ddmgr_->bddZero()) && post<= constraints) {
                 /* compute bdd for the current x and u element and add x' */
                 for(size_t i=0;i<nssVars_; i++)

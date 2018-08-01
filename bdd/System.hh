@@ -4,7 +4,7 @@
 #ifndef SYSTEM_HH_
 #define SYSTEM_HH_
 
-#include "Helper.hh"
+#include "Helper_BDD.hh"
 
 using namespace helper;
 

@@ -6,7 +6,7 @@
 
 #include "SymbolicModelGrowthBound.hh"
 #include "System.hh"
-#include "Helper.hh"
+#include "Helper_BDD.hh"
 
 using std::clog;
 using std::freopen;
@@ -140,7 +140,7 @@ public:
 
         // begin on-the-fly reachability synthesis
         int ab = 0;
-        onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
+        onTheFlyReachRecurse(ab, sysNext, radNext, x, u, 1);
 
         clog << "controllers: " << finalCs_.size() << '\n';
 
@@ -151,6 +151,8 @@ public:
         checkMakeDir("T");
         saveVec(Ts_, "T/T");
         clog << "Wrote Ts_ to file.\n";
+        std::cout << "No. of elements in transition function: " << Ts_[0]->getSize() << '\n';
+
         return;
     }
 
@@ -180,13 +182,13 @@ public:
         if (ab == 0) {
             TicToc timer;
             timer.tic();
-            result = reach(ab);
+            result = reach(ab, -1, 1);
             synTime_ += timer.toc();
         }
         else {
             TicToc timer;
             timer.tic();
-            result = reach(ab, m_);
+            result = reach(ab, m_, 1);
             synTime_ += timer.toc();
         }
         if (result == CONVERGEDVALID) {
@@ -219,7 +221,7 @@ public:
 //            }
             saveCZ(ab);
             validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
-            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;    
+            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
             clog << "saved as snapshot, saved to valids\n";
             if (print)
                 cout << "saved as snapshot, saved to valids\n";
@@ -245,7 +247,12 @@ public:
                 timer.tic();
                 eightToTen(ab, nextAb, sysNext, radNext, x, u);
                 abTime_ += timer.toc();
+                // debug purpose
+                Zs_[ab]->writeToFile("Zs.bdd");
                 finer(Zs_[ab], Zs_[nextAb], ab);
+                Zs_[nextAb]->writeToFile("Zsf.bdd");
+                // end
+                // finer(Zs_[ab], Zs_[nextAb], ab);
                 Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                 validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
                 onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
@@ -421,7 +428,7 @@ public:
         // {(x,u)} with no posts outside of winning set
         BDD nF = !Fbdd;
         // get rid of junk
-        BDD preF = TTs_[curAbs]->symbolicSet_.AndAbstract(nF, *notXUvars_[curAbs]);        
+        BDD preF = TTs_[curAbs]->symbolicSet_.AndAbstract(nF, *notXUvars_[curAbs]);
         return preF;
     }
 

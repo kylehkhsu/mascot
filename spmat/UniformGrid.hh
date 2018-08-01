@@ -258,6 +258,19 @@ public:
     }
     num=id;
     x[0]=m_first[0]+num*m_eta[0];
+    // debug purpose
+    // std::string Str = "m_NN: ";
+    // // Str += std::to_string(points[i]);
+    // // Str += ": ";
+    // Str += std::to_string(m_NN[0]);
+    // Str += ", ";
+    // Str += std::to_string(m_NN[1]);
+    // Str += "\n";
+    // int n = Str.length();
+    // char char_array[n+1];
+    // strcpy(char_array, Str.c_str());
+    // int h = mexPrintf(char_array);
+    // end
   }
 
   /** @brief compute the grid point associated with a index **/
@@ -272,6 +285,21 @@ public:
     }
     num=id;
     x[0]=m_first[0]+num*m_eta[0];
+    // debug purpose
+    // std::string Str = "m_NN: ";
+    // // Str += std::to_string(points[i]);
+    // // Str += ": ";
+    // Str += std::to_string(m_NN[0]);
+    // Str += ", ";
+    // Str += std::to_string(m_NN[1]);
+    // Str += "\n";
+    // int n = Str.length();
+    // char char_array[n+1];
+    // strcpy(char_array, Str.c_str());
+    // int h = mexPrintf(char_array);
+    // std::cout << "hello\n\n";
+    // print_info();
+    // end
   }
 
   /** @brief do a index to state conversion for vectors **/
@@ -319,6 +347,11 @@ public:
         std::cout << m_no_grid_points[i] << " ";
     }
     std::cout << "\nNumber of grid points: "<< total_no_grid_points() << std::endl;
+    // debug purpose
+    for(int i=0; i<m_dim; i++) {
+      std::cout << "m_NN[" << i << "] = " << m_NN[i] << "\n";
+    }
+    // end
   }
 
   /** @name get functions **/

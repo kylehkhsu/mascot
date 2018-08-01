@@ -46,7 +46,7 @@ auto simpleAddG = [](SymbolicSet* G) -> void {
                     1, 0,
                     0,-1,
                     0, 1};
-    double h1[4] = {-2.5, 3.5, 1, 0.7};
+    double h1[4] = {-2.5, 3.5, 0, 0.7};
     G->addPolytope(4, H, h1, INNER);
 };
 
@@ -85,6 +85,7 @@ int main() {
     double etaX[dimX]= {0.6, 0.6};
     double tau = 0.9;
     int numAbs = 3;
+    int p = 4;
 
     System system(dimX, lbX, ubX, etaX, tau,
                   dimU, lbU, ubU, etaU,
@@ -95,7 +96,7 @@ int main() {
 
     TicToc tt_tot;
     tt_tot.tic();
-    syn.onTheFlyReach(sysNext, radNext, x, u);
+    syn.onTheFlyReach(p, sysNext, radNext, x, u);
     clog << "------------------------------------Total time:";
     tt_tot.toc();
 
