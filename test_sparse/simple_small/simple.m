@@ -156,6 +156,24 @@ if (strcmp(mode, 'X'))
     title('X')
 end
 
+if (strcmp(mode, 'G'))
+    openfig('problem')
+    X1 = Goal('G/G1','init');
+    p1 = X1.points;
+    plot(p1(:,1),p1(:,2),'ko');
+    pause
+    
+    X2 = Goal('G/G2','init');
+    p2 = X2.points;
+    plot(p2(:,1),p2(:,2),'bo');
+    pause
+    
+    X3 = Goal('G/G3','init');
+    p3 = X3.points;
+    plot(p3(:,1),p3(:,2),'ro');
+    title('X')
+end
+
 if (strcmp(mode, 'S'))
     figure
     hold on
@@ -217,7 +235,7 @@ if (strcmp(mode,'R'))
     %     I = StaticController('plotting/I.scs');
     %     x = I.domain();
     %     x = x(1,:);
-    x = [5 1];
+    x = [0.5 1];
     
     v = [];
     

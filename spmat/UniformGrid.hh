@@ -76,6 +76,7 @@ protected:
   std::unique_ptr<abs_type[]> m_no_grid_points;
   /** @brief array recursively defined by: m_NN[0]=1; m_NN[i]=m_NN[i-1}*no_grid_points[i-1]; **/
   std::unique_ptr<abs_type[]> m_NN;
+  friend class StateTree;
 
 public:
   /* @cond  EXCLUDE from doxygen */

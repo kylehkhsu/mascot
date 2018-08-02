@@ -59,9 +59,10 @@
                 for (size_t i = 0; i < numAbs_; i++) {
                   db_[i] = new StateTreeNode*[no_states_[i]];
                 }
-                  /* debug purpose */
-                  for (int i=0; i<numAbs_; i++)
-                    std::cout << "no. of states in layer " << i  << ": "<< no_states_[i] << '\n';
+                /* debug purpose */
+                // for (int i=0; i<numAbs_; i++)
+                //   std::cout << "no. of states in layer " << i  << ": "<< no_states_[i] << '\n';
+                /* end */
                 /* first pass: initialization of tree nodes */
                 StateTreeNode** nodePtrArray = nullptr;
                 for (int ab = 0; ab < numAbs_; ab++) {
@@ -73,8 +74,8 @@
                     StateTreeNode* node = new StateTreeNode(ab, i);
                     nodePtrArray[i] = node;
                   }
-                  db_[ab] = nodePtrArray;
-                  // db_.push_back(nodePtrArray);
+                db_[ab] = nodePtrArray;
+                // db_.push_back(nodePtrArray);
                 }
                 /* second pass: mapping of tree nodes across layers */
                 int dim = ss[0]->get_dim(); /* the dimension is same in all layers */
@@ -86,29 +87,48 @@
                 /* loop over layers 0 to numAbs_ -1
                  * map each state of present state to no_child of consecutive
                  * states of the next layer */
-                for (int ab = 0; ab < numAbs_-1; ab++) {
-                  // std::vector<abs_type> no_grid_points_ab = ss[ab].get_no_gp_per_dim();
-                  // std::vector<abs_type> no_grid_points_nextAb = ss[ab+1].get_no_gp_per_dim();
-                  abs_type head = 0; // next state in the next layer which is to be assigned
-                  for (abs_type i = 0; i < no_states_[ab]; i++) {
-                    // if (ab == 0) {
-                    //   db_[ab][i]->parent_ = nullptr;
-                    // }
-                    // elseif (ab == numAbs_-1) {
-                    //   db_[ab][i]->no_child = 0;
-                    // }
-                    // else {
-                    db_[ab][i]->no_child_ = no_child;
-                    for (int j = 0; j < no_child; j++) {
-                        db_[ab][i]->child_.push_back(db_[ab+1][head+j]);
-                        db_[ab+1][head+j]->parent_ = db_[ab][i];
-                    }
-                    head += no_child;
-                    // }
-                  }
-                }
+                 abs_type quo;
+                 abs_type first_child;
+                 abs_type child_id;
+                 for (int ab = 0; ab < numAbs_-1; ab++) {
+                   std::cout << "Abstraction: " << ab << "\n\n";
+                   for (abs_type i = 0; i < no_states_[ab]; i++) {
+                     std::cout << "State: " << i << " : " << '\n';
+                     db_[ab][i]->no_child_ = no_child;
+                     abs_type id = i;
+                     first_child = 0;
+                     for (int j = dim-1; j > 0; j--) {
+                       quo = id/ss[ab]->m_NN[j];
+                       first_child += quo*eta_ratio[j]*ss[ab+1]->m_NN[j];
+                       id = id%ss[ab]->m_NN[j];
+                     }
+                     first_child += id*eta_ratio[0];
+                     std::cout << "Children: " << '\n';
+                     for (int j = 0; j < dim; j++) {
+                       for (int k = 0; k < eta_ratio[j]; k++) {
+                         child_id = first_child + k;
+                         std::cout << "\t " << child_id << '\n';
+                         db_[ab][i]->child_.push_back(db_[ab+1][child_id]);
+                         db_[ab+1][child_id]->parent_ = db_[ab][i];
+                       }
+                       if (j < dim-1) {
+                        first_child += ss[ab+1]->m_NN[j+1];
+                       }
+                     }
+                   }
+                 }
+                // for (int ab = 0; ab < numAbs_-1; ab++) {
+                //   abs_type head = 0; // next state in the next layer which is to be assigned
+                //   for (abs_type i = 0; i < no_states_[ab]; i++) {
+                //     db_[ab][i]->no_child_ = no_child;
+                //     for (int j = 0; j < no_child; j++) {
+                //         db_[ab][i]->child_.push_back(db_[ab+1][head+j]);
+                //         db_[ab+1][head+j]->parent_ = db_[ab][i];
+                //     }
+                //     head += no_child;
+                //   }
+                // }
               }
-            // }
 
     // /* copy constructor */
     // StateTree(const StateTree& other) : StateTree() {
@@ -213,7 +233,7 @@
             std::cout << "No. of layers:  " << numAbs_ << '\n';
             std::cout << "No. of states in each layer:  ";
             for (size_t i = 0; i < numAbs_; i++) {
-              std::cout << no_states_[i];
+              std::cout << no_states_[i] << " ";
             }
             std::cout << '\n';
           }

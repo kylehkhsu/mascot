@@ -33,3 +33,6 @@ $(TARGET): $(TARGET).o
 
 clean:
 	rm  ./$(TARGET)  ./$(TARGET).o
+
+cleanA:
+	rm -r -f C G Z T X plotting

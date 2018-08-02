@@ -901,6 +901,9 @@ public:
     			//X2s_.push_back(X);
           std::string file = "X/X" + std::to_string(i);
           write_to_file(*X, file);
+          // debug purpose
+          // std::cout << "Layer " << i << "state space: " << '\n';
+          // X->print_info();
         }
 		clog << "Xs_ and X2s_ initialized with full domain.\n";
 
@@ -1156,8 +1159,8 @@ public:
         for(abs_type j=0; j<M; j++) {
           /* loop over pre's associated with this input */
           for(abs_ptr_type v=0; v<trans_function.m_no_pre[q*M+j]; v++) {
-    	std::vector<abs_type> debug = trans_function.get_pre(q, j);
-    	abs_type i=trans_function.m_pre[trans_function.m_pre_ptr[q*M+j]+v];
+          	std::vector<abs_type> debug = trans_function.get_pre(q, j);
+          	abs_type i=trans_function.m_pre[trans_function.m_pre_ptr[q*M+j]+v];
             if(avoid(i,ss))
               continue;
             /* (i,j,q) is a transition */
@@ -1218,11 +1221,11 @@ public:
         // for (size_t j = 0; j < Gg->points.size(); j++) {
         //   std::cout << "marked goal: " << Gg->points[j] << '\n';
         // }
-        std::cout << "debug\n\n";
-        Gg->state_grid.print_info();
-        abs_type id = 57;
-        std::vector<double> x;
-        Gg->state_grid.itox(id,x);
+        // std::cout << "debug\n\n";
+        // Gg->state_grid.print_info();
+        // abs_type id = 57;
+        // std::vector<double> x;
+        // Gg->state_grid.itox(id,x);
       }
        //
        //
