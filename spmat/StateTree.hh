@@ -91,6 +91,18 @@
                  abs_type first_child;
                  abs_type child_id;
                  for (int ab = 0; ab < numAbs_-1; ab++) {
+                   std::queue<std::vector<int>> fifo;
+                   for (size_t i = 0; i < dim; i++) {
+                     std::vector<int> v;
+                     int p = 0;
+                     for (size_t j = 0; j < eta_ratio[i]; j++) {
+                       v.push_back(p);
+                       p += ss[ab+1]->m_NN[i];
+                     }
+                     fifo.push(v);
+                   }
+                   fifo = get_offset(fifo);
+                   std::vector<int> offset = fifo.front();
                    std::cout << "Abstraction: " << ab << "\n\n";
                    for (abs_type i = 0; i < no_states_[ab]; i++) {
                      std::cout << "State: " << i << " : " << '\n';
@@ -104,17 +116,24 @@
                      }
                      first_child += id*eta_ratio[0];
                      std::cout << "Children: " << '\n';
-                     for (int j = 0; j < dim; j++) {
-                       for (int k = 0; k < eta_ratio[j]; k++) {
-                         child_id = first_child + k;
-                         std::cout << "\t " << child_id << '\n';
-                         db_[ab][i]->child_.push_back(db_[ab+1][child_id]);
-                         db_[ab+1][child_id]->parent_ = db_[ab][i];
-                       }
-                       if (j < dim-1) {
-                        first_child += ss[ab+1]->m_NN[j+1];
-                       }
+                     for (size_t j = 0; j < offset.size(); j++) {
+                       child_id = first_child + offset[j];
+                       std::cout << "\t " << child_id << '\n';
+                       db_[ab][i]->child_.push_back(db_[ab+1][child_id]);
+                       db_[ab+1][child_id]->parent_ = db_[ab][i];
                      }
+                     // for (int j = 0; j < dim; j++) {
+                     //   for (int k = 0; k < eta_ratio[j]; k++) {
+                     //     child_id = first_child + k;
+                     //     std::cout << "\t " << child_id << '\n';
+                     //     db_[ab][i]->child_.push_back(db_[ab+1][child_id]);
+                     //     db_[ab+1][child_id]->parent_ = db_[ab][i];
+                     //   }
+                     //   if (j < dim-1) {
+                     //    first_child += ss[ab+1]->m_NN[j+1];
+                     //   }
+                     // }
+
                    }
                  }
                 // for (int ab = 0; ab < numAbs_-1; ab++) {
@@ -236,6 +255,36 @@
               std::cout << no_states_[i] << " ";
             }
             std::cout << '\n';
+          }
+
+          /* compute offset vector */
+          template<class T>
+          std::queue<std::vector<T>> get_offset(std::queue<std::vector<T>> fifo) {
+            if (fifo.size()>2) {
+              std::queue<std::vector<T>> temp;
+              temp.push(fifo.front());
+              fifo.pop();
+              temp.push(fifo.front());
+              fifo.pop();
+              std::queue<std::vector<T>> merged = get_offset(temp);
+              fifo.push(merged.front());
+              fifo = get_offset(fifo);
+            }
+            if (fifo.size()==2) {
+              std::vector<T> v1 = fifo.front();
+              fifo.pop();
+              std::vector<T> v2 = fifo.front();
+              fifo.pop();
+              std::vector<T> vmerged;
+              for (size_t i = 0; i < v1.size(); i++) {
+                for (size_t j = 0; j < v2.size(); j++) {
+                  vmerged.push_back(v1[i]+v2[j]);
+                }
+              }
+              fifo.push(vmerged);
+              return fifo;
+            }
+            return fifo;
           }
 
      }; /* close class definitioin */
