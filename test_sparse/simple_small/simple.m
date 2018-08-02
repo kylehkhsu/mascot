@@ -181,7 +181,7 @@ if (strcmp(mode, 'S'))
     drawnow
     
     % load and draw state space
-    X = StaticController('plotting/X.scs');
+    X = UniformGrid('plotting/X');
     lb = X.first();
     ub = X.last();
     axis([lb(1)-1 ub(1)+1 lb(2)-1 ub(2)+1])

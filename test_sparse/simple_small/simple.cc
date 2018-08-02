@@ -55,10 +55,14 @@ auto radNext = [](X_type &x, X_type &r, U_type &u, double tau, OdeSolver solver)
 auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss) {
   X_type x;
   ss->itox(abs_state,x);
-  std::vector<double> s_eta = ss->get_eta();
+  double* offset = new double[dimX];
+  std::vector<double> eta = ss->get_eta();
+  for (size_t i = 0; i < dimX; i++) {
+    offset[i] = eta[i]/2;
+  }
   /* function returns 1 if cell associated with x is in target set  */
-  if (2.5 <= (x[0]) && (x[0]) <= 3.5 &&
-      0 <= (x[1]) && (x[1]) <= 0.7)
+  if (2.5+offset[0] <= (x[0]) && (x[0]) <= 3.5-offset[0] &&
+      0+offset[1] <= (x[1]) && (x[1]) <= 0.7-offset[1])
     return true;
   return false;
 };
@@ -77,8 +81,13 @@ auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss)
 auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss) {
   X_type x;
   ss.itox(abs_state,x);
-  if (2.1 <= (x[0]) && (x[0]) <= 2.3 &&
-      0 <= (x[1]) && (x[1]) <= 1.2)
+  double* offset = new double[dimX];
+  std::vector<double> eta = ss.get_eta();
+  for (size_t i = 0; i < dimX; i++) {
+    offset[i] = eta[i]/2;
+  }
+  if (2.1-offset[0] <= (x[0]) && (x[0]) <= 2.3+offset[0] &&
+      0-offset[1] <= (x[1]) && (x[1]) <= 1.2+offset[1])
     return true;
   return false;
 };
@@ -105,14 +114,14 @@ int main() {
     int nSubInt = 5;
 
     /* 1 layer */
-    // double etaX[dimX]= {0.6/2/2, 0.6/2/2};
-    // double tau = 0.9/2/2;
-    // int numAbs = 1;
+    double etaX[dimX]= {0.6/2/2, 0.6/2/2};
+    double tau = 0.9/2/2;
+    int numAbs = 1;
 
-    /* 3 layers */
-    double etaX[dimX]= {0.6, 0.6};
-    double tau = 0.9;
-    int numAbs = 3;
+    // /* 3 layers */
+    // double etaX[dimX]= {0.6, 0.6};
+    // double tau = 0.9;
+    // int numAbs = 3;
 
     bool lazy = false;
     int readAbs = 0;
@@ -123,7 +132,7 @@ int main() {
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nSubInt, numAbs);
 
-    AdaptAbsReach syn("simple_small3A.log");
+    AdaptAbsReach syn("simple_small1A.log");
     syn.initialize(&system, target, obstacle, verbose);
 
     TicToc tt_tot;
