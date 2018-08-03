@@ -41,8 +41,8 @@ auto radNext = [](X_type &x, X_type &r, U_type &u, double tau, OdeSolver solver)
 auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss) {
 	// X_type t_lb = { { 4.5, 0.1, -M_PI - 0.8 } }; // 0.8 offset is made up
 	// X_type t_ub = { { 6.0, 0.61, M_PI + 0.8 } }; // 0.8 offset is made up
-  X_type t_lb = { { 4.5, 0.1, -3.3 } }; // 0.8 offset is made up
-	X_type t_ub = { { 6.0, 0.61, 3.3 } }; // 0.8 offset is made up
+  X_type t_lb = { { 2.5, 0.1, -3.3 } }; // 0.8 offset is made up
+	X_type t_ub = { { 3.5, 0.61, 3.3 } }; // 0.8 offset is made up
 	X_type c_lb;
 	X_type c_ub;
 	X_type z = { {0, 0, 0} }; // assume no measurement error
@@ -52,20 +52,29 @@ auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss)
 	/* hyper-interval of the quantizer symbol with perturbation */
 	int dim = ss->get_dim();
 	std::vector<double> etaX = ss->get_eta();
-	for (int i = 0; i<dim; i++) {
-		c_lb[i] = x[i] - etaX[i] / 2.0 - z[i];
-		c_ub[i] = x[i] + etaX[i] / 2.0 + z[i];
+	// for (int i = 0; i<dim; i++) {
+	// 	c_lb[i] = x[i] - etaX[i] / 2.0 - z[i];
+	// 	c_ub[i] = x[i] + etaX[i] / 2.0 + z[i];
+	// }
+  // if (t_lb[0] <= c_lb[0] && c_ub[0] <= t_ub[0] &&
+	// 	t_lb[1] <= c_lb[1] && c_ub[1] <= t_ub[1] &&
+	// 	t_lb[2] <= c_lb[2] && c_ub[2] <= t_ub[2]) {
+	// 	return true;
+	// }
+  for (int i = 0; i<dim; i++) {
+		t_lb[i] = t_lb[i] + etaX[i] / 2.0 + z[i];
+		t_ub[i] = t_ub[i] - etaX[i] / 2.0 - z[i];
 	}
-	if (t_lb[0] <= c_lb[0] && c_ub[0] <= t_ub[0] &&
-		t_lb[1] <= c_lb[1] && c_ub[1] <= t_ub[1] &&
-		t_lb[2] <= c_lb[2] && c_ub[2] <= t_ub[2]) {
+	if (t_lb[0] <= x[0] && x[0] <= t_ub[0] &&
+		t_lb[1] <= x[1] && x[1] <= t_ub[1] &&
+		t_lb[2] <= x[2] && x[2] <= t_ub[2]) {
 		return true;
 	}
 	return false;
 
 };
 
-auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss) {
+auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss) {
 	// X_type t_lb = { { 1.9, 0, -M_PI - 0.4 } };
 	// X_type t_ub = { { 2.3, 1.2, M_PI + 0.4 } };
   X_type t_lb = { { 1.9, 0, -3.3 } };
@@ -75,16 +84,25 @@ auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid &s
 	X_type z = { { 0, 0, 0 } }; // assume no measurement error
 	/* center of cell associated with abs_state is stored in x */
 	X_type x;
-	ss.itox(abs_state, x);
+	ss->itox(abs_state, x);
 	/* hyper-interval of the quantizer symbol with perturbation */
-	int dim = ss.get_dim();
-	std::vector<double> etaX = ss.get_eta();
-	for (int i = 0; i<dim; i++) {
-		c_lb[i] = x[i] - etaX[i] / 2.0 - z[i];
-		c_ub[i] = x[i] + etaX[i] / 2.0 + z[i];
+	int dim = ss->get_dim();
+	std::vector<double> etaX = ss->get_eta();
+	// for (int i = 0; i<dim; i++) {
+	// 	c_lb[i] = x[i] - etaX[i] / 2.0 - z[i];
+	// 	c_ub[i] = x[i] + etaX[i] / 2.0 + z[i];
+	// }
+  // if (t_lb[0] <= c_lb[0] && c_ub[0] <= t_ub[0] &&
+	// 	t_lb[1] <= c_lb[1] && c_ub[1] <= t_ub[1]) { //&&
+	// 	//t_lb[2] <= c_lb[2] && c_ub[2] <= t_ub[2]) {
+	// 	return true;
+	// }
+  for (int i = 0; i<dim; i++) {
+		t_lb[i] = t_lb[i] - etaX[i] / 2.0 - z[i];
+		t_ub[i] = t_ub[i] + etaX[i] / 2.0 + z[i];
 	}
-	if (t_lb[0] <= c_lb[0] && c_ub[0] <= t_ub[0] &&
-		t_lb[1] <= c_lb[1] && c_ub[1] <= t_ub[1]) { //&&
+	if (t_lb[0] <= x[0] && t_ub[0] >= x[0] &&
+		t_lb[1] <= x[1] && t_ub[1] >= x[1]) { //&&
 		//t_lb[2] <= c_lb[2] && c_ub[2] <= t_ub[2]) {
 		return true;
 	}
@@ -135,7 +153,7 @@ int main() {
 
     TicToc tt_tot;
     tt_tot.tic();
-    abs.onTheFlyReach(p_, sysNext, radNext, x, u, lazy);
+    abs.onTheFlyReach(p_, sysNext, radNext, x, u, lazy, readAbs);
     clog << "------------------------------------Total time:";
     tt_tot.toc();
 

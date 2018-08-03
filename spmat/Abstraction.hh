@@ -25,7 +25,7 @@ namespace scots {
 /** @cond **/
 /* default parameter for the third parameter of Abstraction::compute_gb  */
 namespace params {
-  auto avoid_abs = [](const abs_type&, const UniformGrid&) noexcept {return false;};
+  auto avoid_abs = [](const abs_type&, const UniformGrid*) noexcept {return false;};
 }
 /** @endcond **/
 
@@ -190,7 +190,7 @@ public:
 	//tu.tic();
 	///* by kaushik: upto this point */
       /* is i an element of the avoid symbols ? */
-      if(avoid(i, m_state_alphabet)) {
+      if(avoid(i, &m_state_alphabet)) {
         for(abs_type j=0; j<M; j++) {
           out_of_domain[i*M+j]=true;
         }
@@ -438,7 +438,7 @@ public:
 	//tu.tic();
 	///* by kaushik: upto this point */
       /* is i an element of the avoid symbols ? */
-      if(avoid(i, m_state_alphabet)) {
+      if(avoid(i, &m_state_alphabet)) {
         for(abs_type j=0; j<M; j++) {
           out_of_domain[i*M+j]=true;
         }

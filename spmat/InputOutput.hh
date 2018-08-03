@@ -58,6 +58,9 @@
 /* Target states defintion */
 #define MASCOT_TARGET_STATES  "TARGET_STATES"
 
+/* Time sampling parameter */
+#define MASCOT_TAU            "TIME_SAMPLING"
+
 /** @namespace scots **/
 namespace scots {
 
@@ -117,6 +120,8 @@ bool write_to_file(const StaticController& sc, const std::string& filename, bool
         writer.add_VECTOR(SCOTS_UG_LOWER_LEFT,sc.m_input_grid.get_lower_left());
         writer.add_VECTOR(SCOTS_UG_UPPER_RIGHT,sc.m_input_grid.get_upper_right());
 
+        /*write time sampling parameter associated with the controller */
+        writer.add_MEMBER(MASCOT_TAU,sc.get_tau());
         writer.close();
 
         /* write WinningDomain */
@@ -227,7 +232,7 @@ bool write_to_file(const UniformGrid& grid, const F& atomic_prop, const std::str
     }
     std::vector<abs_type> gp {};
     for(abs_type i=0; i<grid.size(); i++) {
-        if(atomic_prop(i)) {
+        if(atomic_prop(i, &grid)) {
             gp.push_back(i);
         }
     }
@@ -417,6 +422,10 @@ bool read_from_file(StaticController& sc, const std::string& filename) {
     if(!ss_offset || !is_offset) {
         return false;
     }
+    double tau;
+    if(!reader.get_MEMBER(MASCOT_TAU,tau)) {
+      return false;
+    }
     reader.close();
     /* read UniformGrid info */
     UniformGrid ss;
@@ -433,7 +442,7 @@ bool read_from_file(StaticController& sc, const std::string& filename) {
     if(!read_from_file(wd,filename)) {
         return false;
     }
-    sc = StaticController(ss,is,std::move(wd));
+    sc = StaticController(ss,is,std::move(wd),tau);
     return true;
 }
 

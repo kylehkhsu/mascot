@@ -17,6 +17,7 @@ classdef StaticController < handle
   properties (SetAccess=private)
     filename  % name of file which contains the StaticController
     domain    % the gird points for which there exist valid inputs
+    tau       % time sampling associated with the controller
     handle    % handle to C++ StaticController (created in the mex file)
   end
   methods 
@@ -36,6 +37,9 @@ classdef StaticController < handle
         error(['StaticController: could not read StaticController from ', filename])
       end
       obj.handle=h;
+      
+      t = mexStaticController('parameters',obj.handle);
+      obj.tau = t;
     end
 
 %     function delete(obj)

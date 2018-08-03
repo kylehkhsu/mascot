@@ -39,8 +39,23 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   }
 	reader.close();
   if(!success) {
-    mexErrMsgIdAndTxt("MATLAB:GridPoints",
-                      "couldn't not read grid points from file: %s",filename);
+    // mexErrMsgIdAndTxt("MATLAB:GridPoints",
+                      // "couldn't not read grid points from file: %s",filename);
+                      mexWarnMsgTxt("MATLAB:GridPoints: couldn't read grid points. Returning only the uniformgrid information.");
+                      mwSize dim = grid.get_dim();
+                      mwSize no_grid_points = grid.size();
+
+                      /* convert abstract cell IDs to the center of cells */
+                      plhs[0]=mxCreateDoubleMatrix(no_grid_points,dim,mxREAL);
+                      double *ptr=mxGetPr(plhs[0]);
+                      std::vector<double> x(grid.get_dim());
+                      for(size_t i=0; i<no_grid_points; i++) {
+                        grid.itox(i,x);
+                        for(size_t j=0; j<dim ; j++) {
+                          ptr[j*no_grid_points+i]=x[j];
+                        }
+                      }
+                      return;
 	}
   mwSize dim = grid.get_dim();
   mwSize no_grid_points = abs_gp.size();
@@ -57,4 +72,3 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   }
   return;
 }
-

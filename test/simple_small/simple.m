@@ -1,7 +1,7 @@
 
 function simple (mode, numAbs, controllers, progression)
 w = [0.05 0.05];
-addpath(genpath('../..'));
+addpath(genpath('../../mfiles'));
 addpath(genpath('~/ownCloud/C++/SCOTS_modified/mfiles/'));
 
 % colors
@@ -181,7 +181,7 @@ if (strcmp(mode,'R'))
     %     I = SymbolicSet('plotting/I.bdd');
     %     x = I.points();
     %     x = x(1,:);
-    x = [1 0];
+    x = [0.3222    0.3473];
     
     v = [];
     

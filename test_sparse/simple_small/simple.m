@@ -181,12 +181,12 @@ if (strcmp(mode, 'S'))
     drawnow
     
     % load and draw state space
-    X = UniformGrid('plotting/X');
-    lb = X.first();
-    ub = X.last();
-    axis([lb(1)-1 ub(1)+1 lb(2)-1 ub(2)+1])
-    plotCells(X, 'facecolor', 'none', 'edgec', [0.8 0.8 0.8], 'linew', 0.1);
-    drawnow
+    X = GridPoints('plotting/X');
+    axis([min(X(:,1))-1 max(X(:,1))+1 min(X(:,2))-1 max(X(:,2))+1])
+%     lb = X.first();
+%     ub = X.last();
+    eta = [0.6 0.6];
+    PlotCells(X, eta, 'facecolor', 'none', 'edgec', [0.8 0.8 0.8], 'linew', 0.1);
     disp('Done plotting state space')
     
     savefig('system');
@@ -194,23 +194,25 @@ end
 
 if (strcmp(mode,'P'))
     openfig('system');
+    xl = xlim;
+    yl = ylim;
     hold on
-    drawnow
-    
+%     drawnow
+    eta = [0.15 0.15];
     % load and draw obstacles
     try
-        O = StaticController('plotting/O.scs');
-        plotCells(O, 'facecolor', colors(1,:)*0.5+0.5, 'edgec', colors(1,:), 'linew', 0.1)
-        drawnow
+        O = GridPoints('plotting/O');
+        PlotCells(O, eta, 'facecolor', colors(1,:)*0.5+0.5, 'edgec', colors(1,:), 'linew', 0.1)
+%         drawnow
         disp('Done plotting obstacles')
     catch
         warning('No obstacles');
     end
     
     % load and draw goal
-    G = StaticController('plotting/G.scs');
-    plotCells(G, 'facecolor', colors(2,:)*0.5+0.5, 'edgec', colors(2,:), 'linew', 0.1)
-    drawnow
+    G = GridPoints('plotting/G');
+    PlotCells(G, eta, 'facecolor', colors(2,:)*0.5+0.5, 'edgec', colors(2,:), 'linew', 0.1)
+%     drawnow
     disp('Done plotting goal')
     
     %     % load and draw initial
@@ -218,7 +220,8 @@ if (strcmp(mode,'P'))
     %     plotCells(I, 'facecolor', colors(3,:)*0.5+0.5, 'edgec', colors(3,:), 'linew', 0.1)
     %     drawnow
     %     disp('Done plotting initial')
-    
+    xlim(xl);
+    ylim(yl);
     savefig('problem');
     
 end
@@ -235,8 +238,8 @@ if (strcmp(mode,'R'))
     %     I = StaticController('plotting/I.scs');
     %     x = I.domain();
     %     x = x(1,:);
-    x = [0.5 1];
-    
+    x = [1.9 1];
+   
     v = [];
     
     j = 1;
@@ -245,6 +248,7 @@ if (strcmp(mode,'R'))
         disp(['iteration: ' int2str(i)])
         
         C = StaticController(['C/C' int2str(i)]);
+        tau = C.tau;
         if (i == 1)
 %             G = StaticController(['G/G' int2str(numAbs) '.scs']);
             G = Goal(['G/G' int2str(numAbs)]);
@@ -260,7 +264,7 @@ if (strcmp(mode,'R'))
         Z = Goal(['Z/Z' int2str(i)]);
         eta = Z.eta();
         eta = eta';
-        tau = eta(1) * 3 / 2;
+%         tau = eta(1) * 3 / 2;
         
         disp('eta')
         disp(eta)

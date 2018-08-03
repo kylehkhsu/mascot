@@ -33,7 +33,7 @@ namespace scots {
 /** @cond **/
 /* default parameters for the solve_reachability_game */
 namespace params {
-  auto avoid = [](const abs_type&, const UniformGrid ss) noexcept {return false;};
+  auto avoid = [](const abs_type&, const UniformGrid* ss) noexcept {return false;};
   static std::vector<double> value {};
 }
 
@@ -47,7 +47,7 @@ public:
     vector<UniformGrid*> Xs_; /*!< The *system_->numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
     StateTree* tree_; /*!< The data structure that maps states across layers, and takes care of the projection of winning states. */
 
-  std::function<bool(const int, const UniformGrid&)> avoid; /*!< Function which evaluates to true for unsafe (obstacle) states of a given layer. */
+  std::function<bool(const int, const UniformGrid*)> avoid; /*!< Function which evaluates to true for unsafe (obstacle) states of a given layer. */
 	// std::function<bool(const int, const UniformGrid&)> target; /*!< Function which evaluates to true for winning states of a given layer. */
   // std::function<bool(const abs_type, const int)> target; /*!< Function which evaluates to true for winning states of a given layer. First argument: state, second argument: layer. */
   //vector<UniformGrid*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
@@ -365,8 +365,8 @@ public:
        }
 
        // if ((result != CONVERGEDINVALID) && (ab!=*system_->numAbs_-1)) {
-        if ((result != CONVERGEDINVALID) || (ab==*system_->numAbs_-1)) {
-       // if (result != CONVERGEDINVALID) {
+        // if ((result != CONVERGEDINVALID) || (ab==*system_->numAbs_-1)) {
+       if (result != CONVERGEDINVALID) {
          // validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
          // validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
          std::vector<abs_type> dom = w.get_winning_domain();
@@ -376,7 +376,7 @@ public:
          saveCZ(ab, w);
          // std::cout << "Winning domain size: " << w.get_size() << std::endl;
          // std::string file = "C/C" + std::to_string(rec_depth);
-         // write_to_file(StaticController(*Xs_[ab], *U_, std::move(w)), file);
+         // write_to_file(StaticController(*Xs_[ab], *U_, std::move(w), *tau_[ab]), file);
          clog << "saved as snapshot\n";
          if (print)
              cout << "saved as snapshot\n";
@@ -512,7 +512,7 @@ public:
       TransitionFunction& trans_function = *Ts_[ab];
       abs_ptr_type no_trans = trans_function.get_no_transitions();
       /* state space of layer ab */
-      UniformGrid ss = *Xs_[ab];
+      UniformGrid* ss = Xs_[ab];
       /* target and obstacle regions */
       // F1& target = winning;
       // F2& avoid = obstacle;
@@ -573,7 +573,7 @@ public:
       }
 
       ReachResult result = CONVERGEDINVALID;
-      double lastValue;
+      double lastValue=0;
       /* main loop */
       while(!fifo.empty()) {
         /* get state to be processed */
@@ -612,6 +612,8 @@ public:
         /* if fifo is empty and the m reached is greater than minToBeValid_ */
         result = CONVERGEDVALID;
       }
+      // debug purpose
+      std::cout << "Fix point iterations: " << lastValue << '\n';
       /* if the default value function was used, free the memory of the static object*/
       if(value == scots::params::value){
           value.clear();
@@ -861,7 +863,7 @@ public:
         initializeCubes();
         initializeNotVars();
         initializeProjs();*/
-        verifySave();
+        verifySave(G);
 
         abTime_ += timer.toc();
     }
@@ -1060,7 +1062,8 @@ public:
     }
 
     /*! Saves and prints to log file some information related to the reachability/always-eventually specification. */
-    void verifySave() {
+    template<class classG>
+    void verifySave(classG G) {
         clog << "etaXs_:\n";
         for (size_t i = 0; i < etaXs_.size(); i++) {
             clog << "abstraction " << i << ": ";
@@ -1081,8 +1084,8 @@ public:
 
         checkMakeDir("plotting");
         write_to_file(*Xs_[0], "plotting/X");
-        // write_to_file(*Os_[*system_->numAbs_-1], "plotting/O");
-        // write_to_file(*Gs_[*system_->numAbs_-1], "plotting/G");
+        write_to_file(*Xs_[*system_->numAbs_-1], avoid, "plotting/O");
+        write_to_file(*Xs_[*system_->numAbs_-1], G, "plotting/G");
         // checkMakeDir("O");
         // saveVec(Os_, "O/O");
         // checkMakeDir("G");
@@ -1109,7 +1112,7 @@ public:
     WinningDomain solve_reachability_game(int ab,
                                           std::vector<double> & value = params::value ) {
       TransitionFunction& trans_function = *Ts_[ab];
-      const UniformGrid ss = *Xs_[ab];
+      const UniformGrid* ss = Xs_[ab];
       /* size of state alphabet */
       abs_type N=trans_function.m_no_states;
       /* size of input alphabet */
@@ -1194,13 +1197,19 @@ public:
     */
     void saveCZ(const int ab, WinningDomain& w) {
        std::vector<abs_type>* Z = new std::vector<abs_type>();
-       if (!tree_->getMarkedStates(ab, *Z))
-        return;
+       // if (!tree_->getMarkedStates(ab, *Z))
+       //  return;
+       // Goal* Zg = new Goal(*Xs_[ab], *Z);
 
-       Goal* Zg = new Goal(*Xs_[ab], *Z);
+       // debug purpose
+       if (!tree_->getMarkedStates(*system_->numAbs_-1, *Z))
+        return;
+       Goal* Zg = new Goal(*Xs_[*system_->numAbs_-1], *Z);
+       // end
+
        finalZs_.push_back(Zg);
 
-       StaticController* C = new StaticController(*Xs_[ab], *U_, std::move(w));
+       StaticController* C = new StaticController(*Xs_[ab], *U_, std::move(w), *tau_[ab]);
        finalCs_.push_back(C);
        finalAbs_.push_back(ab);
     }

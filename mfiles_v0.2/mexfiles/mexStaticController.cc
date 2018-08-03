@@ -38,9 +38,20 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     return;
   }
 
-  /* get pointer to UniformGrid object */ 
+  /* get pointer to UniformGrid object */
   scots::StaticController *controller=convertMat2Ptr<scots::StaticController>(prhs[1]);
 
+  /* parameters */
+  if (!std::strcmp(command,"parameters")) {
+    /* tau */
+    double tau = controller->get_tau();
+    if(!tau) {
+      plhs[0]=mxCreateDoubleMatrix(0,0,mxREAL);
+      return;
+    }
+    plhs[0]=mxCreateDoubleScalar((double)tau);
+    return;
+  }
   /* control: return control input associated with x */
   if (!strcmp(command,"control")) {
     /* copy state to std::vector */
@@ -52,7 +63,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     }
     /* get input associated with x */
     try {
-      std::vector<std::vector<double>> 
+      std::vector<std::vector<double>>
       u=controller->get_control<std::vector<double>,std::vector<double>>(x);
       /* create matrix to store input */
       plhs[0]=mxCreateDoubleMatrix((mwSize)u.size(),(mwSize)u[0].size(),mxREAL);
@@ -92,4 +103,3 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   }
   return;
 }
-

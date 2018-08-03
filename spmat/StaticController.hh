@@ -4,7 +4,7 @@
  *  created: Dec 2016
  *   author: Frederik Kunik
  *           Matthias Rungger
- *           
+ *
  */
 
 /** @file **/
@@ -19,7 +19,7 @@
 #include "UniformGrid.hh"
 #include "WinningDomain.hh"
 
-/** @namespace scots **/ 
+/** @namespace scots **/
 namespace scots{
 /**
  * @brief StaticController class to simualte the closed loop
@@ -33,10 +33,12 @@ private:
 
   WinningDomain m_winning_domain;
 
+  /* tau_: the sampling time associated to the controller */
+  double tau_;
 public:
   /** @cond  EXCLUDE from doxygen **/
   /* default constructor */
-  StaticController()=default;                      
+  StaticController()=default;
   /* destructor */
   ~StaticController()=default;
   /* copy constructor  */
@@ -52,10 +54,12 @@ public:
   /** @brief controller constructor **/
   StaticController(const UniformGrid& state_grid,
                    const UniformGrid& input_grid,
-                   WinningDomain&& winning_domain) :
+                   WinningDomain&& winning_domain,
+                   double tau) :
                    m_input_grid(input_grid),
                    m_state_grid(state_grid),
-                   m_winning_domain(std::move(winning_domain)) { }
+                   m_winning_domain(std::move(winning_domain)),
+                   tau_(tau)  { }
 
   /** @brief get a std::vector containing the valid control inputs at state x \n
     * does throw a runtime error if state x is out of winning domain**/
@@ -111,6 +115,10 @@ public:
       domain[i]=x;
     }
     return domain;
+  }
+
+  double get_tau() const {
+    return tau_;
   }
 };
 

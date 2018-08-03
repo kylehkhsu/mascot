@@ -64,6 +64,11 @@ auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss)
   if (2.5+offset[0] <= (x[0]) && (x[0]) <= 3.5-offset[0] &&
       0+offset[1] <= (x[1]) && (x[1]) <= 0.7-offset[1])
     return true;
+  // debug purpose: the goal is entire right side to the obstacle
+  // if (2.3+offset[0] <= (x[0]) && (x[0]) <= 6-offset[0] &&
+  //     0+offset[1] <= (x[1]) && (x[1]) <= 1.8-offset[1])
+  //   return true;
+  // end
   return false;
 };
 
@@ -78,11 +83,11 @@ auto target = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss)
 //     ;
 // };
 
-auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid &ss) {
+auto obstacle = [](const scots::abs_type &abs_state, const scots::UniformGrid* ss) {
   X_type x;
-  ss.itox(abs_state,x);
+  ss->itox(abs_state,x);
   double* offset = new double[dimX];
-  std::vector<double> eta = ss.get_eta();
+  std::vector<double> eta = ss->get_eta();
   for (size_t i = 0; i < dimX; i++) {
     offset[i] = eta[i]/2;
   }
@@ -114,14 +119,14 @@ int main() {
     int nSubInt = 5;
 
     /* 1 layer */
-    double etaX[dimX]= {0.6/2/2, 0.6/2/2};
-    double tau = 0.9/2/2;
-    int numAbs = 1;
+    // double etaX[dimX]= {0.6/2, 0.6/2};
+    // double tau = 0.9/2;
+    // int numAbs = 1;
 
     // /* 3 layers */
-    // double etaX[dimX]= {0.6, 0.6};
-    // double tau = 0.9;
-    // int numAbs = 3;
+    double etaX[dimX]= {0.6, 0.6};
+    double tau = 0.9;
+    int numAbs = 3;
 
     bool lazy = false;
     int readAbs = 0;
@@ -132,7 +137,7 @@ int main() {
                   dimU, lbU, ubU, etaU,
                   etaRatio, tauRatio, nSubInt, numAbs);
 
-    AdaptAbsReach syn("simple_small1A.log");
+    AdaptAbsReach syn("simple_small3A.log");
     syn.initialize(&system, target, obstacle, verbose);
 
     TicToc tt_tot;

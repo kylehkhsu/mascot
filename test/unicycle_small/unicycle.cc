@@ -43,7 +43,7 @@ auto unicycleAddG = [](SymbolicSet* G) -> void {
                     1, 0, 0,
                     0,-1, 0,
                     0, 1, 0};
-    double h1[4] = {-2.5, 3.5, 1, 0.7};
+    double h1[4] = {-2.5, 3.5, 0, 0.7};
     G->addPolytope(4, H, h1, INNER);
 };
 

@@ -1,8 +1,8 @@
 
 function unicycle (mode, numAbs, controllers, progression)
 w = [0.05 0.05 0];
-addpath(genpath('../..'));
-addpath(genpath('~/ownCloud/C++/SCOTS_modified/mfiles/'));
+addpath(genpath('../../mfiles/'));
+% addpath(genpath('~/ownCloud/C++/SCOTS_modified/mfiles/'));
 
 % colors
 colors=get(groot,'DefaultAxesColorOrder');

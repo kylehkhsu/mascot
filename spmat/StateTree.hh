@@ -103,9 +103,9 @@
                    }
                    fifo = get_offset(fifo);
                    std::vector<int> offset = fifo.front();
-                   std::cout << "Abstraction: " << ab << "\n\n";
+                   // std::cout << "Abstraction: " << ab << "\n\n";
                    for (abs_type i = 0; i < no_states_[ab]; i++) {
-                     std::cout << "State: " << i << " : " << '\n';
+                     // std::cout << "State: " << i << " : " << '\n';
                      db_[ab][i]->no_child_ = no_child;
                      abs_type id = i;
                      first_child = 0;
@@ -115,10 +115,10 @@
                        id = id%ss[ab]->m_NN[j];
                      }
                      first_child += id*eta_ratio[0];
-                     std::cout << "Children: " << '\n';
+                     // std::cout << "Children: " << '\n';
                      for (size_t j = 0; j < offset.size(); j++) {
                        child_id = first_child + offset[j];
-                       std::cout << "\t " << child_id << '\n';
+                       // std::cout << "\t " << child_id << '\n';
                        db_[ab][i]->child_.push_back(db_[ab+1][child_id]);
                        db_[ab+1][child_id]->parent_ = db_[ab][i];
                      }
@@ -186,7 +186,7 @@
               int oldMarking = (node->parent_)->marking_;
               if (val==2) {
                 (node->parent_)->no_m_child_ += 1;
-                if ((node->parent_)->no_m_child_ = (node->parent_)->no_child_) {
+                if ((node->parent_)->no_m_child_ == (node->parent_)->no_child_) {
                   (node->parent_)->marking_ = 2;
                 }
                 else {
