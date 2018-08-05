@@ -100,6 +100,21 @@ public:
   }
 
   /**
+   * @brief initialize the transition function
+   *        (required for partial computation only)
+   **/
+   void initialize(TransitionFunction& transition_function) {
+     /* number of cells */
+     abs_type N=m_state_alphabet.size();
+     /* number of inputs */
+     abs_type M=m_input_alphabet.size();
+     /* init in transition_function the members no_pre, no_post, pre_ptr */
+     transition_function.init_infrastructure(N,M);
+     /* allocate memory for pre list */
+     transition_function.init_transitions(0);
+   }
+
+  /**
    * @brief computes the transition function
    *
    * @param[out] transition_function - the result of the computation
@@ -184,6 +199,7 @@ public:
      */
     /* loop over all cells */
     for(abs_type i=0; i<N; i++) {
+      transition_function.m_states_explored[i]=true;
 	///* by kaushik: profiling of one entire loop */
 	//TicToc tu;
 	//std::cout << "Starting with a new state-input pair" << std::endl;
@@ -398,6 +414,20 @@ public:
     abs_type counter=0;
     /* some grid information */
     std::vector<abs_type> NN=m_state_alphabet.get_nn();
+    /* old m_no_pre: will be used to copy the old pres */
+    std::unique_ptr<abs_type[]> old_no_pre;
+    std::unique_ptr<abs_type[]> old_pre;
+    std::unique_ptr<abs_ptr_type[]> old_pre_ptr;
+    old_no_pre.reset(new abs_type[N*M]);
+    old_pre.reset(new abs_type[transition_function.m_no_transitions]);
+    old_pre_ptr.reset(new abs_ptr_type[N*M]);
+    for (abs_type i = 0; i < N*M; i++) {
+      old_no_pre[i] = transition_function.m_no_pre[i];
+      old_pre_ptr[i] = transition_function.m_pre_ptr[i];
+    }
+    for (abs_ptr_type i = 0; i < transition_function.m_no_transitions; i++) {
+      old_pre[i] = transition_function.m_pre[i];
+    }
     /* variables for managing the post */
     std::vector<abs_type> lb(dim);  /* lower-left corner */
     std::vector<abs_type> ub(dim);  /* upper-right corner */
@@ -419,7 +449,7 @@ public:
       upper_right[i]=m_state_alphabet.get_upper_right()[i];
     }
     /* init in transition_function the members no_pre, no_post, pre_ptr */
-    transition_function.init_infrastructure(N,M);
+    // transition_function.init_infrastructure(N,M);
     /* lower-left & upper-right corners of hyper rectangle of cells that cover attainable set */
     std::unique_ptr<abs_type[]> corner_IDs(new abs_type[N*M*2]());
     /* is post of (i,j) out of domain ? */
@@ -432,6 +462,9 @@ public:
     /* loop over all cells given by states_to_explore */
     for(abs_type y=0; y<states_to_explore.size(); y++) {
       abs_type i = states_to_explore[y];
+      if (transition_function.m_states_explored[i])
+        continue;
+
 	///* by kaushik: profiling of one entire loop */
 	//TicToc tu;
 	//std::cout << "Starting with a new state-input pair" << std::endl;
@@ -444,10 +477,15 @@ public:
         }
         continue;
       }
+      // bool already_seen = false;
+      // for (abs_type j = 0; j < M; j++) {
+      //   if (transition_function.m_no_post[i*M+j]!=0) {
+      //     already_seen = true;
+      //   }
+      // }
+
       /* loop over all inputs */
       for(abs_type j=0; j<M; j++) {
-        if (transition_function.m_no_post[i*M+j] != 0) /* state input pair (i,j) already explored */
-          continue;
         out_of_domain[i*M+j]=false;
         /* get center x of cell */
         m_state_alphabet.itox(i,x);
@@ -526,7 +564,7 @@ public:
         if(counter==0)
           std::cout << "1st loop: ";
       }
-      progress(i,N,counter);
+      progress(y,N,counter);
 	//tu.toc(); /* by kaushik */
     }
     /* compute pre_ptr */
@@ -537,62 +575,117 @@ public:
         transition_function.m_pre_ptr[i*M+j]=sum;
       }
     }
-    /* allocate memory for pre list */
-    transition_function.init_transitions(T);
+    /* allocate memory for pre list: temprary is the temporary pre
+      * placeholder, which will replace the m_pre */
+    // transition_function.init_transitions(T);
+    // abs_type* temporary = transition_function.expand_transitions(T);
+    transition_function.m_no_transitions += T;
+    std::unique_ptr<abs_type[]> temporary(new abs_type[transition_function.m_no_transitions]);
 
-    /* second loop: fill pre array */
+
+    /* second loop: fill pre array stage 1 */
     counter=0;
     /* loop over all cells given by states_to_explore */
     for(abs_type y=0; y<states_to_explore.size(); y++) {
       abs_type i = states_to_explore[y];
-      /* loop over all inputs */
-      for(abs_type j=0; j<M; j++) {
-      /* is x an element of the overflow symbols ? */
-        if(out_of_domain[i*M+j])
-          continue;
-        /* extract lower-left and upper-bound points */
-        abs_type k_lb=corner_IDs[i*2*M+2*j];
-        abs_type k_ub=corner_IDs[i*2*M+2*j+1];
-        abs_type npost=1;
+      if (transition_function.m_states_explored[i])
+        continue;
+      else
+        transition_function.m_states_explored[i]=true;
+      // bool already_seen = false;
+      // for (abs_type j = 0; j < M; j++) {
+      //   if (transition_function.m_no_post[i*M+j]!=0) {
+      //     already_seen = true;
+      //   }
+      // }
+      // if (already_seen)
+      //   continue;
+    // for (abs_type i = 0; i < N; i++) {
+      /* check if state i is in states_to_explore */
+      // bool isnew = false;
+      // for (abs_type j = 0; j < states_to_explore.size(); j++) {
+      //   if (states_to_explore[j]==i) {
+      //     isnew = true;
+      //     break;
+      //   }
+      // }
+      // if (isnew) {
+        /* loop over all inputs */
+        for(abs_type j=0; j<M; j++) {
+        /* is x an element of the overflow symbols ? */
+          if(out_of_domain[i*M+j])
+            continue;
+          /* extract lower-left and upper-bound points */
+          abs_type k_lb=corner_IDs[i*2*M+2*j];
+          abs_type k_ub=corner_IDs[i*2*M+2*j+1];
+          abs_type npost=1;
 
-        /* cell idx to coordinates */
-        for(int k=dim-1; k>=0; k--) {
-          /* integer coordinate of lower left corner */
-          lb[k]=k_lb/NN[k];
-          k_lb=k_lb-lb[k]*NN[k];
-          /* integer coordinate of upper right corner */
-          ub[k]=k_ub/NN[k];
-          k_ub=k_ub-ub[k]*NN[k];
-          /* number of grid points in each dimension in the post */
-          no[k]=(ub[k]-lb[k]+1);
-          /* total no of post of (i,j) */
-          npost*=no[k];
-          cc[k]=0;
+          /* cell idx to coordinates */
+          for(int k=dim-1; k>=0; k--) {
+            /* integer coordinate of lower left corner */
+            lb[k]=k_lb/NN[k];
+            k_lb=k_lb-lb[k]*NN[k];
+            /* integer coordinate of upper right corner */
+            ub[k]=k_ub/NN[k];
+            k_ub=k_ub-ub[k]*NN[k];
+            /* number of grid points in each dimension in the post */
+            no[k]=(ub[k]-lb[k]+1);
+            /* total no of post of (i,j) */
+            npost*=no[k];
+            cc[k]=0;
 
-        }
-
-        for(abs_type k=0; k<npost; k++) {
-          abs_type q=0;
-          for(int l=0; l<dim; l++)
-            q+=(lb[l]+cc[l])*NN[l];
-          cc[0]++;
-          for(int l=0; l<dim-1; l++) {
-            if(cc[l]==no[l]) {
-              cc[l]=0;
-              cc[l+1]++;
-            }
           }
-          /* (i,j,q) is a transition */
-          transition_function.m_pre[--transition_function.m_pre_ptr[q*M+j]]=i;
+
+          for(abs_type k=0; k<npost; k++) {
+            abs_type q=0;
+            for(int l=0; l<dim; l++)
+              q+=(lb[l]+cc[l])*NN[l];
+            cc[0]++;
+            for(int l=0; l<dim-1; l++) {
+              if(cc[l]==no[l]) {
+                cc[l]=0;
+                cc[l+1]++;
+              }
+            }
+            /* (i,j,q) is a transition */
+            // transition_function.m_pre[--transition_function.m_pre_ptr[q*M+j]]=i;
+            temporary[--transition_function.m_pre_ptr[q*M+j]]=i;
+          }
+        }
+        /* print progress */
+        if(m_verbose) {
+          if(counter==0)
+            std::cout << "2nd loop: ";
+        }
+        progress(y,N,counter);
+      // }
+      // else { /* the state has already been explored: copy the pres from pre_ptr */
+      //   /* loop over all inputs */
+      //   for(abs_type j=0; j<M; j++) {
+      //
+      //   }
+      // }
+    }
+
+    /* third loop: fill pre array stage 2 */
+    for (abs_type q = 0; q < N; q++) {
+      for (abs_type j = 0; j < M; j++) {
+        abs_type no_pre = old_no_pre[q*M+j];
+        for (abs_type p = 0; p < no_pre; p++) {
+          temporary[--transition_function.m_pre_ptr[q*M+j]] = old_pre[old_pre_ptr[q*M+j]+p];
         }
       }
       /* print progress */
       if(m_verbose) {
         if(counter==0)
-          std::cout << "2nd loop: ";
+          std::cout << "3rd loop: ";
       }
-      progress(i,N,counter);
+      progress(q,N,counter);
     }
+
+    transition_function.m_pre = std::move(temporary);
+    temporary.release();
+    // out_of_domain.release();
   }
 
   /** @brief get the center of cells that are used to over-approximated the

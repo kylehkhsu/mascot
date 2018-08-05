@@ -82,6 +82,8 @@ public:
   std::unique_ptr<abs_type[]> m_no_pre;
   /** @brief array[N*M] saving the number of post for each state-input pair (i,j) **/
   std::unique_ptr<abs_type[]> m_no_post;
+  /** @brief array[N] saving the "seen" status of the states to avoid repeated computation of transitons **/
+  std::unique_ptr<bool[]> m_states_explored;
 public:
   /* @cond  EXCLUDE from doxygen */
   /* default constructor */
@@ -91,7 +93,8 @@ public:
                          m_pre(nullptr),
                          m_pre_ptr(nullptr),
                          m_no_pre(nullptr),
-                         m_no_post(nullptr) { }
+                         m_no_post(nullptr),
+                         m_states_explored(nullptr) { }
   /* move constructor */
   TransitionFunction(TransitionFunction&& other) {
     *this = std::move(other);
@@ -106,6 +109,7 @@ public:
     m_pre_ptr=std::move(other.m_pre_ptr);
     m_no_pre=std::move(other.m_no_pre);
     m_no_post=std::move(other.m_no_post);
+    m_states_explored=std::move(other.m_states_explored);
 
     other.m_no_states=0;
     other.m_no_inputs=0;
@@ -181,6 +185,7 @@ public:
     m_pre_ptr.reset(new abs_ptr_type[no_state*no_inputs]);
     m_no_pre.reset(new abs_type[no_state*no_inputs] ());
     m_no_post.reset(new abs_type[no_state*no_inputs] ());
+    m_states_explored.reset(new bool[no_state] ());
 
   }
 
@@ -189,6 +194,16 @@ public:
     m_no_transitions=no_trans;
     m_pre.reset(new abs_type[no_trans]);
   }
+
+  // /** @brief expand memory for addition in pre array **/
+  // abs_type* expand_transitions(const abs_ptr_type& no_trans) {
+  //   abs_type* temp = new abs_type[m_no_transitions+no_trans];
+  //   return temp;
+  //   // for (size_t i = 0; i < m_no_transitions; i++) {
+  //   //   temp[i] = m_pre[i];
+  //   // }
+  //   // m_no_transitions+=no_trans;
+  // }
 
   /** @brief clear memory of TransitionFunction (if desired) **/
   void clear() {
@@ -200,6 +215,7 @@ public:
     m_pre_ptr.reset(nullptr);
     m_no_pre.reset(nullptr);
     m_no_post.reset(nullptr);
+    m_states_explored.reset(nullptr);
   }
 
   /* debug purpose */
@@ -230,6 +246,7 @@ public:
             transitionMat[index][sdim+p] = u[p];
           for (int p=0; p<sdim; p++)
             transitionMat[index][sdim+idim+p] = xx[p];
+          index++;
         }
       }
     }

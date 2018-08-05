@@ -245,7 +245,25 @@
             }
             return flag;
           }
-
+          /* downward projection between two consecutive layers */
+          void nextFiner(const int curAb, std::vector<abs_type>& sc, std::vector<abs_type>& sf) {
+            StateTreeNode *q, *ch;
+            for (size_t i = 0; i < sc.size(); i++) {
+              q = db_[curAb][sc[i]];
+              for (int j=0; j<q->get_no_child(); j++) {
+                ch = q->child_[j];
+                sf.push_back(ch->getState());
+              }
+            }
+          }
+          /* downward projection between any two layers */
+          void finer(const int curAb, const int targetAb, std::vector<abs_type>& sc, std::vector<abs_type>& sf) {
+            for (size_t i = curAb; i < targetAb; i++) {
+              sf.clear();
+              nextFiner(i, sc, sf);
+              sc = sf;
+            }
+          }
           /* prints some information */
           void print_info() {
             std::cout << "\n State Tree:" << '\n';
@@ -257,6 +275,7 @@
             std::cout << '\n';
           }
 
+        private:
           /* compute offset vector */
           template<class T>
           std::queue<std::vector<T>> get_offset(std::queue<std::vector<T>> fifo) {

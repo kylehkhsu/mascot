@@ -16,6 +16,7 @@ classdef Transitions < handle
 %
   properties (SetAccess=private)
     filename  % name of file which contains the TransitionFunction
+    layer     % the abstraction layer
     domain    % the gird points for which there exist valid inputs
     handle    % handle to C++ TransitionFunction (created in the mex file)
   end
@@ -36,9 +37,10 @@ classdef Transitions < handle
         error(['Transitions: could not read TransitionFunction from ', filename])
       end
       obj.handle=h;
+      obj.layer=varargin{1};
       
-       domain=mexTransitions('domain');
-       obj.domain=domain;
+%        domain=mexTransitions('domain', obj.handle);
+%        obj.domain=domain;
     end
 
 %     function delete(obj)
@@ -67,7 +69,7 @@ classdef Transitions < handle
       if ~isempty(obj.domain)
         domain=obj.domain;
       else
-        domain=mexTransitions('domain',obj.handle);
+        domain=mexTransitions('domain',obj.handle,obj.layer);
         obj.domain=domain;
       end
     end

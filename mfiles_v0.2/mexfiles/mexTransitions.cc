@@ -44,26 +44,40 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
   /* domain: return states with valid inputs */
   if (!strcmp(command,"domain")) {
-    UniformGrid* ss, is;
-    // int ab = prhs[1];
-    int ab = 0;
-    std::string file = "X/X" + std::to_string(ab);
-    bool readFlag = read_from_file(*ss, file);
+    // std::cout << "debug 1" << '\n';
+    scots::UniformGrid ss, is;
+    // UniformGrid* is;
+    int ab = (int)*mxGetPr(prhs[2]);
+    // int ab = 0;
+    int sdim, idim;
+    std::string file = "X/X" + std::to_string(ab-1);
+    // const char* filename=mxArrayToString(prhs[2]);
+    // std::cout << "debug 2" << '\n';
+    bool readFlag = read_from_file(ss, file.c_str());
+    // std::cout << "debug 2" << '\n';
     if (!readFlag)
       error("runtime error: could not read the state space from file");
-    else
-      int sdim = ss->get_dim();
-    bool readFlag = read_from_file(*is, file);
+    // // else
+    sdim = ss.get_dim();
+    readFlag = read_from_file(is, "U");
+    // std::cout << "debug 2" << '\n';
     if (!readFlag)
       error("runtime_error: could not read the input space from file");
-    else
-      int idim = is->get_dim();
+    // // else
+    idim = is.get_dim();
 
     abs_ptr_type ntr = tf->get_no_transitions();
-    double** domain = nullptr;
-    domain = new double[ntr][2*sdim+idim];
-
-    tf->get_domain(ss, is, domain);
+    // std::cout << "debug 2" << '\n';
+    if(!ntr) {
+      plhs[0]=mxCreateDoubleMatrix(0,0,mxREAL);
+      return;
+    }
+    double** domain = new double*[ntr];//[2*(mwSize)sdim+(mwSize)idim];
+    for (size_t i = 0; i < ntr; i++) {
+      domain[i] = new double[2*sdim+idim];
+    }
+    // std::cout << "debug 3" << '\n';
+    tf->get_domain(&ss, &is, domain);
     /* copy state to std::vector */
     // std::vector<std::vector<double>> domain =
     //   tf->get_domain<std::vector<double>>();
@@ -80,17 +94,19 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     //   }
     // }
     // mwSize N=domain.size();
-    if(!ntr) {
-      plhs[0]=mxCreateDoubleMatrix(0,0,mxREAL);
-      return;
-    }
+
+    // std::cout << "debug 4" << '\n';
     // mwSize dim=domain[0].size();
     /* create matrix to store input */
     plhs[0]=mxCreateDoubleMatrix(ntr,(2*sdim+idim),mxREAL);
-    double **dom=mxGetPr(plhs[0]);
+    // std::cout << "debug 5" << '\n';
+    double *dom=mxGetPr(plhs[0]);
+    // std::cout << "debug 6" << '\n';
     for(abs_ptr_type i=0; i<ntr; i++) {
+      // std::cout << "debug 7 \t " << i << '\n';
       for(int j=0; j<2*sdim+idim; j++) {
-        dom[i][j]=domain[i][j];
+        // std::cout << "debug 8 \t " << j  << '\n';
+        dom[j*ntr+i]=domain[i][j];
       }
     }
     return;

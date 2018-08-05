@@ -128,7 +128,7 @@ int main() {
     double tau = 0.9;
     int numAbs = 3;
 
-    bool lazy = false;
+    bool lazy = true;
     int readAbs = 0;
     int p_ = 4;
     bool verbose = true;

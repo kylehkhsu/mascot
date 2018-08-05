@@ -138,8 +138,8 @@ int main() {
 
     int numAbs = 3;
     int readAbs = 0;
-	int p_ = 2;
-    bool lazy = false;
+	int p_ = 4;
+    bool lazy = true;
 
     X_type x;
     U_type u;
@@ -148,7 +148,7 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    AdaptAbsReach abs("unicycle3A.log");
+    AdaptAbsReach abs("unicycle3A_lazy.log");
     abs.initialize(&unicycle, target, obstacle);
 
     TicToc tt_tot;

@@ -39,18 +39,17 @@ if (strcmp(mode, 'Z'))
 end
 if (strcmp(mode, 'D'))
     openfig('problem')
-    C = StaticController('C/C1.scs');
-    p = C.domain;
-    plot(p(:,1),p(:,2),'ko');
-    pause
-    D1 = StaticController('D1/1.scs');
-    p = D1.domain;
-    plot(p(:,1),p(:,2),'bo');
-    pause
-    D2 = StaticController('D2/1.scs');
-    p = D2.domain;
-    plot(p(:,1),p(:,2),'ro');
-    pause
+    for i=1:controllers
+        D = Goal(['D/D' int2str(i)]);
+        p = D.points;
+        set = plot(p(:,1),p(:,2),'ko');
+%         pause
+        delete(set)
+        if i~=1
+            delete(set2)
+        end
+        set2 = plot(p(:,1),p(:,2),'ro');
+    end
 end
 
 if (strcmp(mode, 'CZ'))
@@ -103,18 +102,19 @@ if (strcmp(mode, 'CZ'))
 end
 
 if (strcmp(mode, 'T'))
-    openfig('problem')
-    T1 = StaticController('T/T1.scs', 'projection', [1 2]);
+%     openfig('problem')
+    openfig('system')
+    T1 = Transitions('T/T1',1);
     p1 = T1.domain;
     plot(p1(:,1),p1(:,2),'ko');
     pause
     
-    T2 = StaticController('T/T2.scs', 'projection', [1 2]);
+    T2 = Transitions('T/T2',2);
     p2 = T2.domain;
     plot(p2(:,1),p2(:,2),'bo');
     pause
     
-    T3 = StaticController('T/T3.scs', 'projection', [1 2]);
+    T3 = Transitions('T/T3',3);
     p3 = T3.domain;
     plot(p3(:,1),p3(:,2),'ro');
     title('T')
@@ -235,7 +235,7 @@ if (strcmp(mode,'R'))
     %     I = StaticController('plotting/I.scs');
     %     x = I.domain();
     %     x = x(1,:);
-    x = [1.5 0.001 0];
+    x = [0.001 0.001 0];
    
     v = [];
     

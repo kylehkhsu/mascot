@@ -81,6 +81,10 @@ public:
     vector<UniformGrid*> computedDs_;
     vector<UniformGrid*> savedZs_;
 
+    // debug purpose: printing the intermediate states_to_explore
+    std::vector<Goal*> intermediate_states_to_explore;
+    // end
+
     vector<TransitionFunction*> uTs_; /*!< Transition relations for exploring, i.e. all with coarsest space gridding but varying time sampling. */
 
     int minToGoCoarser_;
@@ -159,7 +163,7 @@ public:
     template<class sys_type, class rad_type, class X_type, class U_type>
     void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u, bool lazy=true, int readAbs=0) {
         m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
-        p_ = p; // coarsest layer uncontrollable-pred. parameter
+        p_ = 2; // coarsest layer uncontrollable-pred. parameter
         minToBeValid_ = 2;
         clog << "m: " << m_ << '\n';
         clog << "p: " << p_ << '\n';
@@ -205,6 +209,9 @@ public:
         // delete[] tr_domain;
 
         // start by synthesizing all uTs_
+
+
+
         if (lazy) {
           TicToc timer;
           timer.tic();
@@ -291,6 +298,9 @@ public:
         saveVec(finalZs_, "Z/Z");
         checkMakeDir("T");
         saveVec(Ts_, "T/T");
+        // debug purpose: print intermediate_states_to_explore
+        checkMakeDir("D");
+        saveVec(intermediate_states_to_explore, "D/D");
         clog << "Wrote Ts_ to file.\n";
 
         /* debug purpose */
@@ -580,7 +590,7 @@ public:
         abs_type q=fifo.front();
         fifo.pop();
         /* If the value of the popped state is greater or equal to m, break */
-        if (value[q] > m && m != -1) {
+        if (value[q] >= m && m != -1) {
           result = NOTCONVERGED;
           break;
         }
@@ -625,6 +635,9 @@ public:
 
     template<class sys_type, class rad_type, class X_type, class U_type>
     void explore(int ab, X_type x, U_type u, sys_type sysNext, rad_type radNext) {
+      /* for coarsest layer, do nothing */
+      if (ab==0)
+        return;
       /* auxiliary transition function of layer ab */
       TransitionFunction& aux_trans_function = *uTs_[ab];
       /* transition function of layer ab */
@@ -633,8 +646,10 @@ public:
       UniformGrid ss = *Xs_[ab];
       /* size of input alphabet */
       abs_type M=aux_trans_function.m_no_inputs;
-      // int infinity = std::numeric_limits<int>::max();
-      int infinity = -1;
+      int infinity = std::numeric_limits<int>::max() - 1;
+      // int infinity = -1;
+      /* vector containing the states to explore */
+      std::vector<abs_type> states_to_explore;
 
       // int* val = NULL;
       // val = new int[Xs_[0]->size()];
@@ -666,7 +681,8 @@ public:
             for(abs_ptr_type v=0; v<aux_trans_function.m_no_pre[q*M+j]; v++) {
               abs_type r=aux_trans_function.m_pre[aux_trans_function.m_pre_ptr[q*M+j]+v];
               // states_to_explore.push_back(i);
-              val[r] = (val[r] > val[q] + 1) ? (val[q] + 1) : (val[r] == -1 ? (val[q]+1) : val[r]);
+              // val[r] = (val[r] > val[q] + 1) ? (val[q] + 1) : (val[r] == -1 ? (val[q]+1) : val[r]);
+              val[r] = (val[r] > val[q] + 1) ? (val[q] + 1) : val[r];
             }
           }
         }
@@ -689,7 +705,6 @@ public:
       // }
 
         /* projecting down */
-      std::vector<abs_type> states_to_explore;
       for (abs_type i = 0; i < Xs_[0]->size(); i++) {
         if (val[i] > 0 && val[i] <= p_)
           states_to_explore.push_back(i);
@@ -707,10 +722,43 @@ public:
         temp.clear();
       }
 
+      /* explore all the states which are in the outer-approximation
+       * of the target but not in the inner-approximation of the target */
+      for (size_t p = 0; p < ab; p++) {
+        std::vector<abs_type> maybe;
+        std::vector<abs_type> maybe_finer;
+        for (size_t i = 0; i < Xs_[p]->size(); i++) {
+          if (tree_->getMarkingStatus(p, i) == 1) {
+            maybe.push_back(i);
+          }
+        }
+        // std::vector<abs_type> temp;
+        tree_->finer(p, ab, maybe, maybe_finer);
+        for (size_t i = 0; i < maybe_finer.size(); i++) {
+          if (tree_->getMarkingStatus(ab, maybe_finer[i])<2) {
+            states_to_explore.push_back(maybe_finer[i]);
+          }
+        }
+      }
+
+      // debug purpose: print the intermediate states_to_explore states
+      Goal* G = new Goal(*Xs_[ab],states_to_explore);
+      intermediate_states_to_explore.push_back(G);
+      // end
+
+
       Abstraction<X_type, U_type> abs(*Xs_[ab], *U_);
       // cout << "Starting computation of transition relation of layer " << ab << ": \n";
       abs.compute_gb_partial(*Ts_[ab], states_to_explore, sysNext, radNext, *solvers_[ab], avoid);
 
+      // const abs_ptr_type ntr = Ts_[ab]->get_no_transitions();
+      // if (ntr!=0) {
+      //   double** tr_domain = new double*[ntr];
+      //   for(int i = 0; i < ntr; ++i)
+      //       tr_domain[i] = new double[2*(*system_->dimX_)+ (*system_->dimU_)];
+      //
+      //   Ts_[ab]->get_domain(Xs_[ab], U_, tr_domain);
+      // }
       // delete[] val;
     }
 
@@ -996,7 +1044,11 @@ public:
 
 		for (int i = 0; i < *system_->numAbs_; i++) {
 			TransitionFunction* Ts = new TransitionFunction; // exploration transition relations are all with coarsest gridding
-			Ts_.push_back(Ts);
+      if (i!=0) {
+        Ts->init_infrastructure(Xs_[i]->size(),U_->size());
+        Ts->init_transitions(0);
+      }
+      Ts_.push_back(Ts);
 		}
 		clog << "Ts_ initialized with empty domain.\n";
 
