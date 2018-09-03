@@ -3,8 +3,10 @@
 #
 CC        = g++
 #CC       	  = clang++
-CXXFLAGS 		= -Wall -Wextra -std=c++11 -O3 -DNDEBUG
-CXXFLAGS 		= -Wall -Wextra -std=c++11 
+#CXXFLAGS 		= -Wall -Wextra -std=c++11 -O3 -DNDEBUG
+#CXXFLAGS 		= -Wall -Wextra -std=c++11 
+#CXXFLAGS		= -Wall -Wextra -std=c++11 -g -Wfatal-errors
+CXXFLAGS		= -Wall -Wextra -std=c++11 -pg
 
 #
 # scots 
@@ -25,7 +27,7 @@ TARGET = unicycle
 all: $(TARGET)
 
 %.o:%.cc
-	$(CC) -c -g $(CXXFLAGS) $(CUDDINC) $(SCOTSINC) $< -o $@ -Wfatal-errors
+	$(CC) -c $(CXXFLAGS) $(CUDDINC) $(SCOTSINC) $< -o $@
 
 $(TARGET): $(TARGET).o
 	$(CC) $(CXXFLAGS) -o $(TARGET) $(TARGET).o $(CUDDLPATH) $(CUDDLIBS)
