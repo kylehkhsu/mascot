@@ -747,7 +747,7 @@ public:
 //                }
 //                std::cout << '\n';
             }
-            ++it; ++k;            
+            ++it; ++k;
         }
         delete[] cube;
         delete[] x;
@@ -1216,7 +1216,7 @@ public:
     /* function: remMinterm
             * removes the minterm from the symblic set BDD (2 = don't care) */
     void remMinterm(int* minterm) {
-        symbolicSet_ &= (!mintermToBDD(minterm) & computeGridPoints());
+        symbolicSet_ &= ((!mintermToBDD(minterm)) & computeGridPoints());
     }
 
     /* function: mintermToBDD

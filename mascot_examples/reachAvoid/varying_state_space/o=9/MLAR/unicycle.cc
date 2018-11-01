@@ -19,7 +19,7 @@ typedef std::array<double, dimX> X_type;
 typedef std::array<double, dimU> U_type;
 
 /* we integrate the unicycle ode by 0.3 sec (the result is stored in x)  */
-auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
+auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
 
   /* the ode describing the unicycle */
   auto rhs =[](X_type& xx,  const X_type &x, U_type &u) -> void {
@@ -32,9 +32,9 @@ auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
 
 /* computation of the growth bound (the result is stored in r)  */
 
-auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
-    r[0] = r[0] + (r[2]*std::abs(u[0]) + w[0]) * tau;
-    r[1] = r[1] + (r[2]*std::abs(u[0]) + w[1]) * tau;
+auto radNext = [](X_type &r, U_type &u, OdeSolver solver) -> void {
+    r[0] = r[0] + (r[2]*std::abs(u[0]) + w[0]) * solver.tau_;
+    r[1] = r[1] + (r[2]*std::abs(u[0]) + w[1]) * solver.tau_;
 };
 
 auto unicycleAddG = [](SymbolicSet* G) -> void {
@@ -133,7 +133,8 @@ int main() {
                     dimU, lbU, ubU, etaU,
                     etaRatio, tauRatio, nSubInt, numAbs);
 
-    AdaptAbsReach abs("unicycle.log");
+    int verbose = 1;
+    AdaptAbsReach abs("unicycle.log", verbose);
     abs.initialize(&unicycle, unicycleAddO, unicycleAddG);
 
     TicToc timer;
@@ -141,6 +142,3 @@ int main() {
     abs.onTheFlyReach(p, sysNext, radNext, x, u);
     clog << "------------------------------------Total time: " << timer.toc() << " seconds.\n";
 }
-
-
-

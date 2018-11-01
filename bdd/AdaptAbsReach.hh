@@ -62,16 +62,18 @@ public:
 
     double abTime_; /*!< Abstraction time. */
     double synTime_; /*!< Synthesis time. */
+    int verbose_; /*!< 0(default)=do not print intermediate result, 1=print intermediate result on std I/O. */
 
     /*!	Constructor for an AdaptAbsReach object.
      *  \param[in]  logFile     Filename of program log.
      */
-    AdaptAbsReach(const char* logFile) {
+    AdaptAbsReach(const char* logFile, int verbose=0) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
 
         abTime_ = 0;
         synTime_ = 0;
+        verbose_ = verbose;
     }
     /*! Destructor for an AdaptAbsReach object. */
     ~AdaptAbsReach() {
@@ -111,6 +113,133 @@ public:
         fclose(stderr);
         delete ddmgr_;
     }
+
+    /*! Non-lazy reachability wrapper function.
+    *  \param[in]  p           Parameter controlling amount of finer layer synthesis attempts.
+    *  \param[in]  readAbs     Flag set to TRUE when abstractions are to be read from file.
+    *  \param[in]  sysNext     System ODE.
+    *  \param[in]  radNext     Growth bound ODE.
+    *  \param[in]  x           Dummy state point.
+    *  \param[in]  u           Dummy input point.
+    */
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void eagerReach(int p, bool readAbs, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
+        clog << "m: " << m_ << '\n';
+
+        // pre-compute all abstractions
+        TicToc timer;
+        timer.tic();
+        if (!readAbs) {
+            for (int ab = 0; ab < *system_->numAbs_; ab++) {
+                Ds_[ab]->addGridPoints();
+                computeAbstraction(ab, sysNext, radNext, x, u);
+
+                // SymbolicSet D = SymbolicSet(*Xs_[i]);
+                // D.symbolicSet_ = Xs_[i]->symbolicSet_ & !Os_[i]->symbolicSet_;
+                // SymbolicModelGrowthBound<X_type, U_type> Ab(&D, U_, X2s_[i]);
+                // Ab.computeTransitionRelation(sysNext, radNext, *solvers_[i]);
+
+                // Ts_[ab]->symbolicSet_ = Ab.transitionRelation_;
+            }
+            clog << "Ts_ computed by sampling system behavior.\n";
+        }
+        else {
+            loadTs();
+        }
+
+        abTime_ += timer.toc();
+
+        if (!readAbs) {
+            checkMakeDir("T");
+            saveVec(Ts_, "T/T");
+            clog << "Wrote Ts_ to file.\n";
+        }
+        // timer.tic();
+        // for (int i = 0; i < *system_->numAbs_; i++) {
+        //     BDD* TT = new BDD;
+        //     *TT = Ts_[i]->symbolicSet_.ExistAbstract(*cubesX2_[i]);
+        //     TTs_.push_back(TT);
+        // }
+        // abTime_ += timer.toc();
+        // clog << "TTs_ initialized by ExistAbstracting from Ts_.\n";
+
+        // synthesize controller
+        int ab = 0;
+        eagerReachRecurse(ab);
+
+        clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
+
+        checkMakeDir("C");
+        saveVec(finalCs_, "C/C");
+        checkMakeDir("Z");
+        saveVec(finalZs_, "Z/Z");
+        checkMakeDir("T");
+        saveVec(Ts_, "T/T");
+        clog << "Wrote Ts_ to file.\n";
+        return;
+    }
+
+    /*! Recursive synthesis of non-lazy controller.
+     *  \param[in]  ab          Current abstraction.
+     */
+     void eagerReachRecurse(int ab) {
+         clog << '\n';
+         clog << "current abstraction: " << ab << '\n';
+         clog << "controllers: " << finalCs_.size() << '\n';
+         ReachResult result;
+         if (ab == 0) {
+             result = reach(ab);
+         }
+         else {
+             result = reach(ab, m_);
+         }
+         if (result == CONVERGEDVALID) {
+             clog << "result: converged valid\n";
+         }
+         else if (result == CONVERGEDINVALID) {
+             clog << "result: converged invalid\n";
+         }
+         else {
+             clog << "result: not converged\n";
+         }
+
+         if (result != CONVERGEDINVALID) {
+             saveCZ(ab);
+             validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+             validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
+             clog << "saved as snapshot, saved to valids\n";
+         }
+         else { // result is CONVERGEDINVALID
+             Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
+             Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
+             clog << "reset to valids\n";
+         }
+
+         if (result != NOTCONVERGED) {
+             if (ab == *system_->numAbs_ - 1) {
+                 return;
+             }
+             else { // go finer
+                 clog << "Going finer\n";
+                 int nextAb = ab + 1;
+                 finer(Zs_[ab], Zs_[nextAb], ab);
+                 Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+                 validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+                 eagerReachRecurse(nextAb);
+                 return;
+             }
+         }
+         else { // not converged, go coarser
+             clog << "Going coarser\n";
+             int nextAb = ab - 1;
+             coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
+             Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+             validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+             eagerReachRecurse(nextAb);
+             return;
+         }
+     }
 
     /*! Lazy reachability wrapper function.
      *  \param[in]  p           Parameter controlling amount of exploration to do between synthesis attempts.
@@ -160,15 +289,14 @@ public:
      *  \param[in]  radNext     Growth bound ODE.
      *  \param[in]  x           Dummy state point.
      *  \param[in]  u           Dummy input point.
-     *  \param[in]  print       Whether information should be printed to console.
      */
     template<class sys_type, class rad_type, class X_type, class U_type>
-    void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u, int print = 0) {
+    void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         clog << '\n';
         clog << "current abstraction: " << ab << '\n';
         clog << "controllers: " << finalCs_.size() << '\n';
 
-        if (print) {
+        if (verbose_) {
             cout << '\n';
             cout << "current abstraction: " << ab << '\n';
             cout << "controllers: " << finalCs_.size() << '\n';
@@ -189,33 +317,33 @@ public:
         }
         if (result == CONVERGEDVALID) {
             clog << "result: converged valid\n";
-            if (print)
+            if (verbose_)
                 cout << "result: converged valid\n";
         }
         else if (result == CONVERGEDINVALID) {
             clog << "result: converged invalid\n";
-            if (print)
+            if (verbose_)
                 cout << "result: converged invalid\n";
         }
         else {
             clog << "result: not converged\n";
-            if (print)
+            if (verbose_)
                 cout << "result: not converged\n";
         }
 
         if (result != CONVERGEDINVALID) {
             saveCZ(ab);
             validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
-            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;    
+            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
             clog << "saved as snapshot, saved to valids\n";
-            if (print)
+            if (verbose_)
                 cout << "saved as snapshot, saved to valids\n";
         }
         else { // result is CONVERGEDINVALID
             Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
             Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
             clog << "reset to valids\n";
-            if (print)
+            if (verbose_)
                 cout << "reset to valids\n";
         }
 
@@ -225,7 +353,7 @@ public:
             }
             else { // go finer
                 clog << "Going finer\n";
-                if (print)
+                if (verbose_)
                     cout << "Going finer\n";
                 int nextAb = ab + 1;
                 TicToc timer;
@@ -241,7 +369,7 @@ public:
         }
         else { // not converged, go coarser
             clog << "Going coarser\n";
-            if (print)
+            if (verbose_)
                 cout << "Going coarser\n";
             int nextAb = ab - 1;
             if (nextAb != 0) { // pointless to do for coarsest layer
@@ -266,9 +394,11 @@ public:
      */
     template<class sys_type, class rad_type, class X_type, class U_type>
     void computeExplorationAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        if (verbose_==1)
+          cout << "Computing exploration abstractions.\n";
         for (int ab = 0; ab < *system_->numAbs_; ab++) {
             SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[0], U_, X2s_[0]); // coarsest state gridding
-            abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // use solver with time step corresponding to that of each layer
+            abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab], verbose_); // use solver with time step corresponding to that of each layer
             uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
         }
         x = x; // gets rid of warning message regarding lack of use
@@ -288,7 +418,7 @@ public:
         Ds_[curAb]->symbolicSet_ = validZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_; // target for uncontrollable reach
         innerDs_[curAb]->symbolicSet_ = validZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_;
         for (int c = curAb - 1; c >= 0; c--) {
-            coarserOuter(Ds_[c], Ds_[c+1], c); 
+            coarserOuter(Ds_[c], Ds_[c+1], c);
             coarserInner(innerDs_[c], innerDs_[c+1], c);
         }
         Ds_[0]->symbolicSet_ = cooperativeReach(Ds_[0]->symbolicSet_, curAb, p_); // do cooperative reach
@@ -314,7 +444,7 @@ public:
         Ds_[ab]->symbolicSet_ = D;
 
         SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]); // abstraction computation will only iterate over the elements in the domain of the state space SymbolicSet (first argument)
-        abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab]); // was hard-coded to 0, source of "tunneling" bug
+        abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab], verbose_); // was hard-coded to 0, source of "tunneling" bug
         if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
             Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
 //            BDD O2 = Os_[ab]->symbolicSet_.Permute(permutesXtoX2_[ab]); // causes unsound behavior, leaving here as warning
@@ -329,17 +459,16 @@ public:
     /*! Calculates the reachability fixed-point for m iterations.
      *  \param[in]  ab      The layer 0-index.
      *  \param[in]  m       The number of iterations. Default -1 corresponds to infinity.
-     *  \param[in]  print   Whether to print information to console.
      *  \returns    Integer representing status of convergence.
      */
-    ReachResult reach(int ab, int m = -1, int print = 0) {
+    ReachResult reach(int ab, int m = -1) {
         int i = 1;
         clog << "abstraction: " << ab << '\n';
-        if (print)
+        if (verbose_)
             cout << "abstraction: " << ab << '\n';
         while (1) {
             clog << "iteration: " << i << '\n';
-            if (print)
+            if (verbose_)
                 cout << "iteration: " << i << '\n';
             BDD controllablePreZ = controllablePre(Zs_[ab]->symbolicSet_, ab);
             BDD C = controllablePreZ | Gs_[ab]->symbolicSet_;
@@ -410,7 +539,7 @@ public:
         // {(x,u)} with no posts outside of winning set
         BDD nF = !Fbdd;
         // get rid of junk
-        BDD preF = TTs_[ab]->symbolicSet_.AndAbstract(nF, *notXUvars_[ab]);        
+        BDD preF = TTs_[ab]->symbolicSet_.AndAbstract(nF, *notXUvars_[ab]);
         return preF;
     }
 
@@ -837,6 +966,23 @@ public:
         Z->symbolicSet_ = Zs_[ab]->symbolicSet_;
         finalZs_.push_back(Z);
         finalAbs_.push_back(ab);
+    }
+
+    /*! Reads transition relation BDDs from file and saves them into Ts_. */
+    void loadTs() {
+        for (int i = 0; i < *system_->numAbs_; i++) {
+            string Str = "T/T";
+            Str += std::to_string(i+1);
+            Str += ".bdd";
+            char Char[20];
+            size_t Length = Str.copy(Char, Str.length() + 1);
+            Char[Length] = '\0';
+            SymbolicSet T(*ddmgr_, Char);
+            Ts_[i]->symbolicSet_ = T.symbolicSet_;
+
+            Ts_[i]->printInfo(1);
+        }
+        clog << "Ts_ read from file.\n";
     }
 };
 }
