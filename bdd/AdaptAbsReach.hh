@@ -134,13 +134,6 @@ public:
             for (int ab = 0; ab < *system_->numAbs_; ab++) {
                 Ds_[ab]->addGridPoints();
                 computeAbstraction(ab, sysNext, radNext, x, u);
-
-                // SymbolicSet D = SymbolicSet(*Xs_[i]);
-                // D.symbolicSet_ = Xs_[i]->symbolicSet_ & !Os_[i]->symbolicSet_;
-                // SymbolicModelGrowthBound<X_type, U_type> Ab(&D, U_, X2s_[i]);
-                // Ab.computeTransitionRelation(sysNext, radNext, *solvers_[i]);
-
-                // Ts_[ab]->symbolicSet_ = Ab.transitionRelation_;
             }
             clog << "Ts_ computed by sampling system behavior.\n";
         }
@@ -155,14 +148,6 @@ public:
             saveVec(Ts_, "T/T");
             clog << "Wrote Ts_ to file.\n";
         }
-        // timer.tic();
-        // for (int i = 0; i < *system_->numAbs_; i++) {
-        //     BDD* TT = new BDD;
-        //     *TT = Ts_[i]->symbolicSet_.ExistAbstract(*cubesX2_[i]);
-        //     TTs_.push_back(TT);
-        // }
-        // abTime_ += timer.toc();
-        // clog << "TTs_ initialized by ExistAbstracting from Ts_.\n";
 
         // synthesize controller
         int ab = 0;
@@ -396,11 +381,12 @@ public:
     void computeExplorationAbstractions(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         if (verbose_==1)
           cout << "Computing exploration abstractions.\n";
+        SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[0], U_, X2s_[0]); // coarsest state gridding
         for (int ab = 0; ab < *system_->numAbs_; ab++) {
-            SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[0], U_, X2s_[0]); // coarsest state gridding
-            abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab], verbose_); // use solver with time step corresponding to that of each layer
+            // abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab], verbose_); // use solver with time step corresponding to that of each layer
             uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
         }
+        abstraction.computeExplorationTransitionRelation(sysNext, radNext, numAbs_, solvers_, uTs_, verbose_);
         x = x; // gets rid of warning message regarding lack of use
         u = u;
     }
