@@ -386,7 +386,7 @@ public:
             // abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab], verbose_); // use solver with time step corresponding to that of each layer
             uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
         }
-        abstraction.computeExplorationTransitionRelation(sysNext, radNext, numAbs_, solvers_, uTs_, verbose_);
+        abstraction.computeExplorationTransitionRelation(sysNext, radNext, *system_->numAbs_, solvers_, uTs_, verbose_);
         x = x; // gets rid of warning message regarding lack of use
         u = u;
     }

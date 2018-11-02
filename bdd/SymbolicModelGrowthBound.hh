@@ -187,7 +187,7 @@ public:
    *
    */
     template<class F1, class F2>
-    void computeExplorationTransitionRelation(F1 &system_post, F2 &radius_post, int numAbs, vector<OdeSolver*> solver, vector<SymbolicSet*> uTs, int print = 0) {
+    void computeExplorationTransitionRelation(F1 &system_post, F2 &radius_post, int numAbs, std::vector<OdeSolver*> solvers, std::vector<SymbolicSet*> uTs, int print = 0) {
 
         /* create the BDD's with numbers 0,1,2,.., #gridPoints */
         size_t dim=stateSpace_->getDimension();
@@ -239,8 +239,8 @@ public:
         stateType_ first;
         stateSpace_->copyFirstGridPoint(&first[0]);
 
-        for (size_t ab = 0; ab < numAbs-1; ab++) {
-          uTs[ab] = ddmgr_->bddZero();
+        for (int ab = 0; ab < numAbs-1; ab++) {
+          uTs[ab]->symbolicSet_ = ddmgr_->bddZero();
         }
         const int* minterm;
 
@@ -273,11 +273,11 @@ public:
             for(size_t i=0; i<dim; i++)
                 r[i]=eta[i]/2.0+z[i];
 
-            for(size_t ab=numAbs-1; ab>=0; ab--) {
+            for(int ab=numAbs-1; ab>=0; ab--) {
               /* integrate system and radius growth bound */
               /* the result is stored in x and r */
-              system_post(x,u, solver[std::min(numAbs-1,ab+1)]);
-              radius_post(r,u, solver[std::min(numAbs-1,ab+1)]);
+              system_post(x,u, *solvers[std::min(numAbs-1,ab+1)]);
+              radius_post(r,u, *solvers[std::min(numAbs-1,ab+1)]);
 
               /* determine the cells which intersect with the attainable set*/
               /* start with the computation of the indices */
@@ -305,7 +305,7 @@ public:
                       phase[nssVars_+i]=minterm[inpVars_[i]];
                   BDD current(*ddmgr_,Cudd_bddComputeCube(mgr,dvars,phase,ndom));
                   current&=post;
-                  uTs[ab] +=current;
+                  uTs[ab]->symbolicSet_ +=current;
               }
             }
             iter++;
