@@ -247,6 +247,7 @@ public:
         timer.tic();
         computeExplorationAbstractions(sysNext, radNext, x, u);
         abTime_ += timer.toc();
+        cout << "\nComputation time for exploration abstractions: " << timer.toc() <<"\n";
 
         // Ts_[0] is uTs_[0] with obstacles removed
         Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_ & !Os_[0]->symbolicSet_;
