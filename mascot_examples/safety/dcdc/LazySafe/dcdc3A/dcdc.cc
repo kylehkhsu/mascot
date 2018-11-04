@@ -106,6 +106,7 @@ int main() {
 
     double etaRatio[dimX] = {2, 2};
     double tauRatio = 1;
+    int verbose = 1;
 
     X_type x;
     U_type u;
@@ -114,7 +115,7 @@ int main() {
     System dcdc(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
-    AdaptAbsSafe abs("dcdc3A.log");
+    AdaptAbsSafe abs("dcdc3A.log", verbose);
     abs.initialize(&dcdc, dcdcAddS);
 
     TicToc timer;

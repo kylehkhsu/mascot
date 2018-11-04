@@ -1,5 +1,5 @@
-#ifndef ADAPTABSSAFE_HH_
-#define ADAPTABSSAFE_HH_
+#ifndef ADAPTABSREACHNSTAY_HH_
+#define ADAPTABSREACHNSTAY_HH_
 
 #include <cstdio>
 #include <vector>
@@ -17,13 +17,16 @@ using namespace helper;
 
 namespace scots {
 
-class AdaptAbsSafe {
+enum ReachResult {CONVERGEDVALID, CONVERGEDINVALID, NOTCONVERGED};
+
+class AdaptAbsReachNStay {
 public:
     Cudd* ddmgr_; /*!< A single manager object common to all BDDs used in the program. */
     System* system_; /*!< Contains abstraction parameters. */
     vector<double*> etaXs_; /*!< *system_->numAbs_ x *system_->dimX_ matrix of state space grid spacings. */
     vector<double*> tau_; /*!< *system_->numAbs_ x 1 matrix of time steps. */
     vector<SymbolicSet*> Xs_; /*!< The *system_->numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
+    vector<SymbolicSet*> Os_; /*!< Instance of *Xs_[i] containing unsafe (obstacle) states. */
 	vector<SymbolicSet*> SafeInner_; /*!< Instance of *Xc_[i] containing inner approximation of safe states. */
 	vector<SymbolicSet*> SafeOuter_; /*!< Instance of *Xc_[i] containing outer approximation of safe states. */
     vector<SymbolicSet*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
@@ -48,6 +51,7 @@ public:
 
     vector<SymbolicSet*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
     vector<SymbolicSet*> validZs_; /*!< Contains winning states that act as savepoints. */
+    vector<SymbolicSet*> validCs_; /*!< Controllers that act as savepoints. */
     vector<SymbolicSet*> finalCs_; /*!< Sequence of controllers that satisfy the specification. */
     vector<SymbolicSet*> finalZs_; /*!< Sequence of domains of finalCs_. */
     vector<int> finalAbs_; /*!< Sequence of abstraction layer indices of finalCs_. */
@@ -58,22 +62,25 @@ public:
     vector<SymbolicSet*> uTs_; /*!< Transition relations for exploring, i.e. all with coarsest space gridding but varying time sampling. */
 	int recursion_; /*!< current recursion depth. */
 
+  int m_; /*!< Number of iterations for synthesis in a layer before attempting to go coarser. */
+  int p_; /*!< Number of iterations for exploration before attempting synthesis. */
+
     double abTime_; /*!< Abstraction time. */
     double synTime_; /*!< Synthesis time. */
     int verbose_; /*!< 0(default)=do not print intermediate result, 1=print intermediate result on std I/O. */
 
-    /*!	Constructor for an AdaptAbsSafe object.
+    /*!	Constructor for an AdaptAbsReachNStay object.
      *  \param[in]  logFile     Filename of program log.
      */
-    AdaptAbsSafe(const char* logFile, int verbose) {
+    AdaptAbsReachNStay(const char* logFile, int verbose=0) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
         verbose_ = verbose;
         abTime_ = 0;
         synTime_ = 0;
     }
-    /*! Destructor for an AdaptAbsSafe object. */
-    ~AdaptAbsSafe() {
+    /*! Destructor for an AdaptAbsReachNStay object. */
+    ~AdaptAbsReachNStay() {
         clog << "Abstraction construction time: " << abTime_ << " seconds.\n";
         clog << "Controller synthesis time: " << synTime_ << " seconds.\n";
         clog << "Abs + syn time: " << abTime_ + synTime_ << " seconds.\n";
@@ -111,6 +118,45 @@ public:
         fclose(stderr);
         delete ddmgr_;
     }
+
+    /*! Lazy reach-avoid-stay (no auxiliary for safety).
+     *  \param[in]  sysNext     System ODE.
+     *  \param[in]  radNext     Growth bound ODE.
+     *  \param[in]  x           Dummy state point.
+     *  \param[in]  u           Dummy input point.
+     */
+   template<class sys_type, class rad_type, class X_type, class U_type>
+   void onTheFlyReachNStay(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        std::cout << "**** Started Safety Synthesis ****" << '\n';
+        onTheFlySafeNoAux(sysNext, radNext, x, u);
+        std::cout << "**** Started Reachability Synthesis ****" << '\n';
+        /* reset variables */
+        for (size_t ab = 0; ab < *system_->numAbs_; ab++) {
+          SymbolicSet* Xinstance = new SymbolicSet(*Xs_[ab]);
+          Xinstance->symbolicSet_ = Zs_[ab]->symbolicSet_;
+          Gs_.push_back(Xinstance);
+          Zs_[ab]->symbolicSet_ = ddmgr_->bddZero();
+          Cs_[ab]->symbolicSet_ = ddmgr_->bddZero();
+          validZs_[ab]->symbolicSet_ = ddmgr_->bddZero();
+          SymbolicSet* validC = new SymbolicSet(*Xs_[ab], *U_);
+          validCs_.push_back(validC);
+          Ds_[ab]->symbolicSet_ = ddmgr_->bddZero();
+          innerDs_[ab]->symbolicSet_ = ddmgr_->bddZero();
+        }
+        std::cout << "Variables were reset to initial values." << '\n';
+        onTheFlyReach(p, sysNext, radNext, x, u);
+        /* counting coverage of the controller domain */
+        for (size_t ab = 0; ab < *system_->numAbs_-1; ab++) {
+          BDD Z = validZs_[ab+1]->symbolicSet_;
+          finer(validZs_[ab],validZs_[ab+1],ab);
+          validZs_[ab+1]->symbolicSet_ |= Z;
+        }
+        size_t win_dom_size = validZs_[*system_->numAbs_-1]->symbolicSet_.CountMinterm(validZs_[*system_->numAbs_-1]->getNVars());
+        size_t state_space_size = Xs_[*system_->numAbs_-1]->symbolicSet_.CountMinterm(Xs_[*system_->numAbs_-1]->getNVars());
+        std::cout << "Win_domain_size:" << win_dom_size << '\n';
+        std::cout << "State_space_size:" << state_space_size << '\n';
+        std::cout << "Coverage:" << win_dom_size/state_space_size << '\n';
+      }
 
     /*! Lazy safety (no auxiliary abstractions) wrapper function.
      *  \param[in]  sysNext     System ODE.
@@ -382,6 +428,8 @@ public:
 		}
 	}
 
+
+
     /*! Fully computes the exploration transition relations (which use the coarsest state gridding).
      *  \param[in]  sysNext     System ODE.
      *  \param[in]  radNext     Growth bound ODE.
@@ -531,8 +579,8 @@ public:
      *  \param[in]	addS	Function pointer specifying the points that should be added to the safe set.
      *  \param[in]  num     Number of parallel threads
      */
-    template<class S_type>
-    void initialize(System* system, S_type addS) {
+    template<class S_type, class O_type>
+    void initialize(System* system, S_type addS, O_type addO) {
         ddmgr_ = new Cudd;
         system_ = system;
 
@@ -541,7 +589,7 @@ public:
 
         initializeEtaTau();
         initializeSolvers();
-        initializeSymbolicSets(addS);
+        initializeSymbolicSets(addS,addO);
         initializeNumBDDVars();
         initializePermutes();
         initializeCubes();
@@ -555,8 +603,8 @@ public:
     /*! Initializes SymbolicSet data members.
      *  \param[in]	addS	Function pointer specifying the points that should be added to the inner approx of the safe set.
      */
-    template<class S_type>
-    void initializeSymbolicSets(S_type addS) {
+    template<class S_type, class O_type>
+    void initializeSymbolicSets(S_type addS, O_type addO) {
         for (int i = 0; i < *system_->numAbs_; i++) {
             SymbolicSet* X = new SymbolicSet(*ddmgr_, *system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[i], tau_[i][0]);
             X->addGridPoints();
@@ -577,6 +625,9 @@ public:
 
         initializeSpec(&SafeInner_, addS);
         clog << "SafeInner_ initialized according to specification.\n";
+
+        initializeSpec(&Os_, addO);
+        clog << "Os_ initialized according to specification.\n";
 
 		for (int i = 0; i < *system_->numAbs_; i++) {
 			SymbolicSet* SafeOuter = new SymbolicSet(*Xs_[i]);
@@ -918,7 +969,261 @@ public:
             finalAbs_.push_back(ab);
         }
     }
+    /***** Functions borrowed from AdaptAbsReach.hh
+    **      Later will be merged in one class *****/
+    /*! Lazy reachability wrapper function.
+     *  \param[in]  p           Parameter controlling amount of exploration to do between synthesis attempts.
+     *  \param[in]  sysNext     System ODE.
+     *  \param[in]  radNext     Growth bound ODE.
+     *  \param[in]  x           Dummy state point.
+     *  \param[in]  u           Dummy input point.
+     */
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void onTheFlyReach(int p, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
+        p_ = p; // coarsest layer uncontrollable-pred. parameter
+        clog << "m: " << m_ << '\n';
+        clog << "p: " << p_ << '\n';
+
+        // start by synthesizing all uTs_
+        Ds_[0]->addGridPoints();
+
+        TicToc timer;
+        timer.tic();
+        computeExplorationAbstractions(sysNext, radNext, x, u);
+        abTime_ += timer.toc();
+
+        // Ts_[0] is uTs_[0] with obstacles removed
+        Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_ & !Os_[0]->symbolicSet_;
+        TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
+
+        // begin on-the-fly reachability synthesis
+        int ab = 0;
+        onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
+
+        clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
+
+        checkMakeDir("C");
+        saveVec(finalCs_, "C/C");
+        checkMakeDir("Z");
+        saveVec(finalZs_, "Z/Z");
+        checkMakeDir("T");
+        saveVec(Ts_, "T/T");
+        clog << "Wrote Ts_ to file.\n";
+        return;
+    }
+
+    /*! Main lazy reachability synthesis procedure.
+     *  \param[in]  ab          Layer 0-index.
+     *  \param[in]  sysNext     System ODE.
+     *  \param[in]  radNext     Growth bound ODE.
+     *  \param[in]  x           Dummy state point.
+     *  \param[in]  u           Dummy input point.
+     */
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void onTheFlyReachRecurse(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        clog << '\n';
+        clog << "current abstraction: " << ab << '\n';
+        clog << "controllers: " << finalCs_.size() << '\n';
+
+        if (verbose_) {
+            cout << '\n';
+            cout << "current abstraction: " << ab << '\n';
+            cout << "controllers: " << finalCs_.size() << '\n';
+        }
+
+        ReachResult result;
+        if (ab == 0) {
+            TicToc timer;
+            timer.tic();
+            result = reach(ab);
+            synTime_ += timer.toc();
+        }
+        else {
+            TicToc timer;
+            timer.tic();
+            result = reach(ab, m_);
+            synTime_ += timer.toc();
+        }
+        if (result == CONVERGEDVALID) {
+            clog << "result: converged valid\n";
+            if (verbose_)
+                cout << "result: converged valid\n";
+        }
+        else if (result == CONVERGEDINVALID) {
+            clog << "result: converged invalid\n";
+            if (verbose_)
+                cout << "result: converged invalid\n";
+        }
+        else {
+            clog << "result: not converged\n";
+            if (verbose_)
+                cout << "result: not converged\n";
+        }
+
+        if (result != CONVERGEDINVALID) {
+            saveCZ(ab);
+            validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+            validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
+            clog << "saved as snapshot, saved to valids\n";
+            if (verbose_)
+                cout << "saved as snapshot, saved to valids\n";
+        }
+        else { // result is CONVERGEDINVALID
+            Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
+            Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
+            clog << "reset to valids\n";
+            if (verbose_)
+                cout << "reset to valids\n";
+        }
+
+        if (result != NOTCONVERGED) { // ab = 0 always converges
+            if (ab == *system_->numAbs_ - 1) {
+                return;
+            }
+            else { // go finer
+                clog << "Going finer\n";
+                if (verbose_)
+                    cout << "Going finer\n";
+                int nextAb = ab + 1;
+                TicToc timer;
+                timer.tic();
+                explore(ab, nextAb, sysNext, radNext, x, u);
+                abTime_ += timer.toc();
+                finer(Zs_[ab], Zs_[nextAb], ab);
+                Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+                validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+                onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+                return;
+            }
+        }
+        else { // not converged, go coarser
+            clog << "Going coarser\n";
+            if (verbose_)
+                cout << "Going coarser\n";
+            int nextAb = ab - 1;
+            if (nextAb != 0) { // pointless to do for coarsest layer
+                TicToc timer;
+                timer.tic();
+                explore(ab, nextAb, sysNext, radNext, x, u);
+                abTime_ += timer.toc();
+            }
+            coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
+            Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
+            validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
+            onTheFlyReachRecurse(nextAb, sysNext, radNext, x, u);
+            return;
+        }
+    }
+
+    /*! Does lazy exploration based on the current status of controller synthesis.
+     *  \param[in]  curAb       The current layer 0-index.
+     *  \param[in]  nextAb      The next layer 0-index.
+     *  \param[in]  sysNext     System ODE.
+     *  \param[in]  radNext     Growth bound ODE.
+     *  \param[in]  x           Dummy state point.
+     *  \param[in]  u           Dummy input point.
+     */
+    template<class sys_type, class rad_type, class X_type, class U_type>
+    void explore(int curAb, int nextAb, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+        Ds_[curAb]->symbolicSet_ = validZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_; // target for uncontrollable reach
+        innerDs_[curAb]->symbolicSet_ = validZs_[curAb]->symbolicSet_ | Gs_[curAb]->symbolicSet_;
+        for (int c = curAb - 1; c >= 0; c--) {
+            coarserOuter(Ds_[c], Ds_[c+1], c);
+            coarserInner(innerDs_[c], innerDs_[c+1], c);
+        }
+        Ds_[0]->symbolicSet_ = cooperativeReach(Ds_[0]->symbolicSet_, curAb, p_); // do cooperative reach
+        Ds_[0]->symbolicSet_ &= (!innerDs_[0]->symbolicSet_); // states to do abstraction for
+        for (int c = 0; c < nextAb; c++) {
+            finer(Ds_[c], Ds_[c+1], c);
+        }
+        computeAbstraction(nextAb, sysNext, radNext, x, u);
+    }
+
+    /*! Calculates the reachability fixed-point for m iterations.
+     *  \param[in]  ab      The layer 0-index.
+     *  \param[in]  m       The number of iterations. Default -1 corresponds to infinity.
+     *  \returns    Integer representing status of convergence.
+     */
+    ReachResult reach(int ab, int m = -1) {
+        int i = 1;
+        clog << "abstraction: " << ab << '\n';
+        if (verbose_)
+            cout << "abstraction: " << ab << '\n';
+        while (1) {
+            clog << "iteration: " << i << '\n';
+            if (verbose_)
+                cout << "iteration: " << i << '\n';
+            BDD cPreZ = cPre(Zs_[ab]->symbolicSet_, ab);
+            BDD C = cPreZ | Gs_[ab]->symbolicSet_;
+            BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
+            Cs_[ab]->symbolicSet_ |= N;
+            Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_; // the disjunction part is new
+
+            if (N == ddmgr_->bddZero() && i != 1) {
+                if (i >= 2) {
+                    return CONVERGEDVALID;
+                }
+                else{
+                    return CONVERGEDINVALID;
+                }
+            }
+            if (i == m) {
+                return NOTCONVERGED;
+            }
+            i += 1;
+        }
+    }
+
+    /*! Calculates the cooperative reachability fixed-point for p iterations.
+     *  \param[in]  Z       The given set.
+     *  \param[in]  ab      The layer 0-index of Z.
+     *  \param[in]  p       The number of iterations.
+     *  \return     BDD containing all possible winning states at most p transitions away from Z.
+     */
+    BDD cooperativeReach(BDD Z, int ab, int p) {
+        int i = 1;
+        while (1) {
+            BDD cooperativePreZ = cooperativePre(Z, ab);
+            BDD N = cooperativePreZ & (!Z);
+            Z = cooperativePreZ;
+
+            if (i == p || N == ddmgr_->bddZero()) {
+                return Z;
+            }
+            i += 1;
+        }
+    }
+
+    /*! Calculates the cooperative predecessor of a given set with respect to the specified un-restricted transition relation.
+     *  \param[in]  Z       The given set.
+     *  \param[in]  ab      0-index of the un-restricted transition relation.
+     *  \return     BDD containing {x} for which there exists a u s.t. there exists a post state of (x,u) in Z.
+     */
+    BDD cooperativePre(BDD Z, int ab) {
+        BDD Z2 = Z.Permute(permutesXtoX2_[0]); // ab = 0 because we use the coarsest state griddings
+        BDD uPreZ = uTs_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[0]);
+        uPreZ = uPreZ.ExistAbstract(*notXvars_[0]);
+        return uPreZ;
+    }
+
+    /*! Saves a snapshot of a controller C and its domain Z into the sequence of final controllers and controller domains.
+        \param[in] ab	0-index of the abstraction which the controller and controller domain that should be saved belong to.
+    */
+    void saveCZ(int ab) {
+        if (Zs_[ab]->symbolicSet_ == ddmgr_->bddZero()) {
+            return;
+        }
+
+        SymbolicSet* C = new SymbolicSet(*Cs_[ab]);
+        C->symbolicSet_ = Cs_[ab]->symbolicSet_;
+        finalCs_.push_back(C);
+        SymbolicSet* Z = new SymbolicSet(*Xs_[ab]);
+        Z->symbolicSet_ = Zs_[ab]->symbolicSet_;
+        finalZs_.push_back(Z);
+        finalAbs_.push_back(ab);
+    }
 };
 }
 
-#endif /* AdaptAbsSafe_HH_ */
+#endif /* AdaptAbsReachNStay_HH_ */

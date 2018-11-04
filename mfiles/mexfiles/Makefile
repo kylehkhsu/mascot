@@ -20,7 +20,8 @@ SCOTSINC		= -I$(SCOTSROOT)/bdd
 # cudd 
 #
 CUDDPATH		=  /opt/local
-CUDDINC 		= -I$(CUDDPATH)/include
+CUDDINCa 		= -I$(CUDDPATH)/include
+CUDDINCb		= -I$(CUDDPATH)/include/cudd
 CUDDLIBS		= -lcudd 
 CUDDLPATH   = -L$(CUDDPATH)/lib
 
@@ -30,5 +31,5 @@ TARGET 			= mexSymbolicSet
 all: $(TARGET)
 
 $(TARGET): $(TARGET).cc
-	$(CC) COMPFLAGS='$(COMPFLAGS) $(CXXFLAGS)' -largeArrayDims $(SCOTSINC) $(CUDDINC) $(CUDDLPATH) $(CUDDLIBS) $(TARGET).cc
+	$(CC) COMPFLAGS='$(COMPFLAGS) $(CXXFLAGS)' -largeArrayDims $(SCOTSINC) $(CUDDINCa) $(CUDDINCb) $(CUDDLPATH) $(CUDDLIBS) $(TARGET).cc
 

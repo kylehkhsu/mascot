@@ -681,7 +681,7 @@ public:
             SymbolicSet* uT = new SymbolicSet(*Ts_[0]); // exploration transition relations are all with coarsest gridding
             uTs_.push_back(uT);
         }
-        clog << "uT_ initialized with empty domain.\n";
+        clog << "uTs_ initialized with empty domain.\n";
     }
 
     /*! Initializes a vector of SymbolicSets that is an instance of Xs_ containing points as specified by addSpec.
