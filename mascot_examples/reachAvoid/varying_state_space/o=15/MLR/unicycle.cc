@@ -3,7 +3,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
-#include "UpfrontReach.hh"
+#include "AdaptAbsReach.hh"
 
 using namespace std;
 using namespace scots;
@@ -148,6 +148,7 @@ int main() {
     double tauRatio = 2;
 
     int numAbs = 3;
+    int readAbs = 0;
 
     X_type x;
     U_type u;
