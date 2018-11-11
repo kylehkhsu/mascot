@@ -266,6 +266,15 @@ public:
         checkMakeDir("T");
         saveVec(Ts_, "T/T");
         clog << "Wrote Ts_ to file.\n";
+
+        if (verbose_) {
+          for (size_t i = 0; i < finalCs_.size(); i++) {
+            std::cout << "Controller " << i+1 << ":"<< '\n';
+            finalCs_[i]->printInfo();
+            std::cout << "Target " << i+1 << '\n';
+            finalZs_[i]->printInfo();
+          }
+        }
         return;
     }
 

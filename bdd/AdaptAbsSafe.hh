@@ -133,9 +133,8 @@ public:
         abTime_ += timer.toc();
 
 		// begin on-the-fly safety synthesis
-		int print = 1; // print progress on command line
 		int recursion = 0;
-		onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion, print);
+		onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion);
 
 		// to ensure that the controllers for the coarser layers admit control inputs that allow visit to finer layer states. Note that this doesn't change the controller domain.
         timer.tic();
@@ -174,15 +173,14 @@ public:
      *  \param[in]  x           Dummy state point.
      *  \param[in]  u           Dummy input point.
      *  \param[in]  recursion   Recursion depth counter.
-     *  \param[in]  print       Whether information should be printed to console.
      */
     template<class sys_type, class rad_type, class X_type, class U_type>
-	void onTheFlySafeRecurseNoAux(sys_type sysNext, rad_type radNext, X_type x, U_type u, int recursion, int print = 0) {
+	void onTheFlySafeRecurseNoAux(sys_type sysNext, rad_type radNext, X_type x, U_type u, int recursion) {
         TicToc timer;
 		recursion += 1;
 		bool CONVERGED;
 
-        if (print) {
+        if (verbose_) {
 		    clog << '\n';
 		    clog << "current recursion depth: " << recursion << '\n';
 			cout << '\n';
@@ -190,7 +188,7 @@ public:
 		}
 
 		for (int ab = 0; ab < *system_->numAbs_; ab++) {
-			if (print) {
+			if (verbose_) {
                 clog << "\t current abstraction: " << ab << '\n';
 				cout << "\t current abstraction: " << ab << '\n';
             }
@@ -246,7 +244,7 @@ public:
 				Zs_[ab]->symbolicSet_ = ddmgr_->bddZero();
 			}
             synTime_ += timer.toc();
-			onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion, print);
+			onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion);
 			return;
 		}
 	}
@@ -278,10 +276,9 @@ public:
 		TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
 
 		// begin on-the-fly safety synthesis
-		int print = 1; // print progress on command line
 		int recursion = 0;
         checkMakeDir("K");
-		onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion, print);
+		onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion);
 
 		// to ensure that the controllers for the coarser layers admit control inputs that allow visit to finer layer states. Note that this doesn't change the controller domain.
 		for (int ab = 0; ab < *system_->numAbs_; ab++) {
@@ -317,23 +314,22 @@ public:
      *  \param[in]  x           Dummy state point.
      *  \param[in]  u           Dummy input point.
      *  \param[in]  recursion   Recursion depth counter.
-     *  \param[in]  print       Whether information should be printed to console.
      */
 	template<class sys_type, class rad_type, class X_type, class U_type>
-	void onTheFlySafeRecurse(sys_type sysNext, rad_type radNext, X_type x, U_type u, int recursion, int print = 0) {
+	void onTheFlySafeRecurse(sys_type sysNext, rad_type radNext, X_type x, U_type u, int recursion) {
 		recursion += 1;
 		bool CONVERGED;
 		clog << '\n';
 		clog << "current recursion depth: " << recursion << '\n';
 
-		if (print) {
+		if (verbose_) {
 			cout << '\n';
 			cout << "current recursion depth: " << recursion << '\n';
 		}
 
 		for (int ab = 0; ab < *system_->numAbs_; ab++) {
             clog << "\t current abstraction: " << ab << '\n';
-            if (print)
+            if (verbose_)
                 cout << "\t current abstraction: " << ab << '\n';
 			if (ab > 0) {
                 TicToc timer;
@@ -377,7 +373,7 @@ public:
             for (int ab = 0; ab <= *system_->numAbs_ - 1; ab++){
                 Zs_[ab]->symbolicSet_ = ddmgr_->bddZero();
             }
-			onTheFlySafeRecurse(sysNext, radNext, x, u, recursion, print);
+			onTheFlySafeRecurse(sysNext, radNext, x, u, recursion);
 			return;
 		}
 	}
@@ -446,15 +442,15 @@ public:
      */
     // abstraction synthesis will only iterate over the elements in the domain of the state space SymbolicSet (first argument in constructing abstraction)
     template<class sys_type, class rad_type, class X_type, class U_type>
-    void computeAbstraction(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u, int print = 0) {
+    void computeAbstraction(int ab, sys_type sysNext, rad_type radNext, X_type x, U_type u) {
         BDD D = Ds_[ab]->symbolicSet_ & (!computedDs_[ab]->symbolicSet_); // don't repeat sampling
         computedDs_[ab]->symbolicSet_ |= Ds_[ab]->symbolicSet_; // update computed part of transition relation
         Ds_[ab]->symbolicSet_ = D;
 
         SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]);
         abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab], 0); // was hard-coded to *solvers_[0], source of "tunneling" bug
-        if (print)
-		    (abstraction.getTransitionRelation()).printInfo(1);
+        // if (verbose_)
+		    // (abstraction.getTransitionRelation()).printInfo(1);
         if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
             Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
 //            BDD O2 = Os_[ab]->symbolicSet_.Permute(permutesXtoX2_[ab]); // causes unsound behavior, leaving here as warning

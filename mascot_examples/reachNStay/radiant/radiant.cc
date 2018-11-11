@@ -3,8 +3,9 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 
+// #include "AdaptAbsReachNStay.hh"
+// #include "AdaptAbsSafe.hh"
 #include "AdaptAbsReach.hh"
-#include "AdaptAbsSafe.hh"
 
 using namespace scots;
 
@@ -36,7 +37,7 @@ auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
 //        -0.0186    0.0106    0.0080
 //        0.4377   -0.4869    0.0260
 //        0.4377    0.0346   -0.4955
-        
+
         double a[3][3];
         double b[3];
         if(u[0]==0.5) {
@@ -49,7 +50,7 @@ auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
             a[2][0] = 0.4377*0.001;
             a[2][1] = 0.0346*0.001;
             a[2][2] = -0.4955*0.001;
-            
+
             b[0] = 0.0004;
             b[1] = 0.0010;
             b[2] = 0.0011;
@@ -63,7 +64,7 @@ auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
             a[2][0] = 0.4377*0.001;
             a[2][1] = 0.0346*0.001;
             a[2][2] = -0.4955*0.001;
-            
+
             b[0] = 0;
             b[1] = 0.0010;
             b[2] = 0.0011;
@@ -108,11 +109,12 @@ auto radNext = [](X_type &r, U_type &u, OdeSolver solver) -> void {
     solver(radODE, r, u);
 };
 
-auto dcdcAddO = [](SymbolicSet* O) -> void {
+auto radiantAddO = [](SymbolicSet* O) -> void {
+    O->clear();
     ;
 };
 
-auto dcdcAddS = [](SymbolicSet* S) -> void {
+auto radiantAddS = [](SymbolicSet* S) -> void {
     double H[6*3] = {-1,  0, 0,
                          1,  0, 0,
                          0, -1, 0,
@@ -123,50 +125,57 @@ auto dcdcAddS = [](SymbolicSet* S) -> void {
     S->addPolytope(6, H, h, INNER);
 };
 
-auto dcdcAddG = [](SymbolicSet* G) -> void {
-    double H[4*2] = {-1,  0,
-        1,  0,
-        0, -1,
-        0,  1};
-    double h[4] = {-1.1, 1.6, -5.4, 5.9};
-    G->addPolytope(4, H, h, INNER);
-};
+// auto radiantAddG = [](SymbolicSet* G) -> void {
+//     double H[4*2] = {-1,  0,
+//         1,  0,
+//         0, -1,
+//         0,  1};
+//     double h[4] = {-1.1, 1.6, -5.4, 5.9};
+//     G->addPolytope(4, H, h, INNER);
+// };
 
 int main() {
-    
+
     double lbX[dimX]  = {20, 20, 20};
     double ubX[dimX]  = {28, 28, 28};
-    
+
     /* the system dynamics has two modes which correspond to two distinct abstract control inputs (in our case, they are 0.5, 1.5) */
     double lbU[dimU]  = {0};
     double ubU[dimU]  = {2};
     double etaU[dimU] = {1};
-    
+
     int nint = 5;
-    
-    double etaX[dimX]= {pow(10,-3), pow(10,-3), pow(10,-3)};
+
+    double etaX[dimX]= {0.5,0.5,0.5};
     //double tau = pow(2, 2)*0.0625;
-    double tau = 2;
+    double tau = 0.01;
     int numAbs = 3;
-    
-    double etaRatio[dimX] = {2, 2};
+
+    double etaRatio[dimX] = {2, 2, 2};
     double tauRatio = 2;
-    
+
     X_type x;
     U_type u;
-    
-    
-    System dcdc(dimX, lbX, ubX, etaX, tau,
+
+
+    System radiant(dimX, lbX, ubX, etaX, tau,
                 dimU, lbU, ubU, etaU,
                 etaRatio, tauRatio, nint, numAbs);
-    int verbose = 0;
-    int p = 3;
-    AdaptAbsReach abs("dcdc3A.log", verbose);
-    abs.initialize(&dcdc, dcdcAddO, dcdcAddG);
-    
+    int verbose = 1;
+    int p = 2;
+    // AdaptAbsReachNStay abs("radiant.log", verbose);
+    // abs.initialize(&radiant, radiantAddS, radiantAddO);
+
     TicToc timer;
     timer.tic();
+    // abs.onTheFlyReachNStay(p,sysNext, radNext, x, u);
+
+    // AdaptAbsSafe abs("radiant_safe.log",verbose);
+    // abs.initialize(&radiant, radiantAddS);
+    // abs.onTheFlySafe(sysNext, radNext, x, u);
+
+    AdaptAbsReach abs("radiant_reach.log",verbose);
+    abs.initialize(&radiant, radiantAddO, radiantAddS);
     abs.onTheFlyReach(p,sysNext, radNext, x, u);
     clog << "-----------------------------------------------Total time: " << timer.toc() << " seconds.\n";
 }
-
