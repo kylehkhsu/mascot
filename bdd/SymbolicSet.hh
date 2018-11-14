@@ -1092,7 +1092,7 @@ public:
                     c*=2;
                 }
                 gridPoints[i*nofMinterms+k]=firstGridPoint_[i]+num*eta_[i];
-                std::cout << firstGridPoint_[i]+num*eta_[i] << '\n';
+//                std::cout << firstGridPoint_[i]+num*eta_[i] << '\n';
             }
             //for(size_t i=0; i<dim_; i++)
             //  std::cout << gridPoints[i*nofMinterms+k] << " " ;
