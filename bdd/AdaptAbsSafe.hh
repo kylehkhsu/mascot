@@ -65,7 +65,7 @@ public:
     /*!	Constructor for an AdaptAbsSafe object.
      *  \param[in]  logFile     Filename of program log.
      */
-    AdaptAbsSafe(const char* logFile, int verbose) {
+    AdaptAbsSafe(const char* logFile, int verbose=0) {
         freopen(logFile, "w", stderr);
         clog << logFile << '\n';
         verbose_ = verbose;

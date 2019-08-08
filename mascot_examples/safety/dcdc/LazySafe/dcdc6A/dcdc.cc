@@ -18,7 +18,7 @@ typedef std::array<double, dimU> U_type;
 const double w[dimX] = {0.001, 0.001};
 
 /* we integrate the simple ode by 0.3 sec (the result is stored in x)  */
-auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
+auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
     auto sysODE = [](X_type &dxdt, const X_type &x, const U_type &u) -> void {
         const double r0 = 1.0 ;
         const double vs = 1.0 ;
@@ -48,7 +48,7 @@ auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
 };
 
 /* computation of the growth bound (the result is stored in r)  */
-auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
+auto radNext = [](X_type &r, U_type &u, OdeSolver solver) -> void {
     auto radODE = [](X_type &drdt, const X_type &r, const U_type &u) -> void {
         const double r0 = 1.0 ;
         const double rl = 0.05 ;
@@ -74,9 +74,9 @@ auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
     solver(radODE, r, u);
 };
 
-auto dcdcAddO = [](SymbolicSet* O) -> void {
-    ;
-};
+// auto dcdcAddO = [](SymbolicSet* O) -> void {
+//     ;
+// };
 
 auto dcdcAddS = [](SymbolicSet* S) -> void {
     double H[4*2] = {-1,  0,
