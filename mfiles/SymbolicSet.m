@@ -13,6 +13,7 @@ classdef SymbolicSet < handle
     first     % first grid point of the uniform grid if SymbolicSet is SymbolicSetFromUniformGrid 
     last      % last grid point of the uniform grid if SymbolicSet is SymbolicSetFromUniformGrid 
     project   % optional: project the SymbolicSet onto the dimensions specified in the array project
+    tau       % sampling time
   end
   methods 
     function obj=SymbolicSet(filename, varargin)
@@ -25,9 +26,10 @@ classdef SymbolicSet < handle
         error('filname is not a string');
       end
 
-      [dim eta first last z]=mexSymbolicSet(filename,'parameters');
+      [dim eta first last z tau]=mexSymbolicSet(filename,'parameters');
       obj.filename=filename;
       obj.dim=dim;
+      obj.tau=tau;
       obj.eta=eta;
       obj.z=z;
       obj.last=last;
@@ -140,7 +142,7 @@ classdef SymbolicSet < handle
         disp('plot function is supported for 1, 2 and 3 dimensions only');
       end
     end
-    function plotCells(obj,varargin)
+    function h = plotCells(obj,varargin)
       if(obj.points==0)
         error(['No grid points stored to be plotted. Did you run set.points ?']);
       end
@@ -148,6 +150,7 @@ classdef SymbolicSet < handle
       case 2
         n=length(obj.points(:,1));
         eh=obj.eta./2;
+        h = zeros(1,n);
         for i=1:n
           x=obj.points(i,1);
           xdata=x+[-1 1 1 -1]*eh(1);
@@ -155,7 +158,7 @@ classdef SymbolicSet < handle
           ydata=y+[-1 -1 1 1]*eh(2);
           v=[xdata(:) ydata(:)];
           f=[1 2 3 4];
-          patch('faces',f,'vertices',v,varargin{:})
+          h(i)=patch('faces',f,'vertices',v,varargin{:});
         end
       case 3
         n=length(obj.points(:,1));

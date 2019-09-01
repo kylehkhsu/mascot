@@ -33,7 +33,7 @@ typedef std::array<double, dimX> X_type;
 typedef std::array<double, dimU> U_type;
 
 /* system ODE (the result is stored in x)  */
-auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
+auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
     /* cartesian to polar conversion */
     X_type y;
     y[0] = pow(pow(x[0], 2) + pow(x[1], 2), 0.5); // radius
@@ -57,7 +57,7 @@ auto sysNext = [](X_type &x, U_type &u, double tau, OdeSolver solver) -> void {
 };
 
 /* computation of the growth bound (the result is stored in r)  */
-auto radNext = [](X_type &r, U_type &u, double tau, OdeSolver solver) -> void {
+auto radNext = [](X_type &r, U_type &u, OdeSolver solver) -> void {
     /* cartesian to polar conversion */
     X_type s;
     s[0] = pow(pow(r[0], 2) + pow(r[1], 2), 0.5);

@@ -1,7 +1,6 @@
 function dcdcPlotNice(mode, numAbs) % numAbs = num of controllers
     w = [0.001 0.001];
-    addpath(genpath('../../..'));
-    colors=get(groot,'DefaultAxesColorOrder');
+    addpath(genpath('../../../../../mfiles/'));
     
     if (strcmp(mode, 'S'))
         figure
@@ -23,12 +22,13 @@ function dcdcPlotNice(mode, numAbs) % numAbs = num of controllers
     end
     
     if (strcmp(mode,'T&C'))
-        figure('Units','inches',...
-            'OuterPosition',[0 0 8 3.1],...
-            'PaperPositionMode','auto');
-        [ha, pos] = tight_subplot(3, 2, 0.07, 0.06, 0.06);
-        set(ha, 'XTickLabelMode', 'auto') 
-        set(ha, 'YTickLabelMode', 'auto')
+        figure
+%         figure('Units','inches',...
+%             'OuterPosition',[0 0 8 3.1],...
+%             'PaperPositionMode','auto');
+%         [ha, pos] = tight_subplot(3, 2, 0.07, 0.06, 0.06);
+%         set(ha, 'XTickLabelMode', 'auto') 
+%         set(ha, 'YTickLabelMode', 'auto')
         cmap = colormap('gray');
         color1 = cmap(1,:);
         color2 = cmap(floor(size(cmap,1)/2),:);
@@ -36,28 +36,17 @@ function dcdcPlotNice(mode, numAbs) % numAbs = num of controllers
 		gray = [0.2471    0.2471    0.2471];
         for ii=1:numAbs
             disp(ii)
-            axes(ha(ii));
+%             axes(ha(ii));
             hold on;
             T = SymbolicSet(['T/T' num2str(ii) '.bdd'],'projection',[1 2]);
             C = SymbolicSet(['C/C' num2str(ii) '.bdd'],'projection',[1 2]);
-            try
-%                 s = subplot(3,numAbs/3,ii); hold on;
-%                 plotCells(T,'facecolor',red,'EdgeColor',red);
-%                 plotCells(C,'facecolor',gray,'EdgeColor',gray);
-                
+            try                
                 pT = T.points;
                 pC = C.points;
-                plot(pT(:,1),pT(:,2),'rs', 'MarkerSize', 10/ii);
-                plot(pC(:,1),pC(:,2),'ks', 'MarkerSize', 10/ii);
-%                 set(s,...
-%                     'Units','normalized',...
-%                     'OuterPosition',[0 0 1 1],...
-%                     'YTick',0:2:12,...
-%                     'XTick',0:2:12,...
-%                     'FontUnits','points',...
-%                     'FontWeight','normal',...
-%                     'FontSize',9,...
-%                     'FontName','Times')
+%                 plot(pT(:,1),pT(:,2),'rs', 'MarkerSize', 10/ii);
+%                 plot(pC(:,1),pC(:,2),'ks', 'MarkerSize', 10/ii);
+                plotCells(T, 'facecolor', 'none', 'edgec', [0 0 0], 'linew', 0.1);
+                plotCells(C, 'facecolor', [1 0.9255 0.2471], 'edgec', [0 0 0], 'linew', 0.1);
                 axis([1.1 1.6 5.4 5.9]);
                 title({['$l_' num2str(numAbs + 1 - ii) '$']},...
                     'FontUnits','points',...
@@ -68,9 +57,7 @@ function dcdcPlotNice(mode, numAbs) % numAbs = num of controllers
                         'FontUnits','points',...
                         'interpreter','latex',...
                         'FontSize',10,...
-                        'FontName','Times');%,...
-        %                 'Units','Normalized',...
-        %                 'Position',[-0.1,0.5,0])
+                        'FontName','Times');
                 xlabel({'$x_1$'},...
                         'FontUnits','points',...
                         'interpreter','latex',...
@@ -83,7 +70,7 @@ function dcdcPlotNice(mode, numAbs) % numAbs = num of controllers
         end
         
         savefig('dcdc6A_cdc');
-        print -depsc dcdc6A_cdc.eps
+%         print -depsc dcdc6A_cdc.eps
     end
     
     if (strcmp(mode,'Controller domain'))

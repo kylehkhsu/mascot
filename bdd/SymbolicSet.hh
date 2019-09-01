@@ -1173,7 +1173,35 @@ public:
         }
         delete[] vars;
     }
-
+    
+    // kaushik
+    /* function: getRandomGridPoint
+        * randomly pick a grid point */
+    void getRandomGridPoint(double gridPoint[]) const {
+        /* number of minterms in the symbolic set */
+        size_t nofMinterms=symbolicSet_.CountMinterm(nvars_);
+        /* randomly select an index in the rangle 0 to nofMinterms-1 */
+        size_t index = rand() % nofMinterms;
+        /* set up iterator */
+        std::vector<size_t> ivars_;
+        ivars_.reserve(nvars_);
+        for(size_t i=0; i<dim_; i++)
+            for(size_t j=0; j<nofBddVars_[i]; j++)
+                ivars_.push_back(indBddVars_[i][j]);
+        CuddMintermIterator it(symbolicSet_,ivars_,nvars_);
+        /* initialize variables */
+        const int* minterm;
+        size_t i = 0;
+        /* loop over all minterms until the iteration count = index */
+        for (it.begin(); !it.done(); it.next()) {
+            if (index==i) {
+                mintermToElement(it.currentMinterm(),gridPoint);
+                break;
+            }
+            i++;
+        }
+    }
+    
     // kyle
 
     /* function: isMinterm

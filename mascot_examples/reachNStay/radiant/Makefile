@@ -38,5 +38,5 @@ clean:
 	rm  ./$(TARGET)  ./$(TARGET).o
 
 cleanAll:
-	rm -r -f ./$(TARGET)  ./$(TARGET).o C Z SafeSets *.txt *.fig plotting T *.log Zs* D* validZs* 
+	rm -r -f ./$(TARGET)  ./$(TARGET).o C Z SafeSets *.txt plotting T *.log Zs* D* validZs* 
 

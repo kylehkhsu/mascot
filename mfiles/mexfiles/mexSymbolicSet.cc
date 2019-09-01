@@ -74,6 +74,11 @@ void mexFunction(
       double *z=mxGetPr(plhs[4]);
       set.copyZ(z);
     }
+      /* tau - sampling time */
+      if(nlhs>=5) {
+          size_t tau=set.getTau();
+          plhs[5]=mxCreateDoubleScalar((double)tau);
+      }
   }
 
   if (!std::strcmp(param,"gridpoints")) {

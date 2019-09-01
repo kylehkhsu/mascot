@@ -1,5 +1,5 @@
 function spiral(mode, numAbs) % numAbs = num of controllers
-    addpath(genpath('../..'));
+    addpath(genpath('../../../../'));
     colors=get(groot,'DefaultAxesColorOrder');
     tauset = [0.05*2*2; 0.05*2; 0.05];
     
@@ -59,6 +59,33 @@ function spiral(mode, numAbs) % numAbs = num of controllers
             catch
                 warning(['There are no points in T or C' num2str(ii)]);
             end
+        end
+    end
+    
+    if (strcmp(mode,'Int_dom'))
+        iter = 30; % from the directory InterimGoal
+        green = [0.7569    0.8667    0.7765];
+		purple = [0.8196    0.6549    0.8471];
+		orange = [0.9137    0.8275    0.3804];
+        cmap = [green;purple;orange];
+        openfig('problem');
+        hold on;
+        h = cell(3,1);
+        for ii=1:iter
+            for jj=0:numAbs-1
+                Z = SymbolicSet(['InterimDom/Z_' num2str(ii) '_' num2str(jj) '.bdd']);
+                try
+                    h{jj+1} = plotCells(Z,'facecolor',cmap(jj+1,:),'edgec',cmap(jj+1,:),'linew', 0.1);
+                catch
+                    warning(['There are probably no points in Z' num2str(ii)]);
+                end
+                drawnow
+                pause(0.01)
+            end 
+            for jj=1:numAbs
+                delete(h{jj});
+            end
+%             pause(0.01)
         end
     end
     

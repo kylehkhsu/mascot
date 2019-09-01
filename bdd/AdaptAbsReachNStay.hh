@@ -144,6 +144,8 @@ public:
           Ds_[ab]->symbolicSet_ = ddmgr_->bddZero();
           innerDs_[ab]->symbolicSet_ = ddmgr_->bddZero();
         }
+        checkMakeDir("G");
+        saveVec(Gs_, "G/G");
         std::cout << "Variables were reset to initial values." << '\n';
         onTheFlyReach(p, sysNext, radNext, x, u);
         /* counting coverage of the controller domain */
@@ -156,7 +158,7 @@ public:
         size_t state_space_size = Xs_[*system_->numAbs_-1]->symbolicSet_.CountMinterm(Xs_[*system_->numAbs_-1]->getNVars());
         std::cout << "Win_domain_size:" << win_dom_size << '\n';
         std::cout << "State_space_size:" << state_space_size << '\n';
-        std::cout << "Coverage:" << win_dom_size/state_space_size << '\n';
+//        std::cout << "Coverage:" << win_dom_size/state_space_size << '\n';
       }
 
     /*! Lazy safety (no auxiliary abstractions) wrapper function.
@@ -606,6 +608,8 @@ public:
             SymbolicSet* X = new SymbolicSet(*ddmgr_, *system_->dimX_, system_->lbX_, system_->ubX_, etaXs_[i], tau_[i][0]);
             X->addGridPoints();
             Xs_.push_back(X);
+            // debug purpose
+            cout << "tau of layer " << i << " is: " << tau_[i][0] << "\n\n";
         }
         clog << "Xs_ initialized with full domain.\n";
 
@@ -945,7 +949,7 @@ public:
         //printVec(Os_, "O");
         cout << "U:\n";
         U_->printInfo(1);
-        //printVec(Gs_, "G");
+//        printVec(Gs_, "G");
 
         checkMakeDir("plotting");
         Xs_[0]->writeToFile("plotting/X.bdd");

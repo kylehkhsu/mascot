@@ -1184,6 +1184,113 @@ namespace scots {
             }
             clog << "Ts_ read from file.\n";
         }
+        /*! Simulate an abstract controlled trajectory (resolve measurement related non-determinism and initial state non-determinism randomly), and simultaneously compute the shortest distance from the safe set boundary.
+         input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: lb_x1 lb_x2 ... ub_x1 ub_x2, where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively */
+        void simulateAbs(std::vector<std::vector<double>> trajectory, std::vector<std::vector<double>> obstacles, double& distance) {
+            std::vector<double> x; /* current state */
+            std::vector<double> xx; /* next state */
+            std::vector<double> u; /* current control input */
+            std::vector<double> xu; /* current state-input pair */
+            scots::SymbolicSet goal; /* current goal */
+            size_t ab; /* current abstraction layer */
+            /* the ids of the state space variables and input variables in the controller BDD and transition BDD are 0 to dimX_-1 and dimX_ to dimX_ + dimU_ -1, respectively */
+            std::vector<size_t> xind;
+            std::vector<size_t> xuind;
+            for (size_t i=0; i<dimX_; i++) {
+                xind.push_back(i);
+                xuind.push_back(i);
+            }
+            for (size_t i=0; i<dimU_; i++) {
+                xuind.push_back(i);
+            }
+            /* Choose one initial state randomly from the set of initial states */
+            X0s_[0]->getRandomGridPoint(x);
+            trajectory.push_back(x);
+            /* initialize distance between the trajectory and safe set boundary */
+            dist = -1;
+            /* iterate over all controllers */
+            for (size_t i=finalCs_.size()-1; i>=0; i--) {
+                if (i==1) {
+                    goal = Gs_[numAbs_-1];
+                } else {
+                    goal = finalZs_[i-1];
+                }
+                
+                while (1) {
+                    x = trajectory.back();
+                    if (goal.isElement(x))
+                        break;
+                    u = getRandomMember(finalCs_[i]->setValuedMap(x,xind));
+                    /* find the abstraction layer that corresponds to the present controller (assuming all the abstraction layers' eta are different) */
+                    for (size_t j=0; j<numAbs_; j++) {
+                        if (finalZs_[i]->getEta()==Xs_[j]->getEta()) {
+                            ab = j;
+                            break;
+                        }
+                    }
+                    for (size_t j=0; j<dimX_; j++) {
+                        xu.push_back(x[j]);
+                    }
+                    for (size_t j=0; j<dimU_; j++) {
+                        xu.push_back(u[j]);
+                    }
+                    xx = getRandomMember(Ts_[ab]->setValuedMap(xu,xuind));
+                    trajectory.push_back(xx);
+                    /* update the distacne */
+                    /* obstacles are a collection of rectangles */
+                    /* compute the box around xx */
+                    std::vector<double> lb1, ub1, lb2, ub2;
+                    for (size_t j=0; j<dimX_; j++) {
+                        lb1.push_back(xx[j]-etaXs_[j]);
+                        ub1.push_back(xx[j]+etaXs_[j]);
+                    }
+                    for (size_t j=0; j<obstacles.size(); j++) {
+                        for (size_t k=0; k<dimX_; k++) {
+                            lb2.push_back(obstacles[j][k]);
+                            ub2.push_back(obstacles[j][dimX_+k]);
+                        }
+                        if (distacne==-1) {
+                            distance = euclidean(lb1, ub1, lb2, ub2);
+                        } else {
+                            distance = std::min(distance,euclidean(lb1, ub1, lb2, ub2));
+                        }
+                    }
+                }
+            }
+        }
+    private:
+        /* get random element from a vector */
+        template<class T>
+        inline T getRandomMember(std::vector<T> vec) {
+            return vec[rand() % vec.size()];
+        }
+        /* compute euclidean distance between two boxes */
+        double euclidean(std::vector<double> lb1, std::vector<double> ub1, std::vector<double> lb2, std::vector<double> ub2) {
+            /* sanity check */
+            if (!(lb1.size()==ub1.size() && ub1.size()==lb2.size() && lb2.size()==ub2.size()))
+                throw "The array dimensions do not match.";
+            
+            std::vector<double> diff1, diff2;
+            /* absolute value of lb1-ub2 */
+            for (size_t i=0; i<lb1.size(); i++) {
+                diff1.push_back(abs(lb1[i]-ub2[1]));
+            }
+            /* absolute value of lb2-ub1 */
+            for (size_t i=0; i<lb2.size(); i++) {
+                diff2.push_back(abs(lb2[i]-ub1[i]));
+            }
+            /* pointwise minimum of diff1 and diff2 */
+            std::vector<double> diff = diff1;
+            for (size_t i=0; i<diff1.size(); i++) {
+                diff[i] = std::min(diff1[i],diff2[i]);
+            }
+            /* the euclidean norm of diff */
+            double sum = 0;
+            for (size_t i=0; i<diff.size(); i++) {
+                sum += pow(diff[i],2);
+            }
+            return sqrt(sum);
+        }
 };
 }
 
