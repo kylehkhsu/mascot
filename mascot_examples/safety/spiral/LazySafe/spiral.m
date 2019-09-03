@@ -1,5 +1,5 @@
 function spiral(mode, numAbs) % numAbs = num of controllers
-    addpath(genpath('../../../../'));
+    addpath(genpath('../../../'));
     colors=get(groot,'DefaultAxesColorOrder');
     tauset = [0.05*2*2; 0.05*2; 0.05];
     

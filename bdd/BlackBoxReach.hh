@@ -104,7 +104,7 @@ namespace scots {
             uTs_=other.uTs_;
             m_=other.m_;
             p_=other.p_;
-            abTime_=0
+            abTime_=0;
             synTime_=0;
             verbose_=other.verbose_;
             /* reset elements related to synthesis */
@@ -194,19 +194,16 @@ namespace scots {
         /*! Only synthesis using the existing abstraction.
          *  IMPORTANT: use only after some abstraction has been computed.
          *  \param[in]  p           Parameter controlling amount of finer layer synthesis attempts.
-         *  \param[in]  readAbs     Flag set to TRUE when abstractions are to be read from file.
-         *  \param[in]  sysNext     System ODE.
-         *  \param[in]  x           Dummy state point.
-         *  \param[in]  u           Dummy input point.
          */
-        template<class sys_type, class X_type, class U_type>
-        void synthesisReach(int p, sys_type sysNext, X_type x, U_type u) {
+        void plainReach(int p) {
             m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
             clog << "m: " << m_ << '\n';
             
             // synthesize controller
             int ab = 0;
             eagerReachRecurse(ab);
+//            ReachResult result = reach(ab);
+//            cout << "ReachResult = " << result << ".\n";
             
             clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
             
@@ -226,21 +223,23 @@ namespace scots {
         template<class X_type, class U_type, class sys_type, class rad_type>
         bool exploreAroundPoint(X_type x, X_type r, U_type u, sys_type sysNext, rad_type radNext) {
             /* sanity check */
-            if(!(x.size()==*system_->dim_)) {
+            if(!(x.size()==*system_->dimX_)) {
                 std::ostringstream os;
                 os << "Error: scots::SymbolicSet::isElement(x): x must be of size dim_.";
                 throw std::invalid_argument(os.str().c_str());
             }
             for (size_t i=0; i < *system_->dimX_; i++) {
-                if (x[i] > ubX_[i] || x[i] < lbX_[i]) {
+                if (x[i] > system_->ubX_[i] || x[i] < system_->lbX_[i]) {
                     std::ostringstream os;
                     os << "Error: scots::BlackBoxReach::exploreAround(x): x is outside the state space.";
                     throw std::invalid_argument(os.str().c_str());
                 }
             }
             /* find the current exploration level around x */
-            for (size_t ab=*system_->numAbs_-1; ab >= 0; ab--) {
+            size_t ab;
+            for (size_t i=*system_->numAbs_-1; i >= 0; i--) {
                 if (computedDs_[ab]->isElement(x)) {
+                    ab = i;
                     break;
                 }
             }
@@ -249,25 +248,31 @@ namespace scots {
             } else { /* otherwise, the exploration happens in the next finer layer */
                 ab = ab - 1;
             }
-            /* prepare parameters for computation */
-            X_type z, first;
-            Xs_[ab]->copyZ(&z[0]);
-            Xs_[ab]->copyFirstGridPoint(&first[0]);
-            /* determine the cells which fall in the area [x-r,x+r] */
-            BDD area = ddmgr_->bddOne();
-            for(size_t i=0; i < *system_->dimX_; i++) {
-                int lb = std::lround(((x[i]-r[i]-z[i]-first[i])/etaXs_[ab][i]));
-                int ub = std::lround(((x[i]+r[i]+z[i]-first[i])/etaXs_[ab][i]));
-                BDD zz=ddmgr_->bddZero();
-                for(int j=lb; j<=ub; j++) {
-                    zz|=num[i][j];
-                }
-                area &= zz;
+            /* Set up the polytope that represents the area around x */
+            int nofHalfSpaces = 2*(*system_->dimX_);
+            double* H = new double[nofHalfSpaces*(*system_->dimX_)];
+            for (size_t i=0; i<nofHalfSpaces*(*system_->dimX_); i++) {
+                H[i] = 0;
             }
-            /* explore the portion given by area */
-            Ds_[ab]->symbolicSet_ = area;
+            int j = 0;
+            for (size_t i=0; i<*system_->dimX_; i++) {
+                H[j]=-1;
+                j += *system_->dimX_;
+                H[j]=1;
+                j += *system_->dimX_+1;
+            }
+            double* h = new double[nofHalfSpaces];
+            for (size_t i=0; i<*system_->dimX_; i++) {
+                h[2*i] = -(x[i]-r[i]-Xs_[ab]->z_[i]);
+                h[2*i+1] = x[i]+r[i]+Xs_[ab]->z_[i];
+            }
+            /* explore the portion given by polytope {x' | Hx' <= h} */
+            Ds_[ab]->clear();
+            Ds_[ab]->addPolytope(nofHalfSpaces,H,h,OUTER);
             X_type y;
             computeAbstraction(ab, sysNext, radNext, y, u);
+            delete[] H;
+            delete[] h;
             return true;
         }
         
@@ -643,12 +648,40 @@ namespace scots {
                 BDD C = controllablePreZ | Gs_[ab]->symbolicSet_;
                 BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
                 Cs_[ab]->symbolicSet_ |= N;
-                Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_; // the disjunction part is new
+                Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_;
                 
-                if (X0s_->symbolicSet_ & (!(Zs_->symbolicSet_)) == ddmgr_->bddZero()) {
+                // debug
+//                if (verbose_) {
+//                    checkMakeDir("InterimDom");
+//                    std::string Str="InterimDom/Z_";
+//                    Str+=std::to_string(ab);
+//                    Str+="_";
+//                    Str+=std::to_string(i);
+//                    Str+=".bdd";
+//                    char Char[20];
+//                    size_t Length = Str.copy(Char, Str.length() + 1);
+//                    Char[Length] = '\0';
+//                    //                vector<SymbolicSet*> Ztemp = Zs_;
+//                    //                for (int i=0; i<ab; i++) {
+//                    //                    BDD temp = Zs_[i+1]->symbolicSet_;
+//                    //                    finer(Zs_[i],Zs_[i+1],i);
+//                    //                    Zs_[i+1]->symbolicSet_ = temp & (!(Zs_[i+1]->symbolicSet_));
+//                    //                }
+//                    BDD temp = Zs_[ab]->symbolicSet_;
+//                    if (ab!=0) {
+//                        finer(Zs_[ab-1],Zs_[ab],ab-1);
+//                        Zs_[ab]->symbolicSet_ = temp & (!(Zs_[ab]->symbolicSet_));
+//                    }
+//                    Zs_[ab]->writeToFile(Char);
+//                    Zs_[ab]->symbolicSet_ = temp;
+//                }
+                // debug end
+                
+                if (X0s_[ab]->symbolicSet_ & (!(Zs_[ab]->symbolicSet_)) == ddmgr_->bddZero()) {
                     return INITWINNING;
                 }
-                if (N == ddmgr_->bddZero() && i != 1) {
+//                if (N == ddmgr_->bddZero() && i != 1) {
+                if (N == ddmgr_->bddZero()) { // by kaushik: "i!=1" doesn't make sense as CONVERGEDINVALID will never be true
                     if (i >= 2) {
                         return CONVERGEDVALID;
                     }
@@ -715,6 +748,7 @@ namespace scots {
             BDD preF = TTs_[ab]->symbolicSet_.AndAbstract(nF, *notXUvars_[ab]);
             // get rid of the obstacles from pre
             preF &= !Os_[ab]->symbolicSet_;
+
             return preF;
         }
         
@@ -765,7 +799,6 @@ namespace scots {
             initializeCubes();
             initializeNotVars();
             initializeProjs();
-            verifySave();
             
             abTime_ += timer.toc();
         }
@@ -880,35 +913,58 @@ namespace scots {
          *  \param[in]    addI    Function pointer specifying the points that should be added to the initial state set. (default to whole state space)
          *  \param[in]  distance    The distance metric used to modify the obstacle and the goal (default to 0).
          */
-        template<class G_type, class O_type, class I_type=NULL, class X_type>
-        void initializeSpec(G_type addG, O_type addO, I_type addI, X_type distance=NULL) {
-            if (distance==NULL) {
-                double* distance = new double[*system_->dimX_];
-                for (i=0; i<*system_->dimX_; i++) {
-                    distance[i] = 0;
-                }
+        template<class G_type, class O_type, class I_type, class X_type>
+        void initializeSpec(G_type addG, O_type addO, I_type addI, X_type distance) {
+            /* initialize specification in the finest layer */
+            addG(Gs_[*system_->numAbs_-1],distance);
+            addO(Os_[*system_->numAbs_-1], distance);
+            addI(X0s_[*system_->numAbs_-1]);
+            if (X0s_[*system_->numAbs_-1]->symbolicSet_==ddmgr_->bddZero()) {
+                error("Error: the set of initial states cannot be empty.\n");
             }
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                addG(Gs_[i],distance);
-                addO(Os_[i], distance);
-                /* checking that specification is valid */
-                if ((Gs_[i]->symbolicSet_ & Os_[i]->symbolicSet_) != ddmgr_->bddZero()) {
-                    error("Error: G and O have nonzero intersection.\n");
-                }
-                /* add initial states */
-                if (addI!=NULL) {
-                    addI(X0s_[i]);
-                    /* ignore initial states which are blocked by the obstacles */
-                    X0s_[i]->symbolicSet_ &= !Os_[i]->symbolicSet_;
-                } else {
-                    X0s_[i]->symbolicSet_ = Xs_[i]->symbolicSet_ & !Os_[i]->symbolicSet_;
-                }
-                if (X0s_[i]->symbolicSet_==ddmgr_->bddZero()) {
-                    error("Error: no initial state outside the obstacles.\n");
-                }
+            /* project the specification to the coarser layers */
+            for (int i = *system_->numAbs_-1; i > 0; i--) {
+                coarserInner(Gs_[i-1],Gs_[i],i-1);
+                coarserOuter(Os_[i-1],Os_[i],i-1);
+                coarserOuter(X0s_[i-1],X0s_[i],i-1);
+                /* ignore initial states which are blocked by the obstacles */
+                X0s_[i]->symbolicSet_ &= !Os_[i]->symbolicSet_;
+            }
+            /* checking that specification is valid */
+            if ((Gs_[*system_->numAbs_-1]->symbolicSet_ & (!Os_[*system_->numAbs_-1]->symbolicSet_)) == ddmgr_->bddZero()) {
+                std::ostringstream os;
+                os<< "Error: No goal state is outside the obstacles in the finest layer.\n";
+                throw std::runtime_error(os.str().c_str());
+            }
+            if (X0s_[*system_->numAbs_-1]->symbolicSet_==ddmgr_->bddZero()) {
+                std::ostringstream os;
+                os<< "Error: no initial state outside the obstacles in the finest layer.\n";
+                throw std::runtime_error(os.str().c_str());
             }
             clog << "No obstacle problem with specification.\n";
-            delete[] distance;
+            verifySave();
+        }
+        /*! Initializes the goal and obstacle sets accross all the layers.
+         *  \param[in]    addO    Function pointer specifying the points that should be added to the obstacle set.
+         *  \param[in]    addG    Function pointer specifying the points that should be added to the goal set.
+         *  \param[in]    addI    Function pointer specifying the points that should be added to the initial state set. (default to whole state space)
+         */
+        template<class G_type, class O_type, class I_type>
+        inline void initializeSpec(G_type addG, O_type addO, I_type addI) {
+            /* when no distance is passed as argument, initialize the distance as 0 and call initializeSpec */
+            double distance = 0.0;
+            initializeSpec(addG, addO, addI, distance);
+        }
+        
+        /*! Computes only the coarsest transitions.
+         *  \param[in]  sysNext     System ODE.
+         *  \param[in]  radNext     Growth bound ODE.
+         *  \param[in]  x           Dummy state point.
+         *  \param[in]  u           Dummy input point. */
+        template<class sys_type, class rad_type, class X_type, class U_type>
+        void initializeAbstraction(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+            Ds_[0]->addGridPoints();
+            computeAbstraction(0, sysNext, radNext, x, u);
         }
         
         /*! Initializes the BDDs useful for existential abstraction. */
@@ -1135,14 +1191,16 @@ namespace scots {
             for (size_t i = 0; i < etaXs_.size(); i++) {
                 clog << "abstraction " << i << ": " << *tau_[i] << '\n';
             }
-            printVec(Xs_, "X");
-            printVec(Os_, "O");
-            cout << "U:\n";
-            U_->printInfo(1);
-            printVec(Gs_, "G");
-            
+            if (verbose_) {
+                printVec(Xs_, "X");
+                printVec(Os_, "O");
+                cout << "U:\n";
+                U_->printInfo(1);
+                printVec(Gs_, "G");
+            }
             checkMakeDir("plotting");
             Xs_[0]->writeToFile("plotting/X.bdd");
+            X0s_[0]->writeToFile("plotting/X0.bdd");
             Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
             Gs_[*system_->numAbs_-1]->writeToFile("plotting/G.bdd");
             checkMakeDir("O");
@@ -1185,74 +1243,117 @@ namespace scots {
             clog << "Ts_ read from file.\n";
         }
         /*! Simulate an abstract controlled trajectory (resolve measurement related non-determinism and initial state non-determinism randomly), and simultaneously compute the shortest distance from the safe set boundary.
-         input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: lb_x1 lb_x2 ... ub_x1 ub_x2, where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively */
-        void simulateAbs(std::vector<std::vector<double>> trajectory, std::vector<std::vector<double>> obstacles, double& distance) {
+         input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively */
+        bool simulateAbs(std::vector<std::vector<double>>& trajectory, std::vector<std::vector<double>> obstacles, double& distance) {
             std::vector<double> x; /* current state */
-            std::vector<double> xx; /* next state */
             std::vector<double> u; /* current control input */
             std::vector<double> xu; /* current state-input pair */
-            scots::SymbolicSet goal; /* current goal */
-            size_t ab; /* current abstraction layer */
+            size_t ab, prevAb; /* current and previous abstraction layer */
             /* the ids of the state space variables and input variables in the controller BDD and transition BDD are 0 to dimX_-1 and dimX_ to dimX_ + dimU_ -1, respectively */
             std::vector<size_t> xind;
             std::vector<size_t> xuind;
-            for (size_t i=0; i<dimX_; i++) {
+            for (size_t i=0; i<*system_->dimX_; i++) {
                 xind.push_back(i);
                 xuind.push_back(i);
             }
-            for (size_t i=0; i<dimU_; i++) {
-                xuind.push_back(i);
+            for (size_t i=0; i<*system_->dimU_; i++) {
+                xuind.push_back(*system_->dimX_+i);
             }
             /* Choose one initial state randomly from the set of initial states */
-            X0s_[0]->getRandomGridPoint(x);
+            X0s_[0]->getRandomGridPoint(&x);
             trajectory.push_back(x);
+            if (!(finalZs_.back()->isElement(x))) {
+                cout << "Error: scots::BlackBoxReach::simulateAbs(trajectory, obstacles, distance): the randomly chosen initial state is outside the winning region.";
+                return false;
+            }
             /* initialize distance between the trajectory and safe set boundary */
-            dist = -1;
+            distance = -1;
             /* iterate over all controllers */
-            for (size_t i=finalCs_.size()-1; i>=0; i--) {
-                if (i==1) {
-                    goal = Gs_[numAbs_-1];
-                } else {
-                    goal = finalZs_[i-1];
-                }
-                
-                while (1) {
-                    x = trajectory.back();
-                    if (goal.isElement(x))
-                        break;
-                    u = getRandomMember(finalCs_[i]->setValuedMap(x,xind));
-                    /* find the abstraction layer that corresponds to the present controller (assuming all the abstraction layers' eta are different) */
-                    for (size_t j=0; j<numAbs_; j++) {
-                        if (finalZs_[i]->getEta()==Xs_[j]->getEta()) {
-                            ab = j;
+            for (int i=finalCs_.size()-1; i>=0; i--) {
+                /* find the abstraction layer that corresponds to the present controller (assuming all the abstraction layers' eta are different) */
+                /* prevAb correspond to the layer used in finalZs_[i-1] */
+                bool flag;
+                if (i!=0) {
+                    for (size_t j=0; j<*system_->numAbs_; j++) {
+                        flag = true;
+                        for (size_t k=0; k<*system_->dimX_; k++) {
+                            if (finalZs_[i-1]->getEta()[k]!=Xs_[j]->getEta()[k]) {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (flag) {
+                            prevAb = j;
                             break;
                         }
                     }
-                    for (size_t j=0; j<dimX_; j++) {
+                }
+                /* ab correspond to the layer used in finalZs_[i] */
+                for (size_t j=0; j<*system_->numAbs_; j++) {
+                    flag = true;
+                    for (size_t k=0; k<*system_->dimX_; k++) {
+                        if (finalZs_[i]->getEta()[k]!=Xs_[j]->getEta()[k]) {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        ab = j;
+                        break;
+                    }
+                }
+                /* for i=0, the goal is the overall goal Gs; otherwise, the goal is to reach the controller domain of i-1 */
+                scots::SymbolicSet goal((i==0) ? *Xs_[*system_->numAbs_-1] : *Xs_[prevAb]);
+                if (i==0) {
+                    goal.setSymbolicSet(Gs_[*system_->numAbs_-1]->symbolicSet_);
+                } else {
+                    goal.setSymbolicSet(finalZs_[i-1]->symbolicSet_);
+                }
+                
+                while (1) {
+                    /* last point in the trajectory is the current state */
+                    x = trajectory.back();
+                    /* if the current goal is reached, go to the next controller */
+                    if (goal.isElement(x))
+                        break;
+                    /* pick any random valid control input */
+                    if (!getRandomMember(finalCs_[i]->setValuedMap(x,xind),u)) {
+                        return false;
+                    }
+                    /* store the indices of state space and control space */
+                    xu.clear();
+                    for (size_t j=0; j<*system_->dimX_; j++) {
                         xu.push_back(x[j]);
                     }
-                    for (size_t j=0; j<dimU_; j++) {
+                    for (size_t j=0; j<*system_->dimU_; j++) {
                         xu.push_back(u[j]);
                     }
-                    xx = getRandomMember(Ts_[ab]->setValuedMap(xu,xuind));
+                    /* pick a random successor (meaningful when the abstraction is non-determinstic) */
+                    std::vector<double> xx;
+                    if (!getRandomMember(Ts_[ab]->setValuedMap(xu,xuind),xx)) {
+                        return false;
+                    }
                     trajectory.push_back(xx);
                     /* update the distacne */
                     /* obstacles are a collection of rectangles */
                     /* compute the box around xx */
                     std::vector<double> lb1, ub1, lb2, ub2;
-                    for (size_t j=0; j<dimX_; j++) {
-                        lb1.push_back(xx[j]-etaXs_[j]);
-                        ub1.push_back(xx[j]+etaXs_[j]);
+                    for (size_t j=0; j<*system_->dimX_; j++) {
+                        lb1.push_back(xx[j]-(0.5*etaXs_[ab][j]));
+                        ub1.push_back(xx[j]+(0.5*etaXs_[ab][j]));
                     }
+                    /* iterate over all obstacles (boxes) */
                     for (size_t j=0; j<obstacles.size(); j++) {
-                        for (size_t k=0; k<dimX_; k++) {
-                            lb2.push_back(obstacles[j][k]);
-                            ub2.push_back(obstacles[j][dimX_+k]);
+                        /* arrange the inputs in suitable form */
+                        for (size_t k=0; k<*system_->dimX_; k++) {
+                            lb2.push_back(-obstacles[j][2*k]);
+                            ub2.push_back(obstacles[j][2*k+1]);
                         }
-                        if (distacne==-1) {
-                            distance = euclidean(lb1, ub1, lb2, ub2);
+                        /* compute the distance */
+                        if (distance==-1) { /*first time this loop is entered */
+                            distance = computeDistance(lb1, ub1, lb2, ub2);
                         } else {
-                            distance = std::min(distance,euclidean(lb1, ub1, lb2, ub2));
+                            distance = std::min(distance,computeDistance(lb1, ub1, lb2, ub2));
                         }
                     }
                 }
@@ -1261,35 +1362,54 @@ namespace scots {
     private:
         /* get random element from a vector */
         template<class T>
-        inline T getRandomMember(std::vector<T> vec) {
-            return vec[rand() % vec.size()];
+        bool getRandomMember(std::vector<T> vec, T& member) {
+            if (vec.size()==0) {
+                cout << "Error: scots::BlackBoxReach::getRandomMember(vec): vec cannot be empty.\n";
+                return false;
+            }
+            member = vec[rand() % vec.size()];
+            return true;
         }
-        /* compute euclidean distance between two boxes */
-        double euclidean(std::vector<double> lb1, std::vector<double> ub1, std::vector<double> lb2, std::vector<double> ub2) {
+        /* compute inf-norm distance between two boxes */
+        double computeDistance(std::vector<double> lb1, std::vector<double> ub1, std::vector<double> lb2, std::vector<double> ub2) {
             /* sanity check */
             if (!(lb1.size()==ub1.size() && ub1.size()==lb2.size() && lb2.size()==ub2.size()))
                 throw "The array dimensions do not match.";
             
             std::vector<double> diff1, diff2;
+            /* first assume that the relative position of the boxes are not side by side */
             /* absolute value of lb1-ub2 */
             for (size_t i=0; i<lb1.size(); i++) {
-                diff1.push_back(abs(lb1[i]-ub2[1]));
+                diff1.push_back(abs(lb1[i]-ub2[i]));
             }
             /* absolute value of lb2-ub1 */
             for (size_t i=0; i<lb2.size(); i++) {
                 diff2.push_back(abs(lb2[i]-ub1[i]));
             }
+            /* next, adjust if the boxes are side by side */
+            for (size_t i=0; i<*system_->dimX_; i++) {
+                if ((lb1[i]>=lb2[i] && lb1[i]<=ub2[i]) ||
+                    (ub1[i]>=lb2[i] && ub1[i]<=ub2[i]) ||
+                    (lb2[i]>=lb1[i] && lb2[i]<=ub1[i]) ||
+                    (ub2[i]>=lb1[i] && ub2[i]<=ub1[i])) {
+                    diff1[i] = 0;
+                    diff2[i] = 0;
+                }
+            }
+            
             /* pointwise minimum of diff1 and diff2 */
             std::vector<double> diff = diff1;
             for (size_t i=0; i<diff1.size(); i++) {
                 diff[i] = std::min(diff1[i],diff2[i]);
             }
-            /* the euclidean norm of diff */
-            double sum = 0;
+            /* the inf norm of diff */
+            double distance = 0;
             for (size_t i=0; i<diff.size(); i++) {
-                sum += pow(diff[i],2);
+//                sum += pow(diff[i],2);
+                if (distance<diff[i])
+                    distance=diff[i];
             }
-            return sqrt(sum);
+            return distance;
         }
 };
 }
