@@ -46,6 +46,7 @@ namespace scots {
         vector<int*> permutesCoarser_; /*!< To project a BDD to the next coarser layer. */
         vector<int*> permutesFiner_; /*!< To project a BDD to the next finer layer. */
         vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
+        OdeSolver* systemSolver_; /*!< ODE solver (Runge-Kutta approximation) used to solve system trajectory (meant to be finer than the abstract solvers). */
         
         vector<SymbolicSet*> Gs_; /*!< Instance of *Xs_[i] containing goal states. */
         vector<SymbolicSet*> validZs_; /*!< Contains winning states that act as savepoints. */
@@ -101,6 +102,7 @@ namespace scots {
             permutesCoarser_=other.permutesCoarser_;
             permutesFiner_=other.permutesFiner_;
             solvers_=other.solvers_;
+            systemSolver_=other.systemSolver_;
             uTs_=other.uTs_;
             m_=other.m_;
             p_=other.p_;
@@ -179,6 +181,7 @@ namespace scots {
             deleteVecArray(permutesCoarser_);
             deleteVecArray(permutesFiner_);
             deleteVec(solvers_);
+            delete systemSolver_;
             deleteVec(Gs_);
             deleteVec(validZs_);
             deleteVec(validCs_);
@@ -677,7 +680,9 @@ namespace scots {
 //                }
                 // debug end
                 
-                if (X0s_[ab]->symbolicSet_ & (!(Zs_[ab]->symbolicSet_)) == ddmgr_->bddZero()) {
+                
+                BDD iw = X0s_[ab]->symbolicSet_ & (!(Zs_[ab]->symbolicSet_));
+                if (iw == ddmgr_->bddZero()) {
                     return INITWINNING;
                 }
 //                if (N == ddmgr_->bddZero() && i != 1) {
@@ -782,8 +787,10 @@ namespace scots {
         
         /*! Initializes data members.
          *  \param[in]  system      Contains abstraction parameters.
+         *  \param[in]  systemTau   The sampling time used for simulating the concrete system trajectory
+         *  \param[in]  systemNSubInt   The number of sub intervals in the RK solver for the simulation of the concrete system trajectory
          */
-        void initialize(System* system) {
+        void initialize(System* system, double systemTau, int systemNSubInt) {
             ddmgr_ = new Cudd;
             system_ = system;
             
@@ -792,7 +799,7 @@ namespace scots {
             
             // This order should be kept.
             initializeEtaTau();
-            initializeSolvers();
+            initializeSolvers(systemTau,systemNSubInt);
             initializeSymbolicSets();
             initializeNumBDDVars();
             initializePermutes();
@@ -1027,11 +1034,12 @@ namespace scots {
         
         /*! Initializes the Runge-Katta ODE solvers.
          */
-        void initializeSolvers() {
+        void initializeSolvers(double systemTau, int systemNSubInt) {
             for (int i = 0; i < *system_->numAbs_; i++) {
                 OdeSolver* solver = new OdeSolver(*system_->dimX_, *system_->nSubInt_, *tau_[i]);
                 solvers_.push_back(solver);
             }
+            systemSolver_ = new OdeSolver(*system_->dimX_, systemNSubInt, systemTau);
             clog << "Initialized solvers.\n";
         }
         
@@ -1243,7 +1251,8 @@ namespace scots {
             clog << "Ts_ read from file.\n";
         }
         /*! Simulate an abstract controlled trajectory (resolve measurement related non-determinism and initial state non-determinism randomly), and simultaneously compute the shortest distance from the safe set boundary.
-         input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively */
+         input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively
+         input: trajectory is a sequence of points traversed. trajectory[0] = x0 (to be passed) */
         bool simulateAbs(std::vector<std::vector<double>>& trajectory, std::vector<std::vector<double>> obstacles, double& distance) {
             std::vector<double> x; /* current state */
             std::vector<double> u; /* current control input */
@@ -1259,11 +1268,16 @@ namespace scots {
             for (size_t i=0; i<*system_->dimU_; i++) {
                 xuind.push_back(*system_->dimX_+i);
             }
-            /* Choose one initial state randomly from the set of initial states */
-            X0s_[0]->getRandomGridPoint(&x);
-            trajectory.push_back(x);
+//            /* Choose one initial state randomly from the set of initial states */
+//            X0s_[0]->getRandomGridPoint(&x);
+//            trajectory.push_back(x);
+            x = trajectory[0]; /* the initial state */
+            if (!(X0s_[0]->isElement(x))) {
+                cout << "Error: stots::BlackBoxReach::simulateAbs(trajectory, obstacles, distance): the initial state does not match the design value.";
+                return false;
+            }
             if (!(finalZs_.back()->isElement(x))) {
-                cout << "Error: scots::BlackBoxReach::simulateAbs(trajectory, obstacles, distance): the randomly chosen initial state is outside the winning region.";
+                cout << "Error: scots::BlackBoxReach::simulateAbs(trajectory, obstacles, distance): the initial state is outside the winning region.";
                 return false;
             }
             /* initialize distance between the trajectory and safe set boundary */
@@ -1358,6 +1372,134 @@ namespace scots {
                     }
                 }
             }
+            return true;
+        }
+        /*! Simulate a concrete controlled trajectory, and simultaneously check if it collides with the obstacles. If yes, which point? (module measurement errors.)
+         input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively
+         input: trajectory is a sequence of points traversed. trajectory[0] = x0 (to be passed) */
+        template<class sys_type, class X_type, class U_type>
+        bool simulateSys(sys_type sys_next, X_type xarr, U_type uarr, std::vector<std::vector<double>>& trajectory, std::vector<std::vector<double>> obstacles,
+                         std::vector<double>& unsafeAt) {
+            std::vector<double> x; /* current state */
+            std::vector<double> u; /* current control input */
+            std::vector<double> xu; /* current state-input pair */
+            size_t ab, prevAb; /* current and previous abstraction layer */
+            /* the ids of the state space variables and input variables in the controller BDD and transition BDD are 0 to dimX_-1 and dimX_ to dimX_ + dimU_ -1, respectively */
+            std::vector<size_t> xind;
+            std::vector<size_t> xuind;
+            for (size_t i=0; i<*system_->dimX_; i++) {
+                xind.push_back(i);
+                xuind.push_back(i);
+            }
+            for (size_t i=0; i<*system_->dimU_; i++) {
+                xuind.push_back(*system_->dimX_+i);
+            }
+//            /* Choose one initial state randomly from the set of initial states */
+//            X0s_[0]->getRandomGridPoint(&x);
+//            trajectory.push_back(x);
+            x = trajectory[0]; /* the initial state */
+            if (!(X0s_[0]->isElement(x))) {
+                cout << "Error: stots::BlackBoxReach::simulateSys(trajectory, obstacles, distance): the initial state does not match the design value.";
+                return false;
+            }
+            if (!(finalZs_.back()->isElement(x))) {
+                cout << "Error: scots::BlackBoxReach::simulateSys(trajectory, obstacles, distance): the initial state is outside the winning region.";
+                return false;
+            }
+            /* iterate over all controllers */
+            for (int i=finalCs_.size()-1; i>=0; i--) {
+                /* find the abstraction layer that corresponds to the present controller (assuming all the abstraction layers' eta are different) */
+                /* prevAb correspond to the layer used in finalZs_[i-1] */
+                bool flag;
+                if (i!=0) {
+                    for (size_t j=0; j<*system_->numAbs_; j++) {
+                        flag = true;
+                        for (size_t k=0; k<*system_->dimX_; k++) {
+                            if (finalZs_[i-1]->getEta()[k]!=Xs_[j]->getEta()[k]) {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (flag) {
+                            prevAb = j;
+                            break;
+                        }
+                    }
+                }
+                /* ab correspond to the layer used in finalZs_[i] */
+                for (size_t j=0; j<*system_->numAbs_; j++) {
+                    flag = true;
+                    for (size_t k=0; k<*system_->dimX_; k++) {
+                        if (finalZs_[i]->getEta()[k]!=Xs_[j]->getEta()[k]) {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        ab = j;
+                        break;
+                    }
+                }
+                /* for i=0, the goal is the overall goal Gs; otherwise, the goal is to reach the controller domain of i-1 */
+                scots::SymbolicSet goal((i==0) ? *Xs_[*system_->numAbs_-1] : *Xs_[prevAb]);
+                if (i==0) {
+                    goal.setSymbolicSet(Gs_[*system_->numAbs_-1]->symbolicSet_);
+                } else {
+                    goal.setSymbolicSet(finalZs_[i-1]->symbolicSet_);
+                }
+                
+                while (1) {
+                    /* last point in the trajectory is the current state */
+                    x = trajectory.back();
+                    /* if the current goal is reached, go to the next controller */
+                    if (goal.isElement(x))
+                        break;
+                    /* pick any random valid control input */
+                    if (!getRandomMember(finalCs_[i]->setValuedMap(x,xind),u)) {
+                        /* no input found means the trajectory left the controller domain; this is also treated as unsafe behavior */
+                        unsafeAt = x;
+                        return false;
+                    }
+                    /* find the successor state by simulating the system */
+                    /* first convert x and u to arrays */
+                    for (size_t k=0; k<*system_->dimX_; k++) {
+                        xarr[k] = x[k];
+                    }
+                    for (size_t k=0; k<*system_->dimU_; k++) {
+                        uarr[k] = u[k];
+                    }
+                    sys_next(xarr,uarr,*systemSolver_);
+                    /* store xarr as a vector and append to the trajectory */
+                    for (size_t k=0; k<*system_->dimX_; k++) {
+                        x[k] = xarr[k];
+                    }
+                    trajectory.push_back(x);
+                    /* collision check */
+                    bool collision = true;
+                    unsafeAt.clear();
+                    std::vector<double> lb,ub;
+                    /* iterate over all obstacles (boxes) */
+                    for (size_t j=0; j<obstacles.size(); j++) {
+                        /* arrange the inputs in suitable form */
+                        for (size_t k=0; k<*system_->dimX_; k++) {
+                            lb.push_back(-obstacles[j][2*k]);
+                            ub.push_back(obstacles[j][2*k+1]);
+                        }
+                        for (size_t k=0; k<*system_->dimX_; k++) {
+                            if (x[k]<lb[k] || x[k]>ub[k]) {
+                                collision = false;
+                                break;
+                            }
+                        }
+                        if (collision) {
+                            unsafeAt = x;
+                            return false;
+                        }
+                        collision = true;
+                    }
+                }
+            }
+            return true;
         }
     private:
         /* get random element from a vector */
