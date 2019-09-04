@@ -224,24 +224,29 @@ namespace scots {
          *  \param[in] r        Radius of exploration
          */
         template<class X_type, class U_type, class sys_type, class rad_type>
-        bool exploreAroundPoint(X_type x, X_type r, U_type u, sys_type sysNext, rad_type radNext) {
+        bool exploreAroundPoint(X_type xarr, X_type r, U_type u, sys_type sysNext, rad_type radNext) {
             /* sanity check */
-            if(!(x.size()==*system_->dimX_)) {
+            if(!(xarr.size()==*system_->dimX_)) {
                 std::ostringstream os;
-                os << "Error: scots::SymbolicSet::isElement(x): x must be of size dim_.";
+                os << "Error: scots::SymbolicSet::isElement(xarr): xarr must be of size dim_.";
                 throw std::invalid_argument(os.str().c_str());
             }
             for (size_t i=0; i < *system_->dimX_; i++) {
-                if (x[i] > system_->ubX_[i] || x[i] < system_->lbX_[i]) {
+                if (xarr[i] > system_->ubX_[i] || xarr[i] < system_->lbX_[i]) {
                     std::ostringstream os;
-                    os << "Error: scots::BlackBoxReach::exploreAround(x): x is outside the state space.";
+                    os << "Error: scots::BlackBoxReach::exploreAround(xarr): xarr is outside the state space.";
                     throw std::invalid_argument(os.str().c_str());
                 }
             }
+            /* convert xarr to a vector x (reqd by some of the methods) */
+            std::vector<double> x;
+            for (int i=0; i<*system_->dimX_; i++) {
+                x.push_back(xarr[i]);
+            }
             /* find the current exploration level around x */
             size_t ab;
-            for (size_t i=*system_->numAbs_-1; i >= 0; i--) {
-                if (computedDs_[ab]->isElement(x)) {
+            for (int i=*system_->numAbs_-1; i >= 0; i--) {
+                if (computedDs_[i]->isElement(x)) {
                     ab = i;
                     break;
                 }
@@ -249,7 +254,7 @@ namespace scots {
             if (ab == *system_->numAbs_-1) { /* return false when already explored upto the finest level */
                 return false;
             } else { /* otherwise, the exploration happens in the next finer layer */
-                ab = ab - 1;
+                ab = ab + 1;
             }
             /* Set up the polytope that represents the area around x */
             int nofHalfSpaces = 2*(*system_->dimX_);
@@ -915,21 +920,90 @@ namespace scots {
         }
         
         /*! Initializes the goal and obstacle sets accross all the layers.
-         *  \param[in]    addO    Function pointer specifying the points that should be added to the obstacle set.
-         *  \param[in]    addG    Function pointer specifying the points that should be added to the goal set.
-         *  \param[in]    addI    Function pointer specifying the points that should be added to the initial state set. (default to whole state space)
+         *  \param[in]  HO, HG, HI  The vector containing the normal vectors for obstacles, goal and initial sets respectively
+         *  \param[in]  ho, hg, hi  Double vectors
          *  \param[in]  distance    The distance metric used to modify the obstacle and the goal (default to 0).
          */
-        template<class G_type, class O_type, class I_type, class X_type>
-        void initializeSpec(G_type addG, O_type addO, I_type addI, X_type distance) {
+        template<class T1, class T2, class T3, class T4, class T5, class T6>
+        bool initializeSpec(std::vector<T1> HO, std::vector<T2> ho, std::vector<T3> HG, std::vector<T4> hg, std::vector<T5> HI, std::vector<T6> hi, double distance) {
             /* initialize specification in the finest layer */
-            addG(Gs_[*system_->numAbs_-1],distance);
-            addO(Os_[*system_->numAbs_-1], distance);
-            addI(X0s_[*system_->numAbs_-1]);
+            /* sanity check: # of obstacles */
+            if (HO.size()!=ho.size()) {
+                std::ostringstream os;
+                os << "Error: the number of obstacles cannot be determined.\n";
+                throw std::runtime_error(os.str().c_str());
+                return false;
+            } else {
+                for (int i=0; i<HO.size(); i++) {
+                    /* sanity check: # of half spaces should match in HO and ho */
+                    if (ho[i].size()*(*system_->dimX_) != HO[i].size()) {
+                        std::ostringstream os;
+                        os << "Error: the polytope for the obstacle " << i << " is ill defined.\n";
+                        throw std::runtime_error(os.str().c_str());
+                        return false;
+                    } else {
+                        /* the obstacles are inflated by "distance" */
+                        for (size_t j=0; j<ho[i].size(); j++) {
+                            ho[i][j] += distance;
+                        }
+                        size_t p = ho[i].size();
+                        Os_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
+                    }
+                }
+            }
+            /* sanity check: # of goals */
+            if (HG.size()!=hg.size()) {
+                std::ostringstream os;
+                os << "Error: the number of goals cannot be determined.\n";
+                throw std::runtime_error(os.str().c_str());
+                return false;
+            } else {
+                for (int i=0; i<HG.size(); i++) {
+                    /* sanity check: # of half spaces should match in HG and hg */
+                    if (hg[i].size()*(*system_->dimX_) != HG[i].size()) {
+                        std::ostringstream os;
+                        os << "Error: the polytope for the goal " << i << " is ill defined.\n";
+                        throw std::runtime_error(os.str().c_str());
+                        return false;
+                    } else {
+                        /* the goals are deflated by "distance" */
+                        for (size_t j=0; j<hg[i].size(); j++) {
+                            hg[i][j] = hg[i][j] - distance;
+                        }
+                        size_t p = hg[i].size();
+                        Gs_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HG[i]),to_native_array(hg[i]),INNER);
+                    }
+                }
+            }
+            /* sanity check: # of initial states */
+            if (HI.size()!=hi.size()) {
+                std::ostringstream os;
+                os << "Error: the number of initial states cannot be determined.\n";
+                throw std::runtime_error(os.str().c_str());
+                return false;
+            } else {
+                for (int i=0; i<HI.size(); i++) {
+                    /* sanity check: # of half spaces should match in HI and hi */
+                    if (hi[i].size()*(*system_->dimX_) != HI[i].size()) {
+                        std::ostringstream os;
+                        os << "Error: the polytope for the initial state " << i << " is ill defined.\n";
+                        throw std::runtime_error(os.str().c_str());
+                        return false;
+                    } else {
+                        /* the initial states are inflated by "distance" */
+                        for (size_t j=0; j<hi[i].size(); j++) {
+                            hi[i][j] += distance;
+                        }
+                        size_t p = hi[i].size();
+                        X0s_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HI[i]),to_native_array(hi[i]),OUTER);
+                    }
+                }
+            }
             if (X0s_[*system_->numAbs_-1]->symbolicSet_==ddmgr_->bddZero()) {
                 error("Error: the set of initial states cannot be empty.\n");
+                return false;
             }
-            /* project the specification to the coarser layers */
+            /* project the specification up to the coarser layers */
             for (int i = *system_->numAbs_-1; i > 0; i--) {
                 coarserInner(Gs_[i-1],Gs_[i],i-1);
                 coarserOuter(Os_[i-1],Os_[i],i-1);
@@ -942,27 +1016,31 @@ namespace scots {
                 std::ostringstream os;
                 os<< "Error: No goal state is outside the obstacles in the finest layer.\n";
                 throw std::runtime_error(os.str().c_str());
+                return false;
             }
             if (X0s_[*system_->numAbs_-1]->symbolicSet_==ddmgr_->bddZero()) {
                 std::ostringstream os;
                 os<< "Error: no initial state outside the obstacles in the finest layer.\n";
                 throw std::runtime_error(os.str().c_str());
+                return false;
             }
             clog << "No obstacle problem with specification.\n";
             verifySave();
+            return true;
         }
         /*! Initializes the goal and obstacle sets accross all the layers.
-         *  \param[in]    addO    Function pointer specifying the points that should be added to the obstacle set.
-         *  \param[in]    addG    Function pointer specifying the points that should be added to the goal set.
-         *  \param[in]    addI    Function pointer specifying the points that should be added to the initial state set. (default to whole state space)
+         *  \param[in]  HO, HG, HI  The vector containing the normal vectors for obstacles, goal and initial sets respectively
+         *  \param[in]  ho, hg, hi  Double vectors
          */
-        template<class G_type, class O_type, class I_type>
-        inline void initializeSpec(G_type addG, O_type addO, I_type addI) {
+        template<class T1, class T2, class T3, class T4, class T5, class T6>
+        bool initializeSpec(std::vector<T1> HO, std::vector<T2> ho, std::vector<T3> HG, std::vector<T4> hg, std::vector<T5> HI, std::vector<T6> hi) {
             /* when no distance is passed as argument, initialize the distance as 0 and call initializeSpec */
             double distance = 0.0;
-            initializeSpec(addG, addO, addI, distance);
+            if (!initializeSpec(HO, ho, HG, hg, HI, hi, distance))
+                return false;
+            else
+                return true;
         }
-        
         /*! Computes only the coarsest transitions.
          *  \param[in]  sysNext     System ODE.
          *  \param[in]  radNext     Growth bound ODE.
@@ -1511,6 +1589,15 @@ namespace scots {
             }
             member = vec[rand() % vec.size()];
             return true;
+        }
+        /* length of a T* object */
+        template<class T1, std::size_t SIZE>
+        inline T1* to_native_array(const std::array<T1,SIZE> a) {
+            T1* b = new T1[a.size()];
+            for (int i=0; i<a.size(); i++) {
+                b[i] = a[i];
+            }
+            return b;
         }
         /* compute inf-norm distance between two boxes */
         double computeDistance(std::vector<double> lb1, std::vector<double> ub1, std::vector<double> lb2, std::vector<double> ub2) {
