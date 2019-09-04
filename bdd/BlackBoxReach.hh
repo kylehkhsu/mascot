@@ -924,8 +924,8 @@ namespace scots {
          *  \param[in]  ho, hg, hi  Double vectors
          *  \param[in]  distance    The distance metric used to modify the obstacle and the goal (default to 0).
          */
-        template<class T1, class T2, class T3, class T4, class T5, class T6>
-        bool initializeSpec(std::vector<T1> HO, std::vector<T2> ho, std::vector<T3> HG, std::vector<T4> hg, std::vector<T5> HI, std::vector<T6> hi, double distance) {
+        template<std::size_t s1, std::size_t s2, std::size_t s3, std::size_t s4, std::size_t s5, std::size_t s6>
+        bool initializeSpec(std::vector<std::array<double, s1>> HO, std::vector<std::array<double, s2>> ho, std::vector<std::array<double, s3>> HG, std::vector<std::array<double, s4>> hg, std::vector<std::array<double, s5>> HI, std::vector<std::array<double, s6>> hi, double distance) {
             /* initialize specification in the finest layer */
             /* sanity check: # of obstacles */
             if (HO.size()!=ho.size()) {
@@ -1032,8 +1032,8 @@ namespace scots {
          *  \param[in]  HO, HG, HI  The vector containing the normal vectors for obstacles, goal and initial sets respectively
          *  \param[in]  ho, hg, hi  Double vectors
          */
-        template<class T1, class T2, class T3, class T4, class T5, class T6>
-        bool initializeSpec(std::vector<T1> HO, std::vector<T2> ho, std::vector<T3> HG, std::vector<T4> hg, std::vector<T5> HI, std::vector<T6> hi) {
+        template<std::size_t s1, std::size_t s2, std::size_t s3, std::size_t s4, std::size_t s5, std::size_t s6>
+        bool initializeSpec(std::vector<std::array<double, s1>> HO, std::vector<std::array<double, s2>> ho, std::vector<std::array<double, s3>> HG, std::vector<std::array<double, s4>> hg, std::vector<std::array<double, s5>> HI, std::vector<std::array<double, s6>> hi) {
             /* when no distance is passed as argument, initialize the distance as 0 and call initializeSpec */
             double distance = 0.0;
             if (!initializeSpec(HO, ho, HG, hg, HI, hi, distance))
