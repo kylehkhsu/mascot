@@ -440,7 +440,7 @@ public:
         // end
     }
     /* function: copy assignment operator */
-    SymbolicSet& operator=(const SymbolicSet &other) {
+    SymbolicSet& operator=(const SymbolicSet& other) {
         ddmgr_=other.ddmgr_;
         dim_=other.dim_;
         tau_ = other.tau_;

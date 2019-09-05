@@ -65,7 +65,7 @@ namespace scots {
         
         double abTime_; /*!< Abstraction time. */
         double synTime_; /*!< Synthesis time. */
-        int verbose_; /*!< 0(default)=do not print intermediate result, 1=print intermediate result on std I/O. */
+        int verbose_; /*!< 0(default)=do not print intermediate result, 1=print moderate intermediate result on std I/O, 2=print information including the symbolicset details. */
         
         /*!    Constructor for a BlackBoxReach object.
          *  \param[in]  logFile     Filename of program log.
@@ -78,9 +78,10 @@ namespace scots {
             synTime_ = 0;
             verbose_ = verbose;
         }
+
         /*! Copy constructor for a BlackBoxReach object. */
         BlackBoxReach(const BlackBoxReach& other) {
-            /* copy elements related to abstraction */
+            /* same location as pointed by other */
             ddmgr_=other.ddmgr_;
             system_=other.system_;
             etaXs_=other.etaXs_;
@@ -103,62 +104,68 @@ namespace scots {
             permutesFiner_=other.permutesFiner_;
             solvers_=other.solvers_;
             systemSolver_=other.systemSolver_;
+            finalAbs_=other.finalAbs_;
             uTs_=other.uTs_;
             m_=other.m_;
             p_=other.p_;
-            abTime_=0;
-            synTime_=0;
+            abTime_=other.abTime_;
+            synTime_=other.synTime_;
             verbose_=other.verbose_;
-            /* reset elements related to synthesis */
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicSet* X0 = new SymbolicSet(*Xs_[i]);
+            /* fresh copies of elements related to synthesis */
+            for (int i = 0; i < (other.X0s_).size(); i++) {
+                SymbolicSet* X0 = new SymbolicSet(*other.X0s_[i]);
                 X0s_.push_back(X0);
             }
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicSet* O = new SymbolicSet(*Xs_[i]);
+            for (int i = 0; i < (other.Os_).size(); i++) {
+                SymbolicSet* O = new SymbolicSet(*other.Os_[i]);
                 Os_.push_back(O);
             }
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicSet* Z = new SymbolicSet(*Xs_[i]);
+            for (int i = 0; i < (other.Zs_).size(); i++) {
+                SymbolicSet* Z = new SymbolicSet(*other.Zs_[i]);
                 Zs_.push_back(Z);
-                
             }
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicSet* C = new SymbolicSet(*Xs_[i], *U_);
+            for (int i = 0; i < (other.Cs_).size(); i++) {
+                SymbolicSet* C = new SymbolicSet(*other.Cs_[i]);
                 Cs_.push_back(C);
             }
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicSet* G = new SymbolicSet(*Xs_[i]);
+            for (int i = 0; i < (other.Gs_).size(); i++) {
+                SymbolicSet* G = new SymbolicSet(*other.Gs_[i]);
                 Gs_.push_back(G);
             }
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicSet* validZ = new SymbolicSet(*Xs_[i]);
+            for (int i = 0; i < (other.validZs_).size(); i++) {
+                SymbolicSet* validZ = new SymbolicSet(*other.validZs_[i]);
                 validZs_.push_back(validZ);
             }
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicSet* validC = new SymbolicSet(*Xs_[i], *U_);
+            for (int i = 0; i < (other.validCs_).size(); i++) {
+                SymbolicSet* validC = new SymbolicSet(*other.validCs_[i]);
                 validCs_.push_back(validC);
             }
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicSet* D = new SymbolicSet(*Xs_[i]);
+            for (int i = 0; i < (other.finalCs_).size(); i++) {
+                SymbolicSet* finalC = new SymbolicSet(*other.finalCs_[i]);
+                finalCs_.push_back(finalC);
+            }
+            for (int i = 0; i < (other.finalZs_).size(); i++) {
+                SymbolicSet* finalZ = new SymbolicSet(*other.finalZs_[i]);
+                finalZs_.push_back(finalZ);
+            }
+            for (int i = 0; i < (other.Ds_).size(); i++) {
+                SymbolicSet* D = new SymbolicSet(*other.Ds_[i]);
                 Ds_.push_back(D);
             }
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicSet* innerD = new SymbolicSet(*Xs_[i]);
+            for (int i = 0; i < (other.innerDs_).size(); i++) {
+                SymbolicSet* innerD = new SymbolicSet(*other.innerDs_[i]);
                 innerDs_.push_back(innerD);
             }
-            for (int i = 0; i < *system_->numAbs_; i++) {
-                SymbolicSet* computedD = new SymbolicSet(*Xs_[i]);
+            for (int i = 0; i < (other.computedDs_).size(); i++) {
+                SymbolicSet* computedD = new SymbolicSet(*other.computedDs_[i]);
                 computedDs_.push_back(computedD);
             }
-            
         }
         /*! Destructor for a BlackBoxReach object. */
         ~BlackBoxReach() {
             clog << "Abstraction construction time: " << abTime_ << " seconds.\n";
             clog << "Controller synthesis time: " << synTime_ << " seconds.\n";
             clog << "Abs + syn time: " << abTime_ + synTime_ << " seconds.\n";
-//            deleteVec(Es_);
             deleteVecArray(etaXs_);
             deleteVec(tau_);
             deleteVec(Xs_);
@@ -209,6 +216,9 @@ namespace scots {
 //            cout << "ReachResult = " << result << ".\n";
             
             clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
+//            if (verbose_>0) {
+//                cout << "\nFinal number of controllers: " << finalCs_.size() << '\n';
+//            }
             
             checkMakeDir("C");
             saveVec(finalCs_, "C/C");
@@ -351,13 +361,14 @@ namespace scots {
             }
             if (result == INITWINNING) {
                 clog << "result: all initial states are winning\n";
+                if (verbose_>0) {
+                    cout << "result: all initial states are winning.\n";
+                }
             } else if (result == CONVERGEDVALID) {
                 clog << "result: converged valid\n";
-            }
-            else if (result == CONVERGEDINVALID) {
+            } else if (result == CONVERGEDINVALID) {
                 clog << "result: converged invalid\n";
-            }
-            else {
+            } else {
                 clog << "result: not converged\n";
             }
             
@@ -374,6 +385,12 @@ namespace scots {
             }
             
             if (result == INITWINNING) {
+                /* propagate the winning region to all the finer layers (reqd later to check if the initial states are winning in the finest layer) */
+                for (int i=ab; i<*system_->numAbs_-1; i++) {
+                    finer(Zs_[i],Zs_[i+1],i);
+                    Zs_[i+1]->symbolicSet_ |= validZs_[i+1]->symbolicSet_;
+                    validZs_[i+1]->symbolicSet_ = Zs_[i+1]->symbolicSet_;
+                }
                 return;
             }
             
@@ -443,13 +460,15 @@ namespace scots {
             saveVec(Ts_, "T/T");
             clog << "Wrote Ts_ to file.\n";
             
-            if (verbose_) {
+            if (verbose_==2) {
                 for (size_t i = 0; i < finalCs_.size(); i++) {
                     std::cout << "Controller " << i+1 << ":"<< '\n';
                     finalCs_[i]->printInfo();
                     std::cout << "Target " << i+1 << '\n';
                     finalZs_[i]->printInfo();
                 }
+            } else if (verbose_==1) {
+                cout << "Number of controllers: " << finalCs_.size() << ".\n";
             }
             return;
         }
@@ -467,7 +486,7 @@ namespace scots {
             clog << "current abstraction: " << ab << '\n';
             clog << "controllers: " << finalCs_.size() << '\n';
             
-            if (verbose_) {
+            if (verbose_>0) {
                 cout << '\n';
                 cout << "current abstraction: " << ab << '\n';
                 cout << "controllers: " << finalCs_.size() << '\n';
@@ -488,23 +507,23 @@ namespace scots {
             }
             if (result == INITWINNING) {
                 clog << "result: all initial states are winning\n";
-                if (verbose_) {
+                if (verbose_>0) {
                     cout << "result: all initial states are winning\n";
                 }
             }
             if (result == CONVERGEDVALID) {
                 clog << "result: converged valid\n";
-                if (verbose_)
+                if (verbose_>0)
                     cout << "result: converged valid\n";
             }
             else if (result == CONVERGEDINVALID) {
                 clog << "result: converged invalid\n";
-                if (verbose_)
+                if (verbose_>0)
                     cout << "result: converged invalid\n";
             }
             else {
                 clog << "result: not converged\n";
-                if (verbose_)
+                if (verbose_>0)
                     cout << "result: not converged\n";
             }
             
@@ -513,14 +532,14 @@ namespace scots {
                 validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
                 validCs_[ab]->symbolicSet_ = Cs_[ab]->symbolicSet_;
                 clog << "saved as snapshot, saved to valids\n";
-                if (verbose_)
+                if (verbose_>0)
                     cout << "saved as snapshot, saved to valids\n";
             }
             else { // result is CONVERGEDINVALID
                 Zs_[ab]->symbolicSet_ = validZs_[ab]->symbolicSet_; // reset this layer's progress
                 Cs_[ab]->symbolicSet_ = validCs_[ab]->symbolicSet_;
                 clog << "reset to valids\n";
-                if (verbose_)
+                if (verbose_>0)
                     cout << "reset to valids\n";
             }
             
@@ -533,7 +552,7 @@ namespace scots {
                 }
                 else { // go finer
                     clog << "Going finer\n";
-                    if (verbose_)
+                    if (verbose_>0)
                         cout << "Going finer\n";
                     int nextAb = ab + 1;
                     TicToc timer;
@@ -549,7 +568,7 @@ namespace scots {
             }
             else { // not converged, go coarser
                 clog << "Going coarser\n";
-                if (verbose_)
+                if (verbose_>0)
                     cout << "Going coarser\n";
                 int nextAb = ab - 1;
                 if (nextAb != 0) { // pointless to do for coarsest layer
@@ -646,11 +665,11 @@ namespace scots {
         ReachResult reach(int ab, int m = -1) {
             int i = 1;
             clog << "abstraction: " << ab << '\n';
-            if (verbose_)
+            if (verbose_>0)
                 cout << "abstraction: " << ab << '\n';
             while (1) {
                 clog << "iteration: " << i << '\n';
-                if (verbose_)
+                if (verbose_>0)
                     cout << "iteration: " << i << '\n';
                 BDD controllablePreZ = controllablePre(Zs_[ab]->symbolicSet_, ab);
                 BDD C = controllablePreZ | Gs_[ab]->symbolicSet_;
@@ -690,8 +709,8 @@ namespace scots {
                 if (iw == ddmgr_->bddZero()) {
                     return INITWINNING;
                 }
-//                if (N == ddmgr_->bddZero() && i != 1) {
-                if (N == ddmgr_->bddZero()) { // by kaushik: "i!=1" doesn't make sense as CONVERGEDINVALID will never be true
+                if (N == ddmgr_->bddZero() && i != 1) {
+//                if (N == ddmgr_->bddZero()) { // by kaushik: "i!=1" doesn't make sense as CONVERGEDINVALID will never be true
                     if (i >= 2) {
                         return CONVERGEDVALID;
                     }
@@ -947,6 +966,8 @@ namespace scots {
                             ho[i][j] += distance;
                         }
                         size_t p = ho[i].size();
+                        /* first clear any previously stored obstacle */
+//                        Os_[*system_->numAbs_-1]->clear();
                         Os_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
                     }
                 }
@@ -971,6 +992,8 @@ namespace scots {
                             hg[i][j] = hg[i][j] - distance;
                         }
                         size_t p = hg[i].size();
+                        /* first clear any previously stored goal set */
+//                        Gs_[*system_->numAbs_-1]->clear();
                         Gs_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HG[i]),to_native_array(hg[i]),INNER);
                     }
                 }
@@ -995,6 +1018,8 @@ namespace scots {
                             hi[i][j] += distance;
                         }
                         size_t p = hi[i].size();
+                        /* first clear any previously stored intial states */
+//                        X0s_[*system_->numAbs_-1]->clear();
                         X0s_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HI[i]),to_native_array(hi[i]),OUTER);
                     }
                 }
@@ -1277,7 +1302,7 @@ namespace scots {
             for (size_t i = 0; i < etaXs_.size(); i++) {
                 clog << "abstraction " << i << ": " << *tau_[i] << '\n';
             }
-            if (verbose_) {
+            if (verbose_==2) {
                 printVec(Xs_, "X");
                 printVec(Os_, "O");
                 cout << "U:\n";
@@ -1456,7 +1481,11 @@ namespace scots {
          input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively
          input: trajectory is a sequence of points traversed. trajectory[0] = x0 (to be passed) */
         template<class sys_type, class X_type, class U_type>
-        bool simulateSys(sys_type sys_next, X_type xarr, U_type uarr, std::vector<std::vector<double>>& trajectory, std::vector<std::vector<double>> obstacles,
+        bool simulateSys(sys_type sys_next,
+                         X_type xarr, U_type uarr,
+                         std::vector<std::vector<double>>& trajectory,
+                         std::vector<std::vector<double>> obstacles,
+                         std::vector<std::vector<double>> sys_goal,
                          std::vector<double>& unsafeAt) {
             std::vector<double> x; /* current state */
             std::vector<double> u; /* current control input */
@@ -1518,20 +1547,41 @@ namespace scots {
                         break;
                     }
                 }
-                /* for i=0, the goal is the overall goal Gs; otherwise, the goal is to reach the controller domain of i-1 */
-                scots::SymbolicSet goal((i==0) ? *Xs_[*system_->numAbs_-1] : *Xs_[prevAb]);
-                if (i==0) {
-                    goal.setSymbolicSet(Gs_[*system_->numAbs_-1]->symbolicSet_);
-                } else {
-                    goal.setSymbolicSet(finalZs_[i-1]->symbolicSet_);
-                }
+                
+
+//                if (i!=0) {
+//                    scots::SymbolicSet goal(*Xs_[prevAb]);
+//                    goal.setSymbolicSet(finalZs_[i-1]->symbolicSet_);
+//                }
                 
                 while (1) {
                     /* last point in the trajectory is the current state */
                     x = trajectory.back();
                     /* if the current goal is reached, go to the next controller */
-                    if (goal.isElement(x))
-                        break;
+                    if (i!=0) {
+                        scots::SymbolicSet goal(*Xs_[prevAb]);
+                        goal.setSymbolicSet(finalZs_[i-1]->symbolicSet_);
+                        if (goal.isElement(x))
+                            break;
+                    } else {
+                        bool goal_reached;
+                        /* at i=0, check true satisfaction of the goal, i.e. in terms of sys_goal */
+                        for (int l=0; l<sys_goal.size(); l++) {
+                            goal_reached = true;
+                            for (int m=0; m<*system_->dimX_; m++) {
+                                if (x[m]< -sys_goal[l][2*m] ||
+                                    x[m]> sys_goal[l][2*m+1]) {
+                                    goal_reached = false;
+                                    break;
+                                }
+                            }
+                            if (goal_reached)
+                                break;
+                        }
+                        if (goal_reached)
+                            break;
+                    }
+                    
                     /* pick any random valid control input */
                     if (!getRandomMember(finalCs_[i]->setValuedMap(x,xind),u)) {
                         /* no input found means the trajectory left the controller domain; this is also treated as unsafe behavior */
@@ -1578,6 +1628,15 @@ namespace scots {
                 }
             }
             return true;
+        }
+        /* check if the initial states are winning or not */
+        bool isInitWinning() {
+            BDD iw = X0s_[*system_->numAbs_-1]->symbolicSet_ & (!validZs_[*system_->numAbs_-1]->symbolicSet_);
+            if (iw==ddmgr_->bddZero()) {
+                return true;
+            } else {
+                return false;
+            }
         }
     private:
         /* get random element from a vector */
