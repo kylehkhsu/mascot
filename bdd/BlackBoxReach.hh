@@ -1506,11 +1506,16 @@ namespace scots {
 //            trajectory.push_back(x);
             x = trajectory[0]; /* the initial state */
             if (!(X0s_[0]->isElement(x))) {
-                cout << "Error: stots::BlackBoxReach::simulateSys(trajectory, obstacles, distance): the initial state does not match the design value.";
+                // debug
+                if (!(X0s_[0]->isElement(x))) {
+                    cout << "This is a test.";
+                }
+                // debug end
+                cout << "Error: stots::BlackBoxReach::simulateSys(trajectory, obstacles, distance): the initial state does not match the design value.\n";
                 return false;
             }
             if (!(finalZs_.back()->isElement(x))) {
-                cout << "Error: scots::BlackBoxReach::simulateSys(trajectory, obstacles, distance): the initial state is outside the winning region.";
+                cout << "Error: scots::BlackBoxReach::simulateSys(trajectory, obstacles, distance): the initial state is outside the winning region.\n";
                 return false;
             }
             /* iterate over all controllers */
@@ -1643,7 +1648,7 @@ namespace scots {
         template<class T>
         bool getRandomMember(std::vector<T> vec, T& member) {
             if (vec.size()==0) {
-                cout << "Error: scots::BlackBoxReach::getRandomMember(vec): vec cannot be empty.\n";
+//                cout << "Error: scots::BlackBoxReach::getRandomMember(vec): vec cannot be empty.\n";
                 return false;
             }
             member = vec[rand() % vec.size()];
