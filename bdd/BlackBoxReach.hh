@@ -98,6 +98,7 @@ namespace scots {
             cubesCoarser_=other.cubesCoarser_;
             Ts_=other.Ts_;
             TTs_=other.TTs_;
+            computedDs_=other.computedDs_;
             permutesXtoX2_=other.permutesXtoX2_;
             permutesX2toX_=other.permutesX2toX_;
             permutesCoarser_=other.permutesCoarser_;
@@ -156,10 +157,18 @@ namespace scots {
                 SymbolicSet* innerD = new SymbolicSet(*other.innerDs_[i]);
                 innerDs_.push_back(innerD);
             }
-            for (int i = 0; i < (other.computedDs_).size(); i++) {
-                SymbolicSet* computedD = new SymbolicSet(*other.computedDs_[i]);
-                computedDs_.push_back(computedD);
-            }
+//            for (int i = 0; i < (other.computedDs_).size(); i++) {
+//                SymbolicSet* computedD = new SymbolicSet(*other.computedDs_[i]);
+//                computedDs_.push_back(computedD);
+//            }
+//            for (int i = 0; i < (other.Ts_).size(); i++) {
+//                SymbolicSet* T = new SymbolicSet(*other.Ts_[i]);
+//                Ts_.push_back(T);
+//            }
+//            for (int i = 0; i < (other.TTs_).size(); i++) {
+//                SymbolicSet* TT = new SymbolicSet(*other.TTs_[i]);
+//                TTs_.push_back(TT);
+//            }
         }
         /*! Destructor for a BlackBoxReach object. */
         ~BlackBoxReach() {
@@ -440,7 +449,8 @@ namespace scots {
             timer.tic();
             computeExplorationAbstractions(sysNext, radNext, x, u);
             abTime_ += timer.toc();
-            cout << "\nComputation time for exploration abstractions: " << timer.toc() <<"\n";
+            if (verbose_>0)
+                cout << "\nComputation time for exploration abstractions: " << timer.toc() <<"\n";
             
             // Ts_[0] is uTs_[0]
             Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_;
@@ -458,6 +468,8 @@ namespace scots {
             saveVec(finalZs_, "Z/Z");
             checkMakeDir("T");
             saveVec(Ts_, "T/T");
+            checkMakeDir("D");
+            saveVec(computedDs_, "D/D");
             clog << "Wrote Ts_ to file.\n";
             
             if (verbose_==2) {
@@ -544,6 +556,18 @@ namespace scots {
             }
             
             if (result == INITWINNING) {
+                /* propagate the winning domain up to the finest layer (required for the check in the method isInitWinning) */
+                for (int i=ab; i<*system_->numAbs_-1; i++) {
+                    finer(Zs_[i], Zs_[i+1], i);
+                    Zs_[i+1]->symbolicSet_ |= validZs_[i+1]->symbolicSet_;
+                    validZs_[i+1]->symbolicSet_ = Zs_[i+1]->symbolicSet_;
+                }
+                // debug
+//                checkMakeDir("X0");
+//                saveVec(X0s_, "X0/X0_");
+//                checkMakeDir("vZ");
+//                saveVec(validZs_, "vZ/Z");
+                // debug end
                 return;
             }
             if (result != NOTCONVERGED) { // ab = 0 always converges
@@ -972,6 +996,8 @@ namespace scots {
                     }
                 }
             }
+            //debug:
+//            cout << "\tDone with obstacles.\n";
             /* sanity check: # of goals */
             if (HG.size()!=hg.size()) {
                 std::ostringstream os;
@@ -998,6 +1024,8 @@ namespace scots {
                     }
                 }
             }
+            //debug:
+//            cout << "\tDone with goal.\n";
             /* sanity check: # of initial states */
             if (HI.size()!=hi.size()) {
                 std::ostringstream os;
@@ -1024,8 +1052,11 @@ namespace scots {
                     }
                 }
             }
+            //debug:
+//            cout << "\tDone with initial.\n";
             if (X0s_[*system_->numAbs_-1]->symbolicSet_==ddmgr_->bddZero()) {
-                error("Error: the set of initial states cannot be empty.\n");
+                /* ignore this environment in this case */
+                cout << "Error: the set of initial states cannot be empty.\n";
                 return false;
             }
             /* project the specification up to the coarser layers */
@@ -1036,17 +1067,20 @@ namespace scots {
                 /* ignore initial states which are blocked by the obstacles */
                 X0s_[i]->symbolicSet_ &= !Os_[i]->symbolicSet_;
             }
+            //debug:
+//            cout << "\tDone with projection.\n";
             /* checking that specification is valid */
             if ((Gs_[*system_->numAbs_-1]->symbolicSet_ & (!Os_[*system_->numAbs_-1]->symbolicSet_)) == ddmgr_->bddZero()) {
-                std::ostringstream os;
-                os<< "Error: No goal state is outside the obstacles in the finest layer.\n";
-                throw std::runtime_error(os.str().c_str());
+                /* ignore this environment in this case */
+                cout << "Error: No goal state is outside the obstacles in the finest layer.\n";
                 return false;
             }
+            //debug:
+//            cout << "\tChecking intersection of goal with obstacle done.\n";
             if (X0s_[*system_->numAbs_-1]->symbolicSet_==ddmgr_->bddZero()) {
                 std::ostringstream os;
-                os<< "Error: no initial state outside the obstacles in the finest layer.\n";
-                throw std::runtime_error(os.str().c_str());
+                /* ignore this environment in this case */
+                cout << "Error: no initial state outside the obstacles in the finest layer.\n";
                 return false;
             }
             clog << "No obstacle problem with specification.\n";
@@ -1288,6 +1322,59 @@ namespace scots {
             clog << "Initialized permutes.\n";
         }
         
+        /*! Sets the transition BDDs */
+        /* inputes: the vector of the transition relation BDDs and the computedDs_ BDDs */
+        void setTransitions(const std::vector<BDD*> T, const std::vector<BDD*> D) {
+            if (T.size()<*system_->numAbs_) {
+                error("The number of transition BDDs should match the number of abstraction layers.\n");
+            } else if (D.size()<*system_->numAbs_) {
+                error("The number of computedDs_ BDDs should match the number of abstraction layers.\n");
+            } else {
+                for (int i=0; i<*system_->numAbs_; i++) {
+                    Ts_[i]->setSymbolicSet(*T[i]);
+                    TTs_[i]->symbolicSet_ = Ts_[i]->symbolicSet_.ExistAbstract(*notXUvars_[i]);
+                    computedDs_[i]->setSymbolicSet(*D[i]);
+                }
+            }
+        }
+        
+        /*! Clears sets related to the specification and controller synthesis */
+        void clear() {
+            for (int i = 0; i < X0s_.size(); i++) {
+                X0s_[i]->clear();
+            }
+            for (int i = 0; i < Os_.size(); i++) {
+                Os_[i]->clear();
+            }
+            for (int i = 0; i < Zs_.size(); i++) {
+                Zs_[i]->clear();
+            }
+            for (int i = 0; i < Cs_.size(); i++) {
+                Cs_[i]->clear();
+            }
+            for (int i = 0; i < Gs_.size(); i++) {
+                Gs_[i]->clear();
+            }
+            for (int i = 0; i < validZs_.size(); i++) {
+                validZs_[i]->clear();
+            }
+            for (int i = 0; i < validCs_.size(); i++) {
+                validCs_[i]->clear();
+            }
+            for (int i = 0; i < finalCs_.size(); i++) {
+                finalCs_[i]->clear();
+            }
+            for (int i = 0; i < finalZs_.size(); i++) {
+                finalZs_[i]->clear();
+            }
+            for (int i = 0; i < Ds_.size(); i++) {
+                Ds_[i]->clear();
+            }
+            for (int i = 0; i < innerDs_.size(); i++) {
+                innerDs_[i]->clear();
+            }
+        }
+        
         /*! Saves and prints to log file some information related to the reachability specification. */
         void verifySave() {
             clog << "etaXs_:\n";
@@ -1311,7 +1398,7 @@ namespace scots {
             }
             checkMakeDir("plotting");
             Xs_[0]->writeToFile("plotting/X.bdd");
-            X0s_[0]->writeToFile("plotting/X0.bdd");
+            X0s_[*system_->numAbs_-1]->writeToFile("plotting/X0.bdd");
             Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
             Gs_[*system_->numAbs_-1]->writeToFile("plotting/G.bdd");
             checkMakeDir("O");
@@ -1472,6 +1559,8 @@ namespace scots {
                         } else {
                             distance = std::min(distance,computeDistance(lb1, ub1, lb2, ub2));
                         }
+                        lb2.clear();
+                        ub2.clear();
                     }
                 }
             }
@@ -1507,9 +1596,9 @@ namespace scots {
             x = trajectory[0]; /* the initial state */
             if (!(X0s_[0]->isElement(x))) {
                 // debug
-                if (!(X0s_[0]->isElement(x))) {
-                    cout << "This is a test.";
-                }
+//                if (!(X0s_[0]->isElement(x))) {
+//                    cout << "This is a test.";
+//                }
                 // debug end
                 cout << "Error: stots::BlackBoxReach::simulateSys(trajectory, obstacles, distance): the initial state does not match the design value.\n";
                 return false;
@@ -1667,6 +1756,7 @@ namespace scots {
         double computeDistance(std::vector<double> lb1, std::vector<double> ub1, std::vector<double> lb2, std::vector<double> ub2) {
             /* sanity check */
             if (!(lb1.size()==ub1.size() && ub1.size()==lb2.size() && lb2.size()==ub2.size()))
+//                cout << "The array dimensions do not match.";
                 throw "The array dimensions do not match.";
             
             std::vector<double> diff1, diff2;
