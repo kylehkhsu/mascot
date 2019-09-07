@@ -98,14 +98,14 @@ namespace scots {
             notXUvars_=other.notXUvars_;
             notXvars_=other.notXvars_;
             cubesCoarser_=other.cubesCoarser_;
-            cubesCoarserTs_=other.cubesCoarser_;
+            cubesCoarserTs_=other.cubesCoarserTs_;
             Ts_=other.Ts_;
             TTs_=other.TTs_;
             computedDs_=other.computedDs_;
             permutesXtoX2_=other.permutesXtoX2_;
             permutesX2toX_=other.permutesX2toX_;
             permutesCoarser_=other.permutesCoarser_;
-            permutesCoarserTs_=other.permutesCoarser_;
+            permutesCoarserTs_=other.permutesCoarserTs_;
             permutesFiner_=other.permutesFiner_;
             solvers_=other.solvers_;
             systemSolver_=other.systemSolver_;
@@ -230,18 +230,18 @@ namespace scots {
 //            ReachResult result = reach(ab);
 //            cout << "ReachResult = " << result << ".\n";
             
-            clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
+//            clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
 //            if (verbose_>0) {
 //                cout << "\nFinal number of controllers: " << finalCs_.size() << '\n';
 //            }
             
-            checkMakeDir("C");
-            saveVec(finalCs_, "C/C");
-            checkMakeDir("Z");
-            saveVec(finalZs_, "Z/Z");
-            checkMakeDir("T");
-            saveVec(Ts_, "T/T");
-            clog << "Wrote Ts_ to file.\n";
+//            checkMakeDir("C");
+//            saveVec(finalCs_, "C/C");
+//            checkMakeDir("Z");
+//            saveVec(finalZs_, "Z/Z");
+//            checkMakeDir("T");
+//            saveVec(Ts_, "T/T");
+//            clog << "Wrote Ts_ to file.\n";
             return;
         }
         /*! Refine some particular region around a point of the state space.
@@ -338,25 +338,25 @@ namespace scots {
             
             abTime_ += timer.toc();
             
-            if (!readAbs) {
-                checkMakeDir("T");
-                saveVec(Ts_, "T/T");
-                clog << "Wrote Ts_ to file.\n";
-            }
+//            if (!readAbs) {
+//                checkMakeDir("T");
+//                saveVec(Ts_, "T/T");
+//                clog << "Wrote Ts_ to file.\n";
+//            }
             
             // synthesize controller
             int ab = 0;
             eagerReachRecurse(ab);
             
-            clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
-            
-            checkMakeDir("C");
-            saveVec(finalCs_, "C/C");
-            checkMakeDir("Z");
-            saveVec(finalZs_, "Z/Z");
-            checkMakeDir("T");
-            saveVec(Ts_, "T/T");
-            clog << "Wrote Ts_ to file.\n";
+//            clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
+//
+//            checkMakeDir("C");
+//            saveVec(finalCs_, "C/C");
+//            checkMakeDir("Z");
+//            saveVec(finalZs_, "Z/Z");
+//            checkMakeDir("T");
+//            saveVec(Ts_, "T/T");
+//            clog << "Wrote Ts_ to file.\n";
             return;
         }
         
@@ -466,17 +466,17 @@ namespace scots {
             int ab = 0;
             onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
             
-            clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
-            
-            checkMakeDir("C");
-            saveVec(finalCs_, "C/C");
-            checkMakeDir("Z");
-            saveVec(finalZs_, "Z/Z");
-            checkMakeDir("T");
-            saveVec(Ts_, "T/T");
-            checkMakeDir("D");
-            saveVec(computedDs_, "D/D");
-            clog << "Wrote Ts_ to file.\n";
+//            clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
+//
+//            checkMakeDir("C");
+//            saveVec(finalCs_, "C/C");
+//            checkMakeDir("Z");
+//            saveVec(finalZs_, "Z/Z");
+//            checkMakeDir("T");
+//            saveVec(Ts_, "T/T");
+//            checkMakeDir("D");
+//            saveVec(computedDs_, "D/D");
+//            clog << "Wrote Ts_ to file.\n";
             
             if (verbose_==2) {
                 for (size_t i = 0; i < finalCs_.size(); i++) {
@@ -683,9 +683,9 @@ namespace scots {
                 //            Ts_[ab]->printInfo(1);
                 TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
                 
-                // Propagate transitions to the coarsest layer
+                // Propagate transitions up to the coarsest layer
                 SymbolicSet* Tf = new SymbolicSet(*Ts_[ab]);
-                Tf->setSymbolicSet(abstraction.transitionRelation_);
+                Tf->symbolicSet_ = abstraction.transitionRelation_;
                 for (int i=ab; i>0; i--) {
                     SymbolicSet* Tc = new SymbolicSet(*Ts_[i-1]);
                     coarserOuterTs(Tc,Tf,i-1);
@@ -848,6 +848,10 @@ namespace scots {
          */
         void coarserOuter(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
             Zc->symbolicSet_ = (Zf->symbolicSet_.ExistAbstract(*cubesCoarser_[c])).Permute(permutesCoarser_[c]);
+            // debugging
+//            checkMakeDir("testing");
+//            Zf->writeToFile("testing/Tf0.bdd");
+//            Zc->writeToFile("testing/Tc0.bdd");
         }
         
         /*! Calculates the coarser outer projection of Tf and stores it in Tc.
@@ -1332,6 +1336,11 @@ namespace scots {
                         }
                     }
                 }
+                for (int dim=0; dim < *system_->dimU_; dim++) {
+                    for (size_t ind=0; ind<U_->nofBddVars_[dim]; ind++) {
+                        permuteCoarserT[U_->indBddVars_[dim][ind]] = U_->indBddVars_[dim][ind];
+                    }
+                }
                 permutesCoarserTs_.push_back(permuteCoarserT);
                 
                 clog << "permuteCoarserTs " << i << " to " << i-1 << ": ";
@@ -1467,15 +1476,15 @@ namespace scots {
                 U_->printInfo(1);
                 printVec(Gs_, "G");
             }
-            checkMakeDir("plotting");
-            Xs_[0]->writeToFile("plotting/X.bdd");
-            X0s_[*system_->numAbs_-1]->writeToFile("plotting/X0.bdd");
-            Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
-            Gs_[*system_->numAbs_-1]->writeToFile("plotting/G.bdd");
-            checkMakeDir("O");
-            saveVec(Os_, "O/O");
-            checkMakeDir("G");
-            saveVec(Gs_, "G/G");
+//            checkMakeDir("plotting");
+//            Xs_[0]->writeToFile("plotting/X.bdd");
+//            X0s_[*system_->numAbs_-1]->writeToFile("plotting/X0.bdd");
+//            Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
+//            Gs_[*system_->numAbs_-1]->writeToFile("plotting/G.bdd");
+//            checkMakeDir("O");
+//            saveVec(Os_, "O/O");
+//            checkMakeDir("G");
+//            saveVec(Gs_, "G/G");
         }
         
         /*! Saves a snapshot of a controller C and its domain Z into the sequence of final controllers and controller domains.
@@ -1493,6 +1502,24 @@ namespace scots {
             Z->symbolicSet_ = Zs_[ab]->symbolicSet_;
             finalZs_.push_back(Z);
             finalAbs_.push_back(ab);
+        }
+        
+        /*! Write final synthesis results and plotting data to files */
+        void saveFinalResult() {
+            checkMakeDir("C");
+            saveVec(finalCs_, "C/C");
+            checkMakeDir("Z");
+            saveVec(finalZs_, "Z/Z");
+            
+            checkMakeDir("plotting");
+            Xs_[0]->writeToFile("plotting/X.bdd");
+            X0s_[*system_->numAbs_-1]->writeToFile("plotting/X0.bdd");
+            Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
+            Gs_[*system_->numAbs_-1]->writeToFile("plotting/G.bdd");
+            checkMakeDir("O");
+            saveVec(Os_, "O/O");
+            checkMakeDir("G");
+            saveVec(Gs_, "G/G");
         }
         
         /*! Reads transition relation BDDs from file and saves them into Ts_. */
@@ -1749,8 +1776,8 @@ namespace scots {
                             if (goal_reached)
                                 break;
                         }
-                        if (goal_reached)
-                            break;
+//                        if (goal_reached)
+//                            break;
                     }
                     
                     /* pick any random valid control input */

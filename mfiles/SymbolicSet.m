@@ -151,7 +151,7 @@ classdef SymbolicSet < handle
         n=length(obj.points(:,1));
         eh=obj.eta./2;
         h = zeros(1,n);
-        parfor i=1:n
+        for i=1:n
           x=obj.points(i,1);
           xdata=x+[-1 1 1 -1]*eh(1);
           y=obj.points(i,2);

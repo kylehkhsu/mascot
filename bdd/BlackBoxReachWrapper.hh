@@ -62,7 +62,7 @@ inline int size_of_array(T* arr) {
 }
 
 template<class X_type, class U_type, class sys_type, class rad_type, class O_type, class G_type, class I_type, class HO_type, class HG_type, class HI_type, class ho_type, class hg_type, class hi_type>
-bool find_abst(X_type x, U_type u,
+double find_abst(X_type x, U_type u,
               sys_type sys_post, rad_type radius_post,
               double* lbX, double* ubX, double* lbU, double* ubU,
               double* etaX, double* etaU, double tau, double systemTau,
@@ -81,7 +81,7 @@ bool find_abst(X_type x, U_type u,
     int seed = time(NULL);
     cout << "\nSeed used for the random number generator : " << seed << "\n\n";
     srand(seed);
-    srand(1567807682);
+    srand(1567843354);
     /* problematic seeds */
     // 1567743385, 1567744613, 1567750636(distance=-1 bug)
     
@@ -108,9 +108,6 @@ bool find_abst(X_type x, U_type u,
     
     /* we keep a moving maximum */
     double spec = 0;
-    /* how far the environments are to be made conservative (no role for computing SPEC) */
-    double dist = 0;
-    
     /* initialize variables */
     double toss1, toss2, toss3;
     std::vector<double> unsafeAt;
@@ -125,8 +122,8 @@ bool find_abst(X_type x, U_type u,
             /* spawn environment */
             if (!useColors)
                 cout << "Environment #" << e << "\n";
-            spawnO(HO,ho,dist,verbose);
-            spawnG(HG,hg,dist,verbose);
+            spawnO(HO,ho,0.0,verbose);
+            spawnG(HG,hg,0.0,verbose);
             spawnI(HI,hi,verbose);
             
             /* *** synthesize controller on the available abstraction only *** */
@@ -147,6 +144,8 @@ bool find_abst(X_type x, U_type u,
                     cout << "There is a controller.\n";
                 /* simulate the concrete system using the synthesized controller */
                 simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_traj);
+                //debug
+//                printArray(sys_traj, )
                 /* check if the system trajectory was unsafe */
                 if (unsafeAt.size()!=0) {
                     if (useColors) {
@@ -168,6 +167,10 @@ bool find_abst(X_type x, U_type u,
                     cout << "Distance of abstract trajectory from the unsafe states = " << distance << ".\n";
                     if (distance>spec) {
                         /* Refine abstraction if unsafe until the specified accuracy is reached */
+                        //debug
+//                        checkMakeDir("T");
+//                        saveVec(abs_ref->Ts_, "T/T");
+                        //debug end
                         while (1) {
                             cout << "\tStarting a refinement loop to minimize the distance.\n";
                             bool flag1 = abs->exploreAroundPoint(unsafeAt, explRadius, u, sys_post, radius_post);
@@ -198,6 +201,11 @@ bool find_abst(X_type x, U_type u,
                             abs_traj.push_back(sys_traj[0]);
                             abs->simulateAbs(abs_traj,hovec,distance);
                             cout << "\tUpdated distance = " << distance << "\n";
+                            //debug
+//                            checkMakeDir("T");
+//                            saveVec(abs_ref->Ts_, "T/T");
+//                            abs->saveFinalResult();
+                            //debug end
                             
                         }
                     }
@@ -245,16 +253,17 @@ bool find_abst(X_type x, U_type u,
         /* initial abstraction */
         BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
         int unique_env_count = 0; /* number of environments explored excluding duplicate cases */
+        /* how far the environments are to be made conservative (no role for computing SPEC) */
+        double eps = DBL_MIN; /* very small number added to make sure that boundary cases are pessimistically resolved */
+        double spec2 = spec + eps;
         /* iterate over the environments */
         for (int e=0; e<NN; e++) {
             abs->clear();
             /* spawn environment */
             if (!useColors)
                 cout << "Environment #" << e << "\n";
-            double eps = DBL_MIN; /* very small number added to make sure that boundary cases are pessimistically resolved */
-            dist = spec + eps;
-            spawnO(HO,ho,dist,verbose);
-            spawnG(HG,hg,dist,verbose);
+            spawnO(HO,ho,spec2,verbose);
+            spawnG(HG,hg,spec2,verbose);
             spawnI(HI,hi,verbose);
             
             /* initialize the environment in the abstraction */
@@ -354,6 +363,6 @@ bool find_abst(X_type x, U_type u,
         for (int l=0; l<dimX; l++)
             act_success_count[l] = 0;
     }
-    return true;
+    return spec;
 }
 #endif
