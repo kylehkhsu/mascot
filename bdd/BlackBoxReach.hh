@@ -39,11 +39,13 @@ namespace scots {
         vector<BDD*> notXUvars_; /*!< notXUvars_[i] is a BDD over all ddmgr_ variables whose 1-term is DC for *Xs_[i] and *U_ and 1 otherwise. */
         vector<BDD*> notXvars_; /*!< notXvars_[i] is a BDD over all ddmgr_ variables whose 1-term is DC for *Xs_[i] and 1 otherwise. */
         vector<BDD*> cubesCoarser_; /*!< Helper BDD for projection to coarser layer. */
+        vector<BDD*> cubesCoarserTs_; /*!< Helper BDD for projection of transitions to coarser layer. */
         vector<SymbolicSet*> Ts_; /*!< Ts_[i] stores the transition relation of abstraction i. */
         vector<SymbolicSet*> TTs_; /*!< TTs_[i] is Ts_[i] with X2s_[i] existentially abtracted. */
         vector<int*> permutesXtoX2_; /*!< To transform a BDD over X variables to an equivalent one over X2 variables. */
         vector<int*> permutesX2toX_; /*!< To transform a BDD over X2 variables to an equivalent one over X variables. */
         vector<int*> permutesCoarser_; /*!< To project a BDD to the next coarser layer. */
+        vector<int*> permutesCoarserTs_; /*!< To project a BDD of transition function to the next coarser layer. */
         vector<int*> permutesFiner_; /*!< To project a BDD to the next finer layer. */
         vector<OdeSolver*> solvers_; /*!< ODE solvers (Runge-Katta approximation) for each abstraction time step. */
         OdeSolver* systemSolver_; /*!< ODE solver (Runge-Kutta approximation) used to solve system trajectory (meant to be finer than the abstract solvers). */
@@ -96,12 +98,14 @@ namespace scots {
             notXUvars_=other.notXUvars_;
             notXvars_=other.notXvars_;
             cubesCoarser_=other.cubesCoarser_;
+            cubesCoarserTs_=other.cubesCoarser_;
             Ts_=other.Ts_;
             TTs_=other.TTs_;
             computedDs_=other.computedDs_;
             permutesXtoX2_=other.permutesXtoX2_;
             permutesX2toX_=other.permutesX2toX_;
             permutesCoarser_=other.permutesCoarser_;
+            permutesCoarserTs_=other.permutesCoarser_;
             permutesFiner_=other.permutesFiner_;
             solvers_=other.solvers_;
             systemSolver_=other.systemSolver_;
@@ -190,11 +194,13 @@ namespace scots {
             deleteVec(notXUvars_);
             deleteVec(notXvars_);
             deleteVec(cubesCoarser_);
+            deleteVec(cubesCoarserTs_);
             deleteVec(Ts_);
             deleteVec(TTs_);
             deleteVecArray(permutesXtoX2_);
             deleteVecArray(permutesX2toX_);
             deleteVecArray(permutesCoarser_);
+            deleteVecArray(permutesCoarserTs_);
             deleteVecArray(permutesFiner_);
             deleteVec(solvers_);
             delete systemSolver_;
@@ -239,29 +245,29 @@ namespace scots {
             return;
         }
         /*! Refine some particular region around a point of the state space.
-         *  \param[in] x        Continuous state around which exploration is needed
+         *  \param[in] xarr     Continuous state around which exploration is needed (can be vector or array)
          *  \param[in] r        Radius of exploration
          */
         template<class X_type, class U_type, class sys_type, class rad_type>
-        bool exploreAroundPoint(X_type xarr, X_type r, U_type u, sys_type sysNext, rad_type radNext) {
+        bool exploreAroundPoint(std::vector<double> x, X_type r, U_type u, sys_type sysNext, rad_type radNext) {
             /* sanity check */
-            if(!(xarr.size()==*system_->dimX_)) {
+            if(!(x.size()==*system_->dimX_)) {
                 std::ostringstream os;
-                os << "Error: scots::SymbolicSet::isElement(xarr): xarr must be of size dim_.";
+                os << "Error: scots::SymbolicSet::isElement(xarr): x must be of size dim_.";
                 throw std::invalid_argument(os.str().c_str());
             }
             for (size_t i=0; i < *system_->dimX_; i++) {
-                if (xarr[i] > system_->ubX_[i] || xarr[i] < system_->lbX_[i]) {
+                if (x[i] > system_->ubX_[i] || x[i] < system_->lbX_[i]) {
                     std::ostringstream os;
                     os << "Error: scots::BlackBoxReach::exploreAround(xarr): xarr is outside the state space.";
                     throw std::invalid_argument(os.str().c_str());
                 }
             }
-            /* convert xarr to a vector x (reqd by some of the methods) */
-            std::vector<double> x;
-            for (int i=0; i<*system_->dimX_; i++) {
-                x.push_back(xarr[i]);
-            }
+//            /* convert xarr to a vector x (reqd by some of the methods) */
+//            std::vector<double> x;
+//            for (int i=0; i<*system_->dimX_; i++) {
+//                x.push_back(xarr[i]);
+//            }
             /* find the current exploration level around x */
             size_t ab;
             for (int i=*system_->numAbs_-1; i >= 0; i--) {
@@ -676,6 +682,17 @@ namespace scots {
                 //            Ts_[ab]->symbolicSet_ &= !O2;
                 //            Ts_[ab]->printInfo(1);
                 TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
+                
+                // Propagate transitions to the coarsest layer
+                SymbolicSet* Tf = new SymbolicSet(*Ts_[ab]);
+                Tf->setSymbolicSet(abstraction.transitionRelation_);
+                for (int i=ab; i>0; i--) {
+                    SymbolicSet* Tc = new SymbolicSet(*Ts_[i-1]);
+                    coarserOuterTs(Tc,Tf,i-1);
+                    Ts_[i-1]->symbolicSet_ |= Tc->symbolicSet_;
+                    TTs_[i-1]->symbolicSet_ = Ts_[i-1]->symbolicSet_.ExistAbstract(*notXUvars_[i-1]);
+                    computedDs_[i-1]->symbolicSet_ |= Ts_[i-1]->symbolicSet_.ExistAbstract(*notXvars_[i-1]);
+                }
             }
             x = x; // gets rid of warning message regarding lack of use
             u = u;
@@ -831,6 +848,15 @@ namespace scots {
          */
         void coarserOuter(SymbolicSet* Zc, SymbolicSet* Zf, int c) {
             Zc->symbolicSet_ = (Zf->symbolicSet_.ExistAbstract(*cubesCoarser_[c])).Permute(permutesCoarser_[c]);
+        }
+        
+        /*! Calculates the coarser outer projection of Tf and stores it in Tc.
+         *  \param[in]  Tc      Contains result of projection (set of transitions).
+         *  \param[in]  Tf      Contains set to project (set of transitions).
+         *  \param[in]  c       Layer 0-index of Tc.
+         */
+        void coarserOuterTs(SymbolicSet* Tc, SymbolicSet* Tf, int c) {
+            Tc->symbolicSet_ = (Tf->symbolicSet_.ExistAbstract(*cubesCoarserTs_[c])).Permute(permutesCoarserTs_[c]);
         }
         
         /*! Initializes data members.
@@ -1263,6 +1289,54 @@ namespace scots {
                 clog << "permuteFiner " << i << " to " << i+1 << ": ";
                 printArray(permuteFiner, numBDDVars_);
             }
+            
+            // Kaushik
+            for (int i=1; i<*system_->numAbs_; i++) {
+                BDD* varsCoarserT = new BDD[2*(*system_->dimX_ - ones)];
+                int ind = 0;
+                for (int j = 0; j < *system_->dimX_; j++) {
+                    if (system_->etaRatio_[j] == 2) {
+                        varsCoarserT[ind] = ddmgr_->bddVar(Xs_[i]->indBddVars_[j][0]);
+                        ind++;
+                    }
+                }
+                for (int j = 0; j < *system_->dimX_; j++) {
+                    if (system_->etaRatio_[j] == 2) {
+                        varsCoarserT[ind] = ddmgr_->bddVar(X2s_[i]->indBddVars_[j][0]);
+                        ind++;
+                    }
+                }
+                
+                BDD* cubeCoarserT = new BDD;
+                *cubeCoarserT = ddmgr_->bddComputeCube(varsCoarserT, NULL, 2*(*system_->dimX_ - ones));
+                cubesCoarserTs_.push_back(cubeCoarserT);
+                delete[] varsCoarserT;
+            }
+            for (int i = 1; i < *system_->numAbs_; i++) {
+                int* permuteCoarserT = new int[numBDDVars_];
+                for (int ind = 0; ind < numBDDVars_; ind++) {
+                    permuteCoarserT[ind] = 0;
+                }
+                
+                for (int dim = 0; dim < *system_->dimX_; dim++) {
+                    if (system_->etaRatio_[dim] == 2) {
+                        for (size_t projInd = 1; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
+                            permuteCoarserT[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i-1]->indBddVars_[dim][projInd-1];
+                            permuteCoarserT[X2s_[i]->indBddVars_[dim][projInd]] = X2s_[i-1]->indBddVars_[dim][projInd-1];
+                        }
+                    }
+                    else if (system_->etaRatio_[dim] == 1){
+                        for (size_t projInd = 0; projInd < Xs_[i]->nofBddVars_[dim]; projInd++) {
+                            permuteCoarserT[Xs_[i]->indBddVars_[dim][projInd]] = Xs_[i-1]->indBddVars_[dim][projInd];
+                            permuteCoarserT[X2s_[i]->indBddVars_[dim][projInd]] = X2s_[i-1]->indBddVars_[dim][projInd];
+                        }
+                    }
+                }
+                permutesCoarserTs_.push_back(permuteCoarserT);
+                
+                clog << "permuteCoarserTs " << i << " to " << i-1 << ": ";
+                printArray(permuteCoarserT, numBDDVars_);
+            }
         }
         
         /*! Initializes the BDDs that are the precursors to notXvars_ and notXUvars_ */
@@ -1361,12 +1435,9 @@ namespace scots {
             for (int i = 0; i < validCs_.size(); i++) {
                 validCs_[i]->clear();
             }
-            for (int i = 0; i < finalCs_.size(); i++) {
-                finalCs_[i]->clear();
-            }
-            for (int i = 0; i < finalZs_.size(); i++) {
-                finalZs_[i]->clear();
-            }
+            finalCs_.clear();
+            finalZs_.clear();
+            finalAbs_.clear();
             for (int i = 0; i < Ds_.size(); i++) {
                 Ds_[i]->clear();
             }
@@ -1472,6 +1543,7 @@ namespace scots {
             }
             /* initialize distance between the trajectory and safe set boundary */
             distance = -1;
+            int ab_with_min_dist = 0; /* for debug purpose: the layer id which contribute to the minimum distance */
             /* iterate over all controllers */
             for (int i=finalCs_.size()-1; i>=0; i--) {
                 /* find the abstraction layer that corresponds to the present controller (assuming all the abstraction layers' eta are different) */
@@ -1556,14 +1628,19 @@ namespace scots {
                         /* compute the distance */
                         if (distance==-1) { /*first time this loop is entered */
                             distance = computeDistance(lb1, ub1, lb2, ub2);
+                            ab_with_min_dist = ab;
                         } else {
-                            distance = std::min(distance,computeDistance(lb1, ub1, lb2, ub2));
+                            double new_distance = computeDistance(lb1, ub1, lb2, ub2);
+                            distance = std::min(distance,new_distance);
+                            if (new_distance<distance)
+                                ab_with_min_dist = ab;
                         }
                         lb2.clear();
                         ub2.clear();
                     }
                 }
             }
+            cout << "The distance corresponds to layer " << ab_with_min_dist << "\n";
             return true;
         }
         /*! Simulate a concrete controlled trajectory, and simultaneously check if it collides with the obstacles. If yes, which point? (module measurement errors.)
