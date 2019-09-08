@@ -1533,6 +1533,7 @@ namespace scots {
                 Char[Length] = '\0';
                 SymbolicSet T(*ddmgr_, Char);
                 Ts_[i]->symbolicSet_ = T.symbolicSet_;
+                TTs_[i]->symbolicSet_ = Ts_[i]->symbolicSet_.ExistAbstract(*notXUvars_[i]);
                 
                 if (verbose_>0)
                     Ts_[i]->printInfo(1);
