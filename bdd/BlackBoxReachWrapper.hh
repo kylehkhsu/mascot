@@ -44,13 +44,13 @@ void simulateSystem(BlackBoxReach* abs,
                     U_type u,
                     std::vector<double>& unsafeAt,
                     std::vector<std::vector<double>>& sys_traj) {
-    double toss1, toss2, toss3;
+//    double toss1, toss2;
     std::vector<std::vector<double>> hovec, hgvec;
-    /* pick a random initial point within the provided initial set */
-    toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
-    toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
-    std::vector<double> init = {toss1, toss2};
-    sys_traj.push_back(init);
+//    /* pick a random initial point within the provided initial set */
+//    toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
+//    toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
+//    std::vector<double> init = {toss1, toss2};
+//    sys_traj.push_back(init);
     vecArr2vecVec(ho,hovec);
     vecArr2vecVec(hg,hgvec);
     abs->simulateSys(sys_post, x, u, sys_traj,hovec,hgvec,unsafeAt);
@@ -81,7 +81,7 @@ double find_abst(X_type x, U_type u,
     int seed = time(NULL);
     cout << "\nSeed used for the random number generator : " << seed << "\n\n";
     srand(seed);
-    srand(1567843354);
+//    srand(1567843354);
     /* problematic seeds */
     // 1567743385, 1567744613, 1567750636(distance=-1 bug)
     
@@ -143,8 +143,19 @@ double find_abst(X_type x, U_type u,
                 if (verbose>0)
                     cout << "There is a controller.\n";
                 /* simulate the concrete system using the synthesized controller */
+                // debug
+//                abs->writeVecToFile(sys_traj,"Figures/traj.txt");
+                /* pick a random initial point within the provided initial set */
+                double toss1, toss2;
+                toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
+                toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
+                std::vector<double> init = {toss1, toss2};
+                sys_traj.push_back(init);
                 simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_traj);
                 //debug
+                abs->writeVecToFile(sys_traj,"Figures/sys_traj.txt","clean");
+                abs->saveFinalResult();
+                //debug end
 //                printArray(sys_traj, )
                 /* check if the system trajectory was unsafe */
                 if (unsafeAt.size()!=0) {
@@ -165,6 +176,9 @@ double find_abst(X_type x, U_type u,
                     vecArr2vecVec(ho,hovec);
                     abs->simulateAbs(abs_traj,hovec,distance);
                     cout << "Distance of abstract trajectory from the unsafe states = " << distance << ".\n";
+                    //debug
+                    abs->writeVecToFile(abs_traj,"Figures/abs_traj.txt","clean");
+                    //debug end
                     if (distance>spec) {
                         /* Refine abstraction if unsafe until the specified accuracy is reached */
                         //debug
@@ -178,19 +192,32 @@ double find_abst(X_type x, U_type u,
                                 cout << "\tNo more refinement possible. Final distance = " << distance << "\n";
                                 break;
                             }
+                            // debug
+                            checkMakeDir("T");
+                            saveVec(abs->Ts_, "T/T");
+                            //end
                             
                             distance = 0;
                             /* do a simple multi-layered reachability (without further refinement) */
                             abs->clear();
                             abs->initializeSpec(HO,ho,HG,hg,HI,hi);
                             abs->plainReach(p);
+                            //debug
+                            abs->saveFinalResult();
+                            //debug end
                             if (!abs->isInitWinning()) {
                                 cout << "\tUpdated distance = 0\n";
                                 break;
                             }
                             unsafeAt.clear();
+                            /* use the old (problematic) initial state */
+                            std::vector<double> old_init = sys_traj[0];
                             sys_traj.clear();
+                            sys_traj.push_back(old_init);
                             simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_traj);
+                            //debug
+                            abs->writeVecToFile(sys_traj,"Figures/sys_traj.txt","clean");
+                            //debug end
                             if (unsafeAt.size()==0) {
                                 if (verbose>0)
                                     cout << "\tThe controller worked for the system as well.\n";
@@ -201,6 +228,9 @@ double find_abst(X_type x, U_type u,
                             abs_traj.push_back(sys_traj[0]);
                             abs->simulateAbs(abs_traj,hovec,distance);
                             cout << "\tUpdated distance = " << distance << "\n";
+                            //debug
+                            abs->writeVecToFile(abs_traj,"Figures/abs_traj.txt","clean");
+                            //debug end
                             //debug
 //                            checkMakeDir("T");
 //                            saveVec(abs_ref->Ts_, "T/T");
@@ -331,13 +361,17 @@ double find_abst(X_type x, U_type u,
                     cout << "The environment was not winnable.\n";
             }
             
-            /* clear the goal sets */
+            /* clear the specification sets */
             ho.clear();
             hg.clear();
             hi.clear();
             HO.clear();
             HG.clear();
             HI.clear();
+        }
+        if (unique_env_count==0) {
+            cout << "\nSPEC value "<< spec <<" is too high. The multi-layered abstraction is too coarse. Starting the whole process by adding 1 more layer at the bottom.";
+            return (-1);
         }
         if ((double)act_success_count[0]/NN < reqd_success_rate[0] &&
             (double)act_success_count[1]/unique_env_count > reqd_success_rate[1]) {
@@ -365,4 +399,97 @@ double find_abst(X_type x, U_type u,
     }
     return spec;
 }
+template<class X_type, class U_type, class sys_type, class rad_type, class O_type, class G_type, class I_type, class HO_type, class HG_type, class HI_type, class ho_type, class hg_type, class hi_type>
+void test_abstraction(BlackBoxReach* abs, double spec_final,
+                      X_type x, U_type u,
+                      sys_type sys_post, rad_type radius_post,
+                      O_type spawnO, G_type spawnG, I_type spawnI,
+                      HO_type HO, HG_type HG, HI_type HI,
+                      ho_type ho, hg_type hg, hi_type hi,
+                      int p,
+                      int NN, int num_tests,
+                      bool useColors, const char* logfile, int verbose=0) {
+    int dimX = x.size();
+    /* perform a series of tests on the computed abstract transition system */
+    int success_count = 0;
+    int no_controller_found = 0;
+    for (int e=0; e<num_tests; e++) {
+        bool validEnv = false;
+        while (!validEnv) {
+            spawnO(HO,ho,spec_final,verbose);
+            spawnG(HG,hg,spec_final,verbose);
+            spawnI(HI,hi,verbose);
+            validEnv = abs->initializeSpec(HO,ho,HG,hg,HI,hi);
+        }
+        if (verbose>0)
+            cout << "Abstraction initialized with the specification.\n";
+        /* do a simple multi-layered reachability (without further refinement) */
+        abs->plainReach(p);
+        if (verbose>0)
+            cout << "Controller synthesis done.\n";
+        if (abs->isInitWinning()) {
+            if (verbose>0)
+                cout << "There is a winning controller.\n";
+            clog << "\nFinal number of controllers: " << abs->finalCs_.size() << '\n';
+            /* now try the controller on the system itself */
+            std::vector<std::vector<double>> sys_traj;
+            /* pick a random initial point within the provided initial set */
+            double toss1, toss2;
+            toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
+            toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
+            std::vector<double> init = {toss1, toss2};
+            sys_traj.push_back(init);
+            std::vector<double> unsafeAt;
+            simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_traj);
+            if (unsafeAt.size()!=0) {
+                if (useColors) {
+                    /* print in red (the code 31) */
+                    cout << "\033[31mEnvironment #" << e << "\033[0m\n";
+                }
+                if (verbose>0) {
+                    cout << "System trajectory went to unsafe part at (";
+                    for (int i=0; i<dimX; i++) {
+                        cout << unsafeAt[i] << ",";
+                    }
+                    cout << "\b).\n";
+                }
+            } else {
+                if (useColors) {
+                    /* print in green (the code 32) */
+                    cout << "\033[32mEnvironment #" << e << "\033[0m\n";
+                }
+                if (verbose>0)
+                    cout << "The controller worked for the system as well.\n";
+                success_count++;
+            }
+        } else {
+            if (verbose>0)
+                cout << "No controller found for this environment.\n";
+            cout << "Environment #" << e << "\n";
+            no_controller_found++;
+        }
+        /* clear the specification sets */
+        ho.clear();
+        hg.clear();
+        hi.clear();
+        HO.clear();
+        HG.clear();
+        HI.clear();
+        /* clear the controller info */
+        abs->clear();
+        
+        //        /* save synthesis results */
+        //        abs->saveFinalResult();
+    }
+    cout << "\nTest result:\n";
+    if (num_tests!=no_controller_found) {
+        cout << "Success rate = " << success_count*100/(num_tests-no_controller_found) << "%.\n";
+        if (no_controller_found!=0) {
+            cout << "This excludes the " << no_controller_found*100/num_tests << "% cases where no controller could be synthesized.";
+        }
+    }
+    else
+        cout << "All tests failed.\n";
+}
+
 #endif

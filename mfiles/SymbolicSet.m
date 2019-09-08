@@ -148,18 +148,22 @@ classdef SymbolicSet < handle
       end
       switch(obj.dim)
       case 2
-        n=length(obj.points(:,1));
-        eh=obj.eta./2;
-        h = zeros(1,n);
-        for i=1:n
-          x=obj.points(i,1);
-          xdata=x+[-1 1 1 -1]*eh(1);
-          y=obj.points(i,2);
-          ydata=y+[-1 -1 1 1]*eh(2);
-          v=[xdata(:) ydata(:)];
-          f=[1 2 3 4];
-          h(i)=patch('faces',f,'vertices',v,varargin{:});
-        end
+          if (strcmp(varargin{1},'fast'))
+              h=plot(obj.points(:,1),obj.points(:,2),'x');
+          else 
+            n=length(obj.points(:,1));
+            eh=obj.eta./2;
+            h = zeros(1,n);
+            for i=1:n
+              x=obj.points(i,1);
+              xdata=x+[-1 1 1 -1]*eh(1);
+              y=obj.points(i,2);
+              ydata=y+[-1 -1 1 1]*eh(2);
+              v=[xdata(:) ydata(:)];
+              f=[1 2 3 4];
+              h(i)=patch('faces',f,'vertices',v,varargin{:});
+            end
+          end
       case 3
         n=length(obj.points(:,1));
         eh=obj.eta./2;

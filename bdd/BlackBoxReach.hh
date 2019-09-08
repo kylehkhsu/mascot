@@ -1534,7 +1534,8 @@ namespace scots {
                 SymbolicSet T(*ddmgr_, Char);
                 Ts_[i]->symbolicSet_ = T.symbolicSet_;
                 
-                Ts_[i]->printInfo(1);
+                if (verbose_>0)
+                    Ts_[i]->printInfo(1);
             }
             clog << "Ts_ read from file.\n";
         }
@@ -1751,6 +1752,18 @@ namespace scots {
 //                    scots::SymbolicSet goal(*Xs_[prevAb]);
 //                    goal.setSymbolicSet(finalZs_[i-1]->symbolicSet_);
 //                }
+                /* arrange the inputs in suitable form */
+                std::vector<std::vector<double>> lb,ub;
+                for (int j=0; j<obstacles.size(); j++) {
+                    std::vector<double> l,u;
+                    for (size_t k=0; k<*system_->dimX_; k++) {
+                        l.push_back(-obstacles[j][2*k]);
+                        u.push_back(obstacles[j][2*k+1]);
+                    }
+                    lb.push_back(l);
+                    ub.push_back(u);
+                }
+                
                 
                 while (1) {
                     /* last point in the trajectory is the current state */
@@ -1776,8 +1789,8 @@ namespace scots {
                             if (goal_reached)
                                 break;
                         }
-//                        if (goal_reached)
-//                            break;
+                        if (goal_reached)
+                            break;
                     }
                     
                     /* pick any random valid control input */
@@ -1800,19 +1813,15 @@ namespace scots {
                         x[k] = xarr[k];
                     }
                     trajectory.push_back(x);
+                    //debug
+//                    writeVecToFile(trajectory,"Figures/traj.txt","app");
                     /* collision check */
                     bool collision = true;
                     unsafeAt.clear();
-                    std::vector<double> lb,ub;
                     /* iterate over all obstacles (boxes) */
                     for (size_t j=0; j<obstacles.size(); j++) {
-                        /* arrange the inputs in suitable form */
                         for (size_t k=0; k<*system_->dimX_; k++) {
-                            lb.push_back(-obstacles[j][2*k]);
-                            ub.push_back(obstacles[j][2*k+1]);
-                        }
-                        for (size_t k=0; k<*system_->dimX_; k++) {
-                            if (x[k]<lb[k] || x[k]>ub[k]) {
+                            if (x[k]<lb[j][k] || x[k]>ub[j][k]) {
                                 collision = false;
                                 break;
                             }
@@ -1835,6 +1844,26 @@ namespace scots {
             } else {
                 return false;
             }
+        }
+        /* saves a vector of arrays or vectors in a text file in matlab reachable format */
+        template<class T>
+        bool writeVecToFile(std::vector<T> vec, const string filename, const string mode="clean") {
+            if ((mode.compare("clean") != 0) && (mode.compare("app")) != 0) {
+                cout << "Error in BlackBoxReach.hh::saveArray: invalid mode. It has to be either clean or app.\n";
+                return false;
+            }
+//            std::string fstr(mode);
+            if (mode.compare("clean") == 0)
+                remove(filename.c_str());
+            std::ofstream fid(filename, std::ofstream::app);
+            for (int i=0; i<vec.size(); i++) {
+                for (int j=0; j<vec[i].size(); j++) {
+                    fid << vec[i][j] << " ";
+                }
+                fid << "\n";
+            }
+            fid.close();
+            return true;
         }
     private:
         /* get random element from a vector */
