@@ -25,6 +25,7 @@ using namespace std;
 using namespace scots;
 using namespace helper;
 
+/*! Convert a vector of arrays to a vector of vectors of the same size */
 template<std::size_t SIZE, class T>
 void vecArr2vecVec(const std::vector<std::array<T,SIZE>> va, std::vector<std::vector<T>>& vv) {
     vv.clear();
@@ -34,6 +35,7 @@ void vecArr2vecVec(const std::vector<std::array<T,SIZE>> va, std::vector<std::ve
     }
 }
 
+/*! Simulate the system using the controller already available in the BlackBoxReach object */
 template<std::size_t SIZE_o, std::size_t SIZE_g, std::size_t SIZE_i, class sys_type, class X_type, class U_type>
 void simulateSystem(BlackBoxReach* abs,
                     const std::vector<std::array<double,SIZE_o>> ho,
@@ -56,11 +58,13 @@ void simulateSystem(BlackBoxReach* abs,
     abs->simulateSys(sys_post, x, u, sys_traj,hovec,hgvec,unsafeAt);
 }
 
+/*! Compute the size of default array */
 template<class T>
 inline int size_of_array(T* arr) {
     return (sizeof(arr)/sizeof(arr[0]));
 }
 
+/*! Compute the multi-layered abstraction of the systemm. */
 template<class X_type, class U_type, class sys_type, class rad_type, class O_type, class G_type, class I_type, class HO_type, class HG_type, class HI_type, class ho_type, class hg_type, class hi_type>
 double find_abst(X_type x, U_type u,
               sys_type sys_post, rad_type radius_post,
@@ -71,46 +75,53 @@ double find_abst(X_type x, U_type u,
               HO_type HO, HG_type HG, HI_type HI,
               ho_type ho, hg_type hg, hi_type hi,
               int nSubInt, int systemNSubInt, int p,
-              int NN, X_type explRadius, double* reqd_success_rate,
+              int NN, X_type explRadius, double reqd_success_rate,
               bool readTsFromFile, bool useColors, const char* logfile, int verbose=0) {
     
     int dimX = x.size();
     int dimU = u.size();
     
-    int act_success_count[2] = {0, 0};
+    int act_success_count = 0;
+    bool reqd_success_rate_reached = false;
+    bool spec_with_no_refinement;
     
     System sys(dimX, lbX, ubX, etaX, tau,
                    dimU, lbU, ubU, etaU,
                    etaRatio, tauRatio, nSubInt, numAbs);
     
-    BlackBoxReach* abs_ref= new BlackBoxReach(logfile,verbose);
-    abs_ref->initialize(&sys,systemTau,systemNSubInt);
+    BlackBoxReach* abs= new BlackBoxReach(logfile,verbose);
+    abs->initialize(&sys,systemTau,systemNSubInt);
     if (readTsFromFile) {
-        abs_ref->loadTs();
+        abs->loadTs();
     } else {
         /* start with only coarse transitions */
-        abs_ref->initializeAbstraction(sys_post,radius_post,x,u);
+        abs->initializeAbstraction(sys_post,radius_post,x,u);
         checkMakeDir("T");
-        saveVec(abs_ref->Ts_, "T/T");
+        saveVec(abs->Ts_, "T/T");
         clog << "Wrote Ts_ to file.\n";
     }
-    /**********************************/
-    /* **** Computation of SPEC **** */
-    /*********************************/
     
+    /* start with a fresh copy of the abstraction */
+//    BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
     /* we keep a moving maximum */
     double spec = 0;
+    /* spec_old is the older value computed: at first it is set to -1. */
+    double spec_old = -1;
     /* initialize variables */
     double toss1, toss2, toss3;
     std::vector<double> unsafeAt;
     std::vector<std::vector<double>> sys_traj, abs_traj;
     double distance;
+    int iter=1;
     while (1) {
+        cout << "\033[1;4;34m\n\nIteration = "<< iter <<" \n\n\033[0m";
+        /*************************************************************/
+        /* **** Computation of SPEC with abstraction refinement **** */
+        /*************************************************************/
         cout << "\033[1;4;34mStarting computation of SPEC.\n\n\033[0m";
+        spec_with_no_refinement=true;
         /* iterate over all the environments */
         for (int e=0; e<NN; e++) {
-            /* start with a fresh copy of the abstraction */
-            BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
             /* spawn environment */
             if (!useColors)
                 cout << "Environment #" << e << "\n";
@@ -121,14 +132,17 @@ double find_abst(X_type x, U_type u,
             /* *** synthesize controller on the available abstraction only *** */
             /* initialize the environment in the abstraction */
             bool flag = abs->initializeSpec(HO,ho,HG,hg,HI,hi);
-            if (!flag) /* ignore this environment */
+            if (!flag) { /* ignore this environment */
+                abs->clear();
                 continue;
+            }
             if (verbose>0)
                 cout << "Abstraction initialized with the specification.\n";
             /* do a simple multi-layered reachability (without further refinement) */
             abs->plainReach(p);
             if (verbose>0)
                 cout << "Controller synthesis done.\n";
+            /* if the abstract game is not winning, the distance remains 0 */
             distance = 0;
             /* check if there is a controller for the abstraction */
             if (abs->isInitWinning()) {
@@ -179,6 +193,7 @@ double find_abst(X_type x, U_type u,
                         //debug end
                         while (1) {
                             cout << "\tStarting a refinement loop to minimize the distance.\n";
+                            abs->clear();
                             bool flag1 = abs->exploreAroundPoint(unsafeAt, explRadius, u, sys_post, radius_post);
                             if (!flag1) { /* already explored upto the finest layer */
                                 cout << "\tNo more refinement possible. Final distance = " << distance << "\n";
@@ -188,10 +203,12 @@ double find_abst(X_type x, U_type u,
 //                            checkMakeDir("T");
 //                            saveVec(abs->Ts_, "T/T");
                             //end
+                            /* even if the abstract game solving was good enough with the previous spec value, still then the abstract games need to be solved again, as the abstraction went finer during the spec computation */
+                            spec_with_no_refinement = false;
                             
+                            /* initialize distance; distance remains 0 if the abstract game with the refined abstraction fails */
                             distance = 0;
                             /* do a simple multi-layered reachability (without further refinement) */
-                            abs->clear();
                             abs->initializeSpec(HO,ho,HG,hg,HI,hi);
                             abs->plainReach(p);
                             //debug
@@ -202,6 +219,7 @@ double find_abst(X_type x, U_type u,
                                 break;
                             }
                             unsafeAt.clear();
+                            /* simulate the system using the synthesized controller */
                             /* use the old (problematic) initial state */
                             std::vector<double> old_init = sys_traj[0];
                             sys_traj.clear();
@@ -216,10 +234,15 @@ double find_abst(X_type x, U_type u,
                                 cout << "\tUpdated distance = 0\n";
                                 break;
                             }
+                            /* if the controller failed on the system, recompute distance and continue refining the abstraction around the point of failure, which is stored in the variable unsafeAt */
                             abs_traj.clear();
                             abs_traj.push_back(sys_traj[0]);
                             abs->simulateAbs(abs_traj,hovec,distance);
                             cout << "\tUpdated distance = " << distance << "\n";
+                            /* if the distance after refinement became smaller than the current spec value, no need to refine further */
+                            if (distance<=spec) {
+                                break;
+                            }
                             //debug
 //                            abs->writeVecToFile(abs_traj,"Figures/abs_traj.txt","clean");
                             //debug end
@@ -229,52 +252,69 @@ double find_abst(X_type x, U_type u,
 //                            abs->saveFinalResult();
                             //debug end
                             
-                        }
-                    }
+                        } /* End of while loop */
+                    } /* End of if (distance > spec) */
                     
                     /* update SPEC */
                     if (distance>spec) {
                         spec = distance;
                     }
-                } else {
+                } else { /* if (unsafeAt.size()==0) */
                     if (useColors) {
                         /* print in green (the code 32) */
                         cout << "\033[32mEnvironment #" << e << "\033[0m\n";
                     }
                     if (verbose>0)
                         cout << "The controller worked for the system as well.\n";
-                }
-            } else {
+                } /* End of if (unsafeAt.size()==0) */
+            } else { /* if the abstract initial states are not winning */
                 if (useColors)
                     cout << "Environment #" << e << "\n";
                 if (verbose>0)
                     cout << "There is no controller for this environment.\n";
-            }
+            } /* End of if(abs->isInitWinning()) */
             
-            if (distance>0)
-                act_success_count[0]++;
+//            if (distance>0)
+//                act_success_count[0]++;
             
+            /* clear the last environment */
             ho.clear();
             hg.clear();
             hi.clear();
             HO.clear();
             HG.clear();
             HI.clear();
+            /* reset the controller synthesis related members of the abstraction object */
+            abs->clear();
+            /* clear the sets used for trajectory simulation */
             unsafeAt.clear();
             sys_traj.clear();
             abs_traj.clear();
-        }
+        } /* End of for loop over the set of environments */
         cout << "\n\nSPEC = " << spec << "\n\n";
         
+        /* if the last computed spec value worked well enough in terms of abstract game solving, and the spec value didn't increase from the last computed spec value, and finally if the abstraction was not refined further during the computation of spec, then we are done */
+        if ((reqd_success_rate_reached) &&
+            (spec <= spec_old) &&
+            (spec_with_no_refinement)) {
+            cout << "Abstract computation finished.\nTermination condition used: reqd. abstract synthesis success rate reached + the SPEC value didn't increase afterwards + no refinement was performed during the last SPEC loop.\n";
+            /* write outputs to files */
+            checkMakeDir("T");
+            saveVec(abs->Ts_, "T/T");
+            cout << "\nWrote transitions to files. Exiting process.\n\n";
+            break;
+        }
+        
         /************************************************************************/
-        /* Refinement of abstraction to maximize number of winning environments */
+        /* Abstract game solving with refinement: Refinement of abstraction to maximize number of winning environments */
         /************************************************************************/
         cout << "\033[1;4;34mStarting abstraction refinement for environment satisfaction.\n\n\033[0m";
         /* keep a history of the 'seen' environments */
         std::vector<std::array<SymbolicSet*,3>> ENV_HIST;
         /* initial abstraction */
-        BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
+//        BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
         int unique_env_count = 0; /* number of environments explored excluding duplicate cases */
+        act_success_count = 0; /* reset the actual success count for solving the abstract game */
         /* how far the environments are to be made conservative (no role for computing SPEC) */
         double eps = DBL_MIN; /* very small number added to make sure that boundary cases are pessimistically resolved */
         double spec2 = spec + eps;
@@ -339,7 +379,8 @@ double find_abst(X_type x, U_type u,
             abs->onTheFlyReach(p, sys_post, radius_post, x, u);
             /* print result of the abstraction refinement */
             if (abs->isInitWinning()) {
-                act_success_count[1]++;
+                /* increment the success rate counter */
+                act_success_count++;
                 if (useColors)
                 /* print in green (the code 32) */
                     cout << "\033[32mEnvironment #" << e << "\033[0m\n";
@@ -360,19 +401,16 @@ double find_abst(X_type x, U_type u,
             HO.clear();
             HG.clear();
             HI.clear();
-        }
+        } /* End of for loop over the set of environments */
         if (unique_env_count==0) {
-            cout << "\nSPEC value "<< spec <<" is too high. The multi-layered abstraction is too coarse. Starting the whole process by adding 1 more layer at the bottom.";
+            cout << "\nSPEC value "<< spec <<" is too high. The multi-layered abstraction is too coarse. Consider recomputation with 1 more layer at the bottom.";
             return (-1);
         }
-        if ((double)act_success_count[0]/NN < reqd_success_rate[0] &&
-            (double)act_success_count[1]/unique_env_count > reqd_success_rate[1]) {
+        if ((double)act_success_count/unique_env_count > reqd_success_rate) {
             cout << "\nTarget precision reached.";
-            /* write outputs to files */
-            checkMakeDir("T");
-            saveVec(abs->Ts_, "T/T");
-            cout << "\nWrote transitions to files. Exiting process.\n\n";
-            break;
+//            break;
+            /* the computation is finished, provided the SPEC value doesn't increase */
+            reqd_success_rate_reached = true;
         }
         if (abs->Ts_[numAbs-1]->symbolicSet_==abs->ddmgr_->bddOne()) {
             cout << "\nNo more refinement possible.";
@@ -382,15 +420,21 @@ double find_abst(X_type x, U_type u,
             cout << "\nWrote transitions to files. Exiting process.\n\n";
             break;
         }
-        /* update the reference abstraction */
+        /* clear the controller related vaiables */
         abs->clear();
-        BlackBoxReach* abs_ref = new BlackBoxReach(*abs);
+//        BlackBoxReach* abs_ref = new BlackBoxReach(*abs);
+        /* store the current spec value and reset the old spec variable */
+        spec_old = spec;
         spec = 0;
-        for (int l=0; l<dimX; l++)
-            act_success_count[l] = 0;
-    }
+        
+        iter++;
+//        for (int l=0; l<dimX; l++)
+//        act_success_count = 0;
+    } /* End of the big while loop over spec computation and game solving */
     return spec;
 }
+
+/*! Test the multi-layered abstraction with a number of randomly generated test environments from a given set of environments */
 template<class X_type, class U_type, class sys_type, class rad_type, class O_type, class G_type, class I_type, class HO_type, class HG_type, class HI_type, class ho_type, class hg_type, class hi_type>
 void test_abstraction(BlackBoxReach* abs, double spec_final,
                       X_type x, U_type u,
@@ -401,6 +445,7 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
                       int p,
                       int NN, int num_tests,
                       bool useColors, const char* logfile, int verbose=0) {
+    cout << "\033[1;4;34mStarting to test the computed abstraction for controller synthesis against test environments.\n\n\033[0m";
     int dimX = x.size();
     /* perform a series of tests on the computed abstract transition system */
     int success_count = 0;
