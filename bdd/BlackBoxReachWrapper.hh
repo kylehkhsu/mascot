@@ -94,8 +94,8 @@ double find_abst(X_type x, U_type u,
     if (readTsFromFile) {
         abs->loadTs();
     } else {
-        /* start with only coarse transitions */
-        abs->initializeAbstraction(sys_post,radius_post,x,u);
+        /* start with only coarse transitions along with the auxiliary exploration abstractions */
+        abs->initializeAbstractionWithExplore(sys_post,radius_post,x,u);
         checkMakeDir("T");
         saveVec(abs->Ts_, "T/T");
         clog << "Wrote Ts_ to file.\n";
@@ -122,11 +122,11 @@ double find_abst(X_type x, U_type u,
         spec_with_no_refinement=true;
         /* iterate over all the environments */
         for (int e=0; e<NN; e++) {
-            /* spawn environment */
+            /* spawn environment with 0 distance from the given specification */
             if (!useColors)
                 cout << "Environment #" << e << "\n";
-            spawnO(HO,ho,0.0,verbose);
-            spawnG(HG,hg,0.0,verbose);
+            spawnO(HO,ho,verbose);
+            spawnG(HG,hg,verbose);
             spawnI(HI,hi,verbose);
             
             /* *** synthesize controller on the available abstraction only *** */
@@ -305,6 +305,12 @@ double find_abst(X_type x, U_type u,
             break;
         }
         
+        //debug
+        /* write outputs to files */
+//        checkMakeDir("T");
+//        saveVec(abs->Ts_, "T/T");
+        //debug end
+        
         /************************************************************************/
         /* Abstract game solving with refinement: Refinement of abstraction to maximize number of winning environments */
         /************************************************************************/
@@ -324,12 +330,12 @@ double find_abst(X_type x, U_type u,
             /* spawn environment */
             if (!useColors)
                 cout << "Environment #" << e << "\n";
-            spawnO(HO,ho,spec2,verbose);
-            spawnG(HG,hg,spec2,verbose);
+            spawnO(HO,ho,verbose);
+            spawnG(HG,hg,verbose);
             spawnI(HI,hi,verbose);
             
             /* initialize the environment in the abstraction */
-            bool flag = abs->initializeSpec(HO,ho,HG,hg,HI,hi);
+            bool flag = abs->initializeSpec(HO,ho,HG,hg,HI,hi,spec2);
             if (!flag) /*ignore this specificaiton */
                 continue;
             if (verbose>0)
@@ -453,10 +459,10 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
     for (int e=0; e<num_tests; e++) {
         bool validEnv = false;
         while (!validEnv) {
-            spawnO(HO,ho,spec_final,verbose);
-            spawnG(HG,hg,spec_final,verbose);
+            spawnO(HO,ho,verbose);
+            spawnG(HG,hg,verbose);
             spawnI(HI,hi,verbose);
-            validEnv = abs->initializeSpec(HO,ho,HG,hg,HI,hi);
+            validEnv = abs->initializeSpec(HO,ho,HG,hg,HI,hi,spec_final);
         }
         if (verbose>0)
             cout << "Abstraction initialized with the specification.\n";
@@ -483,7 +489,7 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
             std::vector<double> unsafeAt;
             simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_traj);
             // debug
-//            abs->writeVecToFile(sys_traj,"Figures/sys_traj.txt","clean");
+            abs->writeVecToFile(sys_traj,"Figures/sys_traj.txt","clean");
 //            abs->saveFinalResult();
             // debug end
             if (unsafeAt.size()!=0) {
@@ -513,6 +519,9 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
             cout << "Environment #" << e << "\n";
             num_cont_found++;
         }
+        // debug
+        abs->saveFinalResult();
+        //end
         /* clear the specification sets */
         ho.clear();
         hg.clear();

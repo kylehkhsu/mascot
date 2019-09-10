@@ -28,6 +28,7 @@ namespace scots {
         vector<SymbolicSet*> Xs_; /*!< The *system_->numAbs_ "pre" state space abstractions, coarsest (0) to finest. */
         vector<SymbolicSet*> X0s_; /*!< The overapproximation of the set of initial states. Default is the entire state space outside the obstacle. */
         vector<SymbolicSet*> Os_; /*!< Instance of *Xs_[i] containing unsafe (obstacle) states. */
+        vector<SymbolicSet*> Es_; /*!< Vector of size *system_->numAbs_ containing the exclusion zone around the obstacles in different layers. */
         vector<SymbolicSet*> Zs_; /*!< Instance of *Xs_[i] containing winning states. */
         vector<SymbolicSet*> X2s_; /*!< The *system_->numAbs_ "post" state space abstractions, coarsest (0) to finest. */
         SymbolicSet* U_; /*!< The single input space abstraction. */
@@ -125,6 +126,10 @@ namespace scots {
                 SymbolicSet* O = new SymbolicSet(*other.Os_[i]);
                 Os_.push_back(O);
             }
+            for (int i = 0; i < (other.Es_).size(); i++) {
+                SymbolicSet* E = new SymbolicSet(*other.Es_[i]);
+                Es_.push_back(E);
+            }
             for (int i = 0; i < (other.Zs_).size(); i++) {
                 SymbolicSet* Z = new SymbolicSet(*other.Zs_[i]);
                 Zs_.push_back(Z);
@@ -184,6 +189,7 @@ namespace scots {
             deleteVec(Xs_);
             deleteVec(X0s_);
             deleteVec(Os_);
+            deleteVec(Es_);
             deleteVec(Zs_);
             deleteVec(X2s_);
             delete U_;
@@ -406,7 +412,11 @@ namespace scots {
                     Zs_[i+1]->symbolicSet_ |= validZs_[i+1]->symbolicSet_;
                     validZs_[i+1]->symbolicSet_ = Zs_[i+1]->symbolicSet_;
                 }
-                return;
+//                /* also check if the winning domain fully covers Es_ in the finest layer */
+//                if (!validZs_[*system_->numAbs_-1]->symbolicSet_ & Es_[*system_->numAbs_-1]->symbolicSet_ == ddmgr_->bddZero())
+                    return;
+//
+//                cout << "All initial states are winning but the exclusion region is not winning yet. Continuing...\n";
             }
             
             if (result != NOTCONVERGED) {
@@ -447,20 +457,6 @@ namespace scots {
             p_ = p; // coarsest layer uncontrollable-pred. parameter
             clog << "m: " << m_ << '\n';
             clog << "p: " << p_ << '\n';
-            
-            // start by synthesizing all uTs_
-            Ds_[0]->addGridPoints();
-            
-            TicToc timer;
-            timer.tic();
-            computeExplorationAbstractions(sysNext, radNext, x, u);
-            abTime_ += timer.toc();
-            if (verbose_>0)
-                cout << "\nComputation time for exploration abstractions: " << timer.toc() <<"\n";
-            
-            // Ts_[0] is uTs_[0]
-            Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_;
-            TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
             
             // begin on-the-fly reachability synthesis
             int ab = 0;
@@ -568,13 +564,18 @@ namespace scots {
                     Zs_[i+1]->symbolicSet_ |= validZs_[i+1]->symbolicSet_;
                     validZs_[i+1]->symbolicSet_ = Zs_[i+1]->symbolicSet_;
                 }
+                /* also check if the winning domain fully covers Es_ in the finest layer */
+//                if (!validZs_[*system_->numAbs_-1]->symbolicSet_ & Es_[*system_->numAbs_-1]->symbolicSet_ == ddmgr_->bddZero())
+                    return;
+//
+//                cout << "All initial states are winning but the exclusion region is not winning yet. Continuing...\n";
                 // debug
 //                checkMakeDir("X0");
 //                saveVec(X0s_, "X0/X0_");
 //                checkMakeDir("vZ");
 //                saveVec(validZs_, "vZ/Z");
                 // debug end
-                return;
+                
             }
             if (result != NOTCONVERGED) { // ab = 0 always converges
                 if (ab == *system_->numAbs_ - 1) {
@@ -712,8 +713,9 @@ namespace scots {
                 clog << "iteration: " << i << '\n';
                 if (verbose_>0)
                     cout << "iteration: " << i << '\n';
-                BDD controllablePreZ = controllablePre(Zs_[ab]->symbolicSet_, ab);
-                BDD C = controllablePreZ | Gs_[ab]->symbolicSet_;
+                BDD controllablePreZ1 = controllablePre(Zs_[ab]->symbolicSet_ & !(Es_[ab]->symbolicSet_ | Os_[ab]->symbolicSet_), ab);
+                BDD controllablePreZ2 = controllablePre(Zs_[ab]->symbolicSet_ & Es_[ab]->symbolicSet_, ab);
+                BDD C = (controllablePreZ1 & !Os_[ab]->symbolicSet_) | (controllablePreZ2 & Es_[ab]->symbolicSet_) | Gs_[ab]->symbolicSet_;
                 BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
                 Cs_[ab]->symbolicSet_ |= N;
                 Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_;
@@ -800,7 +802,6 @@ namespace scots {
         
         
         /*! Calculates the controllable predecessor of the given set with respect to the transition relation at the specified level of abstraction.
-         *  NOTE: the controllable predecessor ignores states which intersects with the obstacles.
          *  \param[in]  Z           The winning set.
          *  \param[in]  ab      0-index of the current abstraction.
          *  \return     BDD containing {(x,u)} for which all post states are in Z.
@@ -816,8 +817,8 @@ namespace scots {
             BDD nF = !Fbdd;
             // get rid of junk
             BDD preF = TTs_[ab]->symbolicSet_.AndAbstract(nF, *notXUvars_[ab]);
-            // get rid of the obstacles from pre
-            preF &= !Os_[ab]->symbolicSet_;
+//            // get rid of the obstacles from pre
+//            preF &= !Os_[ab]->symbolicSet_;
 
             return preF;
         }
@@ -922,6 +923,12 @@ namespace scots {
             clog << "Os_ initialized with empty domain.\n";
             
             for (int i = 0; i < *system_->numAbs_; i++) {
+                SymbolicSet* E = new SymbolicSet(*Xs_[i]);
+                Es_.push_back(E);
+            }
+            clog << "Es_ initialized with empty domain.\n";
+            
+            for (int i = 0; i < *system_->numAbs_; i++) {
                 SymbolicSet* Z = new SymbolicSet(*Xs_[i]);
                 Zs_.push_back(Z);
                 
@@ -1015,14 +1022,14 @@ namespace scots {
                         throw std::runtime_error(os.str().c_str());
                         return false;
                     } else {
-                        /* the obstacles are inflated by "distance" */
+                        /* iniitalize the obstacles */
+                        size_t p = ho[i].size();
+                        Os_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
+                        /* the exclusion regions are obstacles inflated by "distance" \ the obstacles (the subtraction will be done later in this method after the projections) */
                         for (size_t j=0; j<ho[i].size(); j++) {
                             ho[i][j] += distance;
                         }
-                        size_t p = ho[i].size();
-                        /* first clear any previously stored obstacle */
-//                        Os_[*system_->numAbs_-1]->clear();
-                        Os_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
+                        Es_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
                     }
                 }
             }
@@ -1093,16 +1100,21 @@ namespace scots {
             for (int i = *system_->numAbs_-1; i > 0; i--) {
                 coarserInner(Gs_[i-1],Gs_[i],i-1);
                 coarserOuter(Os_[i-1],Os_[i],i-1);
+                coarserOuter(Es_[i-1],Es_[i],i-1);
                 coarserOuter(X0s_[i-1],X0s_[i],i-1);
+            }
+            /* subtract the obstacles from the exclusion regions in all the layers */
+            for (int i=0; i<*system_->numAbs_; i++) {
+                Es_[i]->symbolicSet_ &= !Os_[i]->symbolicSet_;
                 /* ignore initial states which are blocked by the obstacles */
-                X0s_[i]->symbolicSet_ &= !Os_[i]->symbolicSet_;
+                X0s_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_ | Es_[i]->symbolicSet_);
             }
             //debug:
 //            cout << "\tDone with projection.\n";
             /* checking that specification is valid */
-            if ((Gs_[*system_->numAbs_-1]->symbolicSet_ & (!Os_[*system_->numAbs_-1]->symbolicSet_)) == ddmgr_->bddZero()) {
+            if ((Gs_[*system_->numAbs_-1]->symbolicSet_ & (!(Os_[*system_->numAbs_-1]->symbolicSet_ | Es_[*system_->numAbs_-1]->symbolicSet_))) == ddmgr_->bddZero()) {
                 /* ignore this environment in this case */
-                cout << "Error: No goal state is outside the obstacles in the finest layer.\n";
+                cout << "Error: No goal state is outside the obstacles and the exclusion in the finest layer.\n";
                 return false;
             }
             //debug:
@@ -1110,7 +1122,7 @@ namespace scots {
             if (X0s_[*system_->numAbs_-1]->symbolicSet_==ddmgr_->bddZero()) {
                 std::ostringstream os;
                 /* ignore this environment in this case */
-                cout << "Error: no initial state outside the obstacles in the finest layer.\n";
+                cout << "Error: no initial state outside the obstacles and the exclusion in the finest layer.\n";
                 return false;
             }
             clog << "No obstacle problem with specification.\n";
@@ -1139,6 +1151,28 @@ namespace scots {
         void initializeAbstraction(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
             Ds_[0]->addGridPoints();
             computeAbstraction(0, sysNext, radNext, x, u);
+        }
+        
+        /*! Computes only the coarsest transitions along with all the auxiliary exploration transitions.
+         *  \param[in]  sysNext     System ODE.
+         *  \param[in]  radNext     Growth bound ODE.
+         *  \param[in]  x           Dummy state point.
+         *  \param[in]  u           Dummy input point. */
+        template<class sys_type, class rad_type, class X_type, class U_type>
+        void initializeAbstractionWithExplore(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
+            // start by synthesizing all uTs_
+            Ds_[0]->addGridPoints();
+            
+            TicToc timer;
+            timer.tic();
+            computeExplorationAbstractions(sysNext, radNext, x, u);
+            abTime_ += timer.toc();
+            if (verbose_>0)
+                cout << "\nComputation time for exploration abstractions: " << timer.toc() <<"\n";
+            
+            // Ts_[0] is uTs_[0]
+            Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_;
+            TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
         }
         
         /*! Initializes the BDDs useful for existential abstraction. */
@@ -1429,6 +1463,9 @@ namespace scots {
             for (int i = 0; i < Os_.size(); i++) {
                 Os_[i]->clear();
             }
+            for (int i = 0; i < Es_.size(); i++) {
+                Es_[i]->clear();
+            }
             for (int i = 0; i < Zs_.size(); i++) {
                 Zs_[i]->clear();
             }
@@ -1472,6 +1509,7 @@ namespace scots {
             if (verbose_==2) {
                 printVec(Xs_, "X");
                 printVec(Os_, "O");
+                printVec(Es_, "E");
                 cout << "U:\n";
                 U_->printInfo(1);
                 printVec(Gs_, "G");
@@ -1515,9 +1553,12 @@ namespace scots {
             Xs_[0]->writeToFile("plotting/X.bdd");
             X0s_[*system_->numAbs_-1]->writeToFile("plotting/X0.bdd");
             Os_[*system_->numAbs_-1]->writeToFile("plotting/O.bdd");
+            Es_[*system_->numAbs_-1]->writeToFile("plotting/E.bdd");
             Gs_[*system_->numAbs_-1]->writeToFile("plotting/G.bdd");
             checkMakeDir("O");
             saveVec(Os_, "O/O");
+            checkMakeDir("E");
+            saveVec(Es_, "E/E");
             checkMakeDir("G");
             saveVec(Gs_, "G/G");
         }
@@ -1660,16 +1701,20 @@ namespace scots {
                             ab_with_min_dist = ab;
                         } else {
                             double new_distance = computeDistance(lb1, ub1, lb2, ub2);
-                            distance = std::min(distance,new_distance);
-                            if (new_distance<distance)
+                            if (new_distance<distance) {
+                                distance = new_distance;
                                 ab_with_min_dist = ab;
+                            }
                         }
                         lb2.clear();
                         ub2.clear();
                     }
-                }
-            }
+                } /* End of While loop */
+            }/* End of For loop over all controllers in finalCs_ */
             cout << "The distance corresponds to layer " << ab_with_min_dist << "\n";
+            // debug
+//            writeVecToFile(trajectory,"Figures/abs_traj.txt","clean");
+            // debug end
             return true;
         }
         /*! Simulate a concrete controlled trajectory, and simultaneously check if it collides with the obstacles. If yes, which point? (module measurement errors.)
