@@ -262,7 +262,7 @@ namespace scots {
                 os << "Error: scots::SymbolicSet::isElement(xarr): x must be of size dim_.";
                 throw std::invalid_argument(os.str().c_str());
             }
-            for (size_t i=0; i < *system_->dimX_; i++) {
+            for (int i=0; i < *system_->dimX_; i++) {
                 if (x[i] > system_->ubX_[i] || x[i] < system_->lbX_[i]) {
                     std::ostringstream os;
                     os << "Error: scots::BlackBoxReach::exploreAround(xarr): xarr is outside the state space.";
@@ -275,7 +275,7 @@ namespace scots {
 //                x.push_back(xarr[i]);
 //            }
             /* find the current exploration level around x */
-            size_t ab;
+            int ab;
             for (int i=*system_->numAbs_-1; i >= 0; i--) {
                 if (computedDs_[i]->isElement(x)) {
                     ab = i;
@@ -290,18 +290,18 @@ namespace scots {
             /* Set up the polytope that represents the area around x */
             int nofHalfSpaces = 2*(*system_->dimX_);
             double* H = new double[nofHalfSpaces*(*system_->dimX_)];
-            for (size_t i=0; i<nofHalfSpaces*(*system_->dimX_); i++) {
+            for (int i=0; i<nofHalfSpaces*(*system_->dimX_); i++) {
                 H[i] = 0;
             }
             int j = 0;
-            for (size_t i=0; i<*system_->dimX_; i++) {
+            for (int i=0; i<*system_->dimX_; i++) {
                 H[j]=-1;
                 j += *system_->dimX_;
                 H[j]=1;
                 j += *system_->dimX_+1;
             }
             double* h = new double[nofHalfSpaces];
-            for (size_t i=0; i<*system_->dimX_; i++) {
+            for (int i=0; i<*system_->dimX_; i++) {
                 h[2*i] = -(x[i]-r[i]-Xs_[ab]->z_[i]);
                 h[2*i+1] = x[i]+r[i]+Xs_[ab]->z_[i];
             }
@@ -475,7 +475,7 @@ namespace scots {
 //            clog << "Wrote Ts_ to file.\n";
             
             if (verbose_==2) {
-                for (size_t i = 0; i < finalCs_.size(); i++) {
+                for (int i = 0; i < finalCs_.size(); i++) {
                     std::cout << "Controller " << i+1 << ":"<< '\n';
                     finalCs_[i]->printInfo();
                     std::cout << "Target " << i+1 << '\n';
@@ -694,6 +694,8 @@ namespace scots {
                     TTs_[i-1]->symbolicSet_ = Ts_[i-1]->symbolicSet_.ExistAbstract(*notXUvars_[i-1]);
                     computedDs_[i-1]->symbolicSet_ |= Ts_[i-1]->symbolicSet_.ExistAbstract(*notXvars_[i-1]);
                 }
+                // Update the corresponding exploration abstraction
+                
             }
             x = x; // gets rid of warning message regarding lack of use
             u = u;
@@ -1025,11 +1027,6 @@ namespace scots {
                         /* iniitalize the obstacles */
                         size_t p = ho[i].size();
                         Os_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
-                        /* the exclusion regions are obstacles inflated by "distance" \ the obstacles (the subtraction will be done later in this method after the projections) */
-                        for (size_t j=0; j<ho[i].size(); j++) {
-                            ho[i][j] += distance;
-                        }
-                        Es_[*system_->numAbs_-1]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
                     }
                 }
             }
@@ -1100,13 +1097,22 @@ namespace scots {
             for (int i = *system_->numAbs_-1; i > 0; i--) {
                 coarserInner(Gs_[i-1],Gs_[i],i-1);
                 coarserOuter(Os_[i-1],Os_[i],i-1);
-                coarserOuter(Es_[i-1],Es_[i],i-1);
                 coarserOuter(X0s_[i-1],X0s_[i],i-1);
             }
-            /* subtract the obstacles from the exclusion regions in all the layers */
-            for (int i=0; i<*system_->numAbs_; i++) {
+            /* the exclusion regions are obstacles inflated by "distance" in the coarsest layer \ the obstacles in the respective layer (the subtraction will be done later in this method after the projections) */
+            for (int i=0; i<HO.size(); i++) {
+                for (size_t j=0; j<ho[i].size(); j++) {
+                    ho[i][j] += distance;
+                }
+                size_t p = ho[i].size();
+                Es_[0]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
+            }
+            Es_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
+            /* subtract the obstacles of respective layers from the exclusion regions in the coarsest layer */
+            for (int i=1; i<*system_->numAbs_; i++) {
+                finer(Es_[i-1],Es_[i],i-1);
                 Es_[i]->symbolicSet_ &= !Os_[i]->symbolicSet_;
-                /* ignore initial states which are blocked by the obstacles */
+                /* ignore initial states which are blocked by the obstacles or the exclusion region */
                 X0s_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_ | Es_[i]->symbolicSet_);
             }
             //debug:
@@ -1114,7 +1120,7 @@ namespace scots {
             /* checking that specification is valid */
             if ((Gs_[*system_->numAbs_-1]->symbolicSet_ & (!(Os_[*system_->numAbs_-1]->symbolicSet_ | Es_[*system_->numAbs_-1]->symbolicSet_))) == ddmgr_->bddZero()) {
                 /* ignore this environment in this case */
-                cout << "Error: No goal state is outside the obstacles and the exclusion in the finest layer.\n";
+                cout << "Error: No goal state is outside the obstacles and the exclusion region in the finest layer.\n";
                 return false;
             }
             //debug:
@@ -1173,6 +1179,7 @@ namespace scots {
             // Ts_[0] is uTs_[0]
             Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_;
             TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
+            computedDs_[0]->addGridPoints();
         }
         
         /*! Initializes the BDDs useful for existential abstraction. */

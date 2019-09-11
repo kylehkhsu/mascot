@@ -75,7 +75,7 @@ double find_abst(X_type x, U_type u,
               HO_type HO, HG_type HG, HI_type HI,
               ho_type ho, hg_type hg, hi_type hi,
               int nSubInt, int systemNSubInt, int p,
-              int NN, X_type explRadius, double reqd_success_rate,
+              int NN, X_type explRadius, double reqd_success_rate, double spec_max,
               bool readTsFromFile, bool useColors, const char* logfile, int verbose=0) {
     
     int dimX = x.size();
@@ -255,6 +255,10 @@ double find_abst(X_type x, U_type u,
                         } /* End of while loop */
                     } /* End of if (distance > spec) */
                     
+                    /* if spec is greater than spec_max, discontinue the process */
+                    if (distance>spec_max) {
+                        return -1;
+                    }
                     /* update SPEC */
                     if (distance>spec) {
                         spec = distance;
@@ -429,9 +433,9 @@ double find_abst(X_type x, U_type u,
         /* clear the controller related vaiables */
         abs->clear();
 //        BlackBoxReach* abs_ref = new BlackBoxReach(*abs);
-        /* store the current spec value and reset the old spec variable */
+        /* store the current spec value variable for later comparison */
         spec_old = spec;
-        spec = 0;
+//        spec = 0;
         
         iter++;
 //        for (int l=0; l<dimX; l++)
@@ -456,6 +460,10 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
     /* perform a series of tests on the computed abstract transition system */
     int success_count = 0;
     int num_cont_found = 0;
+    //debug
+    std::vector<std::vector<double>> abs_traj;
+    double distance;
+    //debug end
     for (int e=0; e<num_tests; e++) {
         bool validEnv = false;
         while (!validEnv) {
@@ -490,6 +498,12 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
             simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_traj);
             // debug
             abs->writeVecToFile(sys_traj,"Figures/sys_traj.txt","clean");
+            abs_traj.clear();
+            abs_traj.push_back(sys_traj[0]);
+            std::vector<std::vector<double>> hovec;
+            vecArr2vecVec(ho,hovec);
+            abs->simulateAbs(abs_traj,hovec,distance);
+            abs->writeVecToFile(abs_traj,"Figures/abs_traj.txt","clean");
 //            abs->saveFinalResult();
             // debug end
             if (unsafeAt.size()!=0) {
