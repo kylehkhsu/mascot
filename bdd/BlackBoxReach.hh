@@ -685,17 +685,28 @@ namespace scots {
                 TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
                 
                 // Propagate transitions up to the coarsest layer
-                SymbolicSet* Tf = new SymbolicSet(*Ts_[ab]);
-                Tf->symbolicSet_ = abstraction.transitionRelation_;
-                for (int i=ab; i>0; i--) {
-                    SymbolicSet* Tc = new SymbolicSet(*Ts_[i-1]);
-                    coarserOuterTs(Tc,Tf,i-1);
-                    Ts_[i-1]->symbolicSet_ |= Tc->symbolicSet_;
-                    TTs_[i-1]->symbolicSet_ = Ts_[i-1]->symbolicSet_.ExistAbstract(*notXUvars_[i-1]);
-                    computedDs_[i-1]->symbolicSet_ |= Ts_[i-1]->symbolicSet_.ExistAbstract(*notXvars_[i-1]);
-                }
+//                SymbolicSet* Tf = new SymbolicSet(*Ts_[ab]);
+//                Tf->symbolicSet_ = abstraction.transitionRelation_;
+//                for (int i=ab; i>0; i--) {
+//                    SymbolicSet* Tc = new SymbolicSet(*Ts_[i-1]);
+//                    coarserOuterTs(Tc,Tf,i-1);
+//                    Ts_[i-1]->symbolicSet_ |= Tc->symbolicSet_;
+//                    TTs_[i-1]->symbolicSet_ = Ts_[i-1]->symbolicSet_.ExistAbstract(*notXUvars_[i-1]);
+//                    computedDs_[i-1]->symbolicSet_ |= Ts_[i-1]->symbolicSet_.ExistAbstract(*notXvars_[i-1]);
+//                }
                 // Update the corresponding exploration abstraction
-                
+                if (ab!=0) {
+                    SymbolicSet* Tf = new SymbolicSet(*Ts_[ab]);
+                    Tf->symbolicSet_ = abstraction.transitionRelation_;
+                    for (int i=ab; i>0; i--) {
+                        SymbolicSet* Tc = new SymbolicSet(*Ts_[i-1]);
+                        coarserOuterTs(Tc,Tf,i-1);
+                        SymbolicSet* Tf = new SymbolicSet(*Ts_[i-1]);
+                        Tf->symbolicSet_=Tc->symbolicSet_;
+                        if (i==1)
+                            uTs_[ab-1]->symbolicSet_|=Tc->symbolicSet_;
+                    }
+                }
             }
             x = x; // gets rid of warning message regarding lack of use
             u = u;
@@ -1168,6 +1179,7 @@ namespace scots {
         void initializeAbstractionWithExplore(sys_type sysNext, rad_type radNext, X_type x, U_type u) {
             // start by synthesizing all uTs_
             Ds_[0]->addGridPoints();
+            computeAbstraction(0, sysNext, radNext, x, u);
             
             TicToc timer;
             timer.tic();
@@ -1177,9 +1189,9 @@ namespace scots {
                 cout << "\nComputation time for exploration abstractions: " << timer.toc() <<"\n";
             
             // Ts_[0] is uTs_[0]
-            Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_;
-            TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
-            computedDs_[0]->addGridPoints();
+//            Ts_[0]->symbolicSet_ = uTs_[0]->symbolicSet_;
+//            TTs_[0]->symbolicSet_ = Ts_[0]->symbolicSet_.ExistAbstract(*notXUvars_[0]);
+//            computedDs_[0]->addGridPoints();
         }
         
         /*! Initializes the BDDs useful for existential abstraction. */
