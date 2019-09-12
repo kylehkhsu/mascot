@@ -25,6 +25,12 @@ using namespace std;
 using namespace scots;
 using namespace helper;
 
+struct closed_loop_log {
+    std::vector<int> abstraction_used;
+    std::vector<std::vector<double>> trajectory;
+    std::vector<std::vector<double>> strategy;
+};
+
 /*! Convert a vector of arrays to a vector of vectors of the same size */
 template<std::size_t SIZE, class T>
 void vecArr2vecVec(const std::vector<std::array<T,SIZE>> va, std::vector<std::vector<T>>& vv) {
@@ -36,7 +42,7 @@ void vecArr2vecVec(const std::vector<std::array<T,SIZE>> va, std::vector<std::ve
 }
 
 /*! Simulate the system using the controller already available in the BlackBoxReach object */
-template<std::size_t SIZE_o, std::size_t SIZE_g, std::size_t SIZE_i, class sys_type, class X_type, class U_type>
+template<std::size_t SIZE_o, std::size_t SIZE_g, std::size_t SIZE_i, class sys_type, class X_type, class U_type, class L>
 void simulateSystem(BlackBoxReach* abs,
                     const std::vector<std::array<double,SIZE_o>> ho,
                     const std::vector<std::array<double,SIZE_g>> hg,
@@ -45,7 +51,7 @@ void simulateSystem(BlackBoxReach* abs,
                     X_type x,
                     U_type u,
                     std::vector<double>& unsafeAt,
-                    std::vector<std::vector<double>>& sys_traj) {
+                    L& sys_log) {
 //    double toss1, toss2;
     std::vector<std::vector<double>> hovec, hgvec;
 //    /* pick a random initial point within the provided initial set */
@@ -55,7 +61,7 @@ void simulateSystem(BlackBoxReach* abs,
 //    sys_traj.push_back(init);
     vecArr2vecVec(ho,hovec);
     vecArr2vecVec(hg,hgvec);
-    abs->simulateSys(sys_post, x, u, sys_traj,hovec,hgvec,unsafeAt);
+    abs->simulateSys(sys_post, x, u, sys_log,hovec,hgvec,unsafeAt);
 }
 
 /*! Compute the size of default array */
@@ -74,9 +80,9 @@ double find_abst(X_type x, U_type u,
               O_type spawnO, G_type spawnG, I_type spawnI,
               HO_type HO, HG_type HG, HI_type HI,
               ho_type ho, hg_type hg, hi_type hi,
-              int nSubInt, int systemNSubInt, int p,
-              int NN, X_type explRadius, double reqd_success_rate, double spec_max,
-              bool readTsFromFile, bool useColors, const char* logfile, int verbose=0) {
+              const int nSubInt, const int systemNSubInt, const int p,
+              const int NN, const X_type explRadius, const double explHorizon, const double reqd_success_rate, const double spec_max,
+              bool readTsFromFile, bool useColors, const char* logfile, const int verbose=0) {
     
     int dimX = x.size();
     int dimU = u.size();
@@ -110,7 +116,8 @@ double find_abst(X_type x, U_type u,
     /* initialize variables */
     double toss1, toss2, toss3;
     std::vector<double> unsafeAt;
-    std::vector<std::vector<double>> sys_traj, abs_traj;
+    
+    closed_loop_log sys_log, abs_log;
     double distance;
     int iter=1;
     while (1) {
@@ -156,8 +163,8 @@ double find_abst(X_type x, U_type u,
                 toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
                 toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
                 std::vector<double> init = {toss1, toss2};
-                sys_traj.push_back(init);
-                simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_traj);
+                sys_log.trajectory.push_back(init);
+                simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
                 //debug
 //                abs->writeVecToFile(sys_traj,"Figures/sys_traj.txt","clean");
 //                abs->saveFinalResult();
@@ -176,11 +183,14 @@ double find_abst(X_type x, U_type u,
                         }
                         cout << "\b).\n";
                     }
+                    /* add the problematic system trajectory to the abstraction */
+                    abs->addTrajectory(sys_log, explHorizon);
+                    cout << "\tProblematic trajectory now part of abstraction.\n";
                     /* simulate the abstract trajectory and measure the minimum distance from the obstacles */
-                    abs_traj.push_back(sys_traj[0]);
+                    abs_log.trajectory.push_back(sys_log.trajectory[0]);
                     std::vector<std::vector<double>> hovec;
                     vecArr2vecVec(ho,hovec);
-                    abs->simulateAbs(abs_traj,hovec,distance);
+                    abs->simulateAbs(abs_log,hovec,distance);
                     cout << "Distance of abstract trajectory from the unsafe states = " << distance << ".\n";
                     //debug
 //                    abs->writeVecToFile(abs_traj,"Figures/abs_traj.txt","clean");
@@ -196,8 +206,7 @@ double find_abst(X_type x, U_type u,
                             abs->clear();
                             bool flag1 = abs->exploreAroundPoint(unsafeAt, explRadius, u, sys_post, radius_post);
                             if (!flag1) { /* already explored upto the finest layer */
-                                cout << "\tNo more refinement possible. Final distance = " << distance << "\n";
-                                break;
+                                cout << "\tNo more refinement possible.\n";
                             }
                             // debug
 //                            checkMakeDir("T");
@@ -221,10 +230,12 @@ double find_abst(X_type x, U_type u,
                             unsafeAt.clear();
                             /* simulate the system using the synthesized controller */
                             /* use the old (problematic) initial state */
-                            std::vector<double> old_init = sys_traj[0];
-                            sys_traj.clear();
-                            sys_traj.push_back(old_init);
-                            simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_traj);
+                            std::vector<double> old_init = sys_log.trajectory[0];
+                            sys_log.abstraction_used.clear();
+                            sys_log.trajectory.clear();
+                            sys_log.strategy.clear();
+                            sys_log.trajectory.push_back(old_init);
+                            simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
                             //debug
 //                            abs->writeVecToFile(sys_traj,"Figures/sys_traj.txt","clean");
                             //debug end
@@ -235,9 +246,11 @@ double find_abst(X_type x, U_type u,
                                 break;
                             }
                             /* if the controller failed on the system, recompute distance and continue refining the abstraction around the point of failure, which is stored in the variable unsafeAt */
-                            abs_traj.clear();
-                            abs_traj.push_back(sys_traj[0]);
-                            abs->simulateAbs(abs_traj,hovec,distance);
+                            abs_log.abstraction_used.clear();
+                            abs_log.trajectory.clear();
+                            abs_log.strategy.clear();
+                            abs_log.trajectory.push_back(sys_log.trajectory[0]);
+                            abs->simulateAbs(abs_log,hovec,distance);
                             cout << "\tUpdated distance = " << distance << "\n";
                             /* if the distance after refinement became smaller than the current spec value, no need to refine further */
                             if (distance<=spec) {
@@ -251,7 +264,11 @@ double find_abst(X_type x, U_type u,
 //                            saveVec(abs_ref->Ts_, "T/T");
 //                            abs->saveFinalResult();
                             //debug end
-                            
+                            /* discontinue if no more refinement is possible */
+                            if (!flag1) {
+//                                cout << "Final distance = " << distance << "\n";
+                                break;
+                            }
                         } /* End of while loop */
                     } /* End of if (distance > spec) */
                     
@@ -263,6 +280,7 @@ double find_abst(X_type x, U_type u,
                     if (distance>spec) {
                         spec = distance;
                     }
+                    
                 } else { /* if (unsafeAt.size()==0) */
                     if (useColors) {
                         /* print in green (the code 32) */
@@ -292,15 +310,19 @@ double find_abst(X_type x, U_type u,
             abs->clear();
             /* clear the sets used for trajectory simulation */
             unsafeAt.clear();
-            sys_traj.clear();
-            abs_traj.clear();
+            sys_log.abstraction_used.clear();
+            sys_log.trajectory.clear();
+            sys_log.strategy.clear();
+            abs_log.abstraction_used.clear();
+            abs_log.trajectory.clear();
+            abs_log.strategy.clear();
         } /* End of for loop over the set of environments */
         cout << "\n\nSPEC = " << spec << "\n\n";
         
         /* if the last computed spec value worked well enough in terms of abstract game solving, and the spec value didn't increase from the last computed spec value, and finally if the abstraction was not refined further during the computation of spec, then we are done */
         if ((reqd_success_rate_reached) &&
-            (spec <= spec_old) &&
-            (spec_with_no_refinement)) {
+            (spec <= spec_old)) { //&&
+            //(spec_with_no_refinement)) {
             cout << "Abstract computation finished.\nTermination condition used: reqd. abstract synthesis success rate reached + the SPEC value didn't increase afterwards + no refinement was performed during the last SPEC loop.\n";
             /* write outputs to files */
             checkMakeDir("T");
@@ -461,7 +483,8 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
     int success_count = 0;
     int num_cont_found = 0;
     //debug
-    std::vector<std::vector<double>> abs_traj;
+//    std::vector<std::vector<double>> abs_traj;
+    closed_loop_log abs_log;
     double distance;
     //debug end
     for (int e=0; e<num_tests; e++) {
@@ -487,23 +510,25 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
                 cout << "There is a winning controller.\n";
             clog << "\nFinal number of controllers: " << abs->finalCs_.size() << '\n';
             /* now try the controller on the system itself */
-            std::vector<std::vector<double>> sys_traj;
+            closed_loop_log sys_log, abs_log;
+//            std::vector<std::vector<double>> sys_traj;
             /* pick a random initial point within the provided initial set */
             double toss1, toss2;
             toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
             toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
             std::vector<double> init = {toss1, toss2};
-            sys_traj.push_back(init);
+            sys_log.trajectory.push_back(init);
             std::vector<double> unsafeAt;
-            simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_traj);
+            simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
             // debug
-            abs->writeVecToFile(sys_traj,"Figures/sys_traj.txt","clean");
-            abs_traj.clear();
-            abs_traj.push_back(sys_traj[0]);
+            abs->writeVecToFile(sys_log.trajectory,"Figures/sys_traj.txt","clean");
+            abs_log.trajectory.clear();
+            abs_log.strategy.clear();
+            abs_log.trajectory.push_back(sys_log.trajectory[0]);
             std::vector<std::vector<double>> hovec;
             vecArr2vecVec(ho,hovec);
-            abs->simulateAbs(abs_traj,hovec,distance);
-            abs->writeVecToFile(abs_traj,"Figures/abs_traj.txt","clean");
+            abs->simulateAbs(abs_log,hovec,distance);
+            abs->writeVecToFile(abs_log.trajectory,"Figures/abs_traj.txt","clean");
 //            abs->saveFinalResult();
             // debug end
             if (unsafeAt.size()!=0) {

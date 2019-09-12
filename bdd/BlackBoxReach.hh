@@ -250,6 +250,59 @@ namespace scots {
 //            clog << "Wrote Ts_ to file.\n";
             return;
         }
+        
+        /*! Add the last part of the trajectory to all the abstraction layers */
+        template<class L>
+        void addTrajectory(const L sys_log, const double explHorizon) {
+            /* remaining exploration */
+            double explRemaining = explHorizon;
+            /* transition is the tripple (x,u,x') */
+            double* x = new double[*system_->dimX_];
+            double* xu = new double[(*system_->dimX_) + (*system_->dimU_)];
+            double* transition = new double[2*(*system_->dimX_)+(*system_->dimU_)];
+            for (int i=sys_log.trajectory.size()-1; (explRemaining>0) && (i>0); i--) {
+                int index=0;
+                /* fill the current state */
+                for (int j=0; j<*system_->dimX_; j++) {
+//                    x[index] = (sys_log.trajectory[i-1][j]);
+                    xu[index] = (sys_log.trajectory[i-1][j]);
+                    transition[index] = (sys_log.trajectory[i-1][j]);
+                    index++;
+                }
+                /* fill the current control input
+                 * NOTE: the size of strategy is one less than trajectory, so the last element of strategy is i-1 */
+                for (int j=0; j<*system_->dimU_; j++) {
+                    xu[index] = (sys_log.strategy[i-1][j]);
+                    transition[index] = (sys_log.strategy[i-1][j]);
+                    index++;
+                }
+                /* fill the next state */
+                for (int j=0; j<*system_->dimX_; j++) {
+                    /* saturate if out of state space bounds */
+//                    transition[index] = std::min(std::max(system_->lbX_[j], sys_log.trajectory[i][j]), system_->ubX_[j]);
+                    if (sys_log.trajectory[i][j] < system_->lbX_[j]) {
+                        transition[index] = system_->lbX_[j];
+                    } else if (sys_log.trajectory[i][j] > system_->ubX_[j]) {
+                        transition[index] = system_->ubX_[j];
+                    } else {
+                        transition[index] = sys_log.trajectory[i][j];
+                    }
+                    index++;
+                }
+                /* update the symbolicsets */
+//                for (int j=0; j<*system_->numAbs_; j++) {
+//                    computedDs_[j]->addPoint(x);
+                    TTs_[sys_log.abstraction_used[i-1]]->addPoint(xu);
+                    Ts_[sys_log.abstraction_used[i-1]]->addPoint(transition);
+//                }
+                /* the exploration abstraction correspond to the sampling time of the next finer layer */
+                if (sys_log.abstraction_used[i-1]!=0)
+                    uTs_[sys_log.abstraction_used[i-1]-1]->addPoint(transition);
+                explRemaining = explRemaining - *tau_[sys_log.abstraction_used[i-1]];
+            }
+        }
+        
+        
         /*! Refine some particular region around a point of the state space.
          *  \param[in] xarr     Continuous state around which exploration is needed (can be vector or array)
          *  \param[in] r        Radius of exploration
@@ -677,37 +730,72 @@ namespace scots {
             
             SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]); // abstraction computation will only iterate over the elements in the domain of the state space SymbolicSet (first argument)
             abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[ab], verbose_); // was hard-coded to 0, source of "tunneling" bug
-            if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
+            if (abstraction.transitionRelation_ != ddmgr_->bddZero()) {
                 Ts_[ab]->symbolicSet_ |= abstraction.transitionRelation_; // add to transition relation
                 //            BDD O2 = Os_[ab]->symbolicSet_.Permute(permutesXtoX2_[ab]); // causes unsound behavior, leaving here as warning
                 //            Ts_[ab]->symbolicSet_ &= !O2;
                 //            Ts_[ab]->printInfo(1);
                 TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
                 
-                // Propagate transitions up to the coarsest layer
-//                SymbolicSet* Tf = new SymbolicSet(*Ts_[ab]);
-//                Tf->symbolicSet_ = abstraction.transitionRelation_;
-//                for (int i=ab; i>0; i--) {
-//                    SymbolicSet* Tc = new SymbolicSet(*Ts_[i-1]);
-//                    coarserOuterTs(Tc,Tf,i-1);
-//                    Ts_[i-1]->symbolicSet_ |= Tc->symbolicSet_;
-//                    TTs_[i-1]->symbolicSet_ = Ts_[i-1]->symbolicSet_.ExistAbstract(*notXUvars_[i-1]);
-//                    computedDs_[i-1]->symbolicSet_ |= Ts_[i-1]->symbolicSet_.ExistAbstract(*notXvars_[i-1]);
-//                }
-                // Update the corresponding exploration abstraction
-                if (ab!=0) {
-                    SymbolicSet* Tf = new SymbolicSet(*Ts_[ab]);
-                    Tf->symbolicSet_ = abstraction.transitionRelation_;
-                    for (int i=ab; i>0; i--) {
-                        SymbolicSet* Tc = new SymbolicSet(*Ts_[i-1]);
-                        coarserOuterTs(Tc,Tf,i-1);
-                        SymbolicSet* Tf = new SymbolicSet(*Ts_[i-1]);
-                        Tf->symbolicSet_=Tc->symbolicSet_;
-                        if (i==1)
-                            uTs_[ab-1]->symbolicSet_|=Tc->symbolicSet_;
-                    }
+                /* Update the corresponding exploration abstraction */
+                SymbolicSet* Tf = new SymbolicSet(*Ts_[ab]);
+                Tf->symbolicSet_ = Ts_[ab]->symbolicSet_;
+                for (int j=ab; j>0; j--) {
+                    SymbolicSet* Tc = new SymbolicSet(*Ts_[j-1]);
+                    coarserOuterTs(Tc,Tf,j-1);
+                    SymbolicSet* Tf = new SymbolicSet(*Ts_[j-1]);
+                    Tf->symbolicSet_=Tc->symbolicSet_;
+                    if (j==1)
+                        uTs_[ab-1]->symbolicSet_|=Tc->symbolicSet_;
                 }
             }
+            
+            /* Propagate transitions up to the coarsest layer */
+//            for (int i=ab-1; i>=0; i--) {
+//                SymbolicModelGrowthBound<X_type, U_type> abstraction(Ds_[ab], U_, X2s_[ab]); // abstraction computation will only iterate over the elements in the domain of the state space SymbolicSet (first argument)
+//                abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[i], verbose_); // was hard-coded to 0, source of "tunneling" bug
+//                if (abstraction.transitionRelation_ != ddmgr_->bddZero()) { // no point adding/displaying if nothing was added
+//                    SymbolicSet* Tf = new SymbolicSet(*Ts_[ab]);
+//                    Tf->symbolicSet_ = abstraction.transitionRelation_;
+//                    for (int j=ab; j>i; j--) {
+//                        SymbolicSet* Tc = new SymbolicSet(*Ts_[j-1]);
+//                        coarserOuterTs(Tc,Tf,j-1);
+//                        SymbolicSet* Tf = new SymbolicSet(*Ts_[j-1]);
+//                        Tf->symbolicSet_=Tc->symbolicSet_;
+//                        if (j==i+1) {
+//                            Ts_[i]->symbolicSet_|=Tc->symbolicSet_;
+//                            TTs_[i]->symbolicSet_  =  Ts_[i]->symbolicSet_.ExistAbstract(*notXUvars_[i]);
+//                            computedDs_[i]->symbolicSet_ |= Ts_[i]->symbolicSet_.ExistAbstract(*notXvars_[i]);
+//                        }
+//                    }
+//                    /* Update the corresponding exploration abstraction */
+//                    if (i!=0) {
+//                        SymbolicSet* Tf = new SymbolicSet(*Ts_[i]);
+//                        Tf->symbolicSet_ = Ts_[i]->symbolicSet_;
+//                        for (int j=i; j>0; j--) {
+//                            SymbolicSet* Tc = new SymbolicSet(*Ts_[j-1]);
+//                            coarserOuterTs(Tc,Tf,j-1);
+//                            SymbolicSet* Tf = new SymbolicSet(*Ts_[j-1]);
+//                            Tf->symbolicSet_=Tc->symbolicSet_;
+//                            if (j==1)
+//                                uTs_[i-1]->symbolicSet_|=Tc->symbolicSet_;
+//                        }
+//                    }
+            
+                    // Propagate transitions up to the coarsest layer
+                    //                SymbolicSet* Tf = new SymbolicSet(*Ts_[ab]);
+                    //                Tf->symbolicSet_ = abstraction.transitionRelation_;
+                    //                for (int i=ab; i>0; i--) {
+                    //                    SymbolicSet* Tc = new SymbolicSet(*Ts_[i-1]);
+                    //                    coarserOuterTs(Tc,Tf,i-1);
+                    //                    Ts_[i-1]->symbolicSet_ |= Tc->symbolicSet_;
+                    //                    TTs_[i-1]->symbolicSet_ = Ts_[i-1]->symbolicSet_.ExistAbstract(*notXUvars_[i-1]);
+                    //                    computedDs_[i-1]->symbolicSet_ |= Ts_[i-1]->symbolicSet_.ExistAbstract(*notXvars_[i-1]);
+                    //                }
+                    
+//                } /* end of if */
+//            }
+            
             x = x; // gets rid of warning message regarding lack of use
             u = u;
         }
@@ -1594,6 +1682,7 @@ namespace scots {
                 SymbolicSet T(*ddmgr_, Char);
                 Ts_[i]->symbolicSet_ = T.symbolicSet_;
                 TTs_[i]->symbolicSet_ = Ts_[i]->symbolicSet_.ExistAbstract(*notXUvars_[i]);
+                computedDs_[i]->symbolicSet_ |= Ts_[i]->symbolicSet_.ExistAbstract(*notXvars_[i]);
                 
                 if (verbose_>0)
                     Ts_[i]->printInfo(1);
@@ -1603,7 +1692,8 @@ namespace scots {
         /*! Simulate an abstract controlled trajectory (resolve measurement related non-determinism and initial state non-determinism randomly), and simultaneously compute the shortest distance from the safe set boundary.
          input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively
          input: trajectory is a sequence of points traversed. trajectory[0] = x0 (to be passed) */
-        bool simulateAbs(std::vector<std::vector<double>>& trajectory, std::vector<std::vector<double>> obstacles, double& distance) {
+        template<class L>
+        bool simulateAbs(L& abs_log, std::vector<std::vector<double>> obstacles, double& distance) {
             std::vector<double> x; /* current state */
             std::vector<double> u; /* current control input */
             std::vector<double> xu; /* current state-input pair */
@@ -1621,7 +1711,7 @@ namespace scots {
 //            /* Choose one initial state randomly from the set of initial states */
 //            X0s_[0]->getRandomGridPoint(&x);
 //            trajectory.push_back(x);
-            x = trajectory[0]; /* the initial state */
+            x = abs_log.trajectory[0]; /* the initial state */
             if (!(X0s_[0]->isElement(x))) {
                 cout << "Error: stots::BlackBoxReach::simulateAbs(trajectory, obstacles, distance): the initial state does not match the design value.";
                 return false;
@@ -1677,7 +1767,7 @@ namespace scots {
                 
                 while (1) {
                     /* last point in the trajectory is the current state */
-                    x = trajectory.back();
+                    x = abs_log.trajectory.back();
                     /* if the current goal is reached, go to the next controller */
                     if (goal.isElement(x))
                         break;
@@ -1685,6 +1775,7 @@ namespace scots {
                     if (!getRandomMember(finalCs_[i]->setValuedMap(x,xind),u)) {
                         return false;
                     }
+                    abs_log.strategy.push_back(u);
                     /* store the indices of state space and control space */
                     xu.clear();
                     for (size_t j=0; j<*system_->dimX_; j++) {
@@ -1698,7 +1789,7 @@ namespace scots {
                     if (!getRandomMember(Ts_[ab]->setValuedMap(xu,xuind),xx)) {
                         return false;
                     }
-                    trajectory.push_back(xx);
+                    abs_log.trajectory.push_back(xx);
                     /* update the distacne */
                     /* obstacles are a collection of rectangles */
                     /* compute the box around xx */
@@ -1736,13 +1827,14 @@ namespace scots {
             // debug end
             return true;
         }
-        /*! Simulate a concrete controlled trajectory, and simultaneously check if it collides with the obstacles. If yes, which point? (module measurement errors.)
+        /*! Simulate a concrete controlled trajectory, and simultaneously check if it collides with the obstacles. If yes, which point? (modulo measurement errors.)
          input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively
          input: trajectory is a sequence of points traversed. trajectory[0] = x0 (to be passed) */
-        template<class sys_type, class X_type, class U_type>
+        template<class sys_type, class X_type, class U_type, class L>
         bool simulateSys(sys_type sys_next,
                          X_type xarr, U_type uarr,
-                         std::vector<std::vector<double>>& trajectory,
+//                         std::vector<std::vector<double>>& trajectory,
+                         L& sys_log,
                          std::vector<std::vector<double>> obstacles,
                          std::vector<std::vector<double>> sys_goal,
                          std::vector<double>& unsafeAt) {
@@ -1763,7 +1855,7 @@ namespace scots {
 //            /* Choose one initial state randomly from the set of initial states */
 //            X0s_[0]->getRandomGridPoint(&x);
 //            trajectory.push_back(x);
-            x = trajectory[0]; /* the initial state */
+            x = sys_log.trajectory[0]; /* the initial state */
             if (!(X0s_[0]->isElement(x))) {
                 // debug
 //                if (!(X0s_[0]->isElement(x))) {
@@ -1832,7 +1924,7 @@ namespace scots {
                 
                 while (1) {
                     /* last point in the trajectory is the current state */
-                    x = trajectory.back();
+                    x = sys_log.trajectory.back();
                     /* if the current goal is reached, go to the next controller */
                     if (i!=0) {
                         scots::SymbolicSet goal(*Xs_[prevAb]);
@@ -1864,7 +1956,9 @@ namespace scots {
                         unsafeAt = x;
                         return false;
                     }
-                    /* find the successor state by simulating the system */
+                    /* add the current abstraction to the log */
+                    sys_log.abstraction_used.push_back(ab);
+                    /* find the successor state by simulating the system using the same sampling time as that of the current abstraction layer */
                     /* first convert x and u to arrays */
                     for (size_t k=0; k<*system_->dimX_; k++) {
                         xarr[k] = x[k];
@@ -1872,31 +1966,40 @@ namespace scots {
                     for (size_t k=0; k<*system_->dimU_; k++) {
                         uarr[k] = u[k];
                     }
-                    sys_next(xarr,uarr,*systemSolver_);
+//                    sys_next(xarr,uarr,*systemSolver_);
+                    sys_next(xarr,uarr,*solvers_[ab],obstacles,unsafeAt);
                     /* store xarr as a vector and append to the trajectory */
                     for (size_t k=0; k<*system_->dimX_; k++) {
                         x[k] = xarr[k];
                     }
-                    trajectory.push_back(x);
+                    sys_log.trajectory.push_back(x);
+                    /* store uarr as a vector and append to the strategy */
+                    for (size_t k=0; k<*system_->dimU_; k++) {
+                        u[k] = uarr[k];
+                    }
+                    sys_log.strategy.push_back(u);
+                    if (unsafeAt.size()!=0) {
+                        return false;
+                    }
                     //debug
 //                    writeVecToFile(trajectory,"Figures/traj.txt","app");
-                    /* collision check */
-                    bool collision = true;
-                    unsafeAt.clear();
-                    /* iterate over all obstacles (boxes) */
-                    for (size_t j=0; j<obstacles.size(); j++) {
-                        for (size_t k=0; k<*system_->dimX_; k++) {
-                            if (x[k]<lb[j][k] || x[k]>ub[j][k]) {
-                                collision = false;
-                                break;
-                            }
-                        }
-                        if (collision) {
-                            unsafeAt = x;
-                            return false;
-                        }
-                        collision = true;
-                    }
+//                    /* collision check */
+//                    bool collision = true;
+//                    unsafeAt.clear();
+//                    /* iterate over all obstacles (boxes) */
+//                    for (size_t j=0; j<obstacles.size(); j++) {
+//                        for (size_t k=0; k<*system_->dimX_; k++) {
+//                            if (x[k]<lb[j][k] || x[k]>ub[j][k]) {
+//                                collision = false;
+//                                break;
+//                            }
+//                        }
+//                        if (collision) {
+//                            unsafeAt = x;
+//                            return false;
+//                        }
+//                        collision = true;
+//                    }
                 }
             }
             return true;
