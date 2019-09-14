@@ -67,7 +67,7 @@ public:
     /* var: firstGridPoint_
             * dim_-dimensinal vector containing the real values of the first grid point */
     double* firstGridPoint_;
-    /* var: firstGridPoint_
+    /* var: lastGridPoint_
             * dim_-dimensinal vector containing the real values of the last grid point */
     double* lastGridPoint_;
     /* var: nofGridPoints_

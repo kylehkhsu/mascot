@@ -158,11 +158,20 @@ double find_abst(X_type x, U_type u,
                 /* simulate the concrete system using the synthesized controller */
                 // debug
 //                abs->writeVecToFile(sys_traj,"Figures/traj.txt");
-                /* pick a random initial point within the provided initial set */
-                double toss1, toss2;
-                toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
-                toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
-                std::vector<double> init = {toss1, toss2};
+                /* pick a random initial point within the provided initial set which is outside the obstacles and the exclusion regions in the finest layer*/
+                std::vector<double> init;
+                while (1) {
+                    double toss1, toss2;
+                    toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
+                    toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
+                    init.push_back(toss1);
+                    init.push_back(toss2);
+                    if (abs->X0s_[*abs->system_->numAbs_-1]->isElement(init)) {
+                        break;
+                    }
+                }
+                
+                
                 sys_log.trajectory.push_back(init);
                 simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
                 //debug
@@ -348,7 +357,7 @@ double find_abst(X_type x, U_type u,
         int unique_env_count = 0; /* number of environments explored excluding duplicate cases */
         act_success_count = 0; /* reset the actual success count for solving the abstract game */
         /* how far the environments are to be made conservative (no role for computing SPEC) */
-        double eps = DBL_MIN; /* very small number added to make sure that boundary cases are pessimistically resolved */
+//        double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
         double spec2 = spec + eps;
         /* iterate over the environments */
         for (int e=0; e<NN; e++) {
@@ -420,8 +429,7 @@ double find_abst(X_type x, U_type u,
                     cout << "The environment is now winning.\n";
             } else {
                 if (useColors)
-                /* print in red (the code 31) */
-                    cout << "\033[31mEnvironment #" << e << "\033[0m\n";
+                    cout << "Environment #" << e << "\n";
                 if (verbose>0)
                     cout << "The environment was not winnable.\n";
             }
@@ -512,11 +520,19 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
             /* now try the controller on the system itself */
             closed_loop_log sys_log, abs_log;
 //            std::vector<std::vector<double>> sys_traj;
-            /* pick a random initial point within the provided initial set */
-            double toss1, toss2;
-            toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
-            toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
-            std::vector<double> init = {toss1, toss2};
+            /* pick a random initial point within the provided initial set which is outside the obstacles and the exclusion regions in the finest layer*/
+            std::vector<double> init;
+            while (1) {
+                double toss1, toss2;
+                toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
+                toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
+                init.push_back(toss1);
+                init.push_back(toss2);
+                if (abs->X0s_[*abs->system_->numAbs_-1]->isElement(init)) {
+                    break;
+                }
+            }
+            
             sys_log.trajectory.push_back(init);
             std::vector<double> unsafeAt;
             simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);

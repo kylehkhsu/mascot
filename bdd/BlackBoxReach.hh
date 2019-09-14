@@ -8,6 +8,8 @@
 #include "System.hh"
 #include "Helper.hh"
 
+#define eps 1e-13 /* a small number added to continuous states to resolve their membership to abstract states around boundary */
+
 using std::clog;
 using std::freopen;
 using std::string;
@@ -263,10 +265,19 @@ namespace scots {
             for (int i=sys_log.trajectory.size()-1; (explRemaining>0) && (i>0); i--) {
                 int index=0;
                 /* fill the current state */
+//                double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
                 for (int j=0; j<*system_->dimX_; j++) {
 //                    x[index] = (sys_log.trajectory[i-1][j]);
-                    xu[index] = (sys_log.trajectory[i-1][j]);
-                    transition[index] = (sys_log.trajectory[i-1][j]);
+                    if (sys_log.trajectory[i-1][j] < system_->lbX_[j]) {
+                        xu[index] = system_->lbX_[j]+eps;
+                        transition[index] = system_->lbX_[j]+eps;
+                    } else if (sys_log.trajectory[i-1][j] > system_->ubX_[j]) {
+                        xu[index] = system_->ubX_[j]-eps;
+                        transition[index] = system_->ubX_[j]-eps;
+                    } else {
+                        xu[index] = (sys_log.trajectory[i-1][j]);
+                        transition[index] = (sys_log.trajectory[i-1][j]);
+                    }
                     index++;
                 }
                 /* fill the current control input
@@ -281,9 +292,9 @@ namespace scots {
                     /* saturate if out of state space bounds */
 //                    transition[index] = std::min(std::max(system_->lbX_[j], sys_log.trajectory[i][j]), system_->ubX_[j]);
                     if (sys_log.trajectory[i][j] < system_->lbX_[j]) {
-                        transition[index] = system_->lbX_[j];
+                        transition[index] = system_->lbX_[j]+eps;
                     } else if (sys_log.trajectory[i][j] > system_->ubX_[j]) {
-                        transition[index] = system_->ubX_[j];
+                        transition[index] = system_->ubX_[j]-eps;
                     } else {
                         transition[index] = sys_log.trajectory[i][j];
                     }
@@ -327,6 +338,13 @@ namespace scots {
 //            for (int i=0; i<*system_->dimX_; i++) {
 //                x.push_back(xarr[i]);
 //            }
+            // debug
+            for (int i=0; i<*system_->dimX_; i++) {
+                if (x[i]>=system_->ubX_[i]) {
+                    cout << "Problem";
+                }
+            }
+            //debug end
             /* find the current exploration level around x */
             int ab;
             for (int i=*system_->numAbs_-1; i >= 0; i--) {
@@ -1174,10 +1192,11 @@ namespace scots {
                         throw std::runtime_error(os.str().c_str());
                         return false;
                     } else {
-                        /* the initial states are inflated by "distance" */
-                        for (size_t j=0; j<hi[i].size(); j++) {
-                            hi[i][j] += distance;
-                        }
+//                        /* new: adjust initial state only up to measurement error (assumed same in all abstraction layers) */
+//                        for (size_t j=0; j<hi[i].size(); j++) {
+////                            hi[i][j] += distance;
+//                            h[i][j] += Xs_[*system_->numAbs_-1]->
+//                        }
                         size_t p = hi[i].size();
                         /* first clear any previously stored intial states */
 //                        X0s_[*system_->numAbs_-1]->clear();
@@ -2005,8 +2024,11 @@ namespace scots {
             return true;
         }
         /* check if the initial states are winning or not */
+        /* NOTE: the initial states already exclude the intersection with the obstacles and the exclusion regions */
         bool isInitWinning() {
             BDD iw = X0s_[*system_->numAbs_-1]->symbolicSet_ & (!validZs_[*system_->numAbs_-1]->symbolicSet_);
+            /* new: also check intersection with exclusion zone */
+            
             if (iw==ddmgr_->bddZero()) {
                 return true;
             } else {
