@@ -489,7 +489,7 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
     int dimX = x.size();
     /* perform a series of tests on the computed abstract transition system */
     int success_count = 0;
-    int num_cont_found = 0;
+    int no_cont_found_count = 0;
     //debug
 //    std::vector<std::vector<double>> abs_traj;
     closed_loop_log abs_log;
@@ -498,6 +498,8 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
     for (int e=0; e<num_tests; e++) {
         bool validEnv = false;
         while (!validEnv) {
+            /* clear the controller and environment info */
+            abs->clear();
             spawnO(HO,ho,verbose);
             spawnG(HG,hg,verbose);
             spawnI(HI,hi,verbose);
@@ -572,7 +574,7 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
             if (verbose>0)
                 cout << "No controller found for this environment.\n";
             cout << "Environment #" << e << "\n";
-            num_cont_found++;
+            no_cont_found_count++;
         }
         // debug
         abs->saveFinalResult();
@@ -584,17 +586,16 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
         HO.clear();
         HG.clear();
         HI.clear();
-        /* clear the controller info */
-        abs->clear();
+        
         
         //        /* save synthesis results */
         //        abs->saveFinalResult();
     }
     cout << "\nTest result:\n";
-    if (num_tests!=num_cont_found) {
-        cout << "Success rate = " << success_count*100/(num_tests-num_cont_found) << "%.\n";
-        if (num_cont_found!=0) {
-            cout << "This excludes the " << num_cont_found*100/num_tests << "% cases where no controller could be synthesized.";
+    if (num_tests!=no_cont_found_count) {
+        cout << "Success rate = " << success_count*100/(num_tests-no_cont_found_count) << "% (" << success_count << " times).\n";
+        if (no_cont_found_count!=0) {
+            cout << "This excludes the " << no_cont_found_count*100/num_tests << "% (" << no_cont_found_count << ") cases where no controller could be synthesized.";
         }
     }
     else

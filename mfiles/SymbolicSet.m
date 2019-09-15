@@ -149,7 +149,7 @@ classdef SymbolicSet < handle
       switch(obj.dim)
       case 2
           if (strcmp(varargin{1},'fast'))
-              h=plot(obj.points(:,1),obj.points(:,2),'x');
+              h=plot(obj.points(:,1),obj.points(:,2),'.');
           else 
             n=length(obj.points(:,1));
             eh=obj.eta./2;

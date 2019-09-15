@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <vector>
+//#include <experimental/filesystem>
 
 #include "SymbolicModelGrowthBound.hh"
 #include "System.hh"
@@ -268,10 +269,10 @@ namespace scots {
 //                double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
                 for (int j=0; j<*system_->dimX_; j++) {
 //                    x[index] = (sys_log.trajectory[i-1][j]);
-                    if (sys_log.trajectory[i-1][j] < system_->lbX_[j]) {
+                    if (sys_log.trajectory[i-1][j] <= system_->lbX_[j]) {
                         xu[index] = system_->lbX_[j]+eps;
                         transition[index] = system_->lbX_[j]+eps;
-                    } else if (sys_log.trajectory[i-1][j] > system_->ubX_[j]) {
+                    } else if (sys_log.trajectory[i-1][j] >= system_->ubX_[j]) {
                         xu[index] = system_->ubX_[j]-eps;
                         transition[index] = system_->ubX_[j]-eps;
                     } else {
@@ -291,9 +292,9 @@ namespace scots {
                 for (int j=0; j<*system_->dimX_; j++) {
                     /* saturate if out of state space bounds */
 //                    transition[index] = std::min(std::max(system_->lbX_[j], sys_log.trajectory[i][j]), system_->ubX_[j]);
-                    if (sys_log.trajectory[i][j] < system_->lbX_[j]) {
+                    if (sys_log.trajectory[i][j] <= system_->lbX_[j]) {
                         transition[index] = system_->lbX_[j]+eps;
-                    } else if (sys_log.trajectory[i][j] > system_->ubX_[j]) {
+                    } else if (sys_log.trajectory[i][j] >= system_->ubX_[j]) {
                         transition[index] = system_->ubX_[j]-eps;
                     } else {
                         transition[index] = sys_log.trajectory[i][j];
@@ -1217,22 +1218,41 @@ namespace scots {
                 coarserOuter(Os_[i-1],Os_[i],i-1);
                 coarserOuter(X0s_[i-1],X0s_[i],i-1);
             }
-            /* the exclusion regions are obstacles inflated by "distance" in the coarsest layer \ the obstacles in the respective layer (the subtraction will be done later in this method after the projections) */
+//            /* the exclusion regions are obstacles inflated by "distance" in the coarsest layer \ the obstacles in the respective layer (the subtraction will be done later in this method after the projections) */
+//            for (int i=0; i<HO.size(); i++) {
+//                for (size_t j=0; j<ho[i].size(); j++) {
+//                    ho[i][j] += distance;
+//                }
+//                size_t p = ho[i].size();
+//                Es_[0]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
+//            }
+//            Es_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
+//            /* subtract the obstacles of respective layers from the exclusion regions in the coarsest layer */
+//            for (int i=1; i<*system_->numAbs_; i++) {
+//                finer(Es_[i-1],Es_[i],i-1);
+//                Es_[i]->symbolicSet_ &= !Os_[i]->symbolicSet_;
+//                /* ignore initial states which are blocked by the obstacles or the exclusion region */
+//                X0s_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_ | Es_[i]->symbolicSet_);
+//            }
+            /* the exclusion regions are obstacles inflated by "distance" in the respective layer \ the obstacles in the respective layer */
             for (int i=0; i<HO.size(); i++) {
+//                double* ho_inflated = new double[ho[i].size()];
+                double* ho_inflated = new double[ho[i].size()];
                 for (size_t j=0; j<ho[i].size(); j++) {
-                    ho[i][j] += distance;
+                    ho_inflated[j] = ho[i][j] + distance;
                 }
                 size_t p = ho[i].size();
-                Es_[0]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
+                for (int j=0; j<*system_->numAbs_; j++) {
+                    /* add the inflated obstacles */
+                    Es_[j]->addPolytope(p,to_native_array(HO[i]),ho_inflated,OUTER);
+                    /* subtract the real obstacles */
+                    Es_[j]->symbolicSet_ &= !Os_[j]->symbolicSet_;
+                    /* ignore initial states which are blocked by the obstacles or the exclusion region */
+                    X0s_[j]->symbolicSet_ &= !(Os_[j]->symbolicSet_ | Es_[j]->symbolicSet_);
+                }
+                delete[] ho_inflated;
             }
-            Es_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
-            /* subtract the obstacles of respective layers from the exclusion regions in the coarsest layer */
-            for (int i=1; i<*system_->numAbs_; i++) {
-                finer(Es_[i-1],Es_[i],i-1);
-                Es_[i]->symbolicSet_ &= !Os_[i]->symbolicSet_;
-                /* ignore initial states which are blocked by the obstacles or the exclusion region */
-                X0s_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_ | Es_[i]->symbolicSet_);
-            }
+            
             //debug:
 //            cout << "\tDone with projection.\n";
             /* checking that specification is valid */
@@ -1670,11 +1690,17 @@ namespace scots {
         
         /*! Write final synthesis results and plotting data to files */
         void saveFinalResult() {
+            /* first remove all the controller related directories */
+//            std::experimental::filesystem::remvoe_all("C");
+//            std::experimental::filesystem::remove_all("Z");
+            
+            /* save fresh copies of controller */
             checkMakeDir("C");
             saveVec(finalCs_, "C/C");
             checkMakeDir("Z");
             saveVec(finalZs_, "Z/Z");
             
+            /* the others get overwritten */
             checkMakeDir("plotting");
             Xs_[0]->writeToFile("plotting/X.bdd");
             X0s_[*system_->numAbs_-1]->writeToFile("plotting/X0.bdd");
