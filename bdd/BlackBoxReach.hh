@@ -1954,7 +1954,7 @@ namespace scots {
 //                    scots::SymbolicSet goal(*Xs_[prevAb]);
 //                    goal.setSymbolicSet(finalZs_[i-1]->symbolicSet_);
 //                }
-                /* arrange the inputs in suitable form */
+                /* arrange the obstacles in suitable form */
                 std::vector<std::vector<double>> lb,ub;
                 for (int j=0; j<obstacles.size(); j++) {
                     std::vector<double> l,u;
@@ -1972,9 +1972,11 @@ namespace scots {
                     x = sys_log.trajectory.back();
                     /* if the current goal is reached, go to the next controller */
                     if (i!=0) {
-                        scots::SymbolicSet goal(*Xs_[prevAb]);
-                        goal.setSymbolicSet(finalZs_[i-1]->symbolicSet_);
-                        if (goal.isElement(x))
+//                        scots::SymbolicSet goal(*Xs_[prevAb]);
+//                        goal.setSymbolicSet(finalZs_[i-1]->symbolicSet_);
+//                        if (goal.isElement(x))
+//                            break;
+                        if (finalZs_[i-1]->isElement(x))
                             break;
                     } else {
                         bool goal_reached;
@@ -1997,9 +1999,53 @@ namespace scots {
                     
                     /* pick any random valid control input */
                     if (!getRandomMember(finalCs_[i]->setValuedMap(x,xind),u)) {
-                        /* no input found means the trajectory left the controller domain; this is also treated as unsafe behavior */
-                        unsafeAt = x;
-                        return false;
+                        /* no input found means the trajectory left the controller domain */
+                        /* if x is in the exclusion region, then go through all the controller domains from beginning and check if any other controller can save x */
+                        bool input_found = false;
+                        for (int l=finalCs_.size()-1; l>i; l--) {
+                            if (getRandomMember(finalCs_[l]->setValuedMap(x,xind),u)) {
+                                /* control input found with controller 'l' */
+                                input_found = true;
+                                /* reset the current controller */
+                                i = l;
+                                /* prevAb correspond to the layer used in finalZs_[i-1] */
+                                if (i!=0) {
+                                    for (size_t j=0; j<*system_->numAbs_; j++) {
+                                        flag = true;
+                                        for (size_t k=0; k<*system_->dimX_; k++) {
+                                            if (finalZs_[i-1]->getEta()[k]!=Xs_[j]->getEta()[k]) {
+                                                flag = false;
+                                                break;
+                                            }
+                                        }
+                                        if (flag) {
+                                            prevAb = j;
+                                            break;
+                                        }
+                                    }
+                                }
+                                /* ab correspond to the layer used in finalZs_[i] */
+                                for (size_t j=0; j<*system_->numAbs_; j++) {
+                                    flag = true;
+                                    for (size_t k=0; k<*system_->dimX_; k++) {
+                                        if (finalZs_[i]->getEta()[k]!=Xs_[j]->getEta()[k]) {
+                                            flag = false;
+                                            break;
+                                        }
+                                    }
+                                    if (flag) {
+                                        ab = j;
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        if (!input_found) {
+                            /* else this is considered to be unsafe*/
+                            unsafeAt = x;
+                            return false;
+                        }
                     }
                     /* add the current abstraction to the log */
                     sys_log.abstraction_used.push_back(ab);

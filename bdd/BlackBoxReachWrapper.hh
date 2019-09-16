@@ -330,8 +330,8 @@ double find_abst(X_type x, U_type u,
         
         /* if the last computed spec value worked well enough in terms of abstract game solving, and the spec value didn't increase from the last computed spec value, and finally if the abstraction was not refined further during the computation of spec, then we are done */
         if ((reqd_success_rate_reached) &&
-            (spec <= spec_old)) { //&&
-            //(spec_with_no_refinement)) {
+            (spec <= spec_old) &&
+            (spec_with_no_refinement)) {
             cout << "Abstract computation finished.\nTermination condition used: reqd. abstract synthesis success rate reached + the SPEC value didn't increase afterwards + no refinement was performed during the last SPEC loop.\n";
             /* write outputs to files */
             checkMakeDir("T");
