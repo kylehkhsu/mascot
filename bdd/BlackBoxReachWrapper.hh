@@ -533,6 +533,7 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
                 if (abs->X0s_[*abs->system_->numAbs_-1]->isElement(init)) {
                     break;
                 }
+                init.clear();
             }
             
             sys_log.trajectory.push_back(init);

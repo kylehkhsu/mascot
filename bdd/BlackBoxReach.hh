@@ -1248,40 +1248,44 @@ namespace scots {
                 coarserOuter(Os_[i-1],Os_[i],i-1);
                 coarserOuter(X0s_[i-1],X0s_[i],i-1);
             }
-//            /* the exclusion regions are obstacles inflated by "distance" in the coarsest layer \ the obstacles in the respective layer (the subtraction will be done later in this method after the projections) */
-//            for (int i=0; i<HO.size(); i++) {
-//                for (size_t j=0; j<ho[i].size(); j++) {
-//                    ho[i][j] += distance;
-//                }
-//                size_t p = ho[i].size();
-//                Es_[0]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
-//            }
-//            Es_[0]->symbolicSet_ &= !Os_[0]->symbolicSet_;
-//            /* subtract the obstacles of respective layers from the exclusion regions in the coarsest layer */
-//            for (int i=1; i<*system_->numAbs_; i++) {
-//                finer(Es_[i-1],Es_[i],i-1);
-//                Es_[i]->symbolicSet_ &= !Os_[i]->symbolicSet_;
-//                /* ignore initial states which are blocked by the obstacles or the exclusion region */
-//                X0s_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_ | Es_[i]->symbolicSet_);
-//            }
-            /* the exclusion regions are obstacles inflated by "distance" in the respective layer \ the obstacles in the respective layer */
+            /* the exclusion regions are obstacles inflated by "distance" in the coarsest layer \ the obstacles in the respective layer (the subtraction will be done later in this method after the projections) */
             for (int i=0; i<HO.size(); i++) {
-//                double* ho_inflated = new double[ho[i].size()];
-                double* ho_inflated = new double[ho[i].size()];
                 for (size_t j=0; j<ho[i].size(); j++) {
-                    ho_inflated[j] = ho[i][j] + distance;
+                    ho[i][j] += distance;
                 }
                 size_t p = ho[i].size();
-                for (int j=0; j<*system_->numAbs_; j++) {
-                    /* add the inflated obstacles */
-                    Es_[j]->addPolytope(p,to_native_array(HO[i]),ho_inflated,OUTER);
-                    /* subtract the real obstacles */
-                    Es_[j]->symbolicSet_ &= !Os_[j]->symbolicSet_;
-                    /* ignore initial states which are blocked by the obstacles or the exclusion region */
-                    X0s_[j]->symbolicSet_ &= !(Os_[j]->symbolicSet_ | Es_[j]->symbolicSet_);
-                }
-                delete[] ho_inflated;
+                Es_[0]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
             }
+            /* subtract the obstacles of respective layers from the exclusion regions in the coarsest layer */
+            for (int i=1; i<*system_->numAbs_; i++) {
+                /* first do the projection to the finer layer */
+                finer(Es_[i-1],Es_[i],i-1);
+                /* now update the coarser layer exclusion region by doing the subtraction */
+                Es_[i-1]->symbolicSet_ &= !Os_[i-1]->symbolicSet_;
+                /* ignore initial states which are blocked by the obstacles or the exclusion region */
+                X0s_[i-1]->symbolicSet_ &= !(Os_[i-1]->symbolicSet_ | Es_[i-1]->symbolicSet_);
+            }
+            /* do the above two steps for the finer layer as well */
+            Es_[*system_->numAbs_-1]->symbolicSet_ &= !Os_[*system_->numAbs_-1]->symbolicSet_;
+            X0s_[*system_->numAbs_-1]->symbolicSet_ &= !(Os_[*system_->numAbs_-1]->symbolicSet_ | Es_[*system_->numAbs_-1]->symbolicSet_);
+//            /* the exclusion regions are obstacles inflated by "distance" in the respective layer \ the obstacles in the respective layer */
+//            for (int i=0; i<HO.size(); i++) {
+////                double* ho_inflated = new double[ho[i].size()];
+//                double* ho_inflated = new double[ho[i].size()];
+//                for (size_t j=0; j<ho[i].size(); j++) {
+//                    ho_inflated[j] = ho[i][j] + distance;
+//                }
+//                size_t p = ho[i].size();
+//                for (int j=0; j<*system_->numAbs_; j++) {
+//                    /* add the inflated obstacles */
+//                    Es_[j]->addPolytope(p,to_native_array(HO[i]),ho_inflated,OUTER);
+//                    /* subtract the real obstacles */
+//                    Es_[j]->symbolicSet_ &= !Os_[j]->symbolicSet_;
+//                    /* ignore initial states which are blocked by the obstacles or the exclusion region */
+//                    X0s_[j]->symbolicSet_ &= !(Os_[j]->symbolicSet_ | Es_[j]->symbolicSet_);
+//                }
+//                delete[] ho_inflated;
+//            }
             
             //debug:
 //            cout << "\tDone with projection.\n";
