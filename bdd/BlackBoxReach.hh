@@ -478,17 +478,45 @@ namespace scots {
             }
             
             if (result == INITWINNING) {
+                /* Save the current winning regions */
+                BDD** Z = new BDD*[*system_->numAbs_];
+                BDD** validZ = new BDD*[*system_->numAbs_];
+                for (int i=0; i<*system_->numAbs_; i++) {
+                    Z[i] = &(Zs_[i]->symbolicSet_);
+                    validZ[i] = &(validZs_[i]->symbolicSet_);
+                }
                 /* propagate the winning region to all the finer layers (reqd later to check if the initial states are winning in the finest layer) */
                 for (int i=ab; i<*system_->numAbs_-1; i++) {
                     finer(Zs_[i],Zs_[i+1],i);
                     Zs_[i+1]->symbolicSet_ |= validZs_[i+1]->symbolicSet_;
                     validZs_[i+1]->symbolicSet_ = Zs_[i+1]->symbolicSet_;
                 }
-//                /* also check if the winning domain fully covers Es_ in the finest layer */
-//                if (!validZs_[*system_->numAbs_-1]->symbolicSet_ & Es_[*system_->numAbs_-1]->symbolicSet_ == ddmgr_->bddZero())
+                /* propagate to all coarser layers */
+                for (int i=*system_->numAbs_-1; i>0; i--) {
+                    coarserInner(validZs_[i-1],validZs_[i],i-1);
+                }
+                /* check if the winning region covers all the exclusion region states */
+                bool done=true;
+                for (int i=0; i<*system_->numAbs_; i++) {
+                    BDD ew = Es_[i]->symbolicSet_ & (!validZs_[i]->symbolicSet_);
+                    if (ew!=ddmgr_->bddZero()) {
+                        done=false;
+                        break;
+                    }
+                }
+                if (!done) { /* some exclusion states are not yet winning */
+                    /* restore the winning domains */
+                    for (int i=0; i<*system_->numAbs_; i++) {
+                        Zs_[i]->symbolicSet_=*Z[i];
+                        validZs_[i]->symbolicSet_=*validZ[i];
+                    }
+                }
+                delete[] Z;
+                delete[] validZ;
+                if (done) {
+                    /* all exclusion region states are also winning, done with the fixpoint */
                     return;
-//
-//                cout << "All initial states are winning but the exclusion region is not winning yet. Continuing...\n";
+                }
             }
             
             if (result != NOTCONVERGED) {
@@ -869,6 +897,8 @@ namespace scots {
                 
                 
                 BDD iw = X0s_[ab]->symbolicSet_ & (!(Zs_[ab]->symbolicSet_));
+                /* check if the initial states and the exclusion region states are winning */
+//                BDD iw = (X0s_[ab]->symbolicSet_ | Es_[ab]->symbolicSet_) & (!(Zs_[ab]->symbolicSet_));
                 if (iw == ddmgr_->bddZero()) {
                     return INITWINNING;
                 }
@@ -1757,7 +1787,7 @@ namespace scots {
 //            X0s_[0]->getRandomGridPoint(&x);
 //            trajectory.push_back(x);
             x = abs_log.trajectory[0]; /* the initial state */
-            if (!(X0s_[0]->isElement(x))) {
+            if (!(X0s_[*system_->numAbs_-1]->isElement(x))) {
                 cout << "Error: stots::BlackBoxReach::simulateAbs(trajectory, obstacles, distance): the initial state does not match the design value.";
                 return false;
             }
