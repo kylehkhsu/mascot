@@ -479,11 +479,11 @@ namespace scots {
             
             if (result == INITWINNING) {
                 /* Save the current winning regions */
-                BDD** Z = new BDD*[*system_->numAbs_];
-                BDD** validZ = new BDD*[*system_->numAbs_];
+                BDD* Z = new BDD[*system_->numAbs_];
+                BDD* validZ = new BDD[*system_->numAbs_];
                 for (int i=0; i<*system_->numAbs_; i++) {
-                    Z[i] = &(Zs_[i]->symbolicSet_);
-                    validZ[i] = &(validZs_[i]->symbolicSet_);
+                    Z[i] = (Zs_[i]->symbolicSet_);
+                    validZ[i] = (validZs_[i]->symbolicSet_);
                 }
                 /* propagate the winning region to all the finer layers (reqd later to check if the initial states are winning in the finest layer) */
                 for (int i=ab; i<*system_->numAbs_-1; i++) {
@@ -491,24 +491,29 @@ namespace scots {
                     Zs_[i+1]->symbolicSet_ |= validZs_[i+1]->symbolicSet_;
                     validZs_[i+1]->symbolicSet_ = Zs_[i+1]->symbolicSet_;
                 }
-                /* propagate to all coarser layers */
-                for (int i=*system_->numAbs_-1; i>0; i--) {
-                    coarserInner(validZs_[i-1],validZs_[i],i-1);
-                }
+//                /* propagate to all coarser layers */
+//                for (int i=*system_->numAbs_-1; i>0; i--) {
+//                    coarserInner(validZs_[i-1],validZs_[i],i-1);
+//                }
                 /* check if the winning region covers all the exclusion region states */
                 bool done=true;
-                for (int i=0; i<*system_->numAbs_; i++) {
-                    BDD ew = Es_[i]->symbolicSet_ & (!validZs_[i]->symbolicSet_);
-                    if (ew!=ddmgr_->bddZero()) {
-                        done=false;
-                        break;
-                    }
-                }
-                if (!done) { /* some exclusion states are not yet winning */
+//                for (int i=0; i<*system_->numAbs_; i++) {
+//                    BDD ew = Es_[i]->symbolicSet_ & (!validZs_[i]->symbolicSet_);
+//                    if (ew!=ddmgr_->bddZero()) {
+//                        done=false;
+//                        break;
+//                    }
+//                }
+                /* check if the winning region in the finest layer covers the finest layer exclusion region.
+                 * checking only finest region is fine since the finest region exclusion region is a superset of all the other exclusion regions in other layers */
+                BDD ew = Es_[*system_->numAbs_-1]->symbolicSet_ & (!validZs_[*system_->numAbs_-1]->symbolicSet_);
+                if (ew != ddmgr_->bddZero()) { /* some exclusion regions states are not yet winning */
+                    done=false;
+//                if (!done) { /* some exclusion states are not yet winning */
                     /* restore the winning domains */
                     for (int i=0; i<*system_->numAbs_; i++) {
-                        Zs_[i]->symbolicSet_=*Z[i];
-                        validZs_[i]->symbolicSet_=*validZ[i];
+                        Zs_[i]->symbolicSet_=Z[i];
+                        validZs_[i]->symbolicSet_=validZ[i];
                     }
                 }
                 delete[] Z;
@@ -2034,51 +2039,53 @@ namespace scots {
                     /* pick any random valid control input */
                     if (!getRandomMember(finalCs_[i]->setValuedMap(x,xind),u)) {
                         /* no input found means the trajectory left the controller domain */
-                        /* if x is in the exclusion region, then go through all the controller domains from beginning and check if any other controller can save x */
-                        bool input_found = false;
-                        for (int l=finalCs_.size()-1; l>i; l--) {
-                            if (getRandomMember(finalCs_[l]->setValuedMap(x,xind),u)) {
-                                /* control input found with controller 'l' */
-                                input_found = true;
-                                /* reset the current controller */
-                                i = l;
-                                /* prevAb correspond to the layer used in finalZs_[i-1] */
-                                if (i!=0) {
+                        if (Es_[*system_->numAbs_-1]->isElement(x)) {
+                            /* if x is in the exclusion region, then go through all the controller domains from beginning and check if any other controller can save x */
+                            bool input_found = false;
+                            for (int l=finalCs_.size()-1; l>i; l--) {
+                                if (getRandomMember(finalCs_[l]->setValuedMap(x,xind),u)) {
+                                    /* control input found with controller 'l' */
+                                    input_found = true;
+                                    /* reset the current controller */
+                                    i = l;
+                                    /* prevAb correspond to the layer used in finalZs_[i-1] */
+                                    if (i!=0) {
+                                        for (size_t j=0; j<*system_->numAbs_; j++) {
+                                            flag = true;
+                                            for (size_t k=0; k<*system_->dimX_; k++) {
+                                                if (finalZs_[i-1]->getEta()[k]!=Xs_[j]->getEta()[k]) {
+                                                    flag = false;
+                                                    break;
+                                                }
+                                            }
+                                            if (flag) {
+                                                prevAb = j;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    /* ab correspond to the layer used in finalZs_[i] */
                                     for (size_t j=0; j<*system_->numAbs_; j++) {
                                         flag = true;
                                         for (size_t k=0; k<*system_->dimX_; k++) {
-                                            if (finalZs_[i-1]->getEta()[k]!=Xs_[j]->getEta()[k]) {
+                                            if (finalZs_[i]->getEta()[k]!=Xs_[j]->getEta()[k]) {
                                                 flag = false;
                                                 break;
                                             }
                                         }
                                         if (flag) {
-                                            prevAb = j;
+                                            ab = j;
                                             break;
                                         }
                                     }
+                                    break;
                                 }
-                                /* ab correspond to the layer used in finalZs_[i] */
-                                for (size_t j=0; j<*system_->numAbs_; j++) {
-                                    flag = true;
-                                    for (size_t k=0; k<*system_->dimX_; k++) {
-                                        if (finalZs_[i]->getEta()[k]!=Xs_[j]->getEta()[k]) {
-                                            flag = false;
-                                            break;
-                                        }
-                                    }
-                                    if (flag) {
-                                        ab = j;
-                                        break;
-                                    }
-                                }
-                                break;
                             }
-                        }
-                        if (!input_found) {
-                            /* else this is considered to be unsafe*/
-                            unsafeAt = x;
-                            return false;
+                            if (!input_found) {
+                                /* else this is considered to be unsafe*/
+                                unsafeAt = x;
+                                return false;
+                            }
                         }
                     }
                     /* add the current abstraction to the log */
