@@ -81,15 +81,15 @@ double find_abst(X_type x, U_type u,
               HO_type HO, HG_type HG, HI_type HI,
               ho_type ho, hg_type hg, hi_type hi,
               const int nSubInt, const int systemNSubInt, const int p,
-              const int NN, const X_type explRadius, const double explHorizon, const double reqd_success_rate, const double spec_max,
+              const int NN, const X_type explRadius, const double explHorizon, const double* reqd_success_rate, const double spec_max,
               bool readTsFromFile, bool useColors, const char* logfile, const int verbose=0) {
     
     int dimX = x.size();
     int dimU = u.size();
     
-    int act_success_count = 0;
+    int act_success_count[2] = {0, 0};
     bool reqd_success_rate_reached = false;
-    bool spec_with_no_refinement;
+//    bool spec_with_no_refinement;
     
     System sys(dimX, lbX, ubX, etaX, tau,
                    dimU, lbU, ubU, etaU,
@@ -126,7 +126,7 @@ double find_abst(X_type x, U_type u,
         /* **** Computation of SPEC with abstraction refinement **** */
         /*************************************************************/
         cout << "\033[1;4;34mStarting computation of SPEC.\n\n\033[0m";
-        spec_with_no_refinement=true;
+//        spec_with_no_refinement=true;
         /* iterate over all the environments */
         for (int e=0; e<NN; e++) {
             /* spawn environment with 0 distance from the given specification */
@@ -222,8 +222,8 @@ double find_abst(X_type x, U_type u,
 //                            saveVec(abs->Ts_, "T/T");
                             //end
                             /* even if the abstract game solving was good enough with the previous spec value, still then the abstract games need to be solved again, as the abstraction went finer during the spec computation */
-                            spec_with_no_refinement = false;
-                            
+//                            spec_with_no_refinement = false;
+                            act_success_count[0]++;
                             /* initialize distance; distance remains 0 if the abstract game with the refined abstraction fails */
                             distance = 0;
                             /* do a simple multi-layered reachability (without further refinement) */
@@ -331,7 +331,8 @@ double find_abst(X_type x, U_type u,
         /* if the last computed spec value worked well enough in terms of abstract game solving, and the spec value didn't increase from the last computed spec value, and finally if the abstraction was not refined further during the computation of spec, then we are done */
         if ((reqd_success_rate_reached) &&
             (spec <= spec_old) &&
-            (spec_with_no_refinement)) {
+            (act_success_count[0]/NN < reqd_success_rate[0])) {
+//            (spec_with_no_refinement)) {
             cout << "Abstract computation finished.\nTermination condition used: reqd. abstract synthesis success rate reached + the SPEC value didn't increase afterwards + no refinement was performed during the last SPEC loop.\n";
             /* write outputs to files */
             checkMakeDir("T");
@@ -355,7 +356,7 @@ double find_abst(X_type x, U_type u,
         /* initial abstraction */
 //        BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
         int unique_env_count = 0; /* number of environments explored excluding duplicate cases */
-        act_success_count = 0; /* reset the actual success count for solving the abstract game */
+        act_success_count[1] = 0; /* reset the actual success count for solving the abstract game */
         /* how far the environments are to be made conservative (no role for computing SPEC) */
 //        double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
         double spec2 = spec + eps;
@@ -421,7 +422,7 @@ double find_abst(X_type x, U_type u,
             /* print result of the abstraction refinement */
             if (abs->isInitWinning()) {
                 /* increment the success rate counter */
-                act_success_count++;
+                act_success_count[1]++;
                 if (useColors)
                 /* print in green (the code 32) */
                     cout << "\033[32mEnvironment #" << e << "\033[0m\n";
@@ -446,7 +447,7 @@ double find_abst(X_type x, U_type u,
             cout << "\nSPEC value "<< spec <<" is too high. The multi-layered abstraction is too coarse. Consider recomputation with 1 more layer at the bottom.";
             return (-1);
         }
-        if ((double)act_success_count/unique_env_count > reqd_success_rate) {
+        if ((double)act_success_count[1]/unique_env_count > reqd_success_rate[1]) {
             cout << "\nTarget precision reached.";
 //            break;
             /* the computation is finished, provided the SPEC value doesn't increase */
@@ -509,10 +510,6 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
             cout << "Abstraction initialized with the specification.\n";
         /* do a simple multi-layered reachability (without further refinement) */
         abs->plainReach(p);
-        // debug
-//        abs->onTheFlyReach(p,sys_post,radius_post,x,u);
-//        abs->saveFinalResult();
-        // debug end
         if (verbose>0)
             cout << "Controller synthesis done.\n";
         if (abs->isInitWinning()) {

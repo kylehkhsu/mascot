@@ -127,6 +127,10 @@ public:
             }
         }
     }
+    // kaushik
+    inline double getStepSize() {
+        return h_;
+    }
 };
 
 #endif /* RUNGEKUTTA4_HH_ */

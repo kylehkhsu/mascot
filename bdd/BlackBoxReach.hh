@@ -236,25 +236,11 @@ namespace scots {
             // synthesize controller
             int ab = 0;
             eagerReachRecurse(ab);
-//            ReachResult result = reach(ab);
-//            cout << "ReachResult = " << result << ".\n";
-            
-//            clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
-//            if (verbose_>0) {
-//                cout << "\nFinal number of controllers: " << finalCs_.size() << '\n';
-//            }
-            
-//            checkMakeDir("C");
-//            saveVec(finalCs_, "C/C");
-//            checkMakeDir("Z");
-//            saveVec(finalZs_, "Z/Z");
-//            checkMakeDir("T");
-//            saveVec(Ts_, "T/T");
-//            clog << "Wrote Ts_ to file.\n";
             return;
         }
         
-        /*! Add the last part of the trajectory to all the abstraction layers */
+        /*! Add the last part of the trajectory to all the abstraction layers
+         *      The effected variables are Ts_, TTs_ and uTs_ in only those layers whose sampling time was used. Note that computedDs_ remains unchanged as we do not explore all the transitions from the respective states appearing in the trajectory. */
         template<class L>
         void addTrajectory(const L sys_log, const double explHorizon) {
             /* remaining exploration */
@@ -263,12 +249,11 @@ namespace scots {
             double* x = new double[*system_->dimX_];
             double* xu = new double[(*system_->dimX_) + (*system_->dimU_)];
             double* transition = new double[2*(*system_->dimX_)+(*system_->dimU_)];
+            /* iterate over the states in the end of the trajectory until the exploration budget is exhausted */
             for (int i=sys_log.trajectory.size()-1; (explRemaining>0) && (i>0); i--) {
                 int index=0;
-                /* fill the current state */
-//                double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
+                /* fill the current state array */
                 for (int j=0; j<*system_->dimX_; j++) {
-//                    x[index] = (sys_log.trajectory[i-1][j]);
                     if (sys_log.trajectory[i-1][j] <= system_->lbX_[j]) {
                         xu[index] = system_->lbX_[j]+eps;
                         transition[index] = system_->lbX_[j]+eps;
@@ -291,7 +276,6 @@ namespace scots {
                 /* fill the next state */
                 for (int j=0; j<*system_->dimX_; j++) {
                     /* saturate if out of state space bounds */
-//                    transition[index] = std::min(std::max(system_->lbX_[j], sys_log.trajectory[i][j]), system_->ubX_[j]);
                     if (sys_log.trajectory[i][j] <= system_->lbX_[j]) {
                         transition[index] = system_->lbX_[j]+eps;
                     } else if (sys_log.trajectory[i][j] >= system_->ubX_[j]) {
@@ -302,11 +286,8 @@ namespace scots {
                     index++;
                 }
                 /* update the symbolicsets */
-//                for (int j=0; j<*system_->numAbs_; j++) {
-//                    computedDs_[j]->addPoint(x);
-                    TTs_[sys_log.abstraction_used[i-1]]->addPoint(xu);
-                    Ts_[sys_log.abstraction_used[i-1]]->addPoint(transition);
-//                }
+                TTs_[sys_log.abstraction_used[i-1]]->addPoint(xu);
+                Ts_[sys_log.abstraction_used[i-1]]->addPoint(transition);
                 /* the exploration abstraction correspond to the sampling time of the next finer layer */
                 if (sys_log.abstraction_used[i-1]!=0)
                     uTs_[sys_log.abstraction_used[i-1]-1]->addPoint(transition);
@@ -334,18 +315,6 @@ namespace scots {
                     throw std::invalid_argument(os.str().c_str());
                 }
             }
-//            /* convert xarr to a vector x (reqd by some of the methods) */
-//            std::vector<double> x;
-//            for (int i=0; i<*system_->dimX_; i++) {
-//                x.push_back(xarr[i]);
-//            }
-            // debug
-            for (int i=0; i<*system_->dimX_; i++) {
-                if (x[i]>=system_->ubX_[i]) {
-                    cout << "Problem";
-                }
-            }
-            //debug end
             /* find the current exploration level around x */
             int ab;
             for (int i=*system_->numAbs_-1; i >= 0; i--) {
@@ -415,26 +384,9 @@ namespace scots {
             }
             
             abTime_ += timer.toc();
-            
-//            if (!readAbs) {
-//                checkMakeDir("T");
-//                saveVec(Ts_, "T/T");
-//                clog << "Wrote Ts_ to file.\n";
-//            }
-            
-            // synthesize controller
+            /* synthesize controller */
             int ab = 0;
             eagerReachRecurse(ab);
-            
-//            clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
-//
-//            checkMakeDir("C");
-//            saveVec(finalCs_, "C/C");
-//            checkMakeDir("Z");
-//            saveVec(finalZs_, "Z/Z");
-//            checkMakeDir("T");
-//            saveVec(Ts_, "T/T");
-//            clog << "Wrote Ts_ to file.\n";
             return;
         }
         
@@ -453,9 +405,9 @@ namespace scots {
                 result = reach(ab, m_);
             }
             if (result == INITWINNING) {
-                clog << "result: all initial states are winning\n";
+                clog << "result: all initial states and the exclusion regions states are winning\n";
                 if (verbose_>0) {
-                    cout << "result: all initial states are winning.\n";
+                    cout << "result: all initial states and the exclusion region states are winning.\n";
                 }
             } else if (result == CONVERGEDVALID) {
                 clog << "result: converged valid\n";
@@ -477,52 +429,9 @@ namespace scots {
                 clog << "reset to valids\n";
             }
             
-            if (result == INITWINNING) {
-                /* Save the current winning regions */
-                BDD* Z = new BDD[*system_->numAbs_];
-                BDD* validZ = new BDD[*system_->numAbs_];
-                for (int i=0; i<*system_->numAbs_; i++) {
-                    Z[i] = (Zs_[i]->symbolicSet_);
-                    validZ[i] = (validZs_[i]->symbolicSet_);
-                }
-                /* propagate the winning region to all the finer layers (reqd later to check if the initial states are winning in the finest layer) */
-                for (int i=ab; i<*system_->numAbs_-1; i++) {
-                    finer(Zs_[i],Zs_[i+1],i);
-                    Zs_[i+1]->symbolicSet_ |= validZs_[i+1]->symbolicSet_;
-                    validZs_[i+1]->symbolicSet_ = Zs_[i+1]->symbolicSet_;
-                }
-//                /* propagate to all coarser layers */
-//                for (int i=*system_->numAbs_-1; i>0; i--) {
-//                    coarserInner(validZs_[i-1],validZs_[i],i-1);
-//                }
-                /* check if the winning region covers all the exclusion region states */
-                bool done=true;
-//                for (int i=0; i<*system_->numAbs_; i++) {
-//                    BDD ew = Es_[i]->symbolicSet_ & (!validZs_[i]->symbolicSet_);
-//                    if (ew!=ddmgr_->bddZero()) {
-//                        done=false;
-//                        break;
-//                    }
-//                }
-                /* check if the winning region in the finest layer covers the finest layer exclusion region.
-                 * checking only finest region is fine since the finest region exclusion region is a superset of all the other exclusion regions in other layers */
-                BDD ew = Es_[*system_->numAbs_-1]->symbolicSet_ & (!validZs_[*system_->numAbs_-1]->symbolicSet_);
-                if (ew != ddmgr_->bddZero()) { /* some exclusion regions states are not yet winning */
-                    done=false;
-//                if (!done) { /* some exclusion states are not yet winning */
-                    /* restore the winning domains */
-                    for (int i=0; i<*system_->numAbs_; i++) {
-                        Zs_[i]->symbolicSet_=Z[i];
-                        validZs_[i]->symbolicSet_=validZ[i];
-                    }
-                }
-                delete[] Z;
-                delete[] validZ;
-                if (done) {
-                    /* all exclusion region states are also winning, done with the fixpoint */
-                    return;
-                }
-            }
+            /* return if all the initial state and the exclusion region states are winning or not */
+            if (result == INITWINNING)
+                return;
             
             if (result != NOTCONVERGED) {
                 if (ab == *system_->numAbs_ - 1) {
@@ -566,18 +475,6 @@ namespace scots {
             // begin on-the-fly reachability synthesis
             int ab = 0;
             onTheFlyReachRecurse(ab, sysNext, radNext, x, u);
-            
-//            clog << "\nFinal number of controllers: " << finalCs_.size() << '\n';
-//
-//            checkMakeDir("C");
-//            saveVec(finalCs_, "C/C");
-//            checkMakeDir("Z");
-//            saveVec(finalZs_, "Z/Z");
-//            checkMakeDir("T");
-//            saveVec(Ts_, "T/T");
-//            checkMakeDir("D");
-//            saveVec(computedDs_, "D/D");
-//            clog << "Wrote Ts_ to file.\n";
             
             if (verbose_==2) {
                 for (int i = 0; i < finalCs_.size(); i++) {
@@ -625,9 +522,9 @@ namespace scots {
                 synTime_ += timer.toc();
             }
             if (result == INITWINNING) {
-                clog << "result: all initial states are winning\n";
+                clog << "result: all initial states and the exclusion regions states are winning\n";
                 if (verbose_>0) {
-                    cout << "result: all initial states are winning\n";
+                    cout << "result: all initial states and the exclusion region states are winning\n";
                 }
             }
             if (result == CONVERGEDVALID) {
@@ -662,25 +559,9 @@ namespace scots {
                     cout << "reset to valids\n";
             }
             
+            /* retrun if all the intitial states and all the exclusion region states are winning */
             if (result == INITWINNING) {
-                /* propagate the winning domain up to the finest layer (required for the check in the method isInitWinning) */
-                for (int i=ab; i<*system_->numAbs_-1; i++) {
-                    finer(Zs_[i], Zs_[i+1], i);
-                    Zs_[i+1]->symbolicSet_ |= validZs_[i+1]->symbolicSet_;
-                    validZs_[i+1]->symbolicSet_ = Zs_[i+1]->symbolicSet_;
-                }
-                /* also check if the winning domain fully covers Es_ in the finest layer */
-//                if (!validZs_[*system_->numAbs_-1]->symbolicSet_ & Es_[*system_->numAbs_-1]->symbolicSet_ == ddmgr_->bddZero())
-                    return;
-//
-//                cout << "All initial states are winning but the exclusion region is not winning yet. Continuing...\n";
-                // debug
-//                checkMakeDir("X0");
-//                saveVec(X0s_, "X0/X0_");
-//                checkMakeDir("vZ");
-//                saveVec(validZs_, "vZ/Z");
-                // debug end
-                
+                return;
             }
             if (result != NOTCONVERGED) { // ab = 0 always converges
                 if (ab == *system_->numAbs_ - 1) {
@@ -873,42 +754,25 @@ namespace scots {
                 Cs_[ab]->symbolicSet_ |= N;
                 Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_;
                 
-                // debug
-//                if (verbose_) {
-//                    checkMakeDir("InterimDom");
-//                    std::string Str="InterimDom/Z_";
-//                    Str+=std::to_string(ab);
-//                    Str+="_";
-//                    Str+=std::to_string(i);
-//                    Str+=".bdd";
-//                    char Char[20];
-//                    size_t Length = Str.copy(Char, Str.length() + 1);
-//                    Char[Length] = '\0';
-//                    //                vector<SymbolicSet*> Ztemp = Zs_;
-//                    //                for (int i=0; i<ab; i++) {
-//                    //                    BDD temp = Zs_[i+1]->symbolicSet_;
-//                    //                    finer(Zs_[i],Zs_[i+1],i);
-//                    //                    Zs_[i+1]->symbolicSet_ = temp & (!(Zs_[i+1]->symbolicSet_));
-//                    //                }
-//                    BDD temp = Zs_[ab]->symbolicSet_;
-//                    if (ab!=0) {
-//                        finer(Zs_[ab-1],Zs_[ab],ab-1);
-//                        Zs_[ab]->symbolicSet_ = temp & (!(Zs_[ab]->symbolicSet_));
-//                    }
-//                    Zs_[ab]->writeToFile(Char);
-//                    Zs_[ab]->symbolicSet_ = temp;
-//                }
-                // debug end
-                
-                
-                BDD iw = X0s_[ab]->symbolicSet_ & (!(Zs_[ab]->symbolicSet_));
                 /* check if the initial states and the exclusion region states are winning */
-//                BDD iw = (X0s_[ab]->symbolicSet_ | Es_[ab]->symbolicSet_) & (!(Zs_[ab]->symbolicSet_));
+                BDD iw = X0s_[ab]->symbolicSet_ & (!(Zs_[ab]->symbolicSet_));
                 if (iw == ddmgr_->bddZero()) {
-                    return INITWINNING;
+                    /* check if all the exclusion region states are also winning */
+//                    BDD validZ = validZs_[ab]->symbolicSet_;
+//                    validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
+                    /* restore the validZs_[ab] anyway, as they are going to be updated later */
+                    if (isExclusionWinning(ab)) {
+//                        validZs_[ab]->symbolicSet_ = validZ;
+                        clog << "All exclusion region states are winning. \n";
+                        if (verbose_>0)
+                            cout << "All exclusion region states are winning. \n";
+                        return INITWINNING;
+                    } else {
+//                        validZs_[ab]->symbolicSet_ = validZ;
+                    }
+                    
                 }
                 if (N == ddmgr_->bddZero() && i != 1) {
-//                if (N == ddmgr_->bddZero()) { // by kaushik: "i!=1" doesn't make sense as CONVERGEDINVALID will never be true
                     if (i >= 2) {
                         return CONVERGEDVALID;
                     }
@@ -2136,17 +2000,17 @@ namespace scots {
             }
             return true;
         }
-        /* check if the initial states are winning or not */
+        /* check if the initial states and the exclusion region states are winning or not */
         /* NOTE: the initial states already exclude the intersection with the obstacles and the exclusion regions */
         bool isInitWinning() {
             BDD iw = X0s_[*system_->numAbs_-1]->symbolicSet_ & (!validZs_[*system_->numAbs_-1]->symbolicSet_);
             /* new: also check intersection with exclusion zone */
             
             if (iw==ddmgr_->bddZero()) {
-                return true;
-            } else {
-                return false;
+                if (isExclusionWinning(0))
+                    return true;
             }
+            return false;
         }
         /* saves a vector of arrays or vectors in a text file in matlab reachable format */
         template<class T>
@@ -2167,6 +2031,44 @@ namespace scots {
             }
             fid.close();
             return true;
+        }
+        /* check if all the exclusion region states are winning or not
+         * if yes, synchronize the winning regions of all layers, otherwise leave them unchanged */
+        bool isExclusionWinning(int curAb) {
+            /* Save the current winning regions */
+            BDD* Z = new BDD[*system_->numAbs_];
+            BDD* validZ = new BDD[*system_->numAbs_];
+            for (int i=0; i<*system_->numAbs_; i++) {
+                Z[i] = (Zs_[i]->symbolicSet_);
+                validZ[i] = (validZs_[i]->symbolicSet_);
+            }
+            /* propagate the winning region to all the finer layers (reqd later to check if the initial states are winning in the finest layer) */
+            if (curAb==*system_->numAbs_-1) {
+                Zs_[curAb]->symbolicSet_ |= validZs_[curAb]->symbolicSet_;
+                validZs_[curAb]->symbolicSet_ = Zs_[curAb]->symbolicSet_;
+            } else {
+                for (int i=curAb; i<*system_->numAbs_-1; i++) {
+                    finer(Zs_[i],Zs_[i+1],i);
+                    Zs_[i+1]->symbolicSet_ |= validZs_[i+1]->symbolicSet_;
+                    validZs_[i+1]->symbolicSet_ = Zs_[i+1]->symbolicSet_;
+                }
+            }
+            /* check if the winning region covers all the exclusion region states */
+            bool done=true;
+            /* check if the winning region in the finest layer covers the finest layer exclusion region.
+             * checking only finest region is fine since the finest region exclusion region is a superset of all the other exclusion regions in other layers */
+            BDD ew = Es_[*system_->numAbs_-1]->symbolicSet_ & (!validZs_[*system_->numAbs_-1]->symbolicSet_);
+            if (ew != ddmgr_->bddZero()) { /* some exclusion regions states are not yet winning */
+                done=false;
+                /* restore the winning domains */
+                for (int i=0; i<*system_->numAbs_; i++) {
+                    Zs_[i]->symbolicSet_=Z[i];
+                    validZs_[i]->symbolicSet_=validZ[i];
+                }
+            }
+            delete[] Z;
+            delete[] validZ;
+            return done;
         }
     private:
         /* get random element from a vector */
