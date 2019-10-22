@@ -6,6 +6,7 @@ SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
 
 **MASCOT** builds upon SCOTS by using multi-layered abstractions and lazy exploration to enable adaptive fixed points in controller synthesis process.
 
+For conceptual details, see our paper [Lazy Abstraction-Based Controller Synthesis](https://arxiv.org/abs/1804.02722).
 
 ### Requirements
 
@@ -44,3 +45,14 @@ SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
   
 - ./mfiles/mexfiles/
     mex-file to read the C++ output from file 
+
+### Citing MASCOT
+To cite this repository or the accompanying paper [Lazy Abstraction-Based Controller Synthesis](https://arxiv.org/abs/1804.02722), you can use the following BibTeX entry:
+```
+@inproceedings{hsu2019lazy,
+  title={Lazy Abstraction-Based Controller Synthesis},
+  author={Hsu, Kyle and Majumdar, Rupak and Mallik, Kaushik and Schmuck, Anne-Kathrin},
+  booktitle={International Symposium on Automated Technology for Verification and Analysis (ATVA)},
+  year={2019},
+}
+```
