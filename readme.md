@@ -47,7 +47,7 @@ For conceptual details, see our paper [Lazy Abstraction-Based Controller Synthes
     mex-file to read the C++ output from file 
 
 ### Citing MASCOT
-To cite this repository or the accompanying paper [Lazy Abstraction-Based Controller Synthesis](https://arxiv.org/abs/1804.02722), you can use the following BibTeX entry:
+To cite the accompanying paper [Lazy Abstraction-Based Controller Synthesis](https://arxiv.org/abs/1804.02722), you can use the following BibTeX entry:
 ```
 @inproceedings{hsu2019lazy,
   title={Lazy Abstraction-Based Controller Synthesis},
