@@ -4,7 +4,7 @@
 possibly perturbed nonlinear control systems with respect to safety and reachability specifications.
 SCOTS can be downloaded at https://www.hcs.ei.tum.de/en/software/scots/.
 
-**MASCOT** builds upon SCOTS by using multi-layered abstractions and lazy exploration to enable adaptive fixed points in controller synthesis process.
+**MASCOT** builds upon SCOTS by using multi-layered abstractions and lazy exploration to enable adaptive fixed points in the controller synthesis process.
 
 For conceptual details, see our paper [Lazy Abstraction-Based Controller Synthesis](https://arxiv.org/abs/1804.02722).
 
