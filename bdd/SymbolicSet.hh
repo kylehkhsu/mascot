@@ -67,7 +67,7 @@ public:
     /* var: firstGridPoint_
             * dim_-dimensinal vector containing the real values of the first grid point */
     double* firstGridPoint_;
-    /* var: firstGridPoint_
+    /* var: lastGridPoint_
             * dim_-dimensinal vector containing the real values of the last grid point */
     double* lastGridPoint_;
     /* var: nofGridPoints_
@@ -440,7 +440,7 @@ public:
         // end
     }
     /* function: copy assignment operator */
-    SymbolicSet& operator=(const SymbolicSet &other) {
+    SymbolicSet& operator=(const SymbolicSet& other) {
         ddmgr_=other.ddmgr_;
         dim_=other.dim_;
         tau_ = other.tau_;
@@ -1092,7 +1092,7 @@ public:
                     c*=2;
                 }
                 gridPoints[i*nofMinterms+k]=firstGridPoint_[i]+num*eta_[i];
-                std::cout << firstGridPoint_[i]+num*eta_[i] << '\n';
+//                std::cout << firstGridPoint_[i]+num*eta_[i] << '\n';
             }
             //for(size_t i=0; i<dim_; i++)
             //  std::cout << gridPoints[i*nofMinterms+k] << " " ;
@@ -1173,7 +1173,40 @@ public:
         }
         delete[] vars;
     }
-
+    
+    // kaushik
+    /* function: getRandomGridPoint
+        * randomly pick a grid point */
+    void getRandomGridPoint(std::vector<double>* gridPoint) const {
+        /* number of minterms in the symbolic set */
+        size_t nofMinterms=symbolicSet_.CountMinterm(nvars_);
+        /* randomly select an index in the rangle 0 to nofMinterms-1 */
+        size_t index = rand() % nofMinterms;
+         /* set up iterator */
+        std::vector<size_t> ivars_;
+        ivars_.reserve(nvars_);
+        for(size_t i=0; i<dim_; i++)
+            for(size_t j=0; j<nofBddVars_[i]; j++)
+                ivars_.push_back(indBddVars_[i][j]);
+        CuddMintermIterator it(symbolicSet_,ivars_,nvars_);
+        /* initialize variables */
+        const int* minterm;
+        size_t i = 0;
+        /* initialize array of same size as gridPoint (reqd for mintermToElement) */
+        double* g = new double[dim_];
+        /* loop over all minterms until the iteration count = index */
+        for (; !it.done(); ++it) {
+            if (index==i) {
+                mintermToElement(it.currentMinterm(),g);
+                break;
+            }
+            i++;
+        }
+        for (size_t i=0; i<dim_; i++) {
+            gridPoint->push_back(g[i]);
+        }
+    }
+    
     // kyle
 
     /* function: isMinterm

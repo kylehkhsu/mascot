@@ -1,4 +1,0 @@
-cd dcdc1A && make && ./dcdc && cd .. &&
-cd dcdc2A && make clean && make && ./dcdc && cd .. &&
-cd dcdc3A && make clean && make && ./dcdc && cd .. &&
-cd dcdc4A && make clean && make && ./dcdc && cd ..

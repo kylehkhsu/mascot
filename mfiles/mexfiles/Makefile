@@ -1,7 +1,7 @@
 #
 # matlab root 
 #
-MATLABROOT	= /usr/lib/matlab-9.4/
+MATLABROOT	= /Applications/MATLAB_R2017b.app/
 
 #
 # compiler

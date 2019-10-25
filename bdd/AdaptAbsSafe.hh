@@ -206,6 +206,29 @@ public:
 			}
 			timer.tic();
 			safeOne(ab);
+            if (verbose_) {
+                std::string Str="InterimDom/Z_";
+                Str+=std::to_string(recursion);
+                Str+="_";
+                Str+=std::to_string(ab);
+                Str+=".bdd";
+                char Char[20];
+                size_t Length = Str.copy(Char, Str.length() + 1);
+                Char[Length] = '\0';
+//                vector<SymbolicSet*> Ztemp = Zs_;
+//                for (int i=0; i<ab; i++) {
+//                    BDD temp = Zs_[i+1]->symbolicSet_;
+//                    finer(Zs_[i],Zs_[i+1],i);
+//                    Zs_[i+1]->symbolicSet_ = temp & (!(Zs_[i+1]->symbolicSet_));
+//                }
+                BDD temp = Zs_[ab]->symbolicSet_;
+                if (ab!=0) {
+                    finer(Zs_[ab-1],Zs_[ab],ab-1);
+                    Zs_[ab]->symbolicSet_ = temp & (!(Zs_[ab]->symbolicSet_));
+                }
+                Zs_[ab]->writeToFile(Char);
+                Zs_[ab]->symbolicSet_ = temp;
+            }
 			synTime_ += timer.toc();
 		}
 
@@ -277,7 +300,7 @@ public:
 
 		// begin on-the-fly safety synthesis
 		int recursion = 0;
-        checkMakeDir("K");
+        checkMakeDir("InterimDom");
 		onTheFlySafeRecurseNoAux(sysNext, radNext, x, u, recursion);
 
 		// to ensure that the controllers for the coarser layers admit control inputs that allow visit to finer layer states. Note that this doesn't change the controller domain.
