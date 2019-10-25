@@ -23,6 +23,8 @@ doxygen/latex/**
 .*
 *.jpg
 *.mexmaci64
+*.txt
+*.gif
 
 # Packages #
 ############
