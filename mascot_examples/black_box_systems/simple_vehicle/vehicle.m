@@ -55,8 +55,12 @@ switch mode
             warning('Something wrong in obstacle set (possibly no points).\n');
         end
         
-        E = SymbolicSet('plotting/E.bdd');
-        plotCells(E,'fast','facecolor','b');
+        try
+            E = SymbolicSet('plotting/E.bdd');
+            plotCells(E,'fast','facecolor','b');
+        catch
+            warning('Something wrong in exclusion set (possibly no points).\n');
+        end
         disp('Done plotting exclusion zones')
         G = SymbolicSet('plotting/G.bdd');
         if (spec==0)
@@ -101,7 +105,7 @@ switch mode
             pause
         end
     case 'T'
-        openfig('Figures/system')
+%         openfig('Figures/system')
         axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);
         for ii=1:numAbs
             try

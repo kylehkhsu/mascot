@@ -155,12 +155,13 @@ double find_abst(X_type x, U_type u,
             /* if the abstract game is not winning, the distance remains 0 */
             distance = 0;
             /* check if there is a controller for the abstraction */
-            if (abs->isInitWinning()) {
+            if (abs->isInitWinning()) { /* need to check if the controller works for the system as well */
                 if (verbose>0)
                     cout << "There is a controller.\n";
                 /* simulate the concrete system using the synthesized controller */
                 // debug
-//                abs->writeVecToFile(sys_traj,"Figures/traj.txt");
+//                abs->writeVecToFile(abs_log.trajectory,"Figures/abs_traj.txt");
+                // debug end
                 /* pick a random initial point within the provided initial set which is outside the obstacles and the exclusion regions in the finest layer*/
                 std::vector<double> init;
                 while (1) {
@@ -178,7 +179,8 @@ double find_abst(X_type x, U_type u,
                 sys_log.trajectory.push_back(init);
                 simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
                 //debug
-//                abs->writeVecToFile(sys_traj,"Figures/sys_traj.txt","clean");
+                abs->saveFinalResult();
+                abs->writeVecToFile(sys_log.trajectory,"Figures/sys_traj.txt","clean");
 //                abs->saveFinalResult();
                 //debug end
 //                printArray(sys_traj, )
@@ -205,7 +207,7 @@ double find_abst(X_type x, U_type u,
                     abs->simulateAbs(abs_log,hovec,distance);
                     cout << "Distance of abstract trajectory from the unsafe states = " << distance << ".\n";
                     //debug
-//                    abs->writeVecToFile(abs_traj,"Figures/abs_traj.txt","clean");
+                    abs->writeVecToFile(abs_log.trajectory,"Figures/abs_traj.txt","clean");
                     //debug end
                     if (distance>spec) {
                         /* Refine abstraction if unsafe until the specified accuracy is reached */
@@ -219,6 +221,7 @@ double find_abst(X_type x, U_type u,
                             bool flag1 = abs->exploreAroundPoint(unsafeAt, explRadius, u, sys_post, radius_post);
                             if (!flag1) { /* already explored upto the finest layer */
                                 cout << "\tNo more refinement possible.\n";
+                                break;
                             }
                             // debug
 //                            checkMakeDir("T");
@@ -235,52 +238,54 @@ double find_abst(X_type x, U_type u,
                             //debug
 //                            abs->saveFinalResult();
                             //debug end
-                            if (!abs->isInitWinning()) {
+                            if (!abs->isInitWinning()) { /* no controller exists for the abstraction */
                                 cout << "\tUpdated distance = 0\n";
                                 break;
-                            }
-                            unsafeAt.clear();
-                            /* simulate the system using the synthesized controller */
-                            /* use the old (problematic) initial state */
-                            std::vector<double> old_init = sys_log.trajectory[0];
-                            sys_log.abstraction_used.clear();
-                            sys_log.trajectory.clear();
-                            sys_log.strategy.clear();
-                            sys_log.trajectory.push_back(old_init);
-                            simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
-                            //debug
-//                            abs->writeVecToFile(sys_traj,"Figures/sys_traj.txt","clean");
-                            //debug end
-                            if (unsafeAt.size()==0) {
-                                if (verbose>0)
-                                    cout << "\tThe controller worked for the system as well.\n";
-                                cout << "\tUpdated distance = 0\n";
-                                break;
-                            }
-                            /* if the controller failed on the system, recompute distance and continue refining the abstraction around the point of failure, which is stored in the variable unsafeAt */
-                            abs_log.abstraction_used.clear();
-                            abs_log.trajectory.clear();
-                            abs_log.strategy.clear();
-                            abs_log.trajectory.push_back(sys_log.trajectory[0]);
-                            abs->simulateAbs(abs_log,hovec,distance);
-                            cout << "\tUpdated distance = " << distance << "\n";
-                            /* if the distance after refinement became smaller than the current spec value, no need to refine further */
-                            if (distance<=spec) {
-                                break;
-                            }
-                            //debug
-//                            abs->writeVecToFile(abs_traj,"Figures/abs_traj.txt","clean");
-                            //debug end
-                            //debug
-//                            checkMakeDir("T");
-//                            saveVec(abs_ref->Ts_, "T/T");
-//                            abs->saveFinalResult();
-                            //debug end
-                            /* discontinue if no more refinement is possible */
-                            if (!flag1) {
-//                                cout << "Final distance = " << distance << "\n";
-                                break;
-                            }
+                            } else { /* there is a controller for the abstraction: system needs to be checked */
+                                unsafeAt.clear();
+                                /* simulate the system using the synthesized controller */
+                                /* use the old (problematic) initial state */
+                                std::vector<double> old_init = sys_log.trajectory[0];
+                                sys_log.abstraction_used.clear();
+                                sys_log.trajectory.clear();
+                                sys_log.strategy.clear();
+                                sys_log.trajectory.push_back(old_init);
+                                simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
+                                //debug
+                                abs->writeVecToFile(sys_log.trajectory,"Figures/sys_traj.txt","clean");
+                                //debug end
+                                if (unsafeAt.size()==0) {
+                                    if (verbose>0)
+                                        cout << "\tThe controller worked for the system as well.\n";
+                                    cout << "\tUpdated distance = 0\n";
+                                    break;
+                                } else { /* the controller failed to work on the system */
+                                    /* if the controller failed on the system, recompute distance and continue refining the abstraction around the point of failure, which is stored in the variable unsafeAt */
+                                    abs_log.abstraction_used.clear();
+                                    abs_log.trajectory.clear();
+                                    abs_log.strategy.clear();
+                                    abs_log.trajectory.push_back(sys_log.trajectory[0]);
+                                    abs->simulateAbs(abs_log,hovec,distance);
+                                    cout << "\tUpdated distance = " << distance << "\n";
+                                    //debug
+                                    abs->writeVecToFile(abs_log.trajectory,"Figures/abs_traj.txt","clean");
+                                    //debug end
+                                    /* if the distance after refinement became smaller than the current spec value, no need to refine further */
+                                    if (distance<=spec) {
+                                        break;
+                                    }
+                                    //debug
+        //                            checkMakeDir("T");
+        //                            saveVec(abs_ref->Ts_, "T/T");
+        //                            abs->saveFinalResult();
+                                    //debug end
+                                } /* end of else (controller failed on system) */
+                                /* discontinue if no more refinement is possible */
+//                                if (!flag1) {
+//    //                                cout << "Final distance = " << distance << "\n";
+//                                    break;
+//                                }
+                            } /* End of else (abs is winning) */
                         } /* End of while loop */
                     } /* End of if (distance > spec) */
                     
