@@ -8,7 +8,7 @@ W_ub = [0 0];
 lb = [0 0];
 ub = [5 5];
 tau = 0.4;
-numAbs = 3;
+numAbs = 4;
 ab = 1;
 
 addpath(genpath('../../../'));
@@ -53,19 +53,19 @@ axis([lb(1) ub(1) lb(2) ub(2)]);
 %         openfig('problem');
         hold on;
         h = cell(3,1);
-        for ii=0:numAbs-1
+        for ii=numAbs:-1:1
             disp(['Abs = ' int2str(ii)]);
-            for jj=1:iter
+%             for jj=1:iter
                 disp(['Iter = ' int2str(jj)]);
                 try
-                    Z = SymbolicSet(['InterimDom/Z_' num2str(ii) '_' num2str(jj) '.bdd']);
+                    Z = SymbolicSet(['T/T' num2str(ii) '.bdd'],'projection',[1 2]);
                     h{jj+1} = plotCells(Z,'facecolor',cmap(ii+1,:),'edgec',cmap(ii+1,:),'linew', 0.1);
                 catch
                     warning(['There are probably no points in Z' num2str(ii)]);
                 end
                 drawnow
-%                 pause
-            end 
+                pause
+%             end 
 %             for jj=1:numAbs
 %                 delete(h{jj});
 %             end

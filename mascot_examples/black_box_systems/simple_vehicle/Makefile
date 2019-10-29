@@ -1,10 +1,11 @@
 #
 # compiler
 #
-#CC        = g++
-CC       	  = clang++
+CC        = g++
+#CC       	  = clang++
 #CXXFLAGS 		= -Wall -Wextra -std=c++11 -O3 -DNDEBUG
 CXXFLAGS 		= -Wall -Wextra -std=c++11 -Wfatal-errors -g
+#CXXFLAGS                = -Wall -Wextra -std=c++11 -g
 
 #
 # scots 

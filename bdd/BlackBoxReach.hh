@@ -750,13 +750,28 @@ namespace scots {
                 BDD controllablePreZ1 = controllablePre(Zs_[ab]->symbolicSet_ & !(Es_[ab]->symbolicSet_ | Os_[ab]->symbolicSet_), ab);
                 BDD controllablePreZ2 = controllablePre(Zs_[ab]->symbolicSet_ & Es_[ab]->symbolicSet_, ab);
                 BDD C = (controllablePreZ1 & !Os_[ab]->symbolicSet_) | (controllablePreZ2 & Es_[ab]->symbolicSet_) | Gs_[ab]->symbolicSet_;
+                // debug purpose
+//                scots::SymbolicSet S(*Cs_[ab]);
+//                if (ab==3) {
+//                    S.setSymbolicSet((controllablePreZ1 & !Os_[ab]->symbolicSet_) | Gs_[ab]->symbolicSet_);
+////                    S.setSymbolicSet(controllablePreZ2 & Es_[ab]->symbolicSet_);
+////                    if (S.symbolicSet_!=ddmgr_->bddZero()) {
+//                    if (S.symbolicSet_.CountMinterm(Cs_[ab]->nvars_) > 7075600) {
+//                        bool nop=true;
+//                    }
+//                    S.setSymbolicSet(C);
+//                }
+                // debug end
+                //new (get rid of junk)
+                C &= TTs_[ab]->symbolicSet_;
+                //new end
                 BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
                 Cs_[ab]->symbolicSet_ |= N;
                 Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_;
                 
                 /* check if the initial states and the exclusion region states are winning */
                 BDD iw = X0s_[ab]->symbolicSet_ & (!(Zs_[ab]->symbolicSet_));
-                if (iw == ddmgr_->bddZero()) {
+                if (iw == ddmgr_->bddZero() && i>=2) {
                     /* check if all the exclusion region states are also winning */
 //                    BDD validZ = validZs_[ab]->symbolicSet_;
 //                    validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
@@ -1603,6 +1618,14 @@ namespace scots {
             checkMakeDir("Z");
             saveVec(finalZs_, "Z/Z");
             
+            /* save the transition systems */
+            checkMakeDir("T");
+            saveVec(Ts_,"T/T");
+            //debug purpose
+            checkMakeDir("TT");
+            saveVec(TTs_,"TT/T");
+            //debug end
+            
             /* the others get overwritten */
             checkMakeDir("plotting");
             Xs_[0]->writeToFile("plotting/X.bdd");
@@ -1950,6 +1973,9 @@ namespace scots {
                                 unsafeAt = x;
                                 return false;
                             }
+                        } else { /* the trajectory left the controller domain and is not in exclusion region as well */
+                            unsafeAt = x;
+                            return false;
                         }
                     }
                     /* add the current abstraction to the log */

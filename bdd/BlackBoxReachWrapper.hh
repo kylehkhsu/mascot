@@ -147,6 +147,9 @@ double find_abst(X_type x, U_type u,
                 cout << "Abstraction initialized with the specification.\n";
             /* do a simple multi-layered reachability (without further refinement) */
             abs->plainReach(p);
+            //debug
+            abs->saveFinalResult();
+            //debug end
             if (verbose>0)
                 cout << "Controller synthesis done.\n";
             /* if the abstract game is not winning, the distance remains 0 */

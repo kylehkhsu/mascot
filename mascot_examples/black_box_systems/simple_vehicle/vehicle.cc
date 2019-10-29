@@ -216,7 +216,7 @@ int main() {
     double etaU[dimU] = {0.2, 0.2};
     
     int nSubInt = 5;
-    int systemNSubInt = 10;
+    int systemNSubInt = 4;
     
     double etaX[dimX] = {0.3, 0.3};
     double tau = 0.25; /* must be an integer multiple of systemTau */
@@ -225,7 +225,7 @@ int main() {
     double etaRatio[dimX] = {2, 2};
     double tauRatio = 2; /* must be an integer */
     int p = 2;
-    int verbose = 1;
+    int verbose = 0;
     bool readTsFromFile = false;
     
     int numAbs = 4;
@@ -247,16 +247,16 @@ int main() {
     int seed = time(NULL);
     cout << "\nSeed used for the random number generator : " << seed << "\n\n";
     srand(seed);
-    srand(1568788662);
+//    srand(1568788662);
 //    srand(1568250847);
     /* problematic seeds */
     // 1567743385, 1567744613, 1567750636(distance=-1 bug)
     
     
     /* number of samples used */
-    int NN = 100;
+    int NN = 1000;
     /* number of tests */
-    int num_tests = 50;
+    int num_tests = 100;
     /* allowed distance between an abstract trajectory and the unsafe states for the controllers good for the abstraction but bad for the system */
 //    double allowedDistance = 0.15;
     X_type explRadius = {0.25,0.25};
