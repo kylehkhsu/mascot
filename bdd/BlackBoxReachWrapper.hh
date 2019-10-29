@@ -140,7 +140,7 @@ double find_abst(X_type x, U_type u,
             /* initialize the environment in the abstraction */
             bool flag = abs->initializeSpec(HO,ho,HG,hg,HI,hi);
             if (!flag) { /* ignore this environment */
-                abs->clear();
+                abs->clear_env();
                 continue;
             }
             if (verbose>0)
@@ -190,111 +190,13 @@ double find_abst(X_type x, U_type u,
                         /* print in red (the code 31) */
                         cout << "\033[31mEnvironment #" << e << "\033[0m\n";
                     }
-                    if (verbose>0) {
-                        cout << "System trajectory went to unsafe part at (";
-                        for (int i=0; i<dimX; i++) {
-                            cout << unsafeAt[i] << ",";
-                        }
-                        cout << "\b).\n";
-                    }
-                    /* add the problematic system trajectory to the abstraction */
-                    abs->addTrajectory(sys_log, explHorizon);
-                    cout << "\tProblematic trajectory now part of abstraction.\n";
-                    /* simulate the abstract trajectory and measure the minimum distance from the obstacles */
-                    abs_log.trajectory.push_back(sys_log.trajectory[0]);
-                    std::vector<std::vector<double>> hovec;
-                    vecArr2vecVec(ho,hovec);
-                    abs->simulateAbs(abs_log,hovec,distance);
-                    cout << "Distance of abstract trajectory from the unsafe states = " << distance << ".\n";
-                    //debug
-                    abs->writeVecToFile(abs_log.trajectory,"Figures/abs_traj.txt","clean");
-                    //debug end
-                    if (distance>spec) {
-                        /* Refine abstraction if unsafe until the specified accuracy is reached */
-                        //debug
-//                        checkMakeDir("T");
-//                        saveVec(abs_ref->Ts_, "T/T");
-                        //debug end
-                        while (1) {
-                            cout << "\tStarting a refinement loop to minimize the distance.\n";
-                            abs->clear();
-                            bool flag1 = abs->exploreAroundPoint(unsafeAt, explRadius, u, sys_post, radius_post);
-                            if (!flag1) { /* already explored upto the finest layer */
-                                cout << "\tNo more refinement possible.\n";
-                                break;
-                            }
-                            // debug
-//                            checkMakeDir("T");
-//                            saveVec(abs->Ts_, "T/T");
-                            //end
-                            /* even if the abstract game solving was good enough with the previous spec value, still then the abstract games need to be solved again, as the abstraction went finer during the spec computation */
-//                            spec_with_no_refinement = false;
-                            act_success_count[0]++;
-                            /* initialize distance; distance remains 0 if the abstract game with the refined abstraction fails */
-                            distance = 0;
-                            /* do a simple multi-layered reachability (without further refinement) */
-                            abs->initializeSpec(HO,ho,HG,hg,HI,hi);
-                            abs->plainReach(p);
-                            //debug
-//                            abs->saveFinalResult();
-                            //debug end
-                            if (!abs->isInitWinning()) { /* no controller exists for the abstraction */
-                                cout << "\tUpdated distance = 0\n";
-                                break;
-                            } else { /* there is a controller for the abstraction: system needs to be checked */
-                                unsafeAt.clear();
-                                /* simulate the system using the synthesized controller */
-                                /* use the old (problematic) initial state */
-                                std::vector<double> old_init = sys_log.trajectory[0];
-                                sys_log.abstraction_used.clear();
-                                sys_log.trajectory.clear();
-                                sys_log.strategy.clear();
-                                sys_log.trajectory.push_back(old_init);
-                                simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
-                                //debug
-                                abs->writeVecToFile(sys_log.trajectory,"Figures/sys_traj.txt","clean");
-                                //debug end
-                                if (unsafeAt.size()==0) {
-                                    if (verbose>0)
-                                        cout << "\tThe controller worked for the system as well.\n";
-                                    cout << "\tUpdated distance = 0\n";
-                                    break;
-                                } else { /* the controller failed to work on the system */
-                                    /* if the controller failed on the system, recompute distance and continue refining the abstraction around the point of failure, which is stored in the variable unsafeAt */
-                                    abs_log.abstraction_used.clear();
-                                    abs_log.trajectory.clear();
-                                    abs_log.strategy.clear();
-                                    abs_log.trajectory.push_back(sys_log.trajectory[0]);
-                                    abs->simulateAbs(abs_log,hovec,distance);
-                                    cout << "\tUpdated distance = " << distance << "\n";
-                                    //debug
-                                    abs->writeVecToFile(abs_log.trajectory,"Figures/abs_traj.txt","clean");
-                                    //debug end
-                                    /* if the distance after refinement became smaller than the current spec value, no need to refine further */
-                                    if (distance<=spec) {
-                                        break;
-                                    }
-                                    //debug
-        //                            checkMakeDir("T");
-        //                            saveVec(abs_ref->Ts_, "T/T");
-        //                            abs->saveFinalResult();
-                                    //debug end
-                                } /* end of else (controller failed on system) */
-                                /* discontinue if no more refinement is possible */
-//                                if (!flag1) {
-//    //                                cout << "Final distance = " << distance << "\n";
-//                                    break;
-//                                }
-                            } /* End of else (abs is winning) */
-                        } /* End of while loop */
-                    } /* End of if (distance > spec) */
+                    /* recursively refine the abstraction */
+                    distance = refine_recurse(abs,ho,hg,hi,sys_post,radius_post,x,u,unsafeAt,sys_log,abs_log,spec,explRadius,explHorizon,p);
                     
                     /* if spec is greater than spec_max, discontinue the process */
                     if (distance>spec_max) {
                         return -1;
-                    }
-                    /* update SPEC */
-                    if (distance>spec) {
+                    } else if (distance>spec) {
                         spec = distance;
                     }
                     
@@ -305,7 +207,7 @@ double find_abst(X_type x, U_type u,
                     }
                     if (verbose>0)
                         cout << "The controller worked for the system as well.\n";
-                } /* End of if (unsafeAt.size()==0) */
+                } /* End of if-else-block (unsafeAt.size()!=0) */
             } else { /* if the abstract initial states are not winning */
                 if (useColors)
                     cout << "Environment #" << e << "\n";
@@ -324,7 +226,8 @@ double find_abst(X_type x, U_type u,
             HG.clear();
             HI.clear();
             /* reset the controller synthesis related members of the abstraction object */
-            abs->clear();
+            abs->clear_env();
+            abs->clear_control();
             /* clear the sets used for trajectory simulation */
             unsafeAt.clear();
             sys_log.abstraction_used.clear();
@@ -370,7 +273,6 @@ double find_abst(X_type x, U_type u,
         double spec2 = spec + eps;
         /* iterate over the environments */
         for (int e=0; e<NN; e++) {
-            abs->clear();
             /* spawn environment */
             if (!useColors)
                 cout << "Environment #" << e << "\n";
@@ -470,7 +372,8 @@ double find_abst(X_type x, U_type u,
             break;
         }
         /* clear the controller related vaiables */
-        abs->clear();
+        abs->clear_env();
+        abs->clear_control();
 //        BlackBoxReach* abs_ref = new BlackBoxReach(*abs);
         /* store the current spec value variable for later comparison */
         spec_old = spec;
@@ -481,6 +384,102 @@ double find_abst(X_type x, U_type u,
 //        act_success_count = 0;
     } /* End of the big while loop over spec computation and game solving */
     return spec;
+}
+
+/*! Recursively refine the abstraction for a given specification */
+template<std::size_t SIZE_o, std::size_t SIZE_g, std::size_t SIZE_i, class sys_type, class rad_type, class X_type, class U_type, class L1, class L2>
+double refine_recurse(BlackBoxReach* abs,
+                      const std::vector<std::array<double,SIZE_o>> ho,
+                      const std::vector<std::array<double,SIZE_g>> hg,
+                      const std::vector<std::array<double,SIZE_i>> hi,
+                      const sys_type sys_post, const rad_type radius_post,
+                      const X_type x,
+                      const U_type u,
+                      std::vector<double>& unsafeAt,
+                      L1& sys_log, L2& abs_log,
+                      const double spec,
+                      const X_type explRadius, const double explHorizon, const int p) {
+    /* retrieve certain variables from the BlackBoxReach object */
+    int verbose = abs->verbose_;
+    int dimX = *abs->system_->dimX_;
+    if (verbose>0) {
+        cout << "System trajectory went to unsafe part at (";
+        for (int i=0; i<dimX; i++) {
+            cout << unsafeAt[i] << ",";
+        }
+        cout << "\b).\n";
+    }
+    /* initialize the return variable */
+    double distance;
+    /* save the transition BDDs of abstraction */
+    std::vector<SymbolicSet*> T_old = abs->Ts_;
+    /* add the problematic system trajectory to the abstraction */
+    abs->addTrajectory(sys_log, explHorizon);
+    cout << "\tProblematic trajectory now part of abstraction.\n";
+    bool new_addition = false;
+    for (int i=0; i<T_old.size(); i++) {
+        if (abs->Ts_[i]->symbolicSet_!=T_old[i]->symbolicSet_) {
+            new_addition = true;
+            break;
+        }
+    }
+    /* explore around the unsafe state */
+//    abs->clear();
+    bool new_exploration = abs->exploreAroundPoint(unsafeAt, explRadius, u, sys_post, radius_post);
+    if (!new_exploration) { /* already explored upto the finest layer */
+        cout << "\tNo more refinement possible.\n";
+//        return;
+    }
+//        /* not sure if needed */
+//        act_success_count[0]++;
+        /* do a simple multi-layered reachability (without further refinement) */
+//        abs->initializeSpec(HO,ho,HG,hg,HI,hi);
+    abs->clear_control();
+    abs->plainReach(p);
+    if (!abs->isInitWinning()) { /* no controller exists for the abstraction */
+        cout << "\tUpdated distance = 0\n";
+        distance = 0;
+        return distance;
+    } else {
+        /* there is a controller for the abstraction: system needs to be checked */
+        unsafeAt.clear();
+        /* simulate the system using the synthesized controller */
+        /* use the old (problematic) initial state */
+        std::vector<double> old_init = sys_log.trajectory[0];
+        sys_log.abstraction_used.clear();
+        sys_log.trajectory.clear();
+        sys_log.strategy.clear();
+        sys_log.trajectory.push_back(old_init);
+        simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
+        //debug
+        abs->writeVecToFile(sys_log.trajectory,"Figures/sys_traj.txt","clean");
+        //debug end
+        if (unsafeAt.size()==0) {
+            if (verbose>0)
+                cout << "\tThe controller worked for the system as well.\n";
+            cout << "\tUpdated distance = 0\n";
+            distance = 0;
+            return distance;
+        }
+    }
+    /* if the controller failed on the system, or no more exploration was possible, recompute distance and continue refining the abstraction around the point of failure, which is stored in the variable unsafeAt */
+    abs_log.abstraction_used.clear();
+    abs_log.trajectory.clear();
+    abs_log.strategy.clear();
+    abs_log.trajectory.push_back(sys_log.trajectory[0]);
+    std::vector<std::vector<double>> hovec;
+    vecArr2vecVec(ho,hovec);
+    abs->simulateAbs(abs_log,hovec,distance);
+    cout << "\tUpdated distance = " << distance << "\n";
+    //debug
+    abs->writeVecToFile(abs_log.trajectory,"Figures/abs_traj.txt","clean");
+    //debug end
+    /* if the distance after refinement became smaller than the current spec value, no need to refine further */
+    if (!new_exploration && !new_addition) {
+        return distance;
+    } else {
+        return refine_recurse(abs,ho,hg,hi,sys_post,radius_post,x,u,unsafeAt,sys_log,abs_log,spec,explRadius,explHorizon,p);
+    }
 }
 
 /*! Test the multi-layered abstraction with a number of randomly generated test environments from a given set of environments */
@@ -508,7 +507,7 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
         bool validEnv = false;
         while (!validEnv) {
             /* clear the controller and environment info */
-            abs->clear();
+            abs->clear_env();
             spawnO(HO,ho,verbose);
             spawnG(HG,hg,verbose);
             spawnI(HI,hi,verbose);

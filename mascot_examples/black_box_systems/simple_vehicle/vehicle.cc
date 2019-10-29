@@ -247,16 +247,16 @@ int main() {
     int seed = time(NULL);
     cout << "\nSeed used for the random number generator : " << seed << "\n\n";
     srand(seed);
-//    srand(1568788662);
+    srand(1572389026);
 //    srand(1568250847);
     /* problematic seeds */
     // 1567743385, 1567744613, 1567750636(distance=-1 bug)
     
     
     /* number of samples used */
-    int NN = 1000;
+    int NN = 200;
     /* number of tests */
-    int num_tests = 100;
+    int num_tests = 50;
     /* allowed distance between an abstract trajectory and the unsafe states for the controllers good for the abstraction but bad for the system */
 //    double allowedDistance = 0.15;
     X_type explRadius = {0.25,0.25};

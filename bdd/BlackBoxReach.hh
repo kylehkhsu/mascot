@@ -1520,7 +1520,7 @@ namespace scots {
         }
         
         /*! Clears sets related to the specification and controller synthesis */
-        void clear() {
+        void clear_env() {
             for (int i = 0; i < X0s_.size(); i++) {
                 X0s_[i]->clear();
             }
@@ -1530,14 +1530,18 @@ namespace scots {
             for (int i = 0; i < Es_.size(); i++) {
                 Es_[i]->clear();
             }
+            for (int i = 0; i < Gs_.size(); i++) {
+                Gs_[i]->clear();
+            }
+        }
+        
+        /*! Clears sets related to the controller synthesis */
+        void clear_control() {
             for (int i = 0; i < Zs_.size(); i++) {
                 Zs_[i]->clear();
             }
             for (int i = 0; i < Cs_.size(); i++) {
                 Cs_[i]->clear();
-            }
-            for (int i = 0; i < Gs_.size(); i++) {
-                Gs_[i]->clear();
             }
             for (int i = 0; i < validZs_.size(); i++) {
                 validZs_[i]->clear();
