@@ -1764,6 +1764,7 @@ namespace scots {
                     if (!getRandomMember(Ts_[ab]->setValuedMap(xu,xuind),xx)) {
                         return false;
                     }
+                    abs_log.abstraction_used.push_back(ab);
                     abs_log.trajectory.push_back(xx);
                     /* update the distacne */
                     /* obstacles are a collection of rectangles */

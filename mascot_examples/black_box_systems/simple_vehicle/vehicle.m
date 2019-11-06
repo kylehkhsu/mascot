@@ -79,10 +79,18 @@ switch mode
         savefig('Figures/problem');
         
     case 'O'
-        openfig('Figures/problem')
+        openfig('Figures/system')
         axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);
         for ii=2:numAbs
             Z = SymbolicSet(['O/O' num2str(ii) '.bdd']);
+            plotCells(Z,'fast','facecolor',cmap(ii,:));
+            pause
+        end
+    case 'E'
+        openfig('Figures/system')
+        axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);
+        for ii=2:numAbs
+            Z = SymbolicSet(['E/E' num2str(ii) '.bdd']);
             plotCells(Z,'fast','facecolor',cmap(ii,:));
             pause
         end

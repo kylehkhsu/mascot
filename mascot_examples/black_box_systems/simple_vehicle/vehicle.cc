@@ -139,7 +139,7 @@ auto spawnO = [](std::vector<std::array<double,SIZE_o*dimX>>& HO, std::vector<st
                 1, 0,
                 0,-1,
                 0, 1};
-            std::array<double,4> box1 = {-2.4, 2.5, -0.5*i, 0.5*(i+1)};
+            std::array<double,4> box1 = {-2.5, 3.0, -0.5*i, 0.5*(i+1)};
             ho.push_back(box1);
             HO.push_back(H);
             if (verbose>0)
@@ -158,7 +158,7 @@ auto spawnG = [](std::vector<std::array<double,SIZE_g*dimX>>& HG, std::vector<st
         1, 0,
         0,-1,
         0, 1};
-    double side = 1.95; /* length of the side of the goal */
+    double side = 0.7; /* length of the side of the goal */
     toss1 = rand() % 100; /* generate a random number between 0 to 99 */
     if (toss1<98) { /* with 98% probability, it is in [3,5] X [0,5] */
         /* randomly generate the lower left corner of the square goal */
@@ -218,8 +218,8 @@ int main() {
     int nSubInt = 5;
     int systemNSubInt = 4;
     
-    double etaX[dimX] = {0.3, 0.3};
-    double tau = 0.25; /* must be an integer multiple of systemTau */
+    double etaX[dimX] = {0.1, 0.1};
+    double tau = 0.08; /* must be an integer multiple of systemTau */
     double systemTau = 0.0005; /* time step for simulating the system trajectory */
     
     double etaRatio[dimX] = {2, 2};
@@ -247,8 +247,8 @@ int main() {
     int seed = time(NULL);
     cout << "\nSeed used for the random number generator : " << seed << "\n\n";
     srand(seed);
-    srand(1572389026);
-//    srand(1568250847);
+//    srand(1573011469);
+//    srand(1572389026);
     /* problematic seeds */
     // 1567743385, 1567744613, 1567750636(distance=-1 bug)
     

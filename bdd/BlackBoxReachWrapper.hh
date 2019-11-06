@@ -282,43 +282,48 @@ double find_abst(X_type x, U_type u,
             
             /* initialize the environment in the abstraction */
             bool flag = abs->initializeSpec(HO,ho,HG,hg,HI,hi,spec2);
-            if (!flag) /*ignore this specificaiton */
-                continue;
-            if (verbose>0)
-                cout << "Abstraction initialized with the specification.\n";
-            /* if this is not the fist environment, then assume that the environment is seen before */
+            
             bool newenv;
-            if (e==0) {
-                newenv = true;
-            } else {
-                newenv = false;
-            }
-            for (int i=0; i<ENV_HIST.size(); i++) {
-                /* check similarity in the obstacles in the finest layer */
-                if (abs->Os_[numAbs-1]->symbolicSet_!=ENV_HIST[i][0]->symbolicSet_) {
+            if (!flag) { /*ignore this specificaiton */
+                continue;
+            } else { /*use this specificaiton if it has not been seen before*/
+                if (e==0) {
                     newenv = true;
-                }
-                /* check similarity in the goals in the finest layer */
-                if (abs->Gs_[numAbs-1]->symbolicSet_!=ENV_HIST[i][1]->symbolicSet_) {
-                    newenv = true;
-                }
-                /* check similarity in the initial states in the finest layer */
-                if (abs->X0s_[numAbs-1]->symbolicSet_!=ENV_HIST[i][2]->symbolicSet_) {
-                    newenv = true;
+                } else { /* if this is not the fist environment, then assume that the environment is seen before */
+                    newenv = false;
+                    for (int i=0; i<ENV_HIST.size(); i++) {
+                        /* check similarity in the obstacles in the finest layer */
+                        if (abs->Os_[numAbs-1]->symbolicSet_!=ENV_HIST[i][0]->symbolicSet_) {
+                            newenv = true;
+                        } else {
+                            /* check similarity in the goals in the finest layer */
+                            if (abs->Gs_[numAbs-1]->symbolicSet_!=ENV_HIST[i][1]->symbolicSet_) {
+                                newenv = true;
+                            } else {
+                                /* check similarity in the initial states in the finest layer */
+                                if (abs->X0s_[numAbs-1]->symbolicSet_!=ENV_HIST[i][2]->symbolicSet_) {
+                                    newenv = true;
+                                }
+                            }
+                        }
+                        
+                        if (!newenv) /* similarity found */
+                            break;
+                        else if (i<ENV_HIST.size()-1) /* if this is not the last iteration of this for loop then reset newenv flag and continue with the next one */
+                            newenv = false;
+                    }
                 }
                 
-                if (!newenv) /* similarity found */
-                    break;
-                else if (i<ENV_HIST.size()-1) /* if this is not the last iteration of this for loop then reset newenv flag and continue with the next one */
-                    newenv = false;
+                /* if the envrionment is seen before, continue with the next one */
+                if (!newenv) {
+                    if (verbose>0)
+                        cout << "Environment seen before. Coninuing with the next one.\n";
+                    continue;
+                } else {
+                    unique_env_count++;
+                }
             }
-            /* if the envrionment is seen before, continue with the next one */
-            if (!newenv) {
-                if (verbose>0)
-                    cout << "Environment seen before. Coninuing with the next one.\n";
-                continue;
-            }
-            unique_env_count++;
+                      
             
             /* store the environment info in the list */
             SymbolicSet* O = new SymbolicSet(*abs->Os_[numAbs-1]);
@@ -329,6 +334,9 @@ double find_abst(X_type x, U_type u,
             
             /* perform a lazy reach-avoid abstraction refinement step */
             abs->onTheFlyReach(p, sys_post, radius_post, x, u);
+            // debug
+            abs->saveFinalResult();
+            //debug end
             /* print result of the abstraction refinement */
             if (abs->isInitWinning()) {
                 /* increment the success rate counter */
@@ -352,6 +360,9 @@ double find_abst(X_type x, U_type u,
             HO.clear();
             HG.clear();
             HI.clear();
+            /* clear the environments and the controllers */
+            abs->clear_env();
+            abs->clear_control();
         } /* End of for loop over the set of environments */
         if (unique_env_count==0) {
             cout << "\nSPEC value "<< spec <<" is too high. The multi-layered abstraction is too coarse. Consider recomputation with 1 more layer at the bottom.";
@@ -377,7 +388,7 @@ double find_abst(X_type x, U_type u,
 //        BlackBoxReach* abs_ref = new BlackBoxReach(*abs);
         /* store the current spec value variable for later comparison */
         spec_old = spec;
-//        spec = 0;
+        spec = 0;
         
         iter++;
 //        for (int l=0; l<dimX; l++)
@@ -544,7 +555,7 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
             std::vector<double> unsafeAt;
             simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
             // debug
-            abs->writeVecToFile(sys_log.trajectory,"Figures/sys_traj.txt","clean");
+            abs->saveFinalResult(); abs->writeVecToFile(sys_log.trajectory,"Figures/sys_traj.txt","clean");
             abs_log.trajectory.clear();
             abs_log.strategy.clear();
             abs_log.trajectory.push_back(sys_log.trajectory[0]);
@@ -591,6 +602,9 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
         HO.clear();
         HG.clear();
         HI.clear();
+        /* clear the controller and the environment */
+        abs->clear_env();
+        abs->clear_control();
         
         
         //        /* save synthesis results */
