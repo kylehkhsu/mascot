@@ -21,7 +21,7 @@
 
 #include "BlackBoxReach.hh"
 
-using namespace std;
+//using namespace std;
 using namespace scots;
 using namespace helper;
 
@@ -71,7 +71,7 @@ inline int size_of_array(T* arr) {
 }
 
 /*! Compute the multi-layered abstraction of the systemm. */
-template<class X_type, class U_type, class sys_type, class rad_type, class O_type, class G_type, class I_type, class HO_type, class HG_type, class HI_type, class ho_type, class hg_type, class hi_type>
+template<class X_type, class U_type, class sys_type, class rad_type , class O_type, class G_type, class I_type, class HO_type, class HG_type, class HI_type, class ho_type, class hg_type, class hi_type, class gen_init_type>
 double find_abst(X_type x, U_type u,
               sys_type sys_post, rad_type radius_post,
               double* lbX, double* ubX, double* lbU, double* ubU,
@@ -79,7 +79,7 @@ double find_abst(X_type x, U_type u,
               int numAbs, double* etaRatio, double tauRatio,
               O_type spawnO, G_type spawnG, I_type spawnI,
               HO_type HO, HG_type HG, HI_type HI,
-              ho_type ho, hg_type hg, hi_type hi,
+              ho_type ho, hg_type hg, hi_type hi, gen_init_type generateInitial,
               const int nSubInt, const int systemNSubInt, const int p,
               const int NN, const X_type explRadius, const double explHorizon, const double* reqd_success_rate, const double spec_max,
               bool readTsFromFile, bool useColors, const char* logfile, const int verbose=0) {
@@ -97,6 +97,9 @@ double find_abst(X_type x, U_type u,
     
     BlackBoxReach* abs= new BlackBoxReach(logfile,verbose);
     abs->initialize(&sys,systemTau,systemNSubInt);
+    // debug
+//    abs->Xs_[1]->printInfo(1);
+    // debug end
     if (readTsFromFile) {
         abs->loadTs();
     } else {
@@ -165,13 +168,11 @@ double find_abst(X_type x, U_type u,
                 /* pick a random initial point within the provided initial set which is outside the obstacles and the exclusion regions in the finest layer*/
                 std::vector<double> init;
                 while (1) {
-                    double toss1, toss2;
-                    toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
-                    toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
-                    init.push_back(toss1);
-                    init.push_back(toss2);
+                    generateInitial(init,hi);
                     if (abs->X0s_[*abs->system_->numAbs_-1]->isElement(init)) {
                         break;
+                    } else {
+                        init.clear();
                     }
                 }
                 

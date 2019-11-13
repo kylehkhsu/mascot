@@ -1,4 +1,4 @@
-function vehicle (mode, numAbs, controllers, spec)
+function drone (mode, numAbs, controllers, spec)
 
 % mascot path
 addpath(genpath('../../../'));
@@ -34,7 +34,7 @@ switch mode
         drawnow
 
         % load and draw state space
-        X = SymbolicSet('plotting/X.bdd');
+        X = SymbolicSet('plotting/X.bdd','projection',[1 2]);
         lb = X.first();
         ub = X.last();
         axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);
@@ -58,7 +58,7 @@ switch mode
         try
             E = SymbolicSet('plotting/E.bdd');
             plotCells(E,'fast','facecolor','b');
-            disp('Done plotting exlusion region')
+            disp('Done plotting exclusion region states')
         catch
             warning('Something wrong in exclusion set (possibly no points).\n');
         end
@@ -114,11 +114,11 @@ switch mode
             pause
         end
     case 'T'
-%         openfig('Figures/system')
+         openfig('Figures/system')
         axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);
         for ii=1:numAbs
             try
-                T = SymbolicSet(['T_backup_2000_spec=0_3/T' num2str(ii) '.bdd'],'projection',[1 2]);
+                T = SymbolicSet(['T/T' num2str(ii) '.bdd'],'projection',[1 2]);
                 plotCells(T,'fast','facecolor',cmap(ii,:));
                 pause
             catch

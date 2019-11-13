@@ -1,10 +1,11 @@
 #
 # compiler
 #
-#CC        = g++
-CC       	  = clang++
+CC        = g++
+#CC       	  = clang++
 #CXXFLAGS 		= -Wall -Wextra -std=c++11 -O3 -DNDEBUG
 CXXFLAGS 		= -Wall -Wextra -std=c++11 -Wfatal-errors -g
+#CXXFLAGS                = -Wall -Wextra -std=c++11 -g
 
 #
 # scots 
@@ -20,24 +21,12 @@ CUDDINC 		= -I$(CUDDPATH)/include -I$(CUDDPATH)/include/cudd
 CUDDLIBS		= -lcudd 
 CUDDLPATH   = -L$(CUDDPATH)/lib
 
-#
-# chrono
-#
-CHRONOPATH		= /usr/local/include
-CHRONOINC		= -I$(CHRONOPATH)/chrono_vehicle -I$(CHRONOPATH)/chrono_models/vehicle/sedan/ -I$(CHRONOPATH)/chrono/core/
-
-#
-# eigen
-#
-EIGENPATH		= /Users/Kaushik/Library/eigen/
-EIGENINC		= -I$(EIGENPATH)/
-
-TARGET = vehicle
+TARGET = drone
 
 all: $(TARGET)
 
 %.o:%.cc
-	$(CC) -c $(CXXFLAGS) $(CUDDINC) $(CHRONOINC) $(EIGENINC) $(SCOTSINC) $< -o $@
+	$(CC) -c $(CXXFLAGS) $(CUDDINC) $(SCOTSINC) $< -o $@
 
 $(TARGET): $(TARGET).o
 	$(CC) $(CXXFLAGS) -o $(TARGET) $(TARGET).o $(CUDDLPATH) $(CUDDLIBS)

@@ -1,12 +1,12 @@
 /*
- * vehicle.cc
+ * drone.cc
  *
- *  created on: 01.09.2019
+ *  created on: 07.11.2019
  *      author: kaushik
  */
 
 /*
- * simple unperturbed vehicle
+ * Quadcopter dynamics taken from the book https://www.kth.se/polopoly_fs/1.588039.1441112632!/Thesis%20KTH%20-%20Francesco%20Sabatino.pdf
  *
  */
 
@@ -24,8 +24,8 @@ using namespace scots;
 using namespace helper;
 
 
-#define dimX 2
-#define dimU 2
+#define dimX 12
+#define dimU 4
 
 /* data types for the ode solver */
 typedef std::array<double, dimX> X_type;
@@ -50,73 +50,130 @@ overload_set<F1, F2> overload(F1 f1, F2 f2)
 }
 
 /* we consider a sampled time unperturbed system  */
-auto  vehicle_post = overload
+auto  drone_post = overload
     (
         [](X_type &x, U_type &u, OdeSolver solver) -> void {
-            auto vehicle_ode = [](X_type &dxdt, const X_type &x, const U_type &u) -> void {
-                dxdt[0] = u[0];
-                dxdt[1] = u[1];
-                //debug
-        //        int r = rand()%10;
-        //        dxdt[0] = r+u[0];
-        //        dxdt[1] = r+u[1];
-                // debug end
+            /* hack to remove out-of-bound behaviors of the "hidden" states: remember the current state value */
+            X_type x_curr = x;
+            auto drone_ode = [](X_type &dxdt, X_type &x, const U_type &u) -> void {
+                /* parameters */
+                double m=1; /* in kg */
+                double g=9.81; /* m/s */
+                double b=54.2 * 1e-6; /* N/s/s */
+                double l=0.24; /* m */
+                double d=1.1*1e-6; /* Nm/s/s */
+                double I_x=8.1*1e-3; /* Nms^2 */
+                double I_y=8.1*1e-3; /* Nms^2 */
+                double I_z=14.2*1e-3; /* Nms^2 */
+                /* compute input forces and torques as function of the rotor speed (given by u) */
+                double f_t=b*(u[0]*u[0]+u[1]*u[1]+u[2]*u[2]+u[3]*u[3]);
+                double tau_x=b*l*(u[2]*u[2]-u[0]*u[0]);
+                double tau_y=b*l*(u[3]*u[3]-u[1]*u[1]);
+                double tau_z=d*(u[3]*u[3]+u[1]*u[1]-u[2]*u[2]-u[0]*u[0]);
+                /* the angles are always between 0 and 2*M_PI */
+                if (x[3]>2*M_PI) {
+                  double rem = fmod(x[3],2*M_PI);
+                  x[3] = rem;
+                }
+                if (x[3]<0) {
+                  double rem = fmod(-x[3],2*M_PI);
+                  x[3] = 2*M_PI - rem;
+                }
+                if (x[4]>2*M_PI) {
+                  double rem = fmod(x[4],2*M_PI);
+                  x[4] = rem;
+                }
+                if (x[4]<0) {
+                  double rem = fmod(-x[4],2*M_PI);
+                  x[4] = 2*M_PI - rem;
+                }
+                if (x[5]>2*M_PI) {
+                  double rem = fmod(x[5],2*M_PI);
+                  x[5] = rem;
+                }
+                if (x[5]<0) {
+                  double rem = fmod(-x[5],2*M_PI);
+                  x[5] = 2*M_PI - rem;
+                }
+                /* compute the derivative (eq. 2.25 in the book https://www.kth.se/polopoly_fs/1.588039.1441112632!/Thesis%20KTH%20-%20Francesco%20Sabatino.pdf) */
+                dxdt[0] = x[6];
+                dxdt[1] = x[7];
+                dxdt[2] = x[8];
+                dxdt[3] = x[10]*std::sin(x[5])/std::cos(x[4]) + x[11]*std::cos(x[5])/std::cos(x[4]);
+                dxdt[4] = x[10]*std::cos(x[5]) - x[11]*std::sin(x[5]);
+                dxdt[5] = x[9] + x[10]*std::sin(x[5])*std::tan(x[4]) + x[11]*std::cos(x[5])*std::tan(x[4]);
+                dxdt[6] =-1/m *(std::sin(x[5])*std::sin(x[3])+std::cos(x[5])*std::cos(x[3])*std::sin(x[4])) * f_t;
+                dxdt[7] =-1/m *(std::cos(x[3])*std::sin(x[5])-std::cos(x[5])*std::sin(x[3])*std::sin(x[4])) *f_t;
+                dxdt[8] =-1/m *std::cos(x[5])*std::cos(x[4])*f_t+g;
+                dxdt[9] =((I_y-I_z)/I_x)*x[10]*x[11] + 1/I_x*tau_x;
+                dxdt[10]=((I_z-I_x)/I_y)*x[9]*x[11] + 1/I_y*tau_y;
+                dxdt[11]=((I_x-I_y)/I_z)*x[9]*x[10] +1/I_z *tau_z;
             };
-            solver(vehicle_ode, x, u);
-            // simple sampled time test trajectory
-        //    x[0]+= u[0];
-        //    x[1]+=u[1];
+            solver(drone_ode, x, u);
+            /* this is a hack to ignore the out-of-bound behaviors of all the variables other than the first 3 state variables (X, Y, Z coordinates) */
+        for (int i=3; i<dimX; i++) {
+            x[i] = x_curr[i];
+        }
             
-            /* saturate around the bounding box [0,5] X [0,5] */
-//            double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
-            if (x[0]<0)
-                x[0]=0+eps;
-            if (x[0]>5)
-                x[0]=5-eps;
-            
-            if (x[1]<0)
-                x[1]=0+eps;
-            if (x[1]>5)
-                x[1]=5-eps;
         },
          [](X_type &x, U_type &u, OdeSolver solver, const std::vector<std::vector<double>> obs, std::vector<double>& unsafeAt) -> void {
-             auto vehicle_ode = [](X_type &dxdt, const X_type &x, const U_type &u) -> void {
-                 dxdt[0] = u[0];
-                 dxdt[1] = u[1];
-                 //debug
-                 //        int r = rand()%10;
-                 //        dxdt[0] = r+u[0];
-                 //        dxdt[1] = r+u[1];
-                 // debug end
+             auto drone_ode = [](X_type &dxdt, X_type &x, const U_type &u) -> void {
+                 /* parameters */
+                 double m=1; /* in kg */
+                 double g=9.81; /* m/s */
+                 double b=54.2 * 1e-6; /* N/s/s */
+                 double l=0.24; /* m */
+                 double d=1.1*1e-6; /* Nm/s/s */
+                 double I_x=8.1*1e-3; /* Nms^2 */
+                 double I_y=8.1*1e-3; /* Nms^2 */
+                 double I_z=14.2*1e-3; /* Nms^2 */
+                 /* compute input forces and torques as function of the rotor speed (given by u) */
+                 double f_t=b*(u[0]*u[0]+u[1]*u[1]+u[2]*u[2]+u[3]*u[3]);
+                 double tau_x=b*l*(u[2]*u[2]-u[0]*u[0]);
+                 double tau_y=b*l*(u[3]*u[3]-u[1]*u[1]);
+                 double tau_z=d*(u[3]*u[3]+u[1]*u[1]-u[2]*u[2]-u[0]*u[0]);
+                 /* the angles are always between 0 and 2*M_PI */
+                 if (x[3]>2*M_PI) {
+                   double rem = fmod(x[3],2*M_PI);
+                   x[3] = rem;
+                 }
+                 if (x[3]<0) {
+                   double rem = fmod(-x[3],2*M_PI);
+                   x[3] = 2*M_PI - rem;
+                 }
+                 if (x[4]>2*M_PI) {
+                   double rem = fmod(x[4],2*M_PI);
+                   x[4] = rem;
+                 }
+                 if (x[4]<0) {
+                   double rem = fmod(-x[4],2*M_PI);
+                   x[4] = 2*M_PI - rem;
+                 }
+                 if (x[5]>2*M_PI) {
+                   double rem = fmod(x[5],2*M_PI);
+                   x[5] = rem;
+                 }
+                 if (x[5]<0) {
+                   double rem = fmod(-x[5],2*M_PI);
+                   x[5] = 2*M_PI - rem;
+                 }
+                 /* compute the derivative (eq. 2.25 in the book https://www.kth.se/polopoly_fs/1.588039.1441112632!/Thesis%20KTH%20-%20Francesco%20Sabatino.pdf) */
+                 dxdt[0] = x[6];
+                 dxdt[1] = x[7];
+                 dxdt[2] = x[8];
+                 dxdt[3] = x[10]*std::sin(x[5])/std::cos(x[4]) + x[11]*std::cos(x[5])/std::cos(x[4]);
+                 dxdt[4] = x[10]*std::cos(x[5]) - x[11]*std::sin(x[5]);
+                 dxdt[5] = x[9] + x[10]*std::sin(x[5])*std::tan(x[4]) + x[11]*std::cos(x[5])*std::tan(x[4]);
+                 dxdt[6] =-1/m *(std::sin(x[5])*std::sin(x[3])+std::cos(x[5])*std::cos(x[3])*std::sin(x[4])) * f_t;
+                 dxdt[7] =-1/m *(std::cos(x[3])*std::sin(x[5])-std::cos(x[5])*std::sin(x[3])*std::sin(x[4])) *f_t;
+                 dxdt[8] =-1/m *std::cos(x[5])*std::cos(x[4])*f_t+g;
+                 dxdt[9] =((I_y-I_z)/I_x)*x[10]*x[11] + 1/I_x*tau_x;
+                 dxdt[10]=((I_z-I_x)/I_y)*x[9]*x[11] + 1/I_y*tau_y;
+                 dxdt[11]=((I_x-I_y)/I_z)*x[9]*x[10] +1/I_z *tau_z;
              };
-             solver(vehicle_ode, x, u, obs, unsafeAt);
-             // simple sampled time test trajectory
-             //    x[0]+= u[0];
-             //    x[1]+=u[1];
-             
-             /* saturate around the bounding box [0,5] X [0,5] */
-//             double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
-             if (x[0]<0)
-                 x[0]=0+eps;
-             if (x[0]>5)
-                 x[0]=5-eps;
-             
-             if (x[1]<0)
-                 x[1]=0+eps;
-             if (x[1]>5)
-                 x[1]=5-eps;
-             
-             if (unsafeAt.size()!=0) {
-                 if (unsafeAt[0]<0)
-                     unsafeAt[0]=0+eps;
-                 if (unsafeAt[0]>5)
-                     unsafeAt[0]=5-eps;
-                 
-                 if (unsafeAt[1]<0)
-                     unsafeAt[1]=0+eps;
-                 if (unsafeAt[1]>5)
-                     unsafeAt[1]=5-eps;
-             }
+             solver(drone_ode, x, u, obs, unsafeAt);
+            /* saturate all the states other than X, Y, Z to the bounding box*/
+        
          }
      );
 
@@ -124,21 +181,31 @@ auto  vehicle_post = overload
 auto radius_post = [](X_type &r, U_type &u, OdeSolver solver) -> void {
     r[0] = 0;
     r[1] = 0;
+    r[2] = 0;
+    r[3] = 0;
+    r[4] = 0;
+    r[5] = 0;
+    r[6] = 0;
+    r[7] = 0;
+    r[8] = 0;
+    r[9] = 0;
+    r[10] = 0;
+    r[11] = 0;
 };
 
 
 template<std::size_t SIZE_o>
 auto spawnO = [](std::vector<std::array<double,SIZE_o*dimX>>& HO, std::vector<std::array<double,SIZE_o>>& ho, int verbose=0) -> void {
-    /* pick a random set of obstacles in the region [2.4,2.5] X [0,5], modeled as number of thin boxes */
-    int p = 50;
+    /* pick a random set of obstacles in the X-Y axis region [2.4,2.5] X [0,5], modeled as number of thin boxes */
+    int p = 20;
     for (int i=0; i<10; i++) {
         int toss = rand() % 100; /* generate a random number between 0 to 99 */
         if (toss<p) { /* with probability 0.01*p, each obstacle is actually present */
             /* intialize the H arrays */
-            std::array<double,4*dimX> H={-1, 0,
-                1, 0,
-                0,-1,
-                0, 1};
+            std::array<double,4*dimX> H={-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                            0,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                            0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             std::array<double,4> box1 = {-2.5, 3.0, -0.5*i, 0.5*(i+1)};
             ho.push_back(box1);
             HO.push_back(H);
@@ -154,10 +221,10 @@ auto spawnG = [](std::vector<std::array<double,SIZE_g*dimX>>& HG, std::vector<st
     /* pick a random goal set */
     /* the single goal set is a square of fixed size placed anywhere in the band [0,2] X [0,5] U [3,5] X [0,5] with some probability distribution */
     /* intialize the H arrays */
-    std::array<double,4*dimX> H={-1, 0,
-        1, 0,
-        0,-1,
-        0, 1};
+    std::array<double,4*dimX> H={-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                    0,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     double side = 0.7; /* length of the side of the goal */
     toss1 = rand() % 100; /* generate a random number between 0 to 99 */
     if (toss1<98) { /* with 98% probability, it is in [3,5] X [0,5] */
@@ -179,10 +246,10 @@ template<std::size_t SIZE_i>
 auto spawnI = [](std::vector<std::array<double,4*dimX>>& HI, std::vector<std::array<double,SIZE_i>>& hi,int verbose=0) -> void {
     double toss1, toss2, toss3;
     /* intialize the H arrays */
-    std::array<double,4*dimX> H={-1, 0,
-        1, 0,
-        0,-1,
-        0, 1};
+    std::array<double,4*dimX> H={-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                    0,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     /* pick a random initial set */
     /* the initial state set is a small square of length side whose lower left corner is a random point in the region [0,2-side) X [0,5-side] U (3,5-side] X [0,5-side] */
     double side = 0.5;
@@ -202,30 +269,44 @@ auto spawnI = [](std::vector<std::array<double,4*dimX>>& HI, std::vector<std::ar
         cout << "Initial set: [" << -box3[0] << "," << box3[1] << "] X [" << -box3[2] << "," << box3[3] << "].\n";
 };
 
+/* generate a single random initial state */
+template<std::size_t SIZE_i>
+auto generateInitial = [](std::vector<double>& init, const std::vector<std::array<double,SIZE_i>> hi) -> void {
+    double toss1, toss2;
+    toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
+    toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
+    init.push_back(toss1);
+    init.push_back(toss2);
+    for (int i=2; i< dimX; i++) {
+        double x = eps;
+        init.push_back(x);
+    }
+};
+
 
 /****************************************************************************/
 /* main computation */
 /****************************************************************************/
 int main() {
 
-    double lbX[dimX] = {0, 0};
-    double ubX[dimX] = {5.0, 5.0};
+    double lbX[dimX] = {0, 0, 0, 0,0,0,-0.5,0,0,0,0,};
+    double ubX[dimX] = {5.0, 5.0, 5.0, 2*M_PI,2*M_PI,2*M_PI,1.0,1.0,1.0,0.1,0.1,0.1};
     
-    double lbU[dimU] = {-2.0, -2.0};
-    double ubU[dimU] = {2.0, 2.0};
-    double etaU[dimU] = {0.2, 0.2};
+    double lbU[dimU] = {0,0,0,0};
+    double ubU[dimU] = {300,300,300,300};
+    double etaU[dimU] = {50,50,50,50};
     
     int nSubInt = 5;
     int systemNSubInt = 4;
     
-    double etaX[dimX] = {0.1, 0.1};
-    double tau = 0.08; /* must be an integer multiple of systemTau */
+    double etaX[dimX] = {0.1, 0.1, 5.0, 2*M_PI, 2*M_PI, 2*M_PI, 1.0, 1.0, 1.0, 0.1, 0.1, 0.1};
+    double tau = 0.5; /* must be an integer multiple of systemTau */
     double systemTau = 0.0005; /* time step for simulating the system trajectory */
     
-    double etaRatio[dimX] = {2, 2};
+    double etaRatio[dimX] = {2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
     double tauRatio = 2; /* must be an integer */
     int p = 2;
-    int verbose = 0;
+    int verbose = 1;
     bool readTsFromFile = false;
     
     int numAbs = 4;
@@ -247,7 +328,7 @@ int main() {
     int seed = time(NULL);
     cout << "\nSeed used for the random number generator : " << seed << "\n\n";
     srand(seed);
-//    srand(1573011469);
+    srand(1573540980);
 //    srand(1572389026);
     /* problematic seeds */
     // 1567743385, 1567744613, 1567750636(distance=-1 bug)
@@ -259,7 +340,7 @@ int main() {
     int num_tests = 100;
     /* allowed distance between an abstract trajectory and the unsafe states for the controllers good for the abstraction but bad for the system */
 //    double allowedDistance = 0.15;
-    X_type explRadius = {0.25,0.25};
+    X_type explRadius = {0.25,0.25, eps, eps, eps, eps, eps, eps, eps, eps, eps, eps};
     /* exploration horizon in time units */
     double explHorizon = 1;
     double reqd_success_rate[2] = {0.02, 0.9}; /* when to stop: when the fraction of refinement to the total iteration in loop 1 is below reqd_success_rate[0], and the success rate in loop 2 is above reqd_success_rate[1]. */
@@ -281,7 +362,7 @@ int main() {
     std::vector<std::array<double,4>> hg;
     std::vector<std::array<double,4>> hi;
     
-    char logfile [] = "vehicle.log";
+    char logfile [] = "drone.log";
     double spec_final;
     TicToc timer;
     
@@ -289,13 +370,13 @@ int main() {
         timer.tic();
         while (numAbs<=10) {
             spec_final = find_abst(x, u,
-                                          vehicle_post, radius_post,
+                                          drone_post, radius_post,
                                           lbX, ubX, lbU, ubU,
                                           etaX, etaU, tau, systemTau,
                                           numAbs, etaRatio, tauRatio,
                                           spawnO<4>, spawnG<4>, spawnI<4>,
                                           HO, HG, HI,
-                                          ho, hg, hi,
+                                          ho, hg, hi, generateInitial<4>,
                                           nSubInt, systemNSubInt, p,
                                           NN, explRadius, explHorizon, reqd_success_rate, spec_max,
                                           readTsFromFile, useColors, logfile, verbose);
@@ -327,7 +408,7 @@ int main() {
     
     test_abstraction(abs, spec_final,
                      x, u,
-                     vehicle_post, radius_post,
+                     drone_post, radius_post,
                      spawnO<4>, spawnG<4>, spawnI<4>,
                      HO, HG, HI,
                      ho, hg, hi,
