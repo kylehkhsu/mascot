@@ -310,9 +310,11 @@ namespace scots {
             }
             for (int i=0; i < *system_->dimX_; i++) {
                 if (x[i] > system_->ubX_[i] || x[i] < system_->lbX_[i]) {
-                    std::ostringstream os;
-                    os << "Error: scots::BlackBoxReach::exploreAround(xarr): xarr is outside the state space.";
-                    throw std::invalid_argument(os.str().c_str());
+                    x[i]=std::min(std::max(x[i],system_->lbX_[i]+eps),system_->ubX_[i]-eps);
+                    cout << "Unsafe state outside the state space bounding box. So exploring around the boundary.\n";
+//                    std::ostringstream os;
+//                    os << "Error: scots::BlackBoxReach::exploreAround(xarr): xarr is outside the state space.";
+//                    throw std::invalid_argument(os.str().c_str());
                 }
             }
             /* find the current exploration level around x */
@@ -1301,10 +1303,10 @@ namespace scots {
          */
         void initializeSolvers(double systemTau, int systemNSubInt) {
             for (int i = 0; i < *system_->numAbs_; i++) {
-                OdeSolver* solver = new OdeSolver(*system_->dimX_, *system_->nSubInt_, *tau_[i]);
+                OdeSolver* solver = new OdeSolver(*system_->nSubInt_, *tau_[i]);
                 solvers_.push_back(solver);
             }
-            systemSolver_ = new OdeSolver(*system_->dimX_, systemNSubInt, systemTau);
+            systemSolver_ = new OdeSolver(systemNSubInt, systemTau);
             clog << "Initialized solvers.\n";
         }
         

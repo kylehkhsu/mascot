@@ -12,8 +12,6 @@
  * Fixed step size ode solver implementing a Runge Kutta scheme of order 4 */
 class OdeSolver {
 private:
-  /* dimension */
-  const double dim_;
   /* number of intermediate steps */
   const int nint_;
   /* intermidiate step size = tau_/nint_ */
@@ -28,7 +26,7 @@ public:
    * nint - number of intermediate steps
    * tau - sampling time
    */
-  OdeSolver(const int dim, const int nint, const double tau) : dim_(dim), nint_(nint), h_(tau/nint), tau_(tau) { }
+  OdeSolver(const int nint, const double tau) : nint_(nint), h_(tau/nint), tau_(tau) { }
 
   /* function: ()
    *
@@ -41,22 +39,22 @@ public:
   inline void operator()(RHS rhs, X &x, U &u) {
 		X k[4];
 		X tmp;
-
+        int dim=x.size();
 		for(int t=0; t<nint_; t++) {
 			rhs(k[0],x,u);
-			for(int i=0;i<dim_;i++)
+			for(int i=0;i<dim;i++)
 				tmp[i]=x[i]+h_/2*k[0][i];
 
 			rhs(k[1],tmp, u);
-			for(int i=0;i<dim_;i++)
+			for(int i=0;i<dim;i++)
 				tmp[i]=x[i]+h_/2*k[1][i];
 
 			rhs(k[2],tmp, u);
-			for(int i=0;i<dim_;i++)
+			for(int i=0;i<dim;i++)
 				tmp[i]=x[i]+h_*k[2][i];
 
 			rhs(k[3],tmp, u);
-			for(int i=0; i<dim_; i++)
+			for(int i=0; i<dim; i++)
 				x[i] = x[i] + (h_/6)*(k[0][i] + 2*k[1][i] + 2*k[2][i] + k[3][i]);
 		}
 	}
@@ -74,11 +72,12 @@ public:
     inline void operator()(RHS rhs, X &x, U &u, const std::vector<std::vector<T>> obstacles, std::vector<T>& unsafeAt) {
         X k[4];
         X tmp;
+        int dim = x.size();
         /* arrange the obstacles in suitable form */
         std::vector<std::vector<double>> lb,ub;
         for (int j=0; j<obstacles.size(); j++) {
             std::vector<double> l,u;
-            for (size_t k=0; k<dim_; k++) {
+            for (size_t k=0; k<dim; k++) {
                 l.push_back(-obstacles[j][2*k]);
                 u.push_back(obstacles[j][2*k+1]);
             }
@@ -89,19 +88,19 @@ public:
         bool col_flag = false;
         for(int t=0; t<nint_; t++) {
             rhs(k[0],x,u);
-            for(int i=0;i<dim_;i++)
+            for(int i=0;i<dim;i++)
                 tmp[i]=x[i]+h_/2*k[0][i];
             
             rhs(k[1],tmp, u);
-            for(int i=0;i<dim_;i++)
+            for(int i=0;i<dim;i++)
                 tmp[i]=x[i]+h_/2*k[1][i];
             
             rhs(k[2],tmp, u);
-            for(int i=0;i<dim_;i++)
+            for(int i=0;i<dim;i++)
                 tmp[i]=x[i]+h_*k[2][i];
             
             rhs(k[3],tmp, u);
-            for(int i=0; i<dim_; i++)
+            for(int i=0; i<dim; i++)
                 x[i] = x[i] + (h_/6)*(k[0][i] + 2*k[1][i] + 2*k[2][i] + k[3][i]);
             
             if (!col_flag) { /* not detected a collision yet */
@@ -110,7 +109,7 @@ public:
                 /* iterate over all obstacles (boxes) */
                 for (int j=0; j<obstacles.size(); j++) {
                     col_flag = true;
-                    for (int k=0; k<dim_; k++) {
+                    for (int k=0; k<dim; k++) {
                         if (x[k]<lb[j][k] || x[k]>ub[j][k]) {
                             col_flag = false;
                             break;
@@ -118,7 +117,7 @@ public:
                     }
                     if (col_flag) {
                         /* end collision check, but finish the computation up to tau */
-                        for (int i=0; i<dim_; i++) {
+                        for (int i=0; i<dim; i++) {
                             unsafeAt.push_back(x[i]);
                         }
                         break;
