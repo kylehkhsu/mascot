@@ -815,7 +815,7 @@ namespace scots {
             while (1) {
                 BDD cooperativePreZ = cooperativePre(Z, ab);
                 BDD N = cooperativePreZ & (!Z);
-                Z |= cooperativePreZ; // kaushik: added the union
+                Z = cooperativePreZ;
                 
                 if (i == p || N == ddmgr_->bddZero()) {
                     return Z;
