@@ -101,12 +101,12 @@ double find_abst(X_type x, U_type u,
 //    abs->Xs_[1]->printInfo(1);
     // debug end
     if (readTsFromFile) {
-        abs->loadTs();
+        abs->loadInitTs();
     } else {
         /* start with only coarse transitions along with the auxiliary exploration abstractions */
         abs->initializeAbstractionWithExplore(sys_post,radius_post,x,u);
-        checkMakeDir("T");
-        saveVec(abs->Ts_, "T/T");
+        checkMakeDir("T_init");
+        saveVec(abs->Ts_, "T_init/T");
         clog << "Wrote Ts_ to file.\n";
     }
     

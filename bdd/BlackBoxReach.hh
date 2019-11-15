@@ -1043,6 +1043,37 @@ namespace scots {
         template<std::size_t s1, std::size_t s2, std::size_t s3, std::size_t s4, std::size_t s5, std::size_t s6>
         bool initializeSpec(std::vector<std::array<double, s1>> HO, std::vector<std::array<double, s2>> ho, std::vector<std::array<double, s3>> HG, std::vector<std::array<double, s4>> hg, std::vector<std::array<double, s5>> HI, std::vector<std::array<double, s6>> hi, double distance) {
             /* initialize specification in the finest layer */
+            /* there is always an imaginary obstacle around the boundary of the state space (to combat the out-of-bound behaviors of the concrete systems)*/
+            double* HO_boundary = new double[2*(*system_->dimX_)*(*system_->dimX_)];
+            /* first fill HO_boundary with 0s */
+            for (int i=0; i<2*(*system_->dimX_)*(*system_->dimX_); i++)
+                HO_boundary[i]=0;
+            /* next, place the -1 and 1 (denoting hyperplanes) */
+            for (int i=0; i<(*system_->dimX_); i++) {
+                HO_boundary[i*2*(*system_->dimX_)+i]=-1;
+                HO_boundary[i*2*(*system_->dimX_)+i+(*system_->dimX_)]=1;
+            }
+            double* ho_boundary = new double[2*(*system_->dimX_)];
+            /* first make the whole state-space an obstacle */
+            for (int j=0; j<*system_->dimX_; j++) {
+                ho_boundary[2*j]=-system_->lbX_[j];
+                ho_boundary[2*j+1]=system_->ubX_[j];
+            }
+            Os_[*system_->numAbs_-1]->addPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary,OUTER);
+            //debug
+            saveFinalResult();
+            //debug end
+            /* next remove the inner part keeping eps distance from the boundary */
+            for (int j=0; j<*system_->dimX_; j++) {
+                ho_boundary[2*j]=-system_->lbX_[j]-eps;
+                ho_boundary[2*j+1]=system_->ubX_[j]-eps;
+            }
+            Os_[*system_->numAbs_-1]->remPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary,INNER);
+            delete[] HO_boundary;
+            delete[] ho_boundary;
+            //debug
+            saveFinalResult();
+            //debug end
             /* sanity check: # of obstacles */
             if (HO.size()!=ho.size()) {
                 std::ostringstream os;
@@ -1665,6 +1696,25 @@ namespace scots {
                     Ts_[i]->printInfo(1);
             }
             clog << "Ts_ read from file.\n";
+        }
+        /*! Reads transition relation BDDs from file and saves them into Ts_. */
+        void loadInitTs() {
+            for (int i = 0; i < *system_->numAbs_; i++) {
+                string Str = "T_init/T";
+                Str += std::to_string(i+1);
+                Str += ".bdd";
+                char Char[20];
+                size_t Length = Str.copy(Char, Str.length() + 1);
+                Char[Length] = '\0';
+                SymbolicSet T(*ddmgr_, Char);
+                Ts_[i]->symbolicSet_ = T.symbolicSet_;
+                TTs_[i]->symbolicSet_ = Ts_[i]->symbolicSet_.ExistAbstract(*notXUvars_[i]);
+                computedDs_[i]->symbolicSet_ |= Ts_[i]->symbolicSet_.ExistAbstract(*notXvars_[i]);
+                
+                if (verbose_>0)
+                    Ts_[i]->printInfo(1);
+            }
+            clog << "Initial Ts_ read from file.\n";
         }
         /*! Simulate an abstract controlled trajectory (resolve measurement related non-determinism and initial state non-determinism randomly), and simultaneously compute the shortest distance from the safe set boundary.
          input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively
