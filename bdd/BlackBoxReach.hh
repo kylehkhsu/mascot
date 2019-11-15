@@ -815,7 +815,7 @@ namespace scots {
             while (1) {
                 BDD cooperativePreZ = cooperativePre(Z, ab);
                 BDD N = cooperativePreZ & (!Z);
-                Z = cooperativePreZ;
+                Z |= cooperativePreZ; // kaushik: added the union
                 
                 if (i == p || N == ddmgr_->bddZero()) {
                     return Z;
@@ -1069,8 +1069,8 @@ namespace scots {
                 ho_boundary[2*j+1]=system_->ubX_[j]-eps;
             }
             Os_[*system_->numAbs_-1]->remPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary,INNER);
-            delete[] HO_boundary;
-            delete[] ho_boundary;
+//            delete[] HO_boundary;
+//            delete[] ho_boundary;
             //debug
             saveFinalResult();
             //debug end
@@ -1166,6 +1166,35 @@ namespace scots {
                 coarserOuter(X0s_[i-1],X0s_[i],i-1);
             }
             /* the exclusion regions are obstacles inflated by "distance" in the coarsest layer \ the obstacles in the respective layer (the subtraction will be done later in this method after the projections) */
+            /* First start with the boundary */
+//            double* HO_boundary = new double[2*(*system_->dimX_)*(*system_->dimX_)];
+            /* first fill HO_boundary with 0s */
+            for (int i=0; i<2*(*system_->dimX_)*(*system_->dimX_); i++)
+                HO_boundary[i]=0;
+            /* next, place the -1 and 1 (denoting hyperplanes) */
+            for (int i=0; i<(*system_->dimX_); i++) {
+                HO_boundary[i*2*(*system_->dimX_)+i]=-1;
+                HO_boundary[i*2*(*system_->dimX_)+i+(*system_->dimX_)]=1;
+            }
+//            double* ho_boundary = new double[2*(*system_->dimX_)];
+            /* first make the whole state-space an exclusion region */
+            for (int j=0; j<*system_->dimX_; j++) {
+                ho_boundary[2*j]=-system_->lbX_[j];
+                ho_boundary[2*j+1]=system_->ubX_[j];
+            }
+            Es_[0]->addPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary,OUTER);
+            //debug
+            saveFinalResult();
+            //debug end
+            /* next remove the inner part leaving a distance of spec from the boundary */
+            for (int j=0; j<*system_->dimX_; j++) {
+                ho_boundary[2*j]=-system_->lbX_[j]-distance-eps;
+                ho_boundary[2*j+1]=system_->ubX_[j]-distance-eps;
+            }
+            Es_[0]->remPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary,INNER);
+            delete[] HO_boundary;
+            delete[] ho_boundary;
+            /* next add the exclusion regions for the real obstacles */
             for (int i=0; i<HO.size(); i++) {
                 for (size_t j=0; j<ho[i].size(); j++) {
                     ho[i][j] += distance;
@@ -1826,6 +1855,18 @@ namespace scots {
                         lb1.push_back(xx[j]-(0.5*etaXs_[ab][j]));
                         ub1.push_back(xx[j]+(0.5*etaXs_[ab][j]));
                     }
+                    /* compute the minimum distance from the boundaries */
+                    for (int j=0; j<*system_->dimX_; j++) {
+                        double new_distance = std::min(lb1[j]-system_->lbX_[j], system_->ubX_[j]-ub1[j]);
+                        if (distance==-1) { /*first time this loop is entered */
+                            distance = new_distance;
+                        } else {
+                            if (new_distance<distance) {
+                                distance = new_distance;
+                                ab_with_min_dist = ab;
+                            }
+                        }
+                    }
                     /* iterate over all obstacles (boxes) */
                     for (size_t j=0; j<obstacles.size(); j++) {
                         /* arrange the inputs in suitable form */
@@ -1833,16 +1874,10 @@ namespace scots {
                             lb2.push_back(-obstacles[j][2*k]);
                             ub2.push_back(obstacles[j][2*k+1]);
                         }
-                        /* compute the distance */
-                        if (distance==-1) { /*first time this loop is entered */
-                            distance = computeDistance(lb1, ub1, lb2, ub2);
+                        double new_distance = computeDistance(lb1, ub1, lb2, ub2);
+                        if (new_distance<distance) {
+                            distance = new_distance;
                             ab_with_min_dist = ab;
-                        } else {
-                            double new_distance = computeDistance(lb1, ub1, lb2, ub2);
-                            if (new_distance<distance) {
-                                distance = new_distance;
-                                ab_with_min_dist = ab;
-                            }
                         }
                         lb2.clear();
                         ub2.clear();
