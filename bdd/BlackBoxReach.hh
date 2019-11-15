@@ -1726,7 +1726,7 @@ namespace scots {
             }
             clog << "Ts_ read from file.\n";
         }
-        /*! Reads transition relation BDDs from file and saves them into Ts_. */
+        /*! Reads transition relation BDDs from file stored in T_init/ and the auxiliary transitions from uT_init/. */
         void loadInitTs() {
             for (int i = 0; i < *system_->numAbs_; i++) {
                 string Str = "T_init/T";
@@ -1740,10 +1740,20 @@ namespace scots {
                 TTs_[i]->symbolicSet_ = Ts_[i]->symbolicSet_.ExistAbstract(*notXUvars_[i]);
                 computedDs_[i]->symbolicSet_ |= Ts_[i]->symbolicSet_.ExistAbstract(*notXvars_[i]);
                 
-                if (verbose_>0)
+                Str = "uT_init/uT";
+                Str += std::to_string(i+1);
+                Str += ".bdd";
+                Length = Str.copy(Char, Str.length() + 1);
+                Char[Length] = '\0';
+                SymbolicSet uT(*ddmgr_, Char);
+                uTs_[i]->symbolicSet_ = uT.symbolicSet_;
+                
+                if (verbose_>0) {
                     Ts_[i]->printInfo(1);
+                    uTs_[i]->printInfo(1);
+                }
             }
-            clog << "Initial Ts_ read from file.\n";
+            clog << "Initial Ts_ and uTs_ read from file.\n";
         }
         /*! Simulate an abstract controlled trajectory (resolve measurement related non-determinism and initial state non-determinism randomly), and simultaneously compute the shortest distance from the safe set boundary.
          input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively

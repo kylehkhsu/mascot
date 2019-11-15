@@ -108,6 +108,9 @@ double find_abst(X_type x, U_type u,
         checkMakeDir("T_init");
         saveVec(abs->Ts_, "T_init/T");
         clog << "Wrote Ts_ to file.\n";
+        checkMakeDir("uT_init");
+        saveVec(abs->uTs_, "uT_init/uT");
+        clog << "Wrote uTs_ to file.\n";
     }
     
     /* start with a fresh copy of the abstraction */

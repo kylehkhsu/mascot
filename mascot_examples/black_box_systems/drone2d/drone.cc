@@ -379,6 +379,7 @@ int main() {
     int p = 2;
     int verbose = 1;
     bool readTsFromFile = false;
+    bool onlyRunTest = false;
     
     int numAbs = 4;
     
@@ -406,7 +407,7 @@ int main() {
     
     
     /* number of samples used */
-    int NN = 200;
+    int NN = 10;
     /* number of tests */
     int num_tests = 100;
     /* allowed distance between an abstract trajectory and the unsafe states for the controllers good for the abstraction but bad for the system */
@@ -437,7 +438,7 @@ int main() {
     double spec_final;
     TicToc timer;
     
-    if (!readTsFromFile) {
+    if (!onlyRunTest) {
         timer.tic();
         while (numAbs<=10) {
             spec_final = find_abst(x, u,
