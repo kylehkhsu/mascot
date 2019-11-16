@@ -111,7 +111,7 @@ switch mode
         for ii=1:controllers
             Cdom = SymbolicSet(['C/C' num2str(ii) '.bdd'],'projection',[1 2]);
             plotCells(Cdom,'fast','facecolor',cmap(ii,:));
-            pause
+            pause(0.3)
         end
     case 'T'
          openfig('Figures/system')

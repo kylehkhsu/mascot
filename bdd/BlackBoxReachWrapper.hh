@@ -117,8 +117,8 @@ double find_abst(X_type x, U_type u,
 //    BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
     /* we keep a moving maximum */
     double spec = 0;
-    /* spec_old is the older value computed: at first it is set to -1. */
-    double spec_old = -1;
+    /* spec_old is the older value computed: at first it is set to same as spec. */
+    double spec_old = 0;
     /* initialize variables */
     double toss1, toss2, toss3;
     std::vector<double> unsafeAt;
@@ -128,6 +128,122 @@ double find_abst(X_type x, U_type u,
     int iter=1;
     while (1) {
         cout << "\033[1;4;34m\n\nIteration = "<< iter <<" \n\n\033[0m";
+        /************************************************************************/
+        /* Abstract game solving with refinement: Refinement of abstraction to maximize number of winning environments */
+        /************************************************************************/
+        cout << "\033[1;4;34mStarting abstraction refinement for environment satisfaction.\n\n\033[0m";
+        /* keep a history of the 'seen' environments */
+        std::vector<std::array<SymbolicSet*,3>> ENV_HIST;
+        /* initial abstraction */
+//        BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
+        int unique_env_count = 0; /* number of environments explored excluding duplicate cases */
+        act_success_count[1] = 0; /* reset the actual success count for solving the abstract game */
+        /* how far the environments are to be made conservative (no role for computing SPEC) */
+//        double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
+        double spec2 = spec + eps;
+        /* iterate over the environments */
+        for (int e=0; e<NN; e++) {
+            /* spawn environment */
+            if (!useColors)
+                cout << "Environment #" << e << "\n";
+            spawnO(HO,ho,verbose);
+            spawnG(HG,hg,verbose);
+            spawnI(HI,hi,verbose);
+            
+            /* initialize the environment in the abstraction */
+            bool flag = abs->initializeSpec(HO,ho,HG,hg,HI,hi,spec2);
+            
+            bool newenv;
+            if (!flag) { /*ignore this specificaiton */
+                continue;
+            } else { /*use this specificaiton if it has not been seen before*/
+                if (e==0) {
+                    newenv = true;
+                } else { /* if this is not the fist environment, then assume that the environment is seen before */
+                    newenv = false;
+                    for (int i=0; i<ENV_HIST.size(); i++) {
+                        /* check similarity in the obstacles in the finest layer */
+                        if (abs->Os_[numAbs-1]->symbolicSet_!=ENV_HIST[i][0]->symbolicSet_) {
+                            newenv = true;
+                        } else {
+                            /* check similarity in the goals in the finest layer */
+                            if (abs->Gs_[numAbs-1]->symbolicSet_!=ENV_HIST[i][1]->symbolicSet_) {
+                                newenv = true;
+                            } else {
+                                /* check similarity in the initial states in the finest layer */
+                                if (abs->X0s_[numAbs-1]->symbolicSet_!=ENV_HIST[i][2]->symbolicSet_) {
+                                    newenv = true;
+                                }
+                            }
+                        }
+                        
+                        if (!newenv) /* similarity found */
+                            break;
+                        else if (i<ENV_HIST.size()-1) /* if this is not the last iteration of this for loop then reset newenv flag and continue with the next one */
+                            newenv = false;
+                    }
+                }
+                
+                /* if the envrionment is seen before, continue with the next one */
+                if (!newenv) {
+                    if (verbose>0)
+                        cout << "Environment seen before. Coninuing with the next one.\n";
+                    continue;
+                } else {
+                    unique_env_count++;
+                }
+            }
+                      
+            
+            /* store the environment info in the list */
+            SymbolicSet* O = new SymbolicSet(*abs->Os_[numAbs-1]);
+            SymbolicSet* G = new SymbolicSet(*abs->Gs_[numAbs-1]);
+            SymbolicSet* X0 = new SymbolicSet(*abs->X0s_[numAbs-1]);
+            std::array<SymbolicSet*,3> arr = { O, G, X0};
+            ENV_HIST.push_back(arr);
+            
+            /* perform a lazy reach-avoid abstraction refinement step */
+            abs->onTheFlyReach(p, sys_post, radius_post, x, u);
+            // debug
+            abs->saveFinalResult();
+            //debug end
+            /* print result of the abstraction refinement */
+            if (abs->isInitWinning()) {
+                /* increment the success rate counter */
+                act_success_count[1]++;
+                if (useColors)
+                /* print in green (the code 32) */
+                    cout << "\033[32mEnvironment #" << e << "\033[0m\n";
+                if (verbose>0)
+                    cout << "The environment is now winning.\n";
+            } else {
+                if (useColors)
+                    cout << "Environment #" << e << "\n";
+                if (verbose>0)
+                    cout << "The environment was not winnable.\n";
+            }
+            
+            /* clear the specification sets */
+            ho.clear();
+            hg.clear();
+            hi.clear();
+            HO.clear();
+            HG.clear();
+            HI.clear();
+            /* clear the environments and the controllers */
+            abs->clear_env();
+            abs->clear_control();
+        } /* End of for loop over the set of environments */
+        if (unique_env_count==0) {
+            cout << "\nSPEC value "<< spec <<" is too high. The multi-layered abstraction is too coarse. Consider recomputation with 1 more layer at the bottom.";
+            return (-1);
+        }
+        if ((double)act_success_count[1]/unique_env_count > reqd_success_rate[1]) {
+            cout << "\nTarget precision reached.";
+//            break;
+            /* the computation is finished, provided the SPEC value doesn't increase */
+            reqd_success_rate_reached = true;
+        }
         /*************************************************************/
         /* **** Computation of SPEC with abstraction refinement **** */
         /*************************************************************/
@@ -262,122 +378,7 @@ double find_abst(X_type x, U_type u,
 //        saveVec(abs->Ts_, "T/T");
         //debug end
         
-        /************************************************************************/
-        /* Abstract game solving with refinement: Refinement of abstraction to maximize number of winning environments */
-        /************************************************************************/
-        cout << "\033[1;4;34mStarting abstraction refinement for environment satisfaction.\n\n\033[0m";
-        /* keep a history of the 'seen' environments */
-        std::vector<std::array<SymbolicSet*,3>> ENV_HIST;
-        /* initial abstraction */
-//        BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
-        int unique_env_count = 0; /* number of environments explored excluding duplicate cases */
-        act_success_count[1] = 0; /* reset the actual success count for solving the abstract game */
-        /* how far the environments are to be made conservative (no role for computing SPEC) */
-//        double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
-        double spec2 = spec + eps;
-        /* iterate over the environments */
-        for (int e=0; e<NN; e++) {
-            /* spawn environment */
-            if (!useColors)
-                cout << "Environment #" << e << "\n";
-            spawnO(HO,ho,verbose);
-            spawnG(HG,hg,verbose);
-            spawnI(HI,hi,verbose);
-            
-            /* initialize the environment in the abstraction */
-            bool flag = abs->initializeSpec(HO,ho,HG,hg,HI,hi,spec2);
-            
-            bool newenv;
-            if (!flag) { /*ignore this specificaiton */
-                continue;
-            } else { /*use this specificaiton if it has not been seen before*/
-                if (e==0) {
-                    newenv = true;
-                } else { /* if this is not the fist environment, then assume that the environment is seen before */
-                    newenv = false;
-                    for (int i=0; i<ENV_HIST.size(); i++) {
-                        /* check similarity in the obstacles in the finest layer */
-                        if (abs->Os_[numAbs-1]->symbolicSet_!=ENV_HIST[i][0]->symbolicSet_) {
-                            newenv = true;
-                        } else {
-                            /* check similarity in the goals in the finest layer */
-                            if (abs->Gs_[numAbs-1]->symbolicSet_!=ENV_HIST[i][1]->symbolicSet_) {
-                                newenv = true;
-                            } else {
-                                /* check similarity in the initial states in the finest layer */
-                                if (abs->X0s_[numAbs-1]->symbolicSet_!=ENV_HIST[i][2]->symbolicSet_) {
-                                    newenv = true;
-                                }
-                            }
-                        }
-                        
-                        if (!newenv) /* similarity found */
-                            break;
-                        else if (i<ENV_HIST.size()-1) /* if this is not the last iteration of this for loop then reset newenv flag and continue with the next one */
-                            newenv = false;
-                    }
-                }
-                
-                /* if the envrionment is seen before, continue with the next one */
-                if (!newenv) {
-                    if (verbose>0)
-                        cout << "Environment seen before. Coninuing with the next one.\n";
-                    continue;
-                } else {
-                    unique_env_count++;
-                }
-            }
-                      
-            
-            /* store the environment info in the list */
-            SymbolicSet* O = new SymbolicSet(*abs->Os_[numAbs-1]);
-            SymbolicSet* G = new SymbolicSet(*abs->Gs_[numAbs-1]);
-            SymbolicSet* X0 = new SymbolicSet(*abs->X0s_[numAbs-1]);
-            std::array<SymbolicSet*,3> arr = { O, G, X0};
-            ENV_HIST.push_back(arr);
-            
-            /* perform a lazy reach-avoid abstraction refinement step */
-            abs->onTheFlyReach(p, sys_post, radius_post, x, u);
-            // debug
-            abs->saveFinalResult();
-            //debug end
-            /* print result of the abstraction refinement */
-            if (abs->isInitWinning()) {
-                /* increment the success rate counter */
-                act_success_count[1]++;
-                if (useColors)
-                /* print in green (the code 32) */
-                    cout << "\033[32mEnvironment #" << e << "\033[0m\n";
-                if (verbose>0)
-                    cout << "The environment is now winning.\n";
-            } else {
-                if (useColors)
-                    cout << "Environment #" << e << "\n";
-                if (verbose>0)
-                    cout << "The environment was not winnable.\n";
-            }
-            
-            /* clear the specification sets */
-            ho.clear();
-            hg.clear();
-            hi.clear();
-            HO.clear();
-            HG.clear();
-            HI.clear();
-            /* clear the environments and the controllers */
-            abs->clear_env();
-            abs->clear_control();
-        } /* End of for loop over the set of environments */
-        if (unique_env_count==0) {
-            cout << "\nSPEC value "<< spec <<" is too high. The multi-layered abstraction is too coarse. Consider recomputation with 1 more layer at the bottom.";
-            return (-1);
-        }
-        if ((double)act_success_count[1]/unique_env_count > reqd_success_rate[1]) {
-            cout << "\nTarget precision reached.";
-//            break;
-            /* the computation is finished, provided the SPEC value doesn't increase */
-            reqd_success_rate_reached = true;
-        }
+
         if (abs->Ts_[numAbs-1]->symbolicSet_==abs->ddmgr_->bddOne()) {
             cout << "\nNo more refinement possible.";
             /* write outputs to files */
@@ -392,7 +393,7 @@ double find_abst(X_type x, U_type u,
 //        BlackBoxReach* abs_ref = new BlackBoxReach(*abs);
         /* store the current spec value variable for later comparison */
         spec_old = spec;
-        spec = 0;
+//        spec = 0;
         
         iter++;
 //        for (int l=0; l<dimX; l++)

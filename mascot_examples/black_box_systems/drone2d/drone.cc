@@ -381,7 +381,7 @@ int main() {
     bool readTsFromFile = false;
     bool onlyRunTest = false;
     
-    int numAbs = 4;
+    int numAbs = 3;
     
     /* setup colors for printing result */
     bool useColors = true; /* colored output not compatible with verbose > 0 so far */
