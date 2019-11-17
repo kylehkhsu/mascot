@@ -157,7 +157,7 @@ double find_abst(X_type x, U_type u,
             if (!flag) { /*ignore this specificaiton */
                 continue;
             } else { /*use this specificaiton if it has not been seen before*/
-                if (e==0) {
+                if (ENV_HIST.size()==0) {
                     newenv = true;
                 } else { /* if this is not the fist environment, then assume that the environment is seen before */
                     newenv = false;
