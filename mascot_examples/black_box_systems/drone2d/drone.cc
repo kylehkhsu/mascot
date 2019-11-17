@@ -378,7 +378,7 @@ int main() {
     double tauRatio = 2; /* must be an integer */
     int p = 2;
     int verbose = 1;
-    bool readTsFromFile = false;
+    bool readTsFromFile = true;
     bool onlyRunTest = false;
     
     int numAbs = 3;

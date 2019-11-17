@@ -8,7 +8,7 @@
  */
 
 /*
- * A wrapper function to set up the task of black box abstr refinement
+ * A set of wrapper functions to set up the task of black box abstr refinement
  *
  */
 

@@ -19,7 +19,7 @@ using namespace helper;
 
 namespace scots {
     
-    enum ReachResult {CONVERGEDVALID, CONVERGEDINVALID, NOTCONVERGED, INITWINNING};
+    enum ReachResult {CONVERGEDVALID, CONVERGEDINVALID, NOTCONVERGED, WINNING};
     
     class BlackBoxReach {
     public:
@@ -406,7 +406,7 @@ namespace scots {
             else {
                 result = reach(ab, m_);
             }
-            if (result == INITWINNING) {
+            if (result == WINNING) {
                 clog << "result: all initial states and the exclusion regions states are winning\n";
                 if (verbose_>0) {
                     cout << "result: all initial states and the exclusion region states are winning.\n";
@@ -432,7 +432,7 @@ namespace scots {
             }
             
             /* return if all the initial state and the exclusion region states are winning or not */
-            if (result == INITWINNING)
+            if (result == WINNING)
                 return;
             
             if (result != NOTCONVERGED) {
@@ -523,10 +523,10 @@ namespace scots {
                 result = reach(ab, m_);
                 synTime_ += timer.toc();
             }
-            if (result == INITWINNING) {
-                clog << "result: all initial states and the exclusion regions states are winning\n";
+            if (result == WINNING) {
+                clog << "result: all the initial states and the exclusion regions states are winning\n";
                 if (verbose_>0) {
-                    cout << "result: all initial states and the exclusion region states are winning\n";
+                    cout << "result: all the initial states and the exclusion region states are winning\n";
                 }
             }
             if (result == CONVERGEDVALID) {
@@ -562,7 +562,7 @@ namespace scots {
             }
             
             /* retrun if all the intitial states and all the exclusion region states are winning */
-            if (result == INITWINNING) {
+            if (result == WINNING) {
                 return;
             }
             if (result != NOTCONVERGED) { // ab = 0 always converges
@@ -780,10 +780,10 @@ namespace scots {
                     /* restore the validZs_[ab] anyway, as they are going to be updated later */
                     if (isExclusionWinning(ab)) {
 //                        validZs_[ab]->symbolicSet_ = validZ;
-                        clog << "All exclusion region states are winning. \n";
+                        clog << "All initial and exclusion region states are winning. \n";
                         if (verbose_>0)
-                            cout << "All exclusion region states are winning. \n";
-                        return INITWINNING;
+                            cout << "All initial and exclusion region states are winning. \n";
+                        return WINNING;
                     } else {
 //                        validZs_[ab]->symbolicSet_ = validZ;
                     }
@@ -2128,17 +2128,17 @@ namespace scots {
             }
             return true;
         }
-        /* check if the initial states and the exclusion region states are winning or not */
+        /* check if the initial states are winning or not */
         /* NOTE: the initial states already exclude the intersection with the obstacles and the exclusion regions */
         bool isInitWinning() {
             BDD iw = X0s_[*system_->numAbs_-1]->symbolicSet_ & (!validZs_[*system_->numAbs_-1]->symbolicSet_);
             /* new: also check intersection with exclusion zone */
             
             if (iw==ddmgr_->bddZero()) {
-                if (isExclusionWinning(0))
-                    return true;
+                return true;
+            } else {
+                return false;
             }
-            return false;
         }
         /* saves a vector of arrays or vectors in a text file in matlab reachable format */
         template<class T>
