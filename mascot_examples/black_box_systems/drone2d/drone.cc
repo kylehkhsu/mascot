@@ -365,23 +365,23 @@ int main() {
     
     double lbU[dimU] = {0,0,0,0};
     double ubU[dimU] = {300,300,300,300};
-    double etaU[dimU] = {50,50,50,50};
+    double etaU[dimU] = {60,60,60,60};
     
     int nSubInt = 5;
     int systemNSubInt = 4;
     
-    double etaX[dimX] = {0.1, 0.1};
-    double tau = 0.1; /* must be an integer multiple of systemTau */
+    double etaX[dimX] = {0.2, 0.2};
+    double tau = 0.2; /* must be an integer multiple of systemTau */
     double systemTau = 0.0005; /* time step for simulating the system trajectory */
     
     double etaRatio[dimX] = {2, 2};
     double tauRatio = 2; /* must be an integer */
     int p = 2;
     int verbose = 1;
-    bool readTsFromFile = true;
+    bool readTsFromFile = false;
     bool onlyRunTest = false;
     
-    int numAbs = 3;
+    int numAbs = 5;
     
     /* setup colors for printing result */
     bool useColors = true; /* colored output not compatible with verbose > 0 so far */
@@ -400,19 +400,19 @@ int main() {
     int seed = time(NULL);
     cout << "\nSeed used for the random number generator : " << seed << "\n\n";
     srand(seed);
-    srand(1573540980);
+//    srand(1573540980);
 //    srand(1572389026);
     /* problematic seeds */
     // 1567743385, 1567744613, 1567750636(distance=-1 bug)
     
     
     /* number of samples used */
-    int NN = 10;
+    int NN = 200;
     /* number of tests */
     int num_tests = 100;
     /* allowed distance between an abstract trajectory and the unsafe states for the controllers good for the abstraction but bad for the system */
 //    double allowedDistance = 0.15;
-    X_type explRadius = {0.25,0.25};
+    X_type explRadius = {0.2,0.2};
     /* exploration horizon in time units */
     double explHorizon = 1;
     double reqd_success_rate[2] = {0.02, 0.9}; /* when to stop: when the fraction of refinement to the total iteration in loop 1 is below reqd_success_rate[0], and the success rate in loop 2 is above reqd_success_rate[1]. */
@@ -440,7 +440,7 @@ int main() {
     
     if (!onlyRunTest) {
         timer.tic();
-        while (numAbs<=10) {
+        while (numAbs<=5) {
             spec_final = find_abst(x, u,
                                           drone_post, radius_post,
                                           lbX, ubX, lbU, ubU,
