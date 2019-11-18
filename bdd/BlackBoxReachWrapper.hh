@@ -144,15 +144,31 @@ double find_abst(X_type x, U_type u,
         /* how far the environments are to be made conservative (no role for computing SPEC) */
 //        double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
         double spec2 = spec + eps;
-        /* iterate over the environments */
+
+        /* create all NN number of separate BlackBoxReach objects with the same variables as abs */
+//        BlackBoxReach** abs_copies= new BlackBoxReach*[NN];
+        std::vector<BlackBoxReach*> abs_copies;
+        for (int e=0; e<NN; e++) {
+            BlackBoxReach* abs_copy = new BlackBoxReach(*abs);
+//            abs_copies[e] = abs_copy;
+            abs_copies.push_back(abs_copy);
+        }
 #pragma omp parallel
         {
-#pragma omp for \
+#pragma omp parallel for \
 schedule(dynamic, CHUNK_SIZE) \
-default(none) shared(abs,ENV_HIST)
+shared(abs,ENV_HIST,spec2,unique_env_count) private(HO,HG,HI,ho,hg,hi)
+        /* iterate over the environments */
         for (int e=0; e<NN; e++) {
-            /* create a private copy of the abstraction */
-            BlackBoxReach abs_private(abs);
+            BlackBoxReach* abs_curr;
+#pragma omp critical (get_abs_copy)
+            {
+                abs_curr = abs_copies.back();
+                abs_copies.pop_back();
+            }
+            if (verbose>=0) {
+                std::cout << "Starting computation for environment: " << e << ".\n";
+            }
             /* spawn environment */
             if (!useColors)
                 cout << "Environment #" << e << "\n";
@@ -161,7 +177,9 @@ default(none) shared(abs,ENV_HIST)
             spawnI(HI,hi,verbose);
             
             /* initialize the environment in the abstraction */
-            bool flag = abs_private->initializeSpec(HO,ho,HG,hg,HI,hi,spec2);
+            bool flag;
+//#pragma omp critical (initialization)
+            flag = abs_curr->initializeSpec(HO,ho,HG,hg,HI,hi,spec2);
             
             bool newenv;
             if (!flag) { /*ignore this specificaiton */
@@ -173,15 +191,15 @@ default(none) shared(abs,ENV_HIST)
                     newenv = false;
                     for (int i=0; i<ENV_HIST.size(); i++) {
                         /* check similarity in the obstacles in the finest layer */
-                        if (abs_private->Os_[numAbs-1]->symbolicSet_!=ENV_HIST[i][0]->symbolicSet_) {
+                        if (abs_curr->Os_[numAbs-1]->symbolicSet_!=ENV_HIST[i][0]->symbolicSet_) {
                             newenv = true;
                         } else {
                             /* check similarity in the goals in the finest layer */
-                            if (abs_private->Gs_[numAbs-1]->symbolicSet_!=ENV_HIST[i][1]->symbolicSet_) {
+                            if (abs_curr->Gs_[numAbs-1]->symbolicSet_!=ENV_HIST[i][1]->symbolicSet_) {
                                 newenv = true;
                             } else {
                                 /* check similarity in the initial states in the finest layer */
-                                if (abs_private->X0s_[numAbs-1]->symbolicSet_!=ENV_HIST[i][2]->symbolicSet_) {
+                                if (abs_curr->X0s_[numAbs-1]->symbolicSet_!=ENV_HIST[i][2]->symbolicSet_) {
                                     newenv = true;
                                 }
                             }
@@ -200,26 +218,27 @@ default(none) shared(abs,ENV_HIST)
                         cout << "Environment seen before. Coninuing with the next one.\n";
                     continue;
                 } else {
+#pragma omp critical (unique_env_counter_inc)
                     unique_env_count++;
                 }
             }
                       
             
             /* store the environment info in the list */
-            SymbolicSet* O = new SymbolicSet(*abs_private->Os_[numAbs-1]);
-            SymbolicSet* G = new SymbolicSet(*abs_private->Gs_[numAbs-1]);
-            SymbolicSet* X0 = new SymbolicSet(*abs_private->X0s_[numAbs-1]);
+            SymbolicSet* O = new SymbolicSet(*abs_curr->Os_[numAbs-1]);
+            SymbolicSet* G = new SymbolicSet(*abs_curr->Gs_[numAbs-1]);
+            SymbolicSet* X0 = new SymbolicSet(*abs_curr->X0s_[numAbs-1]);
             std::array<SymbolicSet*,3> arr = { O, G, X0};
-#pragma omp critical
+#pragma omp critical (push_new_env)
             ENV_HIST.push_back(arr);
             
             /* perform a lazy reach-avoid abstraction refinement step */
-            abs_private->onTheFlyReach(p, sys_post, radius_post, x, u);
+            abs_curr->onTheFlyReach(p, sys_post, radius_post, x, u);
             // debug
-            abs_private->saveFinalResult();
+            abs_curr->saveFinalResult();
             //debug end
             /* print result of the abstraction refinement */
-            if (abs_private->isInitWinning()) {
+            if (abs_curr->isInitWinning()) {
                 /* increment the success rate counter */
                 act_success_count[1]++;
                 if (useColors)
@@ -242,19 +261,20 @@ default(none) shared(abs,ENV_HIST)
             HG.clear();
             HI.clear();
             /* clear the environments and the controllers */
-            abs_private->clear_env();
-            abs_private->clear_control();
+            abs_curr->clear_env();
+            abs_curr->clear_control();
             /* update the abstraction transition relations */
-#pragma omp critical
+#pragma omp critical (update_transitions)
             {
-            for (int i=0; i<*system_->numAbs_; i++) {
-                abs->Ts_[i]->symbolicSet_=abs_private->Ts_[i]->symbolicSet_;
-                abs->TTs_[i]->symbolicSet_=abs_private->TTs_[i]->symbolicSet_;
-                abs->computedDs_[i]->symbolicSet_=abs_private->computedDs_[i]->symbolicSet_;
+            for (int i=0; i<*abs_curr->system_->numAbs_; i++) {
+                abs->Ts_[i]->symbolicSet_|=abs_curr->Ts_[i]->symbolicSet_;
+                abs->TTs_[i]->symbolicSet_|=abs_curr->TTs_[i]->symbolicSet_;
+                abs->computedDs_[i]->symbolicSet_|=abs_curr->computedDs_[i]->symbolicSet_;
             }
             } /* end of critical section*/
         } /* End of for loop over the set of environments */
         } /* end of omp parallel block */
+//        delete[] abs_copies;
         if (unique_env_count==0) {
             cout << "\nSPEC value "<< spec <<" is too high. The multi-layered abstraction is too coarse. Consider recomputation with 1 more layer at the bottom.";
             return (-1);

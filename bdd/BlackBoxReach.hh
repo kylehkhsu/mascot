@@ -92,8 +92,18 @@ namespace scots {
             system_=other.system_;
             etaXs_=other.etaXs_;
             tau_=other.tau_;
-            Xs_=other.Xs_;
-            X2s_=other.X2s_;
+//            Xs_=other.Xs_;
+            for (int i = 0; i < (other.Xs_).size(); i++) {
+                SymbolicSet* X = new SymbolicSet(*other.Xs_[i]);
+                X->symbolicSet_ = other.Xs_[i]->symbolicSet_;
+                Xs_.push_back(X);
+            }
+//            X2s_=other.X2s_;
+            for (int i = 0; i < (other.X2s_).size(); i++) {
+                SymbolicSet* X2 = new SymbolicSet(*other.X2s_[i]);
+                X2->symbolicSet_ = other.X2s_[i]->symbolicSet_;
+                X2s_.push_back(X2);
+            }
             U_=other.U_;
             numBDDVars_=other.numBDDVars_;
             cubesX_=other.cubesX_;
@@ -103,9 +113,9 @@ namespace scots {
             notXvars_=other.notXvars_;
             cubesCoarser_=other.cubesCoarser_;
             cubesCoarserTs_=other.cubesCoarserTs_;
-            Ts_=other.Ts_;
-            TTs_=other.TTs_;
-            computedDs_=other.computedDs_;
+//            Ts_=other.Ts_;
+//            TTs_=other.TTs_;
+//            computedDs_=other.computedDs_;
             permutesXtoX2_=other.permutesXtoX2_;
             permutesX2toX_=other.permutesX2toX_;
             permutesCoarser_=other.permutesCoarser_;
@@ -169,18 +179,22 @@ namespace scots {
                 SymbolicSet* innerD = new SymbolicSet(*other.innerDs_[i]);
                 innerDs_.push_back(innerD);
             }
-//            for (int i = 0; i < (other.computedDs_).size(); i++) {
-//                SymbolicSet* computedD = new SymbolicSet(*other.computedDs_[i]);
-//                computedDs_.push_back(computedD);
-//            }
-//            for (int i = 0; i < (other.Ts_).size(); i++) {
-//                SymbolicSet* T = new SymbolicSet(*other.Ts_[i]);
-//                Ts_.push_back(T);
-//            }
-//            for (int i = 0; i < (other.TTs_).size(); i++) {
-//                SymbolicSet* TT = new SymbolicSet(*other.TTs_[i]);
-//                TTs_.push_back(TT);
-//            }
+            /* fresh copies of the transition BDDs representing the same functions */
+            for (int i = 0; i < (other.computedDs_).size(); i++) {
+                SymbolicSet* computedD = new SymbolicSet(*other.computedDs_[i]);
+                computedD->symbolicSet_ = other.computedDs_[i]->symbolicSet_;
+                computedDs_.push_back(computedD);
+            }
+            for (int i = 0; i < (other.Ts_).size(); i++) {
+                SymbolicSet* T = new SymbolicSet(*other.Ts_[i]);
+                T->symbolicSet_ = other.Ts_[i]->symbolicSet_;
+                Ts_.push_back(T);
+            }
+            for (int i = 0; i < (other.TTs_).size(); i++) {
+                SymbolicSet* TT = new SymbolicSet(*other.TTs_[i]);
+                TT->symbolicSet_ = other.TTs_[i]->symbolicSet_;
+                TTs_.push_back(TT);
+            }
         }
         /*! Destructor for a BlackBoxReach object. */
         ~BlackBoxReach() {
@@ -1059,8 +1073,12 @@ namespace scots {
                 ho_boundary[2*j]=-system_->lbX_[j];
                 ho_boundary[2*j+1]=system_->ubX_[j];
             }
+            // debug
+            cout << "Address of Os_[finest]" << Os_[*system_->numAbs_-1] << ".\n";
+            // debug end
             Os_[*system_->numAbs_-1]->addPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary,OUTER);
             //debug
+            cout << "Done initialization of Os_";
             saveFinalResult();
             //debug end
             /* next remove the inner part keeping eps distance from the boundary */
@@ -1211,7 +1229,7 @@ namespace scots {
                 /* ignore initial states which are blocked by the obstacles or the exclusion region */
                 X0s_[i-1]->symbolicSet_ &= !(Os_[i-1]->symbolicSet_ | Es_[i-1]->symbolicSet_);
             }
-            /* do the above two steps for the finer layer as well */
+            /* do the above two steps for the finest layer as well */
             Es_[*system_->numAbs_-1]->symbolicSet_ &= !Os_[*system_->numAbs_-1]->symbolicSet_;
             X0s_[*system_->numAbs_-1]->symbolicSet_ &= !(Os_[*system_->numAbs_-1]->symbolicSet_ | Es_[*system_->numAbs_-1]->symbolicSet_);
 //            /* the exclusion regions are obstacles inflated by "distance" in the respective layer \ the obstacles in the respective layer */

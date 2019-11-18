@@ -407,9 +407,9 @@ int main() {
     
     
     /* number of samples used */
-    int NN = 200;
+    int NN = 50;
     /* number of tests */
-    int num_tests = 100;
+    int num_tests = 50;
     /* allowed distance between an abstract trajectory and the unsafe states for the controllers good for the abstraction but bad for the system */
 //    double allowedDistance = 0.15;
     X_type explRadius = {0.2,0.2};
