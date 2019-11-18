@@ -202,6 +202,20 @@ auto spawnI = [](std::vector<std::array<double,4*dimX>>& HI, std::vector<std::ar
         cout << "Initial set: [" << -box3[0] << "," << box3[1] << "] X [" << -box3[2] << "," << box3[3] << "].\n";
 };
 
+/* generate a single random initial state */
+template<std::size_t SIZE_i>
+auto generateInitial = [](std::vector<double>& init, const std::vector<std::array<double,SIZE_i>> hi) -> void {
+    double toss1, toss2;
+    toss1 = 0.01*(rand() % (int)(100*(hi[0][1]+hi[0][0])))-hi[0][0];
+    toss2 = 0.01*(rand() % (int)(100*(hi[0][3]+hi[0][2])))-hi[0][2];
+    init.push_back(toss1);
+    init.push_back(toss2);
+    for (int i=2; i< dimX; i++) {
+        double x = eps;
+        init.push_back(x);
+    }
+};
+
 
 /****************************************************************************/
 /* main computation */
@@ -295,7 +309,7 @@ int main() {
                                           numAbs, etaRatio, tauRatio,
                                           spawnO<4>, spawnG<4>, spawnI<4>,
                                           HO, HG, HI,
-                                          ho, hg, hi,
+                                          ho, hg, hi, generateInitial<4>,
                                           nSubInt, systemNSubInt, p,
                                           NN, explRadius, explHorizon, reqd_success_rate, spec_max,
                                           readTsFromFile, useColors, logfile, verbose);
