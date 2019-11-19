@@ -92,18 +92,18 @@ namespace scots {
             system_=other.system_;
             etaXs_=other.etaXs_;
             tau_=other.tau_;
-//            Xs_=other.Xs_;
-            for (int i = 0; i < (other.Xs_).size(); i++) {
-                SymbolicSet* X = new SymbolicSet(*other.Xs_[i]);
-                X->symbolicSet_ = other.Xs_[i]->symbolicSet_;
-                Xs_.push_back(X);
-            }
-//            X2s_=other.X2s_;
-            for (int i = 0; i < (other.X2s_).size(); i++) {
-                SymbolicSet* X2 = new SymbolicSet(*other.X2s_[i]);
-                X2->symbolicSet_ = other.X2s_[i]->symbolicSet_;
-                X2s_.push_back(X2);
-            }
+            Xs_=other.Xs_;
+//            for (int i = 0; i < (other.Xs_).size(); i++) {
+//                SymbolicSet* X = new SymbolicSet(*other.Xs_[i]);
+//                X->symbolicSet_ = other.Xs_[i]->symbolicSet_;
+//                Xs_.push_back(X);
+//            }
+            X2s_=other.X2s_;
+//            for (int i = 0; i < (other.X2s_).size(); i++) {
+//                SymbolicSet* X2 = new SymbolicSet(*other.X2s_[i]);
+//                X2->symbolicSet_ = other.X2s_[i]->symbolicSet_;
+//                X2s_.push_back(X2);
+//            }
             U_=other.U_;
             numBDDVars_=other.numBDDVars_;
             cubesX_=other.cubesX_;
@@ -243,13 +243,13 @@ namespace scots {
          *  IMPORTANT: use only after some abstraction has been computed.
          *  \param[in]  p           Parameter controlling amount of finer layer synthesis attempts.
          */
-        void plainReach(int p) {
+        void plainReach(int p, bool treat_exclusion_as_obstacle=true) {
             m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
             clog << "m: " << m_ << '\n';
             
             // synthesize controller
             int ab = 0;
-            eagerReachRecurse(ab);
+            eagerReachRecurse(ab, treat_exclusion_as_obstacle);
             return;
         }
         
@@ -409,16 +409,16 @@ namespace scots {
         /*! Recursive synthesis of non-lazy controller.
          *  \param[in]  ab          Current abstraction.
          */
-        void eagerReachRecurse(int ab) {
+        void eagerReachRecurse(int ab, bool treat_exclusion_as_obstacle=true) {
             clog << '\n';
             clog << "current abstraction: " << ab << '\n';
             clog << "controllers: " << finalCs_.size() << '\n';
             ReachResult result;
             if (ab == 0) {
-                result = reach(ab);
+                result = reach(ab, -1, treat_exclusion_as_obstacle);
             }
             else {
-                result = reach(ab, m_);
+                result = reach(ab, m_, treat_exclusion_as_obstacle);
             }
             if (result == WINNING) {
                 clog << "result: all initial states and the exclusion regions states are winning\n";
@@ -446,8 +446,16 @@ namespace scots {
             }
             
             /* return if all the initial state and the exclusion region states are winning or not */
-            if (result == WINNING)
+            if (result == WINNING) {
+                /* transfer the winning region to the finest layer (needed for later check by isinitwinning) */
+                for (int i=ab; i<*system_->numAbs_-1; i++) {
+                    finer(Zs_[i], Zs_[i+1], i);
+                    Zs_[i+1]->symbolicSet_ |= validZs_[i+1]->symbolicSet_;
+                    validZs_[i+1]->symbolicSet_ = Zs_[i+1]->symbolicSet_;
+                }
                 return;
+            }
+                
             
             if (result != NOTCONVERGED) {
                 if (ab == *system_->numAbs_ - 1) {
@@ -459,7 +467,7 @@ namespace scots {
                     finer(Zs_[ab], Zs_[nextAb], ab);
                     Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                     validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                    eagerReachRecurse(nextAb);
+                    eagerReachRecurse(nextAb, treat_exclusion_as_obstacle);
                     return;
                 }
             }
@@ -469,7 +477,7 @@ namespace scots {
                 coarserInner(Zs_[nextAb], Zs_[ab], nextAb);
                 Zs_[nextAb]->symbolicSet_ |= validZs_[nextAb]->symbolicSet_;
                 validZs_[nextAb]->symbolicSet_ = Zs_[nextAb]->symbolicSet_;
-                eagerReachRecurse(nextAb);
+                eagerReachRecurse(nextAb, treat_exclusion_as_obstacle);
                 return;
             }
         }
@@ -754,7 +762,7 @@ namespace scots {
          *  \param[in]  m       The number of iterations. Default -1 corresponds to infinity.
          *  \returns    Integer representing status of convergence.
          */
-        ReachResult reach(int ab, int m = -1) {
+        ReachResult reach(int ab, int m = -1, bool treat_exclusion_as_obstacle=true) {
             int i = 1;
             clog << "abstraction: " << ab << '\n';
             if (verbose_>0)
@@ -763,9 +771,17 @@ namespace scots {
                 clog << "iteration: " << i << '\n';
                 if (verbose_>0)
                     cout << "iteration: " << i << '\n';
-                BDD controllablePreZ1 = controllablePre(Zs_[ab]->symbolicSet_ & !(Es_[ab]->symbolicSet_ | Os_[ab]->symbolicSet_), ab);
-                BDD controllablePreZ2 = controllablePre(Zs_[ab]->symbolicSet_ & Es_[ab]->symbolicSet_, ab);
-                BDD C = (controllablePreZ1 & !Os_[ab]->symbolicSet_) | (controllablePreZ2 & Es_[ab]->symbolicSet_) | Gs_[ab]->symbolicSet_;
+                /* the controller */
+                BDD C;
+                if (!treat_exclusion_as_obstacle) {
+                    BDD controllablePreZ1 = controllablePre(Zs_[ab]->symbolicSet_ & !(Es_[ab]->symbolicSet_ | Os_[ab]->symbolicSet_), ab);
+                    BDD controllablePreZ2 = controllablePre(Zs_[ab]->symbolicSet_ & Es_[ab]->symbolicSet_, ab);
+                    C = (controllablePreZ1 & !Os_[ab]->symbolicSet_) | (controllablePreZ2 & Es_[ab]->symbolicSet_) | Gs_[ab]->symbolicSet_;
+                } else {
+                    BDD controllablePreZ = controllablePre(Zs_[ab]->symbolicSet_, ab);
+                    C = (controllablePreZ& !(Es_[ab]->symbolicSet_ | Os_[ab]->symbolicSet_)) | Gs_[ab]->symbolicSet_;
+                }
+                
                 // debug purpose
 //                scots::SymbolicSet S(*Cs_[ab]);
 //                if (ab==3) {
@@ -792,16 +808,19 @@ namespace scots {
 //                    BDD validZ = validZs_[ab]->symbolicSet_;
 //                    validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
                     /* restore the validZs_[ab] anyway, as they are going to be updated later */
-                    if (isExclusionWinning(ab)) {
-//                        validZs_[ab]->symbolicSet_ = validZ;
-                        clog << "All initial and exclusion region states are winning. \n";
-                        if (verbose_>0)
-                            cout << "All initial and exclusion region states are winning. \n";
+                    if (treat_exclusion_as_obstacle) {
                         return WINNING;
                     } else {
-//                        validZs_[ab]->symbolicSet_ = validZ;
+                        if (isExclusionWinning(ab)) {
+    //                        validZs_[ab]->symbolicSet_ = validZ;
+                            clog << "All initial and exclusion region states are winning. \n";
+                            if (verbose_>0)
+                                cout << "All initial and exclusion region states are winning. \n";
+                            return WINNING;
+                        } else {
+    //                        validZs_[ab]->symbolicSet_ = validZ;
+                        }
                     }
-                    
                 }
                 if (N == ddmgr_->bddZero() && i != 1) {
                     if (i >= 2) {
@@ -1055,7 +1074,7 @@ namespace scots {
          *  \param[in]  distance    The distance metric used to modify the obstacle and the goal (default to 0).
          */
         template<std::size_t s1, std::size_t s2, std::size_t s3, std::size_t s4, std::size_t s5, std::size_t s6>
-        bool initializeSpec(std::vector<std::array<double, s1>> HO, std::vector<std::array<double, s2>> ho, std::vector<std::array<double, s3>> HG, std::vector<std::array<double, s4>> hg, std::vector<std::array<double, s5>> HI, std::vector<std::array<double, s6>> hi, double distance) {
+        bool initializeSpec(std::vector<std::array<double, s1>> HO, std::vector<std::array<double, s2>> ho, std::vector<std::array<double, s3>> HG, std::vector<std::array<double, s4>> hg, std::vector<std::array<double, s5>> HI, std::vector<std::array<double, s6>> hi, double distance, bool treat_exclusion_as_obstacle=true) {
             /* initialize specification in the finest layer */
             /* there is always an imaginary obstacle around the boundary of the state space (to combat the out-of-bound behaviors of the concrete systems)*/
             double* HO_boundary = new double[2*(*system_->dimX_)*(*system_->dimX_)];
@@ -1074,12 +1093,12 @@ namespace scots {
                 ho_boundary[2*j+1]=system_->ubX_[j];
             }
             // debug
-            cout << "Address of Os_[finest]" << Os_[*system_->numAbs_-1] << ".\n";
+//            cout << "Address of Os_[finest]" << Os_[*system_->numAbs_-1] << ".\n";
             // debug end
             Os_[*system_->numAbs_-1]->addPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary,OUTER);
             //debug
-            cout << "Done initialization of Os_";
-            saveFinalResult();
+//            cout << "Done initialization of Os_";
+//            saveFinalResult();
             //debug end
             /* next remove the inner part keeping eps distance from the boundary */
             for (int j=0; j<*system_->dimX_; j++) {
@@ -1183,8 +1202,10 @@ namespace scots {
                 coarserOuter(Os_[i-1],Os_[i],i-1);
                 coarserOuter(X0s_[i-1],X0s_[i],i-1);
             }
-            /* the exclusion regions are obstacles inflated by "distance" in the coarsest layer \ the obstacles in the respective layer (the subtraction will be done later in this method after the projections) */
+            /* Compute exclusion region */
             /* First start with the boundary */
+            double* ho_boundary_outer = new double[2*(*system_->dimX_)];
+            double* ho_boundary_inner = new double[2*(*system_->dimX_)];
 //            double* HO_boundary = new double[2*(*system_->dimX_)*(*system_->dimX_)];
             /* first fill HO_boundary with 0s */
             for (int i=0; i<2*(*system_->dimX_)*(*system_->dimX_); i++)
@@ -1197,41 +1218,58 @@ namespace scots {
 //            double* ho_boundary = new double[2*(*system_->dimX_)];
             /* first make the whole state-space an exclusion region */
             for (int j=0; j<*system_->dimX_; j++) {
-                ho_boundary[2*j]=-system_->lbX_[j];
-                ho_boundary[2*j+1]=system_->ubX_[j];
+                ho_boundary_outer[2*j]=-system_->lbX_[j];
+                ho_boundary_outer[2*j+1]=system_->ubX_[j];
             }
-            Es_[0]->addPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary,OUTER);
+            
             //debug
-            saveFinalResult();
+//            saveFinalResult();
             //debug end
             /* next remove the inner part leaving a distance of spec from the boundary */
             for (int j=0; j<*system_->dimX_; j++) {
-                ho_boundary[2*j]=-system_->lbX_[j]-distance-eps;
-                ho_boundary[2*j+1]=system_->ubX_[j]-distance-eps;
+                ho_boundary_inner[2*j]=-system_->lbX_[j]-distance-eps;
+                ho_boundary_inner[2*j+1]=system_->ubX_[j]-distance-eps;
             }
-            Es_[0]->remPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary,INNER);
-            delete[] HO_boundary;
-            delete[] ho_boundary;
             /* next add the exclusion regions for the real obstacles */
             for (int i=0; i<HO.size(); i++) {
                 for (size_t j=0; j<ho[i].size(); j++) {
                     ho[i][j] += distance;
                 }
-                size_t p = ho[i].size();
-                Es_[0]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
             }
-            /* subtract the obstacles of respective layers from the exclusion regions in the coarsest layer */
-            for (int i=1; i<*system_->numAbs_; i++) {
-                /* first do the projection to the finer layer */
-                finer(Es_[i-1],Es_[i],i-1);
-                /* now update the coarser layer exclusion region by doing the subtraction */
-                Es_[i-1]->symbolicSet_ &= !Os_[i-1]->symbolicSet_;
-                /* ignore initial states which are blocked by the obstacles or the exclusion region */
-                X0s_[i-1]->symbolicSet_ &= !(Os_[i-1]->symbolicSet_ | Es_[i-1]->symbolicSet_);
+            if (!treat_exclusion_as_obstacle) { /* the exclusion regions are obstacles inflated by "distance" in the coarsest layer \ the obstacles in the respective layer (the subtraction will be done later in this method after the projections) */
+                Es_[0]->addPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary_outer,OUTER);
+                Es_[0]->remPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary_inner,INNER);
+                for (int i=0; i<HO.size(); i++) {
+                    size_t p = ho[i].size();
+                    Es_[0]->addPolytope(p,to_native_array(HO[i]),to_native_array(ho[i]),OUTER);
+                }
+                /* subtract the obstacles of respective layers from the exclusion regions in the coarsest layer */
+                for (int i=1; i<*system_->numAbs_; i++) {
+                    /* first do the projection to the finer layer */
+                    finer(Es_[i-1],Es_[i],i-1);
+                    /* now update the coarser layer exclusion region by doing the subtraction */
+                    Es_[i-1]->symbolicSet_ &= !Os_[i-1]->symbolicSet_;
+                    /* ignore initial states which are blocked by the obstacles or the exclusion region */
+                    X0s_[i-1]->symbolicSet_ &= !(Os_[i-1]->symbolicSet_ | Es_[i-1]->symbolicSet_);
+                }
+                /* do the above two steps for the finest layer as well */
+                Es_[*system_->numAbs_-1]->symbolicSet_ &= !Os_[*system_->numAbs_-1]->symbolicSet_;
+                X0s_[*system_->numAbs_-1]->symbolicSet_ &= !(Os_[*system_->numAbs_-1]->symbolicSet_ | Es_[*system_->numAbs_-1]->symbolicSet_);
+            } else { /* all layers' exclusion region are computed individually */
+                for (int i=0; i<*system_->numAbs_; i++) {
+                    Es_[i]->addPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary_outer,OUTER);
+                    Es_[i]->remPolytope(2*(*system_->dimX_),HO_boundary,ho_boundary_inner,INNER);
+                    for (int j=0; j<HO.size(); j++) {
+                        size_t p = ho[j].size();
+                        Es_[i]->addPolytope(p,to_native_array(HO[j]),to_native_array(ho[j]),OUTER);
+                    }
+                    /* now update the exclusion region by doing the subtraction */
+                    Es_[i]->symbolicSet_ &= !Os_[i]->symbolicSet_;
+                    /* ignore initial states which are blocked by the obstacles or the exclusion region */
+                    X0s_[i]->symbolicSet_ &= !(Os_[i]->symbolicSet_ | Es_[i]->symbolicSet_);
+                }
             }
-            /* do the above two steps for the finest layer as well */
-            Es_[*system_->numAbs_-1]->symbolicSet_ &= !Os_[*system_->numAbs_-1]->symbolicSet_;
-            X0s_[*system_->numAbs_-1]->symbolicSet_ &= !(Os_[*system_->numAbs_-1]->symbolicSet_ | Es_[*system_->numAbs_-1]->symbolicSet_);
+            
 //            /* the exclusion regions are obstacles inflated by "distance" in the respective layer \ the obstacles in the respective layer */
 //            for (int i=0; i<HO.size(); i++) {
 ////                double* ho_inflated = new double[ho[i].size()];
@@ -1250,6 +1288,10 @@ namespace scots {
 //                }
 //                delete[] ho_inflated;
 //            }
+            delete[] HO_boundary;
+            delete[] ho_boundary;
+            delete[] ho_boundary_outer;
+            delete[] ho_boundary_inner;
             
             //debug:
 //            cout << "\tDone with projection.\n";
@@ -1777,7 +1819,7 @@ namespace scots {
          input: obstacles is a vector of the two extreme coordinates of the obstacles which are all assumed to be rectangles. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively
          input: trajectory is a sequence of points traversed. trajectory[0] = x0 (to be passed) */
         template<class L>
-        bool simulateAbs(L& abs_log, std::vector<std::vector<double>> obstacles, double& distance) {
+        bool simulateAbs(L& abs_log, std::vector<std::vector<double>> obstacles, double spec, double& distance) {
             std::vector<double> x; /* current state */
             std::vector<double> u; /* current control input */
             std::vector<double> xu; /* current state-input pair */
@@ -1885,7 +1927,7 @@ namespace scots {
                     }
                     /* compute the minimum distance from the boundaries */
                     for (int j=0; j<*system_->dimX_; j++) {
-                        double new_distance = std::min(lb1[j]-system_->lbX_[j], system_->ubX_[j]-ub1[j]);
+                        double new_distance = std::min(lb1[j]-(system_->lbX_[j]+spec), (system_->ubX_[j]-spec)-ub1[j]);
                         if (distance==-1) { /*first time this loop is entered */
                             distance = new_distance;
                         } else {
@@ -1899,8 +1941,8 @@ namespace scots {
                     for (size_t j=0; j<obstacles.size(); j++) {
                         /* arrange the inputs in suitable form */
                         for (size_t k=0; k<*system_->dimX_; k++) {
-                            lb2.push_back(-obstacles[j][2*k]);
-                            ub2.push_back(obstacles[j][2*k+1]);
+                            lb2.push_back(-obstacles[j][2*k]+spec);
+                            ub2.push_back(obstacles[j][2*k+1]+spec);
                         }
                         double new_distance = computeDistance(lb1, ub1, lb2, ub2);
                         if (new_distance<distance) {
@@ -1928,7 +1970,8 @@ namespace scots {
                          L& sys_log,
                          std::vector<std::vector<double>> obstacles,
                          std::vector<std::vector<double>> sys_goal,
-                         std::vector<double>& unsafeAt) {
+                         std::vector<double>& unsafeAt,
+                         double distance=0) {
             std::vector<double> x; /* current state */
             std::vector<double> u; /* current control input */
             std::vector<double> xu; /* current state-input pair */
@@ -2005,8 +2048,8 @@ namespace scots {
                 for (int j=0; j<obstacles.size(); j++) {
                     std::vector<double> l,u;
                     for (size_t k=0; k<*system_->dimX_; k++) {
-                        l.push_back(-obstacles[j][2*k]);
-                        u.push_back(obstacles[j][2*k+1]);
+                        l.push_back(-obstacles[j][2*k]+distance);
+                        u.push_back(obstacles[j][2*k+1]+distance);
                     }
                     lb.push_back(l);
                     ub.push_back(u);
@@ -2109,7 +2152,7 @@ namespace scots {
                         uarr[k] = u[k];
                     }
 //                    sys_next(xarr,uarr,*systemSolver_);
-                    sys_next(xarr,uarr,*solvers_[ab],obstacles,unsafeAt);
+                    sys_next(xarr,uarr,to_array_obj<X_type>(system_->lbX_),to_array_obj<X_type>(system_->ubX_),*solvers_[ab],obstacles,distance,unsafeAt);
                     /* store xarr as a vector and append to the trajectory */
                     for (size_t k=0; k<*system_->dimX_; k++) {
                         x[k] = xarr[k];
@@ -2235,6 +2278,13 @@ namespace scots {
                 b[i] = a[i];
             }
             return b;
+        }
+        template<class T, class S>
+        inline T to_array_obj(const S* native_array) {
+            T array_obj;
+            for (int i=0; i<array_obj.size(); i++) {
+                array_obj[i]=native_array[i];
+            }
         }
         /* compute inf-norm distance between two boxes */
         double computeDistance(std::vector<double> lb1, std::vector<double> ub1, std::vector<double> lb2, std::vector<double> ub2) {

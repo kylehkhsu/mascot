@@ -79,7 +79,7 @@ auto  vehicle_post = overload
             if (x[1]>5)
                 x[1]=5-eps;
         },
-         [](X_type &x, U_type &u, OdeSolver solver, const std::vector<std::vector<double>> obs, std::vector<double>& unsafeAt) -> void {
+         [](X_type &x, U_type &u, X_type xlb, X_type xub, OdeSolver solver, const std::vector<std::vector<double>> obs, double distance, std::vector<double>& unsafeAt) -> void {
              auto vehicle_ode = [](X_type &dxdt, const X_type &x, const U_type &u) -> void {
                  dxdt[0] = u[0];
                  dxdt[1] = u[1];
@@ -89,7 +89,7 @@ auto  vehicle_post = overload
                  //        dxdt[1] = r+u[1];
                  // debug end
              };
-             solver(vehicle_ode, x, u, obs, unsafeAt);
+             solver(vehicle_ode, x, u, xlb, xub, obs, distance, unsafeAt);
              // simple sampled time test trajectory
              //    x[0]+= u[0];
              //    x[1]+=u[1];
@@ -240,6 +240,7 @@ int main() {
     double tauRatio = 2; /* must be an integer */
     int p = 2;
     int verbose = 0;
+    bool readInitTsFromFile = true;
     bool readTsFromFile = false;
     
     int numAbs = 4;
@@ -261,7 +262,7 @@ int main() {
     int seed = time(NULL);
     cout << "\nSeed used for the random number generator : " << seed << "\n\n";
     srand(seed);
-//    srand(1573011469);
+    srand(1574139623);
 //    srand(1572389026);
     /* problematic seeds */
     // 1567743385, 1567744613, 1567750636(distance=-1 bug)
@@ -312,7 +313,7 @@ int main() {
                                           ho, hg, hi, generateInitial<4>,
                                           nSubInt, systemNSubInt, p,
                                           NN, explRadius, explHorizon, reqd_success_rate, spec_max,
-                                          readTsFromFile, useColors, logfile, verbose);
+                                          readInitTsFromFile, useColors, logfile, verbose);
             /* check if the number of abstractions need to be increased due to too high SPEC */
             if (spec_final==-1)
                 numAbs++;

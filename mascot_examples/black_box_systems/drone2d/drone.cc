@@ -136,7 +136,7 @@ auto  drone_post = overload
 //        }
             
         },
-         [](X_type &y, U_type &u, OdeSolver solver, const std::vector<std::vector<double>> obs, std::vector<double>& unsafeAt) -> void {
+         [](X_type &y, U_type &u, X_type xlb, X_type xub, OdeSolver solver, const std::vector<std::vector<double>> obs, double distance, std::vector<double>& unsafeAt) -> void {
         /* In this case the system is simulated using the full state space variables.
          * Initially, the hidden states are chosen randomly, and the next state is stored in a .txt file.
          * At each time step, the states are read from a .txt file, the system is simulated for one time step, and the
@@ -244,7 +244,7 @@ auto  drone_post = overload
              dxdt[10]=((I_z-I_x)/I_y)*x[9]*x[11] + 1/I_y*tau_y;
              dxdt[11]=((I_x-I_y)/I_z)*x[9]*x[10] +1/I_z *tau_z;
          };
-         solver(drone_ode, x, u, obs, unsafeAt);
+         solver(drone_ode, x, u, xlb, xub, obs, distance, unsafeAt);
         /* return the measured variables */
         for (int i=0; i<dimX; i++)
             y[i]=x[i];

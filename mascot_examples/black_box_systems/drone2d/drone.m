@@ -34,7 +34,7 @@ switch mode
         drawnow
 
         % load and draw state space
-        X = SymbolicSet('plotting/X.bdd','projection',[1 2]);
+        X = SymbolicSet('plotting/X.bdd');
         lb = X.first();
         ub = X.last();
         axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);

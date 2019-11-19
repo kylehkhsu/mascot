@@ -69,7 +69,7 @@ public:
      * unsafeAt - point of collision if collision is detected
      */
     template<class RHS, class X, class U, class T>
-    inline void operator()(RHS rhs, X &x, U &u, const std::vector<std::vector<T>> obstacles, std::vector<T>& unsafeAt) {
+    inline void operator()(RHS rhs, X &x, U &u, const X xlb, const X xub, const std::vector<std::vector<T>> obstacles, double distance, std::vector<T>& unsafeAt) {
         X k[4];
         X tmp;
         int dim = x.size();
@@ -103,6 +103,16 @@ public:
             for(int i=0; i<dim; i++)
                 x[i] = x[i] + (h_/6)*(k[0][i] + 2*k[1][i] + 2*k[2][i] + k[3][i]);
             
+            /* check collision with boundary */
+            col_flag = true;
+            for (int j=0; j<dim; j++) {
+                if (x[j]>xlb[j]+distance || x[j]<xub[j]-distance) {
+                    col_flag=false;
+                    break;
+                }
+            }
+            
+            /* check collision with other obstacles */
             if (!col_flag) { /* not detected a collision yet */
                 /* collision check */
                 unsafeAt.clear();

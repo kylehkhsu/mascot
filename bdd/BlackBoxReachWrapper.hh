@@ -17,7 +17,7 @@
 #include <cmath>
 #include <time.h> /* time used to seed the random number */
 #include <float.h> /* for the smallest positive number */
-#include <omp.h> /* for paralle implementation */
+//#include <omp.h> /* for paralle implementation */
 #define _USE_MATH_DEFINES
 
 #define CHUNK_SIZE 4
@@ -44,6 +44,18 @@ void vecArr2vecVec(const std::vector<std::array<T,SIZE>> va, std::vector<std::ve
     }
 }
 
+/*! Compute Minkowski sum of a polytope given by halfplanes (va) with a scalar distance. The output is stored in vb. */
+template<std::size_t SIZE, class T>
+void minkowski_sum(const std::vector<std::array<T,SIZE>> va, std::vector<std::array<T,SIZE>> vb, const double distance) {
+    for (int l=0; l<va.size(); l++) {
+        std::array<T,SIZE> arr;
+        for (int k=0; k<SIZE; k++) {
+            arr[k]=va[l][k]+distance;
+        }
+        vb.push_back(arr);
+    }
+}
+
 /*! Simulate the system using the controller already available in the BlackBoxReach object */
 template<std::size_t SIZE_o, std::size_t SIZE_g, std::size_t SIZE_i, class sys_type, class X_type, class U_type, class L>
 void simulateSystem(BlackBoxReach* abs,
@@ -54,7 +66,8 @@ void simulateSystem(BlackBoxReach* abs,
                     X_type x,
                     U_type u,
                     std::vector<double>& unsafeAt,
-                    L& sys_log) {
+                    L& sys_log,
+                    double distance=0) {
 //    double toss1, toss2;
     std::vector<std::vector<double>> hovec, hgvec;
 //    /* pick a random initial point within the provided initial set */
@@ -64,7 +77,7 @@ void simulateSystem(BlackBoxReach* abs,
 //    sys_traj.push_back(init);
     vecArr2vecVec(ho,hovec);
     vecArr2vecVec(hg,hgvec);
-    abs->simulateSys(sys_post, x, u, sys_log,hovec,hgvec,unsafeAt);
+    abs->simulateSys(sys_post, x, u, sys_log,hovec,hgvec,unsafeAt,distance);
 }
 
 /*! Compute the size of default array */
@@ -119,177 +132,194 @@ double find_abst(X_type x, U_type u,
     /* start with a fresh copy of the abstraction */
 //    BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
     /* we keep a moving maximum */
-    double spec = 0;
+    double spec = eps;
     /* spec_old is the older value computed: at first it is set to same as spec. */
     double spec_old = 0;
     /* initialize variables */
     double toss1, toss2, toss3;
     std::vector<double> unsafeAt;
     
-    closed_loop_log sys_log, abs_log;
-    double distance;
+//    closed_loop_log sys_log, abs_log;
+//    double distance;
     int iter=1;
     while (1) {
         cout << "\033[1;4;34m\n\nIteration = "<< iter <<" \n\n\033[0m";
-        /************************************************************************/
-        /* Abstract game solving with refinement: Refinement of abstraction to maximize number of winning environments */
-        /************************************************************************/
-        cout << "\033[1;4;34mStarting abstraction refinement for environment satisfaction.\n\n\033[0m";
-        /* keep a history of the 'seen' environments */
-        std::vector<std::array<SymbolicSet*,3>> ENV_HIST;
-        /* initial abstraction */
-//        BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
-        int unique_env_count = 0; /* number of environments explored excluding duplicate cases */
-        act_success_count[1] = 0; /* reset the actual success count for solving the abstract game */
-        /* how far the environments are to be made conservative (no role for computing SPEC) */
-//        double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
-        double spec2 = spec + eps;
-
-        /* create all NN number of separate BlackBoxReach objects with the same variables as abs */
-//        BlackBoxReach** abs_copies= new BlackBoxReach*[NN];
-        std::vector<BlackBoxReach*> abs_copies;
-        for (int e=0; e<NN; e++) {
-            BlackBoxReach* abs_copy = new BlackBoxReach(*abs);
-//            abs_copies[e] = abs_copy;
-            abs_copies.push_back(abs_copy);
-        }
-#pragma omp parallel
-        {
-#pragma omp parallel for \
-schedule(dynamic, CHUNK_SIZE) \
-shared(abs,ENV_HIST,spec2,unique_env_count) private(HO,HG,HI,ho,hg,hi)
-        /* iterate over the environments */
-        for (int e=0; e<NN; e++) {
-            BlackBoxReach* abs_curr;
-#pragma omp critical (get_abs_copy)
-            {
-                abs_curr = abs_copies.back();
-                abs_copies.pop_back();
-            }
-            if (verbose>=0) {
-                std::cout << "Starting computation for environment: " << e << ".\n";
-            }
-            /* spawn environment */
-            if (!useColors)
-                cout << "Environment #" << e << "\n";
-            spawnO(HO,ho,verbose);
-            spawnG(HG,hg,verbose);
-            spawnI(HI,hi,verbose);
-            
-            /* initialize the environment in the abstraction */
-            bool flag;
-//#pragma omp critical (initialization)
-            flag = abs_curr->initializeSpec(HO,ho,HG,hg,HI,hi,spec2);
-            
-            bool newenv;
-            if (!flag) { /*ignore this specificaiton */
-                continue;
-            } else { /*use this specificaiton if it has not been seen before*/
-                if (ENV_HIST.size()==0) {
-                    newenv = true;
-                } else { /* if this is not the fist environment, then assume that the environment is seen before */
-                    newenv = false;
-                    for (int i=0; i<ENV_HIST.size(); i++) {
-                        /* check similarity in the obstacles in the finest layer */
-                        if (abs_curr->Os_[numAbs-1]->symbolicSet_!=ENV_HIST[i][0]->symbolicSet_) {
-                            newenv = true;
-                        } else {
-                            /* check similarity in the goals in the finest layer */
-                            if (abs_curr->Gs_[numAbs-1]->symbolicSet_!=ENV_HIST[i][1]->symbolicSet_) {
-                                newenv = true;
-                            } else {
-                                /* check similarity in the initial states in the finest layer */
-                                if (abs_curr->X0s_[numAbs-1]->symbolicSet_!=ENV_HIST[i][2]->symbolicSet_) {
-                                    newenv = true;
-                                }
-                            }
-                        }
-                        
-                        if (!newenv) /* similarity found */
-                            break;
-                        else if (i<ENV_HIST.size()-1) /* if this is not the last iteration of this for loop then reset newenv flag and continue with the next one */
-                            newenv = false;
-                    }
-                }
-                
-                /* if the envrionment is seen before, continue with the next one */
-                if (!newenv) {
-                    if (verbose>0)
-                        cout << "Environment seen before. Coninuing with the next one.\n";
-                    continue;
-                } else {
-#pragma omp critical (unique_env_counter_inc)
-                    unique_env_count++;
-                }
-            }
-                      
-            
-            /* store the environment info in the list */
-            SymbolicSet* O = new SymbolicSet(*abs_curr->Os_[numAbs-1]);
-            SymbolicSet* G = new SymbolicSet(*abs_curr->Gs_[numAbs-1]);
-            SymbolicSet* X0 = new SymbolicSet(*abs_curr->X0s_[numAbs-1]);
-            std::array<SymbolicSet*,3> arr = { O, G, X0};
-#pragma omp critical (push_new_env)
-            ENV_HIST.push_back(arr);
-            
-            /* perform a lazy reach-avoid abstraction refinement step */
-            abs_curr->onTheFlyReach(p, sys_post, radius_post, x, u);
-            // debug
-            abs_curr->saveFinalResult();
-            //debug end
-            /* print result of the abstraction refinement */
-            if (abs_curr->isInitWinning()) {
-                /* increment the success rate counter */
-                act_success_count[1]++;
-                if (useColors)
-                /* print in green (the code 32) */
-                    cout << "\033[32mEnvironment #" << e << "\033[0m\n";
-                if (verbose>0)
-                    cout << "The environment is now winning.\n";
-            } else {
-                if (useColors)
-                    cout << "Environment #" << e << "\n";
-                if (verbose>0)
-                    cout << "The environment was not winnable.\n";
-            }
-            
-            /* clear the specification sets */
-            ho.clear();
-            hg.clear();
-            hi.clear();
-            HO.clear();
-            HG.clear();
-            HI.clear();
-            /* clear the environments and the controllers */
-            abs_curr->clear_env();
-            abs_curr->clear_control();
-            /* update the abstraction transition relations */
-#pragma omp critical (update_transitions)
-            {
-            for (int i=0; i<*abs_curr->system_->numAbs_; i++) {
-                abs->Ts_[i]->symbolicSet_|=abs_curr->Ts_[i]->symbolicSet_;
-                abs->TTs_[i]->symbolicSet_|=abs_curr->TTs_[i]->symbolicSet_;
-                abs->computedDs_[i]->symbolicSet_|=abs_curr->computedDs_[i]->symbolicSet_;
-            }
-            } /* end of critical section*/
-        } /* End of for loop over the set of environments */
-        } /* end of omp parallel block */
-//        delete[] abs_copies;
-        if (unique_env_count==0) {
-            cout << "\nSPEC value "<< spec <<" is too high. The multi-layered abstraction is too coarse. Consider recomputation with 1 more layer at the bottom.";
-            return (-1);
-        }
-        if ((double)act_success_count[1]/unique_env_count > reqd_success_rate[1]) {
-            cout << "\nTarget precision reached.";
+//        if (spec<eps) {
+//            /*stopping crieterion*/
 //            break;
-            /* the computation is finished, provided the SPEC value doesn't increase */
-            reqd_success_rate_reached = true;
-        }
+//        } else { /* update spec_old (against which new spec is computed) */
+            spec_old = spec+spec_old;
+            spec=0;
+            cout << "SPEC_old = " << spec_old << ".\n";
+            cout << "SPEC = " << spec << ".\n";
+//        }
+//        /************************************************************************/
+//        /* Abstract game solving with refinement: Refinement of abstraction to maximize number of winning environments */
+//        /************************************************************************/
+//        cout << "\033[1;4;34mStarting abstraction refinement for environment satisfaction.\n\n\033[0m";
+//        /* keep a history of the 'seen' environments */
+//        std::vector<std::array<SymbolicSet*,3>> ENV_HIST;
+//        /* initial abstraction */
+////        BlackBoxReach* abs = new BlackBoxReach(*abs_ref);
+//        int unique_env_count = 0; /* number of environments explored excluding duplicate cases */
+//        act_success_count[1] = 0; /* reset the actual success count for solving the abstract game */
+//        /* how far the environments are to be made conservative (no role for computing SPEC) */
+////        double eps = 1e-13; /* very small number added to make sure that boundary cases are pessimistically resolved */
+//        double spec2 = spec + eps;
+//
+//        /* create all NN number of separate BlackBoxReach objects with the same variables as abs */
+////        BlackBoxReach** abs_copies= new BlackBoxReach*[NN];
+//        std::vector<BlackBoxReach*> abs_copies;
+//        for (int e=0; e<NN; e++) {
+//            BlackBoxReach* abs_copy = new BlackBoxReach(*abs);
+////            abs_copies[e] = abs_copy;
+//            abs_copies.push_back(abs_copy);
+//        }
+//#pragma omp parallel
+//        {
+//#pragma omp parallel for \
+//schedule(dynamic, CHUNK_SIZE) \
+//shared(abs,ENV_HIST,spec2,unique_env_count) private(HO,HG,HI,ho,hg,hi)
+//        /* iterate over the environments */
+//        /* #####################################
+//         This loop is disabled for the moment
+//         #######################################*/
+//        for (int e=0; e<0; e++) {
+////        for (int e=0; e<NN; e++) {
+//            BlackBoxReach* abs_curr;
+//#pragma omp critical (get_abs_copy)
+//            {
+//                abs_curr = abs_copies.back();
+//                abs_copies.pop_back();
+//            }
+//            if (verbose>=0) {
+//                std::cout << "Starting computation for environment: " << e << ".\n";
+//            }
+//            /* spawn environment */
+//            if (!useColors)
+//                cout << "Environment #" << e << "\n";
+//            spawnO(HO,ho,verbose);
+//            spawnG(HG,hg,verbose);
+//            spawnI(HI,hi,verbose);
+//
+//            /* initialize the environment in the abstraction */
+//            bool flag;
+////#pragma omp critical (initialization)
+//            flag = abs_curr->initializeSpec(HO,ho,HG,hg,HI,hi,spec2);
+//
+//            bool newenv;
+//            if (!flag) { /*ignore this specificaiton */
+//                continue;
+//            } else { /*use this specificaiton if it has not been seen before*/
+//                if (ENV_HIST.size()==0) {
+//                    newenv = true;
+//                } else { /* if this is not the fist environment, then assume that the environment is seen before */
+//                    newenv = false;
+//                    for (int i=0; i<ENV_HIST.size(); i++) {
+//                        /* check similarity in the obstacles in the finest layer */
+//                        if (abs_curr->Os_[numAbs-1]->symbolicSet_!=ENV_HIST[i][0]->symbolicSet_) {
+//                            newenv = true;
+//                        } else {
+//                            /* check similarity in the goals in the finest layer */
+//                            if (abs_curr->Gs_[numAbs-1]->symbolicSet_!=ENV_HIST[i][1]->symbolicSet_) {
+//                                newenv = true;
+//                            } else {
+//                                /* check similarity in the initial states in the finest layer */
+//                                if (abs_curr->X0s_[numAbs-1]->symbolicSet_!=ENV_HIST[i][2]->symbolicSet_) {
+//                                    newenv = true;
+//                                }
+//                            }
+//                        }
+//
+//                        if (!newenv) /* similarity found */
+//                            break;
+//                        else if (i<ENV_HIST.size()-1) /* if this is not the last iteration of this for loop then reset newenv flag and continue with the next one */
+//                            newenv = false;
+//                    }
+//                }
+//
+//                /* if the envrionment is seen before, continue with the next one */
+//                if (!newenv) {
+//                    if (verbose>0)
+//                        cout << "Environment seen before. Coninuing with the next one.\n";
+//                    continue;
+//                } else {
+//#pragma omp critical (unique_env_counter_inc)
+//                    unique_env_count++;
+//                }
+//            }
+//
+//
+//            /* store the environment info in the list */
+//            SymbolicSet* O = new SymbolicSet(*abs_curr->Os_[numAbs-1]);
+//            SymbolicSet* G = new SymbolicSet(*abs_curr->Gs_[numAbs-1]);
+//            SymbolicSet* X0 = new SymbolicSet(*abs_curr->X0s_[numAbs-1]);
+//            std::array<SymbolicSet*,3> arr = { O, G, X0};
+//#pragma omp critical (push_new_env)
+//            ENV_HIST.push_back(arr);
+//
+//            /* perform a lazy reach-avoid abstraction refinement step */
+//            abs_curr->onTheFlyReach(p, sys_post, radius_post, x, u);
+//            // debug
+//            abs_curr->saveFinalResult();
+//            //debug end
+//            /* print result of the abstraction refinement */
+//            if (abs_curr->isInitWinning()) {
+//                /* increment the success rate counter */
+//                act_success_count[1]++;
+//                if (useColors)
+//                /* print in green (the code 32) */
+//                    cout << "\033[32mEnvironment #" << e << "\033[0m\n";
+//                if (verbose>0)
+//                    cout << "The environment is now winning.\n";
+//            } else {
+//                if (useColors)
+//                    cout << "Environment #" << e << "\n";
+//                if (verbose>0)
+//                    cout << "The environment was not winnable.\n";
+//            }
+//
+//            /* clear the specification sets */
+//            ho.clear();
+//            hg.clear();
+//            hi.clear();
+//            HO.clear();
+//            HG.clear();
+//            HI.clear();
+//            /* clear the environments and the controllers */
+//            abs_curr->clear_env();
+//            abs_curr->clear_control();
+//            /* update the abstraction transition relations */
+//#pragma omp critical (update_transitions)
+//            {
+//            for (int i=0; i<*abs_curr->system_->numAbs_; i++) {
+//                abs->Ts_[i]->symbolicSet_|=abs_curr->Ts_[i]->symbolicSet_;
+//                abs->TTs_[i]->symbolicSet_|=abs_curr->TTs_[i]->symbolicSet_;
+//                abs->computedDs_[i]->symbolicSet_|=abs_curr->computedDs_[i]->symbolicSet_;
+//            }
+//            } /* end of critical section*/
+//        } /* End of for loop over the set of environments */
+//        } /* end of omp parallel block */
+////        delete[] abs_copies;
+//        if (unique_env_count==0) {
+//            cout << "\nSPEC value "<< spec <<" is too high. The multi-layered abstraction is too coarse. Consider recomputation with 1 more layer at the bottom.";
+//            return (-1);
+//        }
+//        if ((double)act_success_count[1]/unique_env_count > reqd_success_rate[1]) {
+//            cout << "\nTarget precision reached.";
+////            break;
+//            /* the computation is finished, provided the SPEC value doesn't increase */
+//            reqd_success_rate_reached = true;
+//        }
         /*************************************************************/
         /* **** Computation of SPEC with abstraction refinement **** */
         /*************************************************************/
         cout << "\033[1;4;34mStarting computation of SPEC.\n\n\033[0m";
 //        spec_with_no_refinement=true;
+        /* To remember the problematic trajectories */
+        std::vector<closed_loop_log*> bad_trajectories;
+        /* treat the exclusion region states as obstacles */
+        bool treat_exclusion_as_obstacle = true;
         /* iterate over all the environments */
         for (int e=0; e<NN; e++) {
             /* spawn environment with 0 distance from the given specification */
@@ -301,22 +331,26 @@ shared(abs,ENV_HIST,spec2,unique_env_count) private(HO,HG,HI,ho,hg,hi)
             
             /* *** synthesize controller on the available abstraction only *** */
             /* initialize the environment in the abstraction */
-            bool flag = abs->initializeSpec(HO,ho,HG,hg,HI,hi);
+            bool flag = abs->initializeSpec(HO,ho,HG,hg,HI,hi,spec_old,treat_exclusion_as_obstacle);
             if (!flag) { /* ignore this environment */
+                HO.clear();
+                HG.clear();
+                HI.clear();
+                ho.clear();
+                hg.clear();
+                hi.clear();
                 abs->clear_env();
                 continue;
             }
             if (verbose>0)
                 cout << "Abstraction initialized with the specification.\n";
             /* do a simple multi-layered reachability (without further refinement) */
-            abs->plainReach(p);
+            abs->plainReach(p,treat_exclusion_as_obstacle);
             //debug
             abs->saveFinalResult();
             //debug end
             if (verbose>0)
                 cout << "Controller synthesis done.\n";
-            /* if the abstract game is not winning, the distance remains 0 */
-            distance = 0;
             /* check if there is a controller for the abstraction */
             if (abs->isInitWinning()) { /* need to check if the controller works for the system as well */
                 if (verbose>0)
@@ -336,12 +370,12 @@ shared(abs,ENV_HIST,spec2,unique_env_count) private(HO,HG,HI,ho,hg,hi)
                     }
                 }
                 
-                
-                sys_log.trajectory.push_back(init);
-                simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
+                closed_loop_log* sys_log = new closed_loop_log();
+                sys_log->trajectory.push_back(init);
+                simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,*sys_log,spec_old);
                 //debug
                 abs->saveFinalResult();
-                abs->writeVecToFile(sys_log.trajectory,"Figures/sys_traj.txt","clean");
+                abs->writeVecToFile(sys_log->trajectory,"Figures/sys_traj.txt","clean");
 //                abs->saveFinalResult();
                 //debug end
 //                printArray(sys_traj, )
@@ -351,15 +385,38 @@ shared(abs,ENV_HIST,spec2,unique_env_count) private(HO,HG,HI,ho,hg,hi)
                         /* print in red (the code 31) */
                         cout << "\033[31mEnvironment #" << e << "\033[0m\n";
                     }
-                    /* recursively refine the abstraction */
-                    distance = refine_recurse(abs,ho,hg,hi,sys_post,radius_post,x,u,unsafeAt,sys_log,abs_log,spec,explRadius,explHorizon,p);
+                    bad_trajectories.push_back(sys_log);
+//                    /* disabled: recursively refine the abstraction */
+//                    distance = refine_recurse(abs,ho,hg,hi,sys_post,radius_post,x,u,unsafeAt,sys_log,abs_log,spec,explRadius,explHorizon,p);
                     
-                    /* if spec is greater than spec_max, discontinue the process */
-                    if (distance>spec_max) {
-                        return -1;
-                    } else if (distance>spec) {
+                    /* enabled: simulate the abstraction and measure the distance */
+                    /* if the controller failed on the system, or no more exploration was possible, recompute distance and continue refining the abstraction around the point of failure, which is stored in the variable unsafeAt */
+                    closed_loop_log abs_log;
+                    abs_log.abstraction_used.clear();
+                    abs_log.trajectory.clear();
+                    abs_log.strategy.clear();
+                    abs_log.trajectory.push_back(sys_log->trajectory[0]);
+                    std::vector<std::vector<double>> hovec;
+                    vecArr2vecVec(ho,hovec);
+                    ho_type ho_inflated;
+                    minkowski_sum(ho,ho_inflated,spec_old);
+                    double distance;
+                    abs->simulateAbs(abs_log,hovec,spec_old,distance);
+                    cout << "\tUpdated distance = " << distance << "\n";
+                    //debug
+                    abs->writeVecToFile(abs_log.trajectory,"Figures/abs_traj.txt","clean");
+                    //debug end
+//                    double distance = measure_distance(abs,ho,abs_log);
+                    if (distance>spec) {
                         spec = distance;
                     }
+                    
+                    /* disabled: if distance is greater than spec_max, discontinue the process */
+//                    if (distance>spec_max) {
+//                        return -1;
+//                    } else if (distance>spec) {
+//                        spec = distance;
+//                    }
                     
                 } else { /* if (unsafeAt.size()==0) */
                     if (useColors) {
@@ -374,6 +431,8 @@ shared(abs,ENV_HIST,spec2,unique_env_count) private(HO,HG,HI,ho,hg,hi)
                     cout << "Environment #" << e << "\n";
                 if (verbose>0)
                     cout << "There is no controller for this environment.\n";
+                /* if the abstract game is not winning, the distance is 0 */
+//                distance = 0;
             } /* End of if(abs->isInitWinning()) */
             
 //            if (distance>0)
@@ -391,33 +450,47 @@ shared(abs,ENV_HIST,spec2,unique_env_count) private(HO,HG,HI,ho,hg,hi)
             abs->clear_control();
             /* clear the sets used for trajectory simulation */
             unsafeAt.clear();
-            sys_log.abstraction_used.clear();
-            sys_log.trajectory.clear();
-            sys_log.strategy.clear();
-            abs_log.abstraction_used.clear();
-            abs_log.trajectory.clear();
-            abs_log.strategy.clear();
+//            sys_log.abstraction_used.clear();
+//            sys_log.trajectory.clear();
+//            sys_log.strategy.clear();
+//            abs_log.abstraction_used.clear();
+//            abs_log.trajectory.clear();
+//            abs_log.strategy.clear();
         } /* End of for loop over the set of environments */
         cout << "\n\nSPEC = " << spec << "\n\n";
         
-        /* if the last computed spec value worked well enough in terms of abstract game solving, and the spec value didn't increase from the last computed spec value, and finally if the abstraction was not refined further during the computation of spec, then we are done */
-        if ((reqd_success_rate_reached) &&
-            (spec <= spec_old) &&
-            (act_success_count[0]/NN < reqd_success_rate[0])) {
-//            (spec_with_no_refinement)) {
-            cout << "Abstract computation finished.\nTermination condition used: reqd. abstract synthesis success rate reached + the SPEC value didn't increase afterwards + no refinement was performed during the last SPEC loop.\n";
-            /* write outputs to files */
-            checkMakeDir("T");
-            saveVec(abs->Ts_, "T/T");
-            cout << "\nWrote transitions to files. Exiting process.\n\n";
-            break;
-        }
+//        /* if the last computed spec value worked well enough in terms of abstract game solving, and the spec value didn't increase from the last computed spec value, and finally if the abstraction was not refined further during the computation of spec, then we are done */
+//        if ((reqd_success_rate_reached) &&
+//            (spec <= spec_old) &&
+//            (act_success_count[0]/NN < reqd_success_rate[0])) {
+////            (spec_with_no_refinement)) {
+//            cout << "Abstract computation finished.\nTermination condition used: reqd. abstract synthesis success rate reached + the SPEC value didn't increase afterwards + no refinement was performed during the last SPEC loop.\n";
+//            /* write outputs to files */
+//            checkMakeDir("T");
+//            saveVec(abs->Ts_, "T/T");
+//            cout << "\nWrote transitions to files. Exiting process.\n\n";
+//            break;
+//        }
         
         //debug
         /* write outputs to files */
 //        checkMakeDir("T");
 //        saveVec(abs->Ts_, "T/T");
         //debug end
+        
+        if (bad_trajectories.size() == 0) {
+            break;
+        } else {
+        /* Refinement */
+            for (int j=bad_trajectories.size()-1; j>=0; j--) {
+                /* add the problematic system trajectory to the abstraction */
+                abs->addTrajectory(*bad_trajectories[j], explHorizon);
+                cout << "\tProblematic trajectory now part of abstraction.\n";
+                bool flag = abs->exploreAroundPoint(bad_trajectories[j]->trajectory.back(), explRadius, u, sys_post, radius_post);
+                delete bad_trajectories[j];
+            }
+        }
+        
         
 
         if (abs->Ts_[numAbs-1]->symbolicSet_==abs->ddmgr_->bddOne()) {
@@ -433,14 +506,14 @@ shared(abs,ENV_HIST,spec2,unique_env_count) private(HO,HG,HI,ho,hg,hi)
         abs->clear_control();
 //        BlackBoxReach* abs_ref = new BlackBoxReach(*abs);
         /* store the current spec value variable for later comparison */
-        spec_old = spec;
+//        spec_old = spec;
 //        spec = 0;
         
         iter++;
 //        for (int l=0; l<dimX; l++)
 //        act_success_count = 0;
     } /* End of the big while loop over spec computation and game solving */
-    return spec;
+    return spec_old;
 }
 
 /*! Recursively refine the abstraction for a given specification */
@@ -539,6 +612,122 @@ double refine_recurse(BlackBoxReach* abs,
     }
 }
 
+///*! Refine the abstraction around a set of specified points */
+//template<std::size_t SIZE_o, std::size_t SIZE_g, std::size_t SIZE_i, class sys_type, class rad_type, class X_type, class U_type, class L1, class L2>
+//double refine(BlackBoxReach* abs,
+//                      const std::vector<std::array<double,SIZE_o>> ho,
+//                      const std::vector<std::array<double,SIZE_g>> hg,
+//                      const std::vector<std::array<double,SIZE_i>> hi,
+//                      const sys_type sys_post, const rad_type radius_post,
+//                      const X_type x,
+//                      const U_type u,
+//                      std::vector<double>& unsafeAt,
+//                      L1& sys_log, L2& abs_log,
+//                      const double spec,
+//                      const X_type explRadius, const double explHorizon, const int p) {
+//    /* retrieve certain variables from the BlackBoxReach object */
+//    int verbose = abs->verbose_;
+//    int dimX = *abs->system_->dimX_;
+//    if (verbose>0) {
+//        cout << "System trajectory went to unsafe part at (";
+//        for (int i=0; i<dimX; i++) {
+//            cout << unsafeAt[i] << ",";
+//        }
+//        cout << "\b).\n";
+//    }
+//    /* initialize the return variable */
+//    double distance;
+//    /* save the transition BDDs of abstraction */
+//    std::vector<SymbolicSet*> T_old = abs->Ts_;
+//    /* add the problematic system trajectory to the abstraction */
+//    abs->addTrajectory(sys_log, explHorizon);
+//    cout << "\tProblematic trajectory now part of abstraction.\n";
+//    bool new_addition = false;
+//    for (int i=0; i<T_old.size(); i++) {
+//        if (abs->Ts_[i]->symbolicSet_!=T_old[i]->symbolicSet_) {
+//            new_addition = true;
+//            break;
+//        }
+//    }
+//    /* explore around the unsafe state */
+////    abs->clear();
+//    bool new_exploration = abs->exploreAroundPoint(unsafeAt, explRadius, u, sys_post, radius_post);
+//    if (!new_exploration) { /* already explored upto the finest layer */
+//        cout << "\tNo more refinement possible.\n";
+////        return;
+//    }
+////        /* not sure if needed */
+////        act_success_count[0]++;
+//        /* do a simple multi-layered reachability (without further refinement) */
+////        abs->initializeSpec(HO,ho,HG,hg,HI,hi);
+//    abs->clear_control();
+//    abs->plainReach(p);
+//    if (!abs->isInitWinning()) { /* no controller exists for the abstraction */
+//        cout << "\tUpdated distance = 0\n";
+//        distance = 0;
+//        return distance;
+//    } else {
+//        /* there is a controller for the abstraction: system needs to be checked */
+//        unsafeAt.clear();
+//        /* simulate the system using the synthesized controller */
+//        /* use the old (problematic) initial state */
+//        std::vector<double> old_init = sys_log.trajectory[0];
+//        sys_log.abstraction_used.clear();
+//        sys_log.trajectory.clear();
+//        sys_log.strategy.clear();
+//        sys_log.trajectory.push_back(old_init);
+//        simulateSystem(abs,ho,hg,hi,sys_post,x,u,unsafeAt,sys_log);
+//        //debug
+//        abs->writeVecToFile(sys_log.trajectory,"Figures/sys_traj.txt","clean");
+//        //debug end
+//        if (unsafeAt.size()==0) {
+//            if (verbose>0)
+//                cout << "\tThe controller worked for the system as well.\n";
+//            cout << "\tUpdated distance = 0\n";
+//            distance = 0;
+//            return distance;
+//        }
+//    }
+//    /* if the controller failed on the system, or no more exploration was possible, recompute distance and continue refining the abstraction around the point of failure, which is stored in the variable unsafeAt */
+//    abs_log.abstraction_used.clear();
+//    abs_log.trajectory.clear();
+//    abs_log.strategy.clear();
+//    abs_log.trajectory.push_back(sys_log.trajectory[0]);
+//    std::vector<std::vector<double>> hovec;
+//    vecArr2vecVec(ho,hovec);
+//    abs->simulateAbs(abs_log,hovec,distance);
+//    cout << "\tUpdated distance = " << distance << "\n";
+//    //debug
+//    abs->writeVecToFile(abs_log.trajectory,"Figures/abs_traj.txt","clean");
+//    //debug end
+//    /* if the distance after refinement became smaller than the current spec value, no need to refine further */
+//    if (!new_exploration && !new_addition) {
+//        return distance;
+//    } else {
+//        return refine_recurse(abs,ho,hg,hi,sys_post,radius_post,x,u,unsafeAt,sys_log,abs_log,spec,explRadius,explHorizon,p);
+//    }
+//}
+
+///*! Measure the minimum distance of the abstract trajectory from the obstacles */
+//template<std::size_t SIZE_o, class L>
+//double measure_distance(BlackBoxReach* abs,
+//                        const std::vector<std::array<double,SIZE_o>> ho,
+//                        L& abs_log,
+//                        const double spec) {
+//    double distance;
+//    /* if the controller failed on the system, or no more exploration was possible, recompute distance and continue refining the abstraction around the point of failure, which is stored in the variable unsafeAt */
+//    abs_log.abstraction_used.clear();
+//    abs_log.trajectory.clear();
+//    abs_log.strategy.clear();
+//    abs_log.trajectory.push_back(sys_log.trajectory[0]);
+//    std::vector<std::array<double,SIZE_o>> ho_inflated;
+//    minkowski_sum(ho,ho_inflated,spec);
+//    std::vector<std::vector<double>> hovec;
+//    vecArr2vecVec(ho_inflated,hovec);
+//    abs->simulateAbs(abs_log,hovec,distance);
+//    return distance;
+//}
+
 /*! Test the multi-layered abstraction with a number of randomly generated test environments from a given set of environments */
 template<class X_type, class U_type, class sys_type, class rad_type, class O_type, class G_type, class I_type, class HO_type, class HG_type, class HI_type, class ho_type, class hg_type, class hi_type>
 void test_abstraction(BlackBoxReach* abs, double spec_final,
@@ -607,7 +796,7 @@ void test_abstraction(BlackBoxReach* abs, double spec_final,
             abs_log.trajectory.push_back(sys_log.trajectory[0]);
             std::vector<std::vector<double>> hovec;
             vecArr2vecVec(ho,hovec);
-            abs->simulateAbs(abs_log,hovec,distance);
+            abs->simulateAbs(abs_log,hovec,spec_final,distance);
             abs->writeVecToFile(abs_log.trajectory,"Figures/abs_traj.txt","clean");
 //            abs->saveFinalResult();
             // debug end

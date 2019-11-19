@@ -1,7 +1,9 @@
 function vehicle (mode, numAbs, controllers, spec)
 
-% mascot path
-addpath(genpath('../../../'));
+% mascot root
+MASCOT_ROOT = '~/codes/mascot';
+addpath(genpath([MASCOT_ROOT '/mfiles/']));
+EXAMPLE_ROOT = [MASCOT_ROOT '/mascot_examples/black_box_systems/simple_vehicle'];
 
 
 % parameters
@@ -42,10 +44,10 @@ switch mode
         drawnow;
         disp('Done plotting state space')
 
-        savefig('Figures/system');
+        savefig([EXAMPLE_ROOT '/Figures/system']);
         
     case 'P'
-        openfig('Figures/system')
+        openfig([EXAMPLE_ROOT '/Figures/system'])
         axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);
         try
             O = SymbolicSet('plotting/O.bdd');
@@ -77,10 +79,10 @@ switch mode
         X0 = SymbolicSet('plotting/X0.bdd');
         plotCells(X0,'fast','facecolor','y');
         disp('Done plotting initial states')
-        savefig('Figures/problem');
+        savefig([EXAMPLE_ROOT '/Figures/problem']);
         
     case 'O'
-        openfig('Figures/system')
+        openfig([EXAMPLE_ROOT '/Figures/system'])
         axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);
         for ii=2:numAbs
             Z = SymbolicSet(['O/O' num2str(ii) '.bdd']);
@@ -88,7 +90,7 @@ switch mode
             pause
         end
     case 'E'
-        openfig('Figures/system')
+        openfig([EXAMPLE_ROOT '/Figures/system'])
         axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);
         for ii=2:numAbs
             Z = SymbolicSet(['E/E' num2str(ii) '.bdd']);
@@ -106,7 +108,7 @@ switch mode
         end
         
     case 'Cdom'
-        openfig('Figures/problem')
+        openfig([EXAMPLE_ROOT '/Figures/problem'])
         axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);
         for ii=1:controllers
             Cdom = SymbolicSet(['C/C' num2str(ii) '.bdd'],'projection',[1 2]);
