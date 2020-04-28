@@ -3,10 +3,9 @@
 #
 CC        = g++
 #CC       	  = clang++
-#CXXFLAGS		= -Wall -Wextra -std=c++11 -O3 -DNDEBUG -fopenmp -Wfatal-errors -g
 #CXXFLAGS 		= -Wall -Wextra -std=c++11 -O3 -DNDEBUG
-#CXXFLAGS 		= -Wall -Wextra -std=c++11 -Wfatal-errors -g -fopenmp
-CXXFLAGS                = -Wall -Wextra -std=c++11 -g -Wfatal-errors
+CXXFLAGS 		= -Wall -Wextra -std=c++11 -Wfatal-errors -g
+#CXXFLAGS                = -Wall -Wextra -std=c++11 -g
 
 #
 # scots 
@@ -17,8 +16,8 @@ SCOTSINC		= -I$(SCOTSROOT)/utils -I$(SCOTSROOT)/bdd
 #
 # cudd 
 #
-CUDDPATH		=  /opt/local
-#CUDDPATH		= ../../../../../libraries
+#CUDDPATH		=  /opt/local
+CUDDPATH		= ../../../../../libraries
 CUDDINC 		= -I$(CUDDPATH)/include -I$(CUDDPATH)/include/cudd
 CUDDLIBS		= -lcudd 
 CUDDLPATH   = -L$(CUDDPATH)/lib
