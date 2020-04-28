@@ -1,7 +1,9 @@
 function drone (mode, numAbs, controllers, spec)
 
-% mascot path
-addpath(genpath('../../../'));
+% mascot root
+MASCOT_ROOT = '~/codes/mascot';
+addpath(genpath([MASCOT_ROOT '/mfiles/']));
+EXAMPLE_ROOT = [MASCOT_ROOT '/mascot_examples/black_box_systems/drone2d'];
 
 
 % parameters
@@ -112,6 +114,28 @@ switch mode
             Cdom = SymbolicSet(['C/C' num2str(ii) '.bdd'],'projection',[1 2]);
             plotCells(Cdom,'fast','facecolor',cmap(ii,:));
             pause(0.3)
+        end
+    case 'C_interim'
+        openfig([EXAMPLE_ROOT '/Figures/problem'])
+        for ii=1:44
+            Cdom = SymbolicSet(['C_interim/C' num2str(ii) '.bdd'],'projection',[1 2]);
+            plotCells(Cdom,'fast');
+            pause
+        end
+    case 'Z_interim'
+        openfig([EXAMPLE_ROOT '/Figures/problem'])
+        for ii=2:51
+            Cdom = SymbolicSet(['Z_interim/Z' num2str(ii) '.bdd']);
+            plotCells(Cdom,'fast');
+            pause
+        end
+    case 'value'
+        drone('P',numAbs,controllers,spec)
+        openfig([EXAMPLE_ROOT '/Figures/problem'])
+        for ii=1:18
+            Cdom = SymbolicSet(['Values/v' num2str(ii) '.bdd']);
+            plotCells(Cdom,'fast');
+            pause
         end
     case 'T'
          openfig('Figures/system')

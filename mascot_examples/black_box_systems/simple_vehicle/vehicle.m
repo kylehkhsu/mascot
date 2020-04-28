@@ -115,6 +115,27 @@ switch mode
             plotCells(Cdom,'fast','facecolor',cmap(ii,:));
             pause
         end
+    case 'C_interim'
+        openfig([EXAMPLE_ROOT '/Figures/problem'])
+        for ii=1:51
+            Cdom = SymbolicSet(['C_interim/C' num2str(ii) '.bdd'],'projection',[1 2]);
+            plotCells(Cdom,'fast');
+            pause
+        end
+    case 'Z_interim'
+        openfig([EXAMPLE_ROOT '/Figures/problem'])
+        for ii=2:51
+            Cdom = SymbolicSet(['Z_interim/Z' num2str(ii) '.bdd']);
+            plotCells(Cdom,'fast');
+            pause
+        end
+    case 'value'
+        openfig([EXAMPLE_ROOT '/Figures/problem'])
+        for ii=1:7
+            Cdom = SymbolicSet(['Values/v' num2str(ii) '.bdd']);
+            plotCells(Cdom,'fast');
+            pause
+        end
     case 'T'
 %         openfig('Figures/system')
         axis([0.99*lb(1) 1.01*ub(1) 0.99*lb(2) 1.01*ub(2)]);

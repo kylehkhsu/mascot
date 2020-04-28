@@ -68,11 +68,12 @@ public:
      * obstacles - set of hyper-rectangular obstacles as vector. Each element of the vector correspond to one obstacle, whose elements are arranged as: {-lb_x1, ub_x1, -lb_x2, ub_x2, ...} where x1, x2, ... are the state variables, and lb, ub represent the lower and upper bound respectively
      * unsafeAt - point of collision if collision is detected
      */
-    template<class RHS, class X, class U, class T>
-    inline void operator()(RHS rhs, X &x, U &u, const X xlb, const X xub, const std::vector<std::vector<T>> obstacles, double distance, std::vector<T>& unsafeAt) {
-        X k[4];
-        X tmp;
-        int dim = x.size();
+    template<class RHS, class X_full, class X, class U, class T>
+    inline void operator()(RHS rhs, X_full &x, U &u, const X xlb, const X xub, const std::vector<std::vector<T>> obstacles, double distance, std::vector<T>& unsafeAt) {
+        X_full k[4];
+        X_full tmp;
+        int dim_full = x.size();
+        int dim = xlb.size();
         /* arrange the obstacles in suitable form */
         std::vector<std::vector<double>> lb,ub;
         for (int j=0; j<obstacles.size(); j++) {
@@ -88,24 +89,24 @@ public:
         bool col_flag = false;
         for(int t=0; t<nint_; t++) {
             rhs(k[0],x,u);
-            for(int i=0;i<dim;i++)
+            for(int i=0;i<dim_full;i++)
                 tmp[i]=x[i]+h_/2*k[0][i];
             
             rhs(k[1],tmp, u);
-            for(int i=0;i<dim;i++)
+            for(int i=0;i<dim_full;i++)
                 tmp[i]=x[i]+h_/2*k[1][i];
             
             rhs(k[2],tmp, u);
-            for(int i=0;i<dim;i++)
+            for(int i=0;i<dim_full;i++)
                 tmp[i]=x[i]+h_*k[2][i];
             
             rhs(k[3],tmp, u);
-            for(int i=0; i<dim; i++)
+            for(int i=0; i<dim_full; i++)
                 x[i] = x[i] + (h_/6)*(k[0][i] + 2*k[1][i] + 2*k[2][i] + k[3][i]);
             
             /* check collision with boundary */
             col_flag = true;
-            for (int j=0; j<dim; j++) {
+            for (int j=0; j<xlb.size(); j++) {
                 if (x[j]>xlb[j]+distance || x[j]<xub[j]-distance) {
                     col_flag=false;
                     break;

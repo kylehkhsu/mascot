@@ -377,8 +377,8 @@ int main() {
     double etaRatio[dimX] = {2, 2};
     double tauRatio = 2; /* must be an integer */
     int p = 2;
-    int verbose = 1;
-    bool readTsFromFile = false;
+    int verbose = 0;
+    bool readTsFromFile = true;
     bool onlyRunTest = false;
     
     int numAbs = 5;
@@ -407,15 +407,16 @@ int main() {
     
     
     /* number of samples used */
-    int NN = 50;
+    int NN = 100;
     /* number of tests */
-    int num_tests = 50;
+    int num_tests = 100;
     /* allowed distance between an abstract trajectory and the unsafe states for the controllers good for the abstraction but bad for the system */
 //    double allowedDistance = 0.15;
     X_type explRadius = {0.2,0.2};
     /* exploration horizon in time units */
-    double explHorizon = 1;
-    double reqd_success_rate[2] = {0.02, 0.9}; /* when to stop: when the fraction of refinement to the total iteration in loop 1 is below reqd_success_rate[0], and the success rate in loop 2 is above reqd_success_rate[1]. */
+    int explHorizon = 10;
+    double reqd_success_rate = 0.8;
+//    double reqd_success_rate[2] = {0.02, 0.9}; /* when to stop: when the fraction of refinement to the total iteration in loop 1 is below reqd_success_rate[0], and the success rate in loop 2 is above reqd_success_rate[1]. */
 //    double reqd_success_rate = 0.9;
     
     /* maximum value of spec based on knowledge of the size of the goal

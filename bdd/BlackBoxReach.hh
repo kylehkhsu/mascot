@@ -10,6 +10,7 @@
 #include "Helper.hh"
 
 #define eps 1e-13 /* a small number added to continuous states to resolve their membership to abstract states around boundary */
+#define noop ((void)0)
 
 using std::clog;
 using std::freopen;
@@ -65,6 +66,9 @@ namespace scots {
         vector<SymbolicSet*> computedDs_; /*!< Instance of *Xs_[i] containing states for which transitions have already been constructed. */
         
         vector<SymbolicSet*> uTs_; /*!< Transition relations for exploring, i.e. all with coarsest space gridding but varying time sampling. */
+        
+        SymbolicSet* dummy_disturbance_transition; /*!< A dummy transition system used to compute the values. */
+        vector<vector<SymbolicSet*>> value; /*!< Layer-wise list of sets of states arranged in increasing order of distance from the obstacles */
         
         int m_; /*!< Number of iterations for synthesis in a layer before attempting to go coarser. */
         int p_; /*!< Number of iterations for exploration before attempting synthesis. */
@@ -124,6 +128,7 @@ namespace scots {
             solvers_=other.solvers_;
             systemSolver_=other.systemSolver_;
             finalAbs_=other.finalAbs_;
+            dummy_disturbance_transition=other.dummy_disturbance_transition;
             uTs_=other.uTs_;
             m_=other.m_;
             p_=other.p_;
@@ -235,6 +240,9 @@ namespace scots {
             deleteVec(Ds_);
             deleteVec(innerDs_);
             deleteVec(computedDs_);
+            for (int i=0; i<value.size(); i++) {
+                deleteVec(value[i]);
+            }
             deleteVec(uTs_);
             fclose(stderr);
             delete ddmgr_;
@@ -246,7 +254,12 @@ namespace scots {
         void plainReach(int p, bool treat_exclusion_as_obstacle=true) {
             m_ = p; // max. iterations for consecutive reachability for non-coarsest layers
             clog << "m: " << m_ << '\n';
+            // debug purpose
+            saveFinalResult();
+            //debug end
             
+            /* for maximizing trajectory distance from the obstacles */
+            computeValue();
             // synthesize controller
             int ab = 0;
             eagerReachRecurse(ab, treat_exclusion_as_obstacle);
@@ -256,15 +269,13 @@ namespace scots {
         /*! Add the last part of the trajectory to all the abstraction layers
          *      The effected variables are Ts_, TTs_ and uTs_ in only those layers whose sampling time was used. Note that computedDs_ remains unchanged as we do not explore all the transitions from the respective states appearing in the trajectory. */
         template<class L>
-        void addTrajectory(const L sys_log, const double explHorizon) {
-            /* remaining exploration */
-            double explRemaining = explHorizon;
+        void addTrajectory(const L sys_log) {
             /* transition is the tripple (x,u,x') */
             double* x = new double[*system_->dimX_];
             double* xu = new double[(*system_->dimX_) + (*system_->dimU_)];
             double* transition = new double[2*(*system_->dimX_)+(*system_->dimU_)];
             /* iterate over the states in the end of the trajectory until the exploration budget is exhausted */
-            for (int i=sys_log.trajectory.size()-1; (explRemaining>0) && (i>0); i--) {
+            for (int i=sys_log.trajectory.size()-1; i>0; i--) {
                 int index=0;
                 /* fill the current state array */
                 for (int j=0; j<*system_->dimX_; j++) {
@@ -305,7 +316,6 @@ namespace scots {
                 /* the exploration abstraction correspond to the sampling time of the next finer layer */
                 if (sys_log.abstraction_used[i-1]!=0)
                     uTs_[sys_log.abstraction_used[i-1]-1]->addPoint(transition);
-                explRemaining = explRemaining - *tau_[sys_log.abstraction_used[i-1]];
             }
         }
         
@@ -777,13 +787,39 @@ namespace scots {
                     BDD controllablePreZ1 = controllablePre(Zs_[ab]->symbolicSet_ & !(Es_[ab]->symbolicSet_ | Os_[ab]->symbolicSet_), ab);
                     BDD controllablePreZ2 = controllablePre(Zs_[ab]->symbolicSet_ & Es_[ab]->symbolicSet_, ab);
                     C = (controllablePreZ1 & !Os_[ab]->symbolicSet_) | (controllablePreZ2 & Es_[ab]->symbolicSet_) | Gs_[ab]->symbolicSet_;
-                } else {
+                } else { /* only add the states which are farthest from the obstacles and the exlcusion regions */
                     BDD controllablePreZ = controllablePre(Zs_[ab]->symbolicSet_, ab);
-                    C = (controllablePreZ& !(Es_[ab]->symbolicSet_ | Os_[ab]->symbolicSet_)) | Gs_[ab]->symbolicSet_;
+                    BDD D;
+                    for (int k=value[ab].size()-1; k>=0; k--) {
+                        D = (controllablePreZ& !(Es_[ab]->symbolicSet_ | Os_[ab]->symbolicSet_)) & value[ab][k]->symbolicSet_;
+                        // debug purpose
+//                        scots::SymbolicSet S(*Xs_[ab]);
+//                        S.symbolicSet_= (D.ExistAbstract(*notXvars_[ab]) & !Zs_[ab]->symbolicSet_);
+                        checkMakeDir("Z_interim");
+                        std::string name;
+                        name = "Z_interim/Z";
+                        name += std::to_string(i);
+                        name += ".bdd";
+                        const char *cstr = name.c_str();
+                        Zs_[ab]->writeToFile(cstr);
+                        //debug end
+                        if ((D.ExistAbstract(*notXvars_[ab]) & !Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)) != ddmgr_->bddZero()) {
+                            break;
+                        }
+                    }
+                    C = D | Gs_[ab]->symbolicSet_;
                 }
                 
                 // debug purpose
-//                scots::SymbolicSet S(*Cs_[ab]);
+                scots::SymbolicSet S(*Cs_[ab]);
+                S.symbolicSet_=C;
+                checkMakeDir("C_interim");
+                std::string name;
+                name = "C_interim/C";
+                name += std::to_string(i);
+                name += ".bdd";
+                const char *cstr = name.c_str();
+                S.writeToFile(cstr);
 //                if (ab==3) {
 //                    S.setSymbolicSet((controllablePreZ1 & !Os_[ab]->symbolicSet_) | Gs_[ab]->symbolicSet_);
 ////                    S.setSymbolicSet(controllablePreZ2 & Es_[ab]->symbolicSet_);
@@ -799,11 +835,12 @@ namespace scots {
                 //new end
                 BDD N = C & (!(Cs_[ab]->symbolicSet_.ExistAbstract(*cubeU_)));
                 Cs_[ab]->symbolicSet_ |= N;
-                Zs_[ab]->symbolicSet_ = C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_;
+                Zs_[ab]->symbolicSet_ |= C.ExistAbstract(*notXvars_[ab]) | validZs_[ab]->symbolicSet_;
                 
                 /* check if the initial states and the exclusion region states are winning */
                 BDD iw = X0s_[ab]->symbolicSet_ & (!(Zs_[ab]->symbolicSet_));
-                if (iw == ddmgr_->bddZero() && i>=2) {
+//                if (iw == ddmgr_->bddZero() && i>=2) { /*PREMATURE TERMINATION DISABLED AT THE MOMENT*/
+                if (false) {
                     /* check if all the exclusion region states are also winning */
 //                    BDD validZ = validZs_[ab]->symbolicSet_;
 //                    validZs_[ab]->symbolicSet_ = Zs_[ab]->symbolicSet_;
@@ -865,6 +902,17 @@ namespace scots {
         BDD cooperativePre(BDD Z, int ab) {
             BDD Z2 = Z.Permute(permutesXtoX2_[0]); // ab = 0 because we use the coarsest state griddings
             BDD uPreZ = uTs_[ab]->symbolicSet_.AndAbstract(Z2, *notXUvars_[0]);
+            uPreZ = uPreZ.ExistAbstract(*notXvars_[0]);
+            return uPreZ;
+        }
+        
+        /*! Calculates the cooperative predecessor of a given set with respect to the dummy disturbance transitions.
+         *  \param[in]  Z       The given set.
+         *  \return     BDD containing {x} for which there exists a u s.t. there exists a post state of (x,u) in Z.
+         */
+        BDD dummyCoopPre(BDD Z) {
+            BDD Z2 = Z.Permute(permutesXtoX2_[0]);
+            BDD uPreZ = dummy_disturbance_transition->symbolicSet_.AndAbstract(Z2, *notXUvars_[0]);
             uPreZ = uPreZ.ExistAbstract(*notXvars_[0]);
             return uPreZ;
         }
@@ -1566,6 +1614,72 @@ namespace scots {
                 clog << "permuteCoarserTs " << i << " to " << i-1 << ": ";
                 printArray(permuteCoarserT, numBDDVars_);
             }
+        }
+        
+        /*! Initialize the list of value function across all layers.
+         *  Needs to be done after the initialization of the symbolicsets */
+        template<class X_type, class U_type>
+        void initializeDummyTransition() {
+            /* First initialize a dummy transition relation in the coarsest layer which allows moving to adjacent cells */
+//            SymbolicSet* TT = new SymbolicSet(*Cs_[*system_->numAbs_-1]);
+            dummy_disturbance_transition = new SymbolicSet(*Cs_[0], *X2s_[0]);
+            /* the lambda function for a dummy state transition: don't move */
+            auto sysNext = [](X_type &x, U_type &u, OdeSolver solver) -> void {
+                noop;
+            };
+            /* the lambda function for a dummy growth bound: grow inside the neighbors */
+            auto radNext = [](X_type &r, U_type &u, OdeSolver solver) -> void {
+                for (int i=0; i<r.size(); i++) {
+                    r[i]=1.5*r[i];
+                }
+            };
+            SymbolicModelGrowthBound<X_type, U_type> dummy_abstraction(Xs_[0], U_, X2s_[0]); // abstraction computation will only iterate over the elements in the domain of the state space SymbolicSet (first argument)
+            dummy_abstraction.computeTransitionRelation(sysNext, radNext, *solvers_[0], verbose_);
+            dummy_disturbance_transition->symbolicSet_ = dummy_abstraction.transitionRelation_;
+            //debug
+            dummy_disturbance_transition->writeToFile("plotting/dummy.bdd");
+//            TT->symbolicSet_ = T->symbolicSet_.ExistAbstract(*notXUvars_[0]);
+            
+//
+//            delete T;
+//            delete TT;
+        }
+        
+        /*! Compute value.
+         *  The dummy abstraction has to be computed first.
+         *  The obstacles need to be added beforehand. */
+        void computeValue(){
+            value.clear();
+            std::vector<SymbolicSet*> vec;
+//            BDD Z = ddmgr_->bddZero();
+            SymbolicSet* Y = new SymbolicSet(*Xs_[0]);
+            while (1) {
+                SymbolicSet* X = new SymbolicSet(*Xs_[0]);
+                BDD C = dummyCoopPre(Y->symbolicSet_) | Os_[0]->symbolicSet_;
+                BDD N = C.ExistAbstract(*cubeU_) & (!(Y->symbolicSet_));
+                if (N==ddmgr_->bddZero()) {
+                    break;
+                }
+                Y->symbolicSet_ |= N;
+                X->symbolicSet_ = N;
+                vec.push_back(X);
+            }
+            value.push_back(vec);
+            delete Y;
+            /* compute value for the other layers */
+            for (int i=1; i<*system_->numAbs_; i++) {
+                std::vector<SymbolicSet*> vec;
+                for (int j=0; j<value[i-1].size(); j++) {
+                    SymbolicSet* X = new SymbolicSet(*Xs_[i]);
+                    finer(value[i-1][j], X, i-1);
+                    vec.push_back(X);
+                }
+                value.push_back(vec);
+            }
+            //debug
+            checkMakeDir("Values");
+            saveVec(value[0],"Values/v");
+            //debug end
         }
         
         /*! Initializes the BDDs that are the precursors to notXvars_ and notXUvars_ */

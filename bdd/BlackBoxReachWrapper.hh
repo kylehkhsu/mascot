@@ -97,13 +97,13 @@ double find_abst(X_type x, U_type u,
               HO_type HO, HG_type HG, HI_type HI,
               ho_type ho, hg_type hg, hi_type hi, gen_init_type generateInitial,
               const int nSubInt, const int systemNSubInt, const int p,
-              const int NN, const X_type explRadius, const double explHorizon, const double* reqd_success_rate, const double spec_max,
+              const int NN, const X_type explRadius, const int explHorizon, const double reqd_success_rate, const double spec_max,
               bool readTsFromFile, bool useColors, const char* logfile, const int verbose=0) {
     
     int dimX = x.size();
     int dimU = u.size();
     
-    int act_success_count[2] = {0, 0};
+//    int act_success_count = 0;
     bool reqd_success_rate_reached = false;
 //    bool spec_with_no_refinement;
     
@@ -113,6 +113,7 @@ double find_abst(X_type x, U_type u,
     
     BlackBoxReach* abs= new BlackBoxReach(logfile,verbose);
     abs->initialize(&sys,systemTau,systemNSubInt);
+    abs->initializeDummyTransition<X_type,U_type>();
     // debug
 //    abs->Xs_[1]->printInfo(1);
     // debug end
@@ -148,10 +149,12 @@ double find_abst(X_type x, U_type u,
 //            /*stopping crieterion*/
 //            break;
 //        } else { /* update spec_old (against which new spec is computed) */
-            spec_old = spec+spec_old;
+//            spec_old = spec+spec_old;
+        spec_old=0;
             spec=0;
             cout << "SPEC_old = " << spec_old << ".\n";
             cout << "SPEC = " << spec << ".\n";
+        int act_success_count=0;
 //        }
 //        /************************************************************************/
 //        /* Abstract game solving with refinement: Refinement of abstraction to maximize number of winning environments */
@@ -419,6 +422,7 @@ double find_abst(X_type x, U_type u,
 //                    }
                     
                 } else { /* if (unsafeAt.size()==0) */
+                    act_success_count++;
                     if (useColors) {
                         /* print in green (the code 32) */
                         cout << "\033[32mEnvironment #" << e << "\033[0m\n";
@@ -478,17 +482,31 @@ double find_abst(X_type x, U_type u,
 //        saveVec(abs->Ts_, "T/T");
         //debug end
         
-        if (bad_trajectories.size() == 0) {
+        cout << "Success rate = " << act_success_count*100/NN << "%.\n";
+        cout << "Failure rate = " << bad_trajectories.size()*100/NN << "%.\n";
+        if (act_success_count/NN >= reqd_success_rate) {
+            cout << "\nReqd. success rate reached. Final SPEC = " << spec << ".\n\n";
+            break;
+        } else if (bad_trajectories.size()==0) {
+            cout << "\nNo more failure situation was found. Consider increasing the number of abstraction and restarting the process if desired success rate was not reached.\n\n";
             break;
         } else {
         /* Refinement */
             for (int j=bad_trajectories.size()-1; j>=0; j--) {
                 /* add the problematic system trajectory to the abstraction */
-                abs->addTrajectory(*bad_trajectories[j], explHorizon);
+                abs->addTrajectory(*bad_trajectories[j]);
                 cout << "\tProblematic trajectory now part of abstraction.\n";
-                bool flag = abs->exploreAroundPoint(bad_trajectories[j]->trajectory.back(), explRadius, u, sys_post, radius_post);
+                int remExploration = explHorizon;
+                for (int k=bad_trajectories[j]->trajectory.size()-1; k>=0 && remExploration>0; k--) {
+                    bool flag = abs->exploreAroundPoint(bad_trajectories[j]->trajectory[k], explRadius, u, sys_post, radius_post);
+                    remExploration = remExploration - 1;
+                }
                 delete bad_trajectories[j];
             }
+            /* write outputs to files */
+            checkMakeDir("T");
+            saveVec(abs->Ts_, "T/T");
+            cout << "\nSaved refined transition systems in files.\n";
         }
         
         
@@ -498,7 +516,7 @@ double find_abst(X_type x, U_type u,
             /* write outputs to files */
             checkMakeDir("T");
             saveVec(abs->Ts_, "T/T");
-            cout << "\nWrote transitions to files. Exiting process.\n\n";
+            cout << "\nWrote transitions to files. Exiting process. Final SPEC = " << spec << "\n\n";
             break;
         }
         /* clear the controller related vaiables */
