@@ -8,17 +8,6 @@
 #ifndef SYMBOLICSET_HH_
 #define SYMBOLICSET_HH_
 
-#include <vector>
-#include <algorithm>
-#include <sstream>
-#include <cassert>
-#include <cmath>
-#include <iostream>
-#include <fstream>
-#include <stdexcept>
-
-#include "dddmp.h"
-#include "cuddObj.hh"
 #include "CuddMintermIterator.hh"
 
 /* class: SymbolicSet

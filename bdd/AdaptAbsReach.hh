@@ -3,6 +3,17 @@
 
 #include <cstdio>
 #include <vector>
+#include <fstream>
+#include <algorithm>
+#include <sstream>
+#include <cassert>
+#include <cmath>
+#include <iostream>
+#include <stdexcept>
+
+#include "cuddObj.hh"
+#include "cudd.h"
+#include "dddmp.h"
 
 #include "SymbolicModelGrowthBound.hh"
 #include "System.hh"
@@ -397,8 +408,8 @@ public:
             uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
         }
         abstraction.computeExplorationTransitionRelation(sysNext, radNext, *system_->numAbs_, solvers_, uTs_, verbose_);
-        x = x; // gets rid of warning message regarding lack of use
-        u = u;
+        (void)x; // gets rid of warning message regarding lack of use
+        (void)u;
     }
 
     /*! Does lazy exploration based on the current status of controller synthesis.
@@ -448,8 +459,8 @@ public:
 //            Ts_[ab]->printInfo(1);
             TTs_[ab]->symbolicSet_ = Ts_[ab]->symbolicSet_.ExistAbstract(*notXUvars_[ab]);
         }
-        x = x; // gets rid of warning message regarding lack of use
-        u = u;
+        (void)x; // gets rid of warning message regarding lack of use
+        (void)u;
     }
 
     /*! Calculates the reachability fixed-point for m iterations.

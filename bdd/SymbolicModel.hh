@@ -8,12 +8,6 @@
 #ifndef SYMBOLICMODEL_HH_
 #define SYMBOLICMODEL_HH_
 
-#include <iostream>
-#include <stdexcept>
-
-#include "cuddObj.hh"
-#include "dddmp.h"
-
 #include "SymbolicSet.hh"
 
 

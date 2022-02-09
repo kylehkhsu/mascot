@@ -1,9 +1,20 @@
 #ifndef ADAPTABSSAFE_HH_
 #define ADAPTABSSAFE_HH_
 
+#include <thread>
 #include <cstdio>
 #include <vector>
-#include <thread>
+#include <fstream>
+#include <algorithm>
+#include <sstream>
+#include <cassert>
+#include <cmath>
+#include <iostream>
+#include <stdexcept>
+
+#include "cuddObj.hh"
+#include "cudd.h"
+#include "dddmp.h"
 
 #include "SymbolicModelGrowthBound.hh"
 #include "System.hh"
