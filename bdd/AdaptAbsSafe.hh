@@ -167,6 +167,8 @@ public:
 				saveVec(finalZs_, "Z/Z");
 			}
 		}
+        
+        saveControllerInfo(finalCs_.size());
 
 		if (NoController == 1) {
 			clog << "Empty controller domain.\n";
@@ -924,6 +926,14 @@ public:
             finalZs_.push_back(Z);
             finalAbs_.push_back(ab);
         }
+    }
+    /*! Saves information about the controller */
+    void saveControllerInfo(int numCont,
+                            std::string filename = "C/controller_info.m") {
+        FILE* file = fopen(filename.c_str(), "w");
+        fprintf(file, "numAbs = %d\n", *(system_->numAbs_));
+        fprintf(file, "numCont = %d\n", numCont);
+        fclose(file);
     }
 };
 }

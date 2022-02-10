@@ -34,3 +34,6 @@ $(TARGET): $(TARGET).o
 
 clean:
 	rm  ./$(TARGET)  ./$(TARGET).o
+
+clean_all:
+	rm -r -f C G O T Z plotting *.fig *.log ./$(TARGET) ./$(TARGET).o

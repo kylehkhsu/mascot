@@ -286,6 +286,7 @@ public:
             finalZs_[i]->printInfo();
           }
         }
+        saveControllerInfo(finalCs_.size());
         return;
     }
 
@@ -990,6 +991,14 @@ public:
             Ts_[i]->printInfo(1);
         }
         clog << "Ts_ read from file.\n";
+    }
+    /*! Saves information about the controller */
+    void saveControllerInfo(int numCont,
+                            std::string filename = "C/controller_info.m") {
+        FILE* file = fopen(filename.c_str(), "w");
+        fprintf(file, "numAbs = %d\n", *(system_->numAbs_));
+        fprintf(file, "numCont = %d\n", numCont);
+        fclose(file);
     }
 };
 }
