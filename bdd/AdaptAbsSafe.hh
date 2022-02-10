@@ -403,8 +403,8 @@ public:
         uTs_[ab]->symbolicSet_ = abstraction.transitionRelation_; // add to transition relation
     }
     abstraction.computeExplorationTransitionRelation(sysNext, radNext, *system_->numAbs_, solvers_, uTs_, verbose_);
-    x = x; // gets rid of warning message regarding lack of use
-    u = u;
+    (void)x; // gets rid of warning message regarding lack of use
+    (void)u;
 	}
 
     /*! Does lazy exploration based on the current status of controller synthesis.
@@ -470,8 +470,8 @@ public:
             TTs_[ab]->symbolicSet_ |= abstraction.transitionRelation_.ExistAbstract(*notXUvars_[ab]);
         }
 
-        x = x; // gets rid of warning message regarding lack of use
-        u = u;
+        (void)x; // gets rid of warning message regarding lack of use
+        (void)u;
     }
 
     /*! Calculates the cooperative predecessor of a given set with respect to the un-restricted transition relation at the coarsest level of abstraction.

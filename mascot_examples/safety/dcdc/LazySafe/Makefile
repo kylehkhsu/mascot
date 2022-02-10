@@ -5,12 +5,12 @@ CC        = g++
 #CC       	  = clang++
 CXXFLAGS		= -Wall -Wextra -std=c++11 -O3 -DNCEBUG -Wfatal-errors
 #CXXFLAGS 		= -Wall -Wextra -std=c++11 -O3 -DNDEBUG
-#CXXFLAGS 		= -Wall -Wextra -std=c++11 
+#CXXFLAGS 		= -Wall -Wextra -std=c++11 -g
 
 #
 # scots 
 #
-SCOTSROOT		= ../../../../../
+SCOTSROOT		= ../../../../
 SCOTSINC		= -I$(SCOTSROOT)/utils -I$(SCOTSROOT)/bdd 
 
 #
@@ -36,6 +36,6 @@ $(TARGET): $(TARGET).o
 clean:
 	rm  ./$(TARGET)  ./$(TARGET).o
 
-cleanAll:
+clean_all:
 	rm -r -f ./$(TARGET)  ./$(TARGET).o C Z SafeSets *.txt *.fig plotting T *.log Zs* D* validZs* 
 
