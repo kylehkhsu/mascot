@@ -285,7 +285,7 @@ if (strcmp(mode,'Safe'))
 %         end
         delete(h)
         disp("Current abstraction")
-        disp(curAbs)
+        disp(numAbs - curAbs)
 %         disp('u')
 %         disp(u(ran,:))
 %         disp('d')
