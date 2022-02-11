@@ -10,9 +10,9 @@ run('C/controller_info.m')
 dcdc('S', numAbs, numCont, 'f');
 close all;
 
-% Plot obstacles and goal
-dcdc('P', numAbs, numCont, 'f');
-close all;
+% % Plot obstacles and goal
+% dcdc('P', numAbs, numCont, 'f');
+% close all;
 
 % Simulate controlled trajectory
 dcdc('Safe', numAbs, numCont, 'f');

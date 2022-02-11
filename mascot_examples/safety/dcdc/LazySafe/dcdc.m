@@ -235,11 +235,14 @@ if (strcmp(mode,'Safe'))
     hold on
     drawnow
     
-    x = [1.175 5.475];
-%     x = [1.40700000000000,5.48300000000000];
+    x = [1.25 5.55];
     v = [];    
     j = 1;
-    tauSet = [6.4 3.2 1.6 0.8 0.4 0.2 0.1];
+    tauSet = ones(numAbs, 1);
+    tauFinest = 0.0625;
+    for ii=1:numAbs
+        tauSet(ii) = tauFinest * 2^(numAbs - ii);
+    end
     
     C = cell(numAbs,1);
     Z = cell(numAbs,1);
@@ -249,17 +252,22 @@ if (strcmp(mode,'Safe'))
     end
     
     for rounds=1:400
-        for ii=1:numAbs
+        curAbs = 0;
+        for ii=numAbs:-1:1
             if (Z{ii}.isElement(x(end,:)))
+                curAbs = ii;
                 tau = tauSet(ii);
-                if (ii==3)
-                    a = 1;
-                end
+%                 if (ii==3)
+%                     a = 1;
+%                 end
                 break;
             end
         end
+        if (curAbs == 0)
+            error("Something wrong with the controller: the trajectory left the controllable region.");
+        end
 %         try
-            u = C{ii}.getInputs(x(end,:));
+            u = C{curAbs}.getInputs(x(end,:));
 %         catch
 %             debug = 1;
 %         end
@@ -269,17 +277,21 @@ if (strcmp(mode,'Safe'))
         [t phi] = ode45(@sysODE, [0 tau], x(end,:), [], u(ran,:), d);
         x = [x; phi];
 
-%         if (mod(j,1) == 0)
-            plot(x(:,1),x(:,2),'k.-')
-            drawnow
+%         if (mod(j,1) == 0
+        plot(x(:,1),x(:,2),'.-','Color', [150 150 150]/255);
+        h = plot(x(end,1),x(end,2),'Marker','o','MarkerEdgeColor','r');
+        drawnow
 %             pause
 %         end
-        disp(ii)
+        delete(h)
+        disp("Current abstraction")
+        disp(curAbs)
 %         disp('u')
 %         disp(u(ran,:))
 %         disp('d')
 %         disp(d)
 %         disp('x')
+        disp("Current state")
         disp(x(end,:))
 %         pause
        
